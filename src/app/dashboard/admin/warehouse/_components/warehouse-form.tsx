@@ -1,0 +1,584 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+
+import { Warehouse, commonCurrencies } from "@/types/warehouse";
+import { createWarehouse, updateWarehouse } from "@/app/actions/warehouse";
+import { africanCountries } from "@/app/dashboard/_constant";
+
+interface WarehouseFormProps {
+  warehouse?: Warehouse;
+  isEdit?: boolean;
+}
+
+/**
+ * WarehouseForm Component
+ * Provides a form for creating and editing warehouses without any form libraries
+ */
+export default function WarehouseForm({
+  warehouse,
+  isEdit = false,
+}: WarehouseFormProps) {
+  const t = useTranslations("warehouse.form");
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: "",
+    country: "",
+    city: "",
+    currency: "USD",
+    address: "",
+    capacity: undefined as number | undefined,
+    capacityUnit: "items",
+    isActive: true,
+    conversionEnabled: false,
+    targetCurrency: "USD",
+    conversionRate: 1 as number | undefined,
+    autoUpdateRate: false,
+  });
+  console.log("🚀 ~ WarehouseForm ~ formData:", formData);
+
+  // Populate form values when editing
+  useEffect(() => {
+    if (warehouse && isEdit) {
+      setFormData({
+        name: warehouse.name,
+        country: warehouse.country,
+        city: warehouse.city || "",
+        currency: warehouse.currency,
+        address: warehouse.address || "",
+        capacity: warehouse.capacity,
+        capacityUnit: warehouse.capacityUnit || "items",
+        isActive: warehouse.isActive,
+        conversionEnabled: warehouse.currencyConversion.enabled,
+        targetCurrency: warehouse.currencyConversion.targetCurrency,
+        conversionRate: warehouse.currencyConversion.rate,
+        autoUpdateRate: warehouse.currencyConversion.autoUpdate,
+      });
+    }
+  }, [warehouse, isEdit]);
+
+  // Handle input changes
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type } = e.target;
+
+    if (type === "number") {
+      setFormData({
+        ...formData,
+        [name]: value === "" ? undefined : Number(value),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+
+  // Handle select changes
+  const handleSelectChange = (name: string, value: string) => {
+    if (name && value) {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+
+  // Handle boolean switches
+  const handleSwitchChange = (name: string, checked: boolean) => {
+    setFormData({
+      ...formData,
+      [name]: checked,
+    });
+  };
+
+  // Simple validation
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Required fields
+    if (!formData.name.trim()) {
+      newErrors.name = "Warehouse name is required";
+    }
+
+    if (!formData.country.trim()) {
+      newErrors.country = "Country is required";
+    }
+
+    if (!formData.currency) {
+      newErrors.currency = "Currency is required";
+    }
+
+    // Validation for conversion settings when enabled
+    if (formData.conversionEnabled) {
+      if (!formData.targetCurrency) {
+        newErrors.targetCurrency = "Target currency is required";
+      } else if (formData.targetCurrency === formData.currency) {
+        newErrors.targetCurrency =
+          "Target currency must be different from warehouse currency";
+      }
+
+      if (
+        formData.conversionRate === undefined ||
+        formData.conversionRate <= 0
+      ) {
+        newErrors.conversionRate = "Conversion rate must be a positive number";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Form submission handler
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      // Show first error as toast
+      const firstError = Object.values(errors)[0];
+      if (firstError) {
+        toast(firstError);
+      }
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      let result;
+
+      if (isEdit && warehouse) {
+        result = await updateWarehouse(warehouse._id, formData);
+      } else {
+        result = await createWarehouse(formData);
+      }
+
+      if (result.error) {
+        toast(result.error);
+      } else {
+        toast(
+          isEdit
+            ? t("messages.updateSuccess", { ns: "warehouse" })
+            : t("messages.createSuccess", { ns: "warehouse" })
+        );
+        router.push("/dashboard/admin/warehouse");
+      }
+    } catch (error) {
+      toast(t("messages.error", { ns: "warehouse" }));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>
+          {isEdit
+            ? t("editWarehouse", { ns: "warehouse" })
+            : t("createWarehouse", { ns: "warehouse" })}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Basic Information */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">
+              {t("details.basicInfo", { ns: "warehouse" })}
+            </h3>
+            <Separator />
+
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium">
+                {t("name")}
+              </Label>
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g., Mali Central Warehouse"
+                className={errors.name ? "border-destructive" : ""}
+              />
+              <p className="text-sm text-muted-foreground">
+                {t("nameDescription")}
+              </p>
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name}</p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="country" className="text-sm font-medium">
+                  {t("country")}
+                </Label>
+                <Select
+                  value={formData.country}
+                  onValueChange={(value) => {
+                    if (value) {
+                      setFormData({
+                        ...formData,
+                        country: value,
+                      });
+                    }
+                  }}
+                >
+                  <SelectTrigger
+                    className={errors.country ? "border-destructive w-full" : " w-full"}
+                  >
+                    <SelectValue placeholder="Select a country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {africanCountries.map((country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  {t("countryDescription")}
+                </p>
+                {errors.country && (
+                  <p className="text-sm text-destructive">{errors.country}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="city" className="text-sm font-medium">
+                  {t("city")}
+                </Label>
+                <Input
+                  id="city"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="e.g., Bamako"
+                  className={errors.city ? "border-destructive" : ""}
+                />
+                <p className="text-sm text-muted-foreground">
+                  {t("cityDescription")}
+                </p>
+                {errors.city && (
+                  <p className="text-sm text-destructive">{errors.city}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="address" className="text-sm font-medium">
+                {t("address")}
+              </Label>
+              <Textarea
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="e.g., 123 Commerce Street, District 5"
+                className={`resize-none ${
+                  errors.address ? "border-destructive" : ""
+                }`}
+              />
+              <p className="text-sm text-muted-foreground">
+                {t("addressDescription")}
+              </p>
+              {errors.address && (
+                <p className="text-sm text-destructive">{errors.address}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Properties */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">
+              {t("details.properties", { ns: "warehouse" })}
+            </h3>
+            <Separator />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="currency" className="text-sm font-medium">
+                  {t("currency")}
+                </Label>
+                <Select
+                  value={formData?.currency}
+                  onValueChange={(value) =>
+                    handleSelectChange("currency", value)
+                  }
+                >
+                  <SelectTrigger
+                    id="currency"
+                    className={errors.currency ? "border-destructive" : ""}
+                  >
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {commonCurrencies.map((currency) => (
+                      <SelectItem key={currency.code} value={currency.code}>
+                        {currency.code} - {currency.name} ({currency.symbol})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  {t("currencyDescription")}
+                </p>
+                {errors.currency && (
+                  <p className="text-sm text-destructive">{errors.currency}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <Switch
+                    id="isActive"
+                    checked={formData.isActive}
+                    onCheckedChange={(checked) =>
+                      handleSwitchChange("isActive", checked)
+                    }
+                  />
+                  <div className="space-y-1 leading-none">
+                    <Label htmlFor="isActive" className="text-sm font-medium">
+                      {formData.isActive ? t("active") : t("inactive")}
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      {t("statusDescription")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="capacity" className="text-sm font-medium">
+                  {t("capacity")}
+                </Label>
+                <Input
+                  id="capacity"
+                  name="capacity"
+                  type="number"
+                  value={
+                    formData.capacity === undefined ? "" : formData.capacity
+                  }
+                  onChange={handleChange}
+                  placeholder="e.g., 10000"
+                  className={errors.capacity ? "border-destructive" : ""}
+                />
+                <p className="text-sm text-muted-foreground">
+                  {t("capacityDescription")}
+                </p>
+                {errors.capacity && (
+                  <p className="text-sm text-destructive">{errors.capacity}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="capacityUnit" className="text-sm font-medium">
+                  {t("capacityUnit")}
+                </Label>
+                <Input
+                  id="capacityUnit"
+                  name="capacityUnit"
+                  value={formData.capacityUnit || ""}
+                  onChange={handleChange}
+                  placeholder="e.g., items, pallets, cubic meters"
+                  className={errors.capacityUnit ? "border-destructive" : ""}
+                />
+                <p className="text-sm text-muted-foreground">
+                  {t("capacityUnitDescription")}
+                </p>
+                {errors.capacityUnit && (
+                  <p className="text-sm text-destructive">
+                    {errors.capacityUnit}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Currency Conversion */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">{t("currencyConversion")}</h3>
+            <Separator />
+
+            <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <Switch
+                id="conversionEnabled"
+                checked={formData.conversionEnabled}
+                onCheckedChange={(checked) =>
+                  handleSwitchChange("conversionEnabled", checked)
+                }
+              />
+              <div className="space-y-1 leading-none">
+                <Label
+                  htmlFor="conversionEnabled"
+                  className="text-sm font-medium"
+                >
+                  {formData.conversionEnabled
+                    ? t("enabled", { ns: "warehouse.details" })
+                    : t("disabled", { ns: "warehouse.details" })}
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  {t("conversionEnabledDescription")}
+                </p>
+              </div>
+            </div>
+
+            {formData.conversionEnabled && (
+              <div className="space-y-4 pl-4 border-l-2 border-primary/20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="targetCurrency"
+                      className="text-sm font-medium"
+                    >
+                      {t("targetCurrency")}
+                    </Label>
+                    <Select
+                      value={formData.targetCurrency}
+                      onValueChange={(value) =>
+                        handleSelectChange("targetCurrency", value)
+                      }
+                    >
+                      <SelectTrigger
+                        id="targetCurrency"
+                        className={
+                          errors.targetCurrency ? "border-destructive" : ""
+                        }
+                      >
+                        <SelectValue placeholder="Select target currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {commonCurrencies
+                          .filter(
+                            (currency) => currency.code !== formData.currency
+                          )
+                          .map((currency) => (
+                            <SelectItem
+                              key={currency.code}
+                              value={currency.code}
+                            >
+                              {currency.code} - {currency.name} (
+                              {currency.symbol})
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-muted-foreground">
+                      {t("targetCurrencyDescription")}
+                    </p>
+                    {errors.targetCurrency && (
+                      <p className="text-sm text-destructive">
+                        {errors.targetCurrency}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="conversionRate"
+                      className="text-sm font-medium"
+                    >
+                      {t("conversionRate")}
+                    </Label>
+                    <Input
+                      id="conversionRate"
+                      name="conversionRate"
+                      type="number"
+                      step="0.0001"
+                      value={
+                        formData.conversionRate === undefined
+                          ? ""
+                          : formData.conversionRate
+                      }
+                      onChange={handleChange}
+                      placeholder="e.g., 1.2345"
+                      className={
+                        errors.conversionRate ? "border-destructive" : ""
+                      }
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      {t("conversionRateDescription")}
+                    </p>
+                    {errors.conversionRate && (
+                      <p className="text-sm text-destructive">
+                        {errors.conversionRate}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <Switch
+                    id="autoUpdateRate"
+                    checked={formData.autoUpdateRate}
+                    onCheckedChange={(checked) =>
+                      handleSwitchChange("autoUpdateRate", checked)
+                    }
+                  />
+                  <div className="space-y-1 leading-none">
+                    <Label
+                      htmlFor="autoUpdateRate"
+                      className="text-sm font-medium"
+                    >
+                      {formData.autoUpdateRate
+                        ? t("enabled", { ns: "warehouse.details" })
+                        : t("disabled", { ns: "warehouse.details" })}
+                    </Label>
+                    <p className="text-sm text-muted-foreground">
+                      {t("autoUpdateRateDescription")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end space-x-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/warehouse")}
+              disabled={isSubmitting}
+            >
+              {t("cancel")}
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isSubmitting ? t("saving") : t("submit")}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}

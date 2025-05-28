@@ -1,0 +1,1308 @@
+{
+  "expeditions": {
+    "warehouseName": "Warehouse Name",
+    "expeditionDate": "Expedition Date",
+    "fromCountry":"Origin Country",
+    "totalProducts":"Total Products",
+    "applyFilters":"Apply Filters",
+    "title": "Expeditions",
+    "filterByTransportMode": "Filter by Transport Mode",
+    "filterByStatus": "Filter by Status",
+    "filterByProviderType": "Filter by Provider Type",
+    "manageExpeditions": "Manage Expeditions",
+    "addExpedition": "Add Expedition",
+    "filterByCountry": "Filter by Country",
+    "filterByWarehouse": "Filter by Warehouse",
+    "createExpedition": "Create Expedition",
+    "filterByWeight": "Filter by Weight",
+    "createExpeditionDescription": "Create a new expedition to ship products from your warehouse to customers. Fill in all required information including package details, transport mode, and product selection.",
+    "editExpedition": "Edit Expedition",
+    "filterByDate": "Filter by Date",
+    "clearFilters":"Clear Filters",
+    "expeditionCreated": "Expedition created successfully",
+    "expeditionUpdated": "Expedition updated successfully",
+    "expeditionDeleted": "Expedition deleted successfully",
+    "noExpeditionsFound": "No expeditions found",
+    "noProductsAvailable": "No products available for this warehouse",
+    "noProductsSelected": "No products selected. Please select products from the available list above.",
+    "searchExpeditions": "Search expeditions...",
+    "expeditionCode": "Expedition Code",
+    
+    "filtering": {
+      "applyFilters": "Apply Filters",
+      "clearFilters": "Clear Filters",
+      "filters": "Filters",
+      "filtersDescription": "Filter expeditions by various criteria",
+      "filterByStatus": "Filter by Status",
+      "filterByTransportMode": "Filter by Transport Mode",
+      "filterByProviderType": "Filter by Provider Type",
+      "filterByWarehouse": "Filter by Warehouse",
+      "filterBySeller": "Filter by Seller",
+      "filterByCountry": "Filter by Country",
+      "filterByWeight": "Filter by Weight",
+      "filterByDate": "Filter by Date",
+      "allStatuses": "All Statuses",
+      "allTransportModes": "All Transport Modes",
+      "allProviderTypes": "All Provider Types",
+      "allWarehouses": "All Warehouses",
+      "allSellers": "All Sellers",
+      "allCountries": "All Countries",
+      "allWeightLevels": "All Weight Levels",
+      "fromDate": "From Date",
+      "toDate": "To Date"
+    },
+
+    "weightLevels": {
+      "all": "All Weight Levels",
+      "light": "Light (< 5 KG)",
+      "medium": "Medium (5-20 KG)",
+      "heavy": "Heavy (> 20 KG)"
+    },
+
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "results": "results",
+      "itemsPerPage": "Items per page",
+      "page": "Page",
+      "previous": "Previous",
+      "next": "Next"
+    },
+
+    "deleteDialog": {
+      "title": "Delete Expedition",
+      "description": "Are you sure you want to delete this expedition? This action cannot be undone.",
+      "confirmButton": "Delete",
+      "cancelButton": "Cancel"
+    },
+
+    "statusActions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "markInTransit": "Mark In Transit",
+      "markDelivered": "Mark Delivered",
+      "cancel": "Cancel",
+      "approvalConfirmation": "Are you sure you want to approve this expedition?",
+      "rejectionConfirmation": "Are you sure you want to reject this expedition?",
+      "rejectionReason": "Rejection Reason",
+      "statusUpdated": "Expedition status updated successfully"
+    },
+    
+    "sections": {
+      "packageInfo": "Package Information",
+      "providerInfo": "Provider Information", 
+      "productSelection": "Product Selection",
+      "optionalInfo": "Optional Information",
+      "expeditionDetails": "Expedition Details",
+      "summary": "Summary",
+       "basicInfo": "Basic Information",
+      "statusTracking": "Status & Tracking", 
+      "warehouseInfo": "Warehouse Information",
+      "products": "Products",
+      "sellerInfo": "Seller Information",
+      "approvalInfo": "Approval Information"
+    },
+
+    "fields": {
+      "expeditionCode": "Expedition Code",
+      "fromCountry": "Origin Country",
+      "toCountry": "Destination Country",
+      "weight": "Weight",
+      "expeditionDate": "Expedition Date",
+      "transportMode": "Transport Mode",
+      "warehouse": "Warehouse",
+      "warehouseId": "Warehouse",
+      "providerType": "Provider Type",
+      "provider": "Provider",
+      "providerId": "Provider",
+      "carrierName": "Carrier Name",
+      "carrierPhone": "Carrier Phone",
+      "carrierEmail": "Carrier Email",
+      "carrierCompany": "Carrier Company",
+      "trackingNumber": "Tracking Number",
+      "estimatedDelivery": "Estimated Delivery",
+      "actualDelivery": "Actual Delivery",
+      "status": "Status",
+      "sellerName": "Seller",
+      "warehouseName": "Warehouse",
+      "providerName": "Provider",
+      "totalProducts": "Total Products",
+      "totalQuantity": "Total Quantity", 
+      "totalValue": "Total Value",
+      "createdAt": "Created Date",
+      "updatedAt": "Last Updated",
+      "approvedBy": "Approved By",
+      "approvedAt": "Approved Date",
+      "rejectedReason": "Rejection Reason",
+      "availableProducts": "Available Products",
+      "selectedProducts": "Selected Products",
+      "productName": "Product Name",
+      "productCode": "Product Code",
+      "quantity": "Quantity",
+      "unitPrice": "Unit Price",
+      "stock": "Stock",
+      "price": "Price"
+    },
+
+    "placeholders": {
+      "selectCountry": "Select a country",
+      "enterWeight": "Enter weight in KG",
+      "selectTransportMode": "Select transport mode",
+      "selectWarehouse": "Select a warehouse",
+      "selectProviderType": "Select provider type",
+      "selectProvider": "Select a provider",
+      "enterCarrierName": "Enter carrier name",
+      "enterCarrierPhone": "Enter carrier phone",
+      "enterCarrierEmail": "Enter carrier email (optional)",
+      "enterCarrierCompany": "Enter carrier company (optional)",
+      "enterTrackingNumber": "Enter tracking number",
+      "searchExpeditions": "Search expeditions...",
+      "selectStatus": "Select status",
+      "selectSeller": "Select seller",
+      "filterByCountry": "Filter by country",
+      "filterByWarehouse": "Filter by warehouse",
+      "filterByProvider": "Filter by provider"
+    },
+
+    "transportModes": {
+      "AIR": "Air Transport",
+      "SEA": "Sea Transport", 
+      "LAND": "Land Transport",
+      "RAIL": "Rail Transport",
+      "MULTIMODAL": "Multimodal Transport",
+      "road": "Road Transport",
+      "railway": "Railway Transport",
+      "air": "Air Transport",
+      "maritime": "Maritime Transport"
+    },
+
+    "transportMode": {
+      "title": "Transport Mode",
+      "description": "Select the primary mode of transportation for this expedition",
+      "AIR": {
+        "name": "Air Transport",
+        "description": "Fast delivery via aircraft. Ideal for urgent shipments and long distances.",
+        "benefits": ["Fastest delivery", "Global reach", "Secure handling"],
+        "timeframe": "1-5 days"
+      },
+      "SEA": {
+        "name": "Sea Transport",
+        "description": "Cost-effective shipping via ocean freight. Best for large volumes.",
+        "benefits": ["Most economical", "Large capacity", "Environmentally friendly"],
+        "timeframe": "15-45 days"
+      },
+      "LAND": {
+        "name": "Land Transport",
+        "description": "Ground transportation via trucks or road vehicles.",
+        "benefits": ["Door-to-door service", "Flexible routes", "Medium cost"],
+        "timeframe": "1-10 days"
+      },
+      "RAIL": {
+        "name": "Rail Transport",
+        "description": "Transportation via railway networks. Good for medium distances.",
+        "benefits": ["Eco-friendly", "Reliable schedules", "Cost-effective"],
+        "timeframe": "3-15 days"
+      },
+      "MULTIMODAL": {
+        "name": "Multimodal Transport",
+        "description": "Combination of multiple transport modes for optimal efficiency.",
+        "benefits": ["Best of all modes", "Optimized cost", "Flexible routing"],
+        "timeframe": "Varies"
+      }
+    },
+
+    "providerTypes": {
+      "REGISTERED": "Registered Provider",
+      "OWN": "Own Carrier",
+      "THIRD_PARTY": "Third Party",
+      "registered": "Registered Provider",
+      "own": "Own Carrier"
+    },
+
+    "providerType": {
+      "title": "Provider Type",
+      "description": "Choose how you want to handle the transportation for this expedition",
+      "REGISTERED": {
+        "name": "Registered Provider",
+        "description": "Use one of our verified and registered transportation providers.",
+        "benefits": ["Pre-verified providers", "Integrated tracking", "Insurance coverage", "24/7 support"],
+        "requirements": ["Select from available providers", "Standard rates apply"],
+        "recommended": true
+      },
+      "OWN": {
+        "name": "Own Carrier",
+        "description": "Use your own transportation carrier or logistics company.",
+        "benefits": ["Full control", "Custom arrangements", "Direct relationship", "Flexible terms"],
+        "requirements": ["Provide carrier details", "Enter contact information", "Manage tracking manually"]
+      },
+      "THIRD_PARTY": {
+        "name": "Third Party",
+        "description": "Use an external logistics provider not registered in our system.",
+        "benefits": ["Wide selection", "Competitive rates", "Special arrangements"],
+        "requirements": ["Provide full provider details", "Manual coordination required", "Limited system integration"]
+      }
+    },
+
+    "statuses": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "IN_TRANSIT": "In Transit",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled",
+      "DELAYED": "Delayed",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "in_transit": "In Transit",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "delayed": "Delayed"
+    },
+
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "track": "Track",
+      "duplicate": "Duplicate",
+      "export": "Export",
+      "print": "Print",
+      "addProduct": "Add Product",
+      "removeProduct": "Remove Product",
+      "clearAll": "Clear All",
+      "selectAll": "Select All"
+    },
+
+    "filters": {
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved", 
+      "rejected": "Rejected",
+      "inTransit": "In Transit",
+      "delivered": "Delivered",
+      "last7Days": "Last 7 Days",
+      "last30Days": "Last 30 Days",
+      "thisMonth": "This Month",
+      "lastMonth": "Last Month",
+      "thisYear": "This Year"
+    },
+
+    "validation": {
+      "fromCountryRequired": "Origin country is required",
+      "weightRequired": "Weight is required",
+      "weightInvalid": "Weight must be a positive number",
+      "expeditionDateRequired": "Expedition date is required",
+      "transportModeRequired": "Transport mode is required",
+      "warehouseRequired": "Warehouse selection is required",
+      "providerTypeRequired": "Provider type is required",
+      "providerRequired": "Provider selection is required",
+      "carrierNameRequired": "Carrier name is required",
+      "carrierPhoneRequired": "Carrier phone is required",
+      "productsRequired": "At least one product must be selected",
+      "quantityRequired": "Quantity is required for each product",
+      "quantityInvalid": "Quantity must be a positive number",
+      "quantityExceedsStock": "Quantity for {productName} exceeds available stock ({available})",
+      "unitPriceRequired": "Unit price is required",
+      "unitPriceInvalid": "Unit price must be a positive number",
+      "trackingNumberInvalid": "Invalid tracking number format",
+      "emailInvalid": "Invalid email format",
+      "phoneInvalid": "Invalid phone number format"
+    },
+
+    "help": {
+      "weight": "Enter the total weight of the package in kilograms",
+      "expeditionDate": "Select the date when the expedition will start",
+      "transportMode": "Choose the primary mode of transportation",
+      "warehouse": "Select the warehouse from which goods will be shipped",
+      "providerType": "Choose whether to use a registered provider or your own carrier",
+      "trackingNumber": "Enter the tracking number if available (can be added later)",
+      "estimatedDelivery": "Select the estimated delivery date (optional)"
+    },
+
+    "messages": {
+      "loadingProducts": "Loading products...",
+      "noProductsForWarehouse": "No products found for the selected warehouse",
+      "productAlreadySelected": "This product has already been selected",
+      "productAddedSuccess": "Product added successfully",
+      "productRemovedSuccess": "Product removed successfully",
+      "outOfStockWarning": "{productName} is out of stock but has been added to the expedition",
+      "stockWarning": "Some selected products are out of stock",
+      "expeditionSaved": "Expedition has been saved successfully",
+      "expeditionStatusUpdated": "Expedition status updated successfully",
+      "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+      "deleteConfirmation": "Are you sure you want to delete this expedition?",
+      "approveConfirmation": "Are you sure you want to approve this expedition?",
+      "rejectConfirmation": "Are you sure you want to reject this expedition?"
+    },
+
+    "errors": {
+      "saveFailed": "Failed to save expedition",
+      "loadFailed": "Failed to load expedition data",
+      "updateFailed": "Failed to update expedition",
+      "deleteFailed": "Failed to delete expedition",
+      "statusUpdateFailed": "Failed to update expedition status",
+      "productsLoadFailed": "Failed to load products",
+      "warehousesLoadFailed": "Failed to load warehouses",
+      "providersLoadFailed": "Failed to load providers",
+      "unexpectedError": "An unexpected error occurred",
+      "networkError": "Network error. Please check your connection.",
+      "permissionDenied": "You don't have permission to perform this action",
+      "expeditionNotFound": "Expedition not found",
+      "invalidData": "Invalid data provided"
+    },
+
+    "table": {
+      "columns": {
+        "expeditionCode": "Code",
+        "seller": "Seller",
+        "fromCountry": "Origin",
+        "weight": "Weight (KG)",
+        "date": "Date", 
+        "transport": "Transport",
+        "warehouse": "Warehouse",
+        "provider": "Provider",
+        "products": "Products",
+        "quantity": "Qty",
+        "value": "Value",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "noData": "No expeditions found",
+      "loading": "Loading expeditions...",
+      "rowsPerPage": "Rows per page",
+      "page": "Page",
+      "of": "of",
+      "rows": "rows",
+      "selected": "selected"
+    },
+
+    "export": {
+      "title": "Export Expeditions",
+      "format": "Export Format",
+      "dateRange": "Date Range",
+      "includeProducts": "Include Product Details",
+      "includeTracking": "Include Tracking Information",
+      "csv": "CSV",
+      "excel": "Excel",
+      "pdf": "PDF"
+    },
+
+    "dashboard": {
+      "totalExpeditions": "Total Expeditions",
+      "pendingApproval": "Pending Approval",
+      "inTransit": "In Transit",
+      "delivered": "Delivered",
+      "recentExpeditions": "Recent Expeditions",
+      "expeditionsByStatus": "Expeditions by Status",
+      "expeditionsByCountry": "Expeditions by Country",
+      "monthlyTrend": "Monthly Trend"
+    },
+
+    "notifications": {
+      "newExpedition": "New expedition created",
+      "expeditionApproved": "Expedition approved",
+      "expeditionRejected": "Expedition rejected",
+      "expeditionInTransit": "Expedition is now in transit",
+      "expeditionDelivered": "Expedition has been delivered",
+      "trackingUpdated": "Tracking information updated"
+    }
+  },
+
+  "stockHistory": {
+    "title": "Stock History",
+    "stockMovementHistory": "Stock Movement History",
+    "totalMovements": "Total Movements",
+    "currentStock": "Current Stock",
+    "stockIncreases": "Stock Increases",
+    "stockDecreases": "Stock Decreases",
+    "searchStockHistory": "Search stock history...",
+    "noMovementsFound": "No stock movements found for this product",
+    "backToProducts": "← Back to Products",
+    "trackAllMovements": "Track all stock movements and changes",
+    "filterByMovementType": "Filter by Movement Type",
+    "filterByReason": "Filter by Reason",
+    "filterByWarehouse": "Filter by Warehouse",
+    "filterByUser": "Filter by User",
+    "filters": "Filters",
+    "applyFiltersToHistory": "Apply filters to stock history",
+    "allMovementTypes": "All Movement Types",
+    "allReasons": "All Reasons",
+    "allWarehouses": "All Warehouses",
+    "allUsers": "All Users",
+    "dateTime": "Date & Time",
+    "type": "Type",
+    "reason": "Reason",
+    "quantity": "Quantity",
+    "previous": "Previous",
+    "newStock": "New Stock",
+    "change": "Change",
+    "user": "User",
+    "notes": "Notes",
+    "order": "Order",
+    "transfer": "Transfer",
+    "itemsPerPage": "Items per page",
+    "showing": "Showing",
+    "of": "of",
+    "movement": "movement",
+    "movements": "movements",
+    "movementsFound": "{count} movement found",
+    "movementsFound_other": "{count} movements found",
+    "lastMovement": "Last Movement",
+    "lastRestock": "Last Restock",
+    "averageMovement": "Average Movement",
+    "stockAnalytics": "Stock Analytics",
+    "warehouseBreakdown": "Warehouse Breakdown",
+    "movementTypes": {
+      "increase": "Increase",
+      "decrease": "Decrease"
+    },
+    "reasons": {
+      "initial_stock": "Initial Stock Added",
+      "restock": "Restocked from Supplier",
+      "return_from_customer": "Customer Return",
+      "warehouse_transfer_in": "Transfer from Another Warehouse",
+      "manual_adjustment_increase": "Manual Stock Increase",
+      "inventory_correction_increase": "Inventory Correction (Increase)",
+      "order_confirmed": "Order Confirmed and Shipped",
+      "damaged_goods": "Damaged Goods Removed",
+      "lost_goods": "Lost Goods Removed",
+      "warehouse_transfer_out": "Transfer to Another Warehouse",
+      "manual_adjustment_decrease": "Manual Stock Decrease",
+      "inventory_correction_decrease": "Inventory Correction (Decrease)",
+      "expired_goods": "Expired Goods Removed"
+    },
+    "tooltips": {
+      "viewDetails": "View movement details",
+      "orderReference": "Related to order",
+      "transferReference": "Related to warehouse transfer",
+      "userAction": "Action performed by user",
+      "stockChange": "Stock level change",
+      "lowStock": "Low stock alert",
+      "outOfStock": "Out of stock"
+    },
+    "summaryCards": {
+      "totalMovements": {
+        "title": "Total Movements",
+        "description": "All stock movements for this product"
+      },
+      "currentStock": {
+        "title": "Current Stock",
+        "description": "Current total stock across all warehouses"
+      },
+      "stockIncreases": {
+        "title": "Stock Increases",
+        "description": "Number of stock increase movements"
+      },
+      "stockDecreases": {
+        "title": "Stock Decreases",
+        "description": "Number of stock decrease movements"
+      }
+    }
+  },
+  "products": {
+    "viewStockHistory": "View stock history",
+    "outOfStock": "Out of stock",
+    "title": "Products",
+    "manageProducts": "Manage Products",
+    "createProduct": "Create Product",
+    "editProduct": "Edit Product",
+    "noProductsFound": "No products found",
+    "searchProducts": "Search products...",
+    "filterByStatus": "Filter by Status",
+    "filterByWarehouse": "Filter by Warehouse",
+    "filterBySeller": "Filter by Seller",
+    "filterByStock": "Filter by Stock Level",
+    "applyFilters": "Apply Filters",
+    "clearFilters": "Clear Filters",
+    "productDeleted": "Product deleted successfully",
+    "productUpdated": "Product updated successfully",
+    "productCreated": "Product created successfully",
+    "addProduct": "Add Product",
+    "uploadImage": "Upload Image",
+    "changeImage": "Change Image",
+    "uploadingImage": "Uploading image...",
+    "noWarehousesAvailable": "No warehouses available. Please add a warehouse first.",
+
+    "warehouseTable": {
+      "name": "Warehouse Name",
+      "country": "Country",
+      "stock": "Stock"
+    },
+
+    "sections": {
+      "basicInfo": "Basic Information",
+      "pricingStock": "Pricing & Stock",
+      "productImage": "Product Image",
+      "warehouseDistribution": "Warehouse Distribution",
+      "sellerInfo": "Seller Information",
+      "additionalInfo": "Additional Information"
+    },
+
+    "deleteDialog": {
+      "title": "Delete Product",
+      "description": "Are you sure you want to delete this product? This action cannot be undone.",
+      "confirmButton": "Delete Product",
+      "cancelButton": "Cancel"
+    },
+
+    "fields": {
+      "name": "Product Name",
+      "code": "Product Code",
+
+      "warehouses": "Warehouses",
+
+      "productImage": "Product Image",
+      "productName": "Product Name",
+      "productCode": "Product Code",
+      "variantCode": "Variant Code",
+      "description": "Description",
+      "creationDate": "Creation Date",
+      "lastUpdated": "Last Updated",
+      "price": "Price",
+      "totalStock": "Total Stock",
+      "status": "Status",
+      "inStock": "In Stock",
+      "sellerName": "Seller Name",
+      "sellerEmail": "Seller Email",
+      "businessName": "Business Name",
+      "verificationLink": "Verification Link"
+    },
+    "actions": {
+      "markAsActive": "Mark as Active",
+      "markAsInactive": "Mark as Inactive",
+      "markAsOutOfStock": "Mark as Out of Stock"
+    },
+    "messages": {
+      "noWarehousesConfigured": "No warehouses configured for this product"
+    },
+
+    "placeholders": {
+      "enterName": "Enter product name",
+      "enterCode": "Enter unique product code",
+      "enterVariantCode": "Enter variant code (optional)",
+      "enterDescription": "Enter product description",
+      "enterVerificationLink": "Enter verification link (optional)",
+      "enterPrice": "Enter price (optional)",
+      "selectStatus": "Select status"
+    },
+
+    "help": {
+      "uniqueCode": "Must be unique for each product you create",
+      "optionalVariant": "Optional code for product variants",
+      "price": "Product price (optional)",
+      "verificationLink": "Link to product verification page",
+      "imageRequirements": "Image must be less than 5MB and in JPG, PNG, or WEBP format"
+    },
+
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "out_of_stock": "Out of Stock",
+      "descriptions": {
+        "active": "Product is available for sale",
+        "inactive": "Product is temporarily unavailable",
+        "out_of_stock": "Product is currently out of stock"
+      }
+    },
+
+    "stockLevels": {
+      "all": "All Levels",
+      "low": "Low Stock (< 10)",
+      "medium": "Medium Stock (10-50)",
+      "high": "High Stock (> 50)"
+    },
+
+    "validation": {
+      "nameRequired": "Product name is required",
+      "descriptionRequired": "Description is required",
+      "codeRequired": "Product code is required",
+      "priceInvalid": "Price must be a valid number",
+      "warehouseRequired": "At least one warehouse must be selected",
+      "stockRequired": "At least one warehouse must have stock",
+      "imageTypeInvalid": "Only image files are allowed (JPG, PNG, WEBP)",
+      "imageTooLarge": "Image size must be less than 5MB"
+    },
+
+    "errors": {
+      "saveFailed": "Failed to save product",
+      "unexpectedError": "An unexpected error occurred",
+      "imageUploadFailed": "Failed to upload image"
+    }
+  },
+  "users": {
+    "title": "User Management",
+    "subtitle": "Manage users, roles, and permissions",
+    "createUser": "Create User",
+    "editUser": "Edit User",
+    "userDetails": "User Details",
+    "allUsers": "All Users",
+    "searchUsers": "Search users...",
+    "noUsersFound": "No users found",
+    "userCreated": "User created successfully",
+    "userUpdated": "User updated successfully",
+    "userDeleted": "User deleted successfully",
+    "confirmDelete": "Are you sure you want to delete this user?",
+    "bulkDelete": "Delete Selected",
+    "confirmBulkDelete": "Are you sure you want to delete {count} selected users?",
+    "selectAll": "Select All",
+    "clearSelection": "Clear Selection",
+    "selectedCount": "{count} selected",
+    "totalUsers": "Total Users: {count}",
+    "filterByRole": "Filter by Role",
+    "filterByStatus": "Filter by Status",
+    "filterByCountry": "Filter by Country",
+    "clearFilters": "Clear Filters",
+    "applyFilters": "Apply Filters",
+    "exportUsers": "Export Users",
+    "importUsers": "Import Users",
+    "userProfile": "User Profile",
+    "accountSettings": "Account Settings",
+    "securitySettings": "Security Settings",
+    "businessInformation": "Business Information",
+    "manageUsers": "Manage Users",
+    "fields": {
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "phoneNumber": "Phone Number",
+      "businessName": "Business Name",
+      "businessInfo": "Business Information",
+      "serviceType": "Service Type",
+      "country": "Country",
+      "role": "Role",
+      "status": "Status",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "lastActiveDate": "Last Active Date",
+      "registrationDate": "Registration Date"
+    },
+    "placeholders": {
+      "enterFullName": "Enter full name",
+      "enterEmail": "Enter email address",
+      "enterPassword": "Enter password",
+      "enterPhone": "Enter phone number",
+      "enterBusinessName": "Enter business name",
+      "enterBusinessInfo": "Enter business information",
+      "enterServiceType": "Enter service type",
+      "selectCountry": "Select country",
+      "selectRole": "Select a role",
+      "selectStatus": "Select status"
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "nameMinLength": "Name must be at least 2 characters long",
+      "nameMaxLength": "Name must be less than 100 characters",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "emailExists": "Email already exists",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 8 characters long",
+      "passwordMaxLength": "Password must be less than 128 characters",
+      "passwordComplex": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+      "roleRequired": "Role is required",
+      "statusRequired": "Status is required",
+      "phoneInvalid": "Please enter a valid phone number",
+      "businessNameRequired": "Business name is required for {role}",
+      "businessNameMaxLength": "Business name must be less than 200 characters",
+      "serviceTypeRequired": "Service type is required for providers",
+      "serviceTypeMaxLength": "Service type must be less than 100 characters",
+      "businessInfoMaxLength": "Business information must be less than 1000 characters",
+      "countryMaxLength": "Country must be less than 100 characters"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "moderator": "Moderator",
+      "seller": "Seller",
+      "provider": "Provider",
+      "delivery": "Delivery Personnel",
+      "support": "Support Team",
+      "call_center": "Call Center",
+      "descriptions": {
+        "admin": "Full system access",
+        "moderator": "Limited admin access",
+        "seller": "Product management",
+        "provider": "Service provider",
+        "delivery": "Delivery operations",
+        "support": "Customer support",
+        "call_center": "Order confirmation"
+      }
+    },
+    "statuses": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "sections": {
+      "basicInfo": "Basic Information",
+      "basicInfoDesc": "Enter user basic information",
+      "rolePermissions": "Role & Permissions",
+      "rolePermissionsDesc": "Assign role and set permissions",
+      "businessInfo": "Business Information",
+      "businessInfoDesc": "Business-related information",
+      "securitySettings": "Security Settings",
+      "securitySettingsDesc": "Security and authentication settings",
+      "updateBasicInfo": "Update user basic information",
+      "updateRolePermissions": "Update role and permissions",
+      "updateBusinessInfo": "Update business information",
+      "updateSecuritySettings": "Update security settings"
+    },
+    "messages": {
+      "passwordKeepCurrent": "(leave blank to keep current password)",
+      "twoFactorEnabled": "Two-factor authentication is enabled",
+      "twoFactorDisabled": "Two-factor authentication is disabled",
+      "businessFieldsRequired": "Business information is required for this role",
+      "serviceTypeRequired": "Service type is required for providers",
+      "userNotFound": "User not found",
+      "deleteWarning": "This action cannot be undone",
+      "bulkDeleteWarning": "This will permanently delete all selected users"
+    }
+  },
+  "status": {
+    "title": "Account Status",
+    "subtitle": {
+      "approved": "Your account has been approved! You can now access your seller dashboard.",
+      "rejected": "Your account application has been rejected. Please review the details below.",
+      "pending": "Your account is currently under review. We'll notify you once it's approved."
+    },
+    "badge": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending Review"
+    },
+    "approved": {
+      "title": "Account Approved",
+      "description": "Welcome to AvolShip! Your seller account has been approved and is now active.",
+      "features": {
+        "access": {
+          "title": "Full Platform Access",
+          "description": "You now have access to all seller features, including inventory management, order processing, and shipping tools."
+        },
+        "warehouse": {
+          "title": "Warehouse Integration",
+          "description": "Connect with warehouses across multiple countries to manage your inventory efficiently."
+        },
+        "tools": {
+          "title": "Advanced Seller Tools",
+          "description": "Access analytics, reporting, and optimization tools to grow your business and improve performance."
+        }
+      },
+      "continue": "Continue to Dashboard",
+      "support": "If you need any assistance, please contact our support team at"
+    },
+    "rejected": {
+      "title": "Account Rejected",
+      "description": "Unfortunately, your application to become a seller on AvolShip was not approved at this time.",
+      "reason": {
+        "title": "Possible Reasons",
+        "description": "Your application may have been rejected for one or more of the following reasons:",
+        "list": {
+          "verification": {
+            "title": "Verification Issues",
+            "description": "We couldn't verify your business information or documents provided were incomplete."
+          },
+          "information": {
+            "title": "Incomplete Information",
+            "description": "Some required information was missing or incorrect in your application."
+          },
+          "requirements": {
+            "title": "Business Requirements",
+            "description": "Your business doesn't currently meet our platform requirements for sellers."
+          }
+        }
+      },
+      "nextSteps": {
+        "reapply": {
+          "title": "Reapply",
+          "description": "You can address the issues and resubmit your application after 30 days."
+        },
+        "contact": {
+          "title": "Contact Support",
+          "description": "For more specific details about your rejection, please contact our support team."
+        },
+        "support": {
+          "title": "Get Help",
+          "description": "Our support team can guide you through the requirements and help you prepare for reapplication."
+        }
+      },
+      "signOut": "Sign Out",
+      "contact": "Contact Support",
+      "appealText": "If you believe there's been a mistake, please email us at"
+    },
+    "pending": {
+      "title": "Application Under Review",
+      "description": "Your application is currently being reviewed by our team. This process typically takes 1-3 business days.",
+      "status": {
+        "title": "Application Status",
+        "inReview": "In Review",
+        "received": "Received",
+        "processing": "Processing",
+        "completed": "Completed"
+      },
+      "info": {
+        "timeframe": {
+          "title": "Review Timeframe",
+          "description": "Most applications are processed within 1-3 business days, but some may take longer depending on verification needs."
+        },
+        "notification": {
+          "title": "Email Notification",
+          "description": "You'll receive an email notification once your application has been approved or if we need additional information."
+        },
+        "questions": {
+          "title": "Questions?",
+          "description": "If you have any questions about your application status, please contact our support team."
+        }
+      },
+      "signOut": "Sign Out",
+      "contact": "Contact Support",
+      "checkEmail": "Please check your email for updates.",
+      "estimatedTime": "Estimated time: 1-3 business days"
+    }
+  },
+  "warehouse": {
+    "selector": {
+      "selectWarehouse": "Select Warehouse",
+      "search": "Search warehouses...",
+      "noResults": "No warehouses found",
+      "noWarehouses": "No warehouses available",
+      "noWarehousesMessage": "You don't have access to any active warehouses. Please contact an administrator to have warehouses assigned to your account.",
+      "contactAdmin": "Contact an administrator for assistance.",
+      "availableWarehouses": "Available Warehouses",
+      "loading": "Loading warehouses...",
+      "selectedWarehouse": "Selected Warehouse",
+      "switchWarehouse": "Switch Warehouse"
+    },
+    "title": "Warehouses",
+    "manageWarehouses": "Manage Warehouses",
+    "createWarehouse": "Create Warehouse",
+    "editWarehouse": "Edit Warehouse",
+    "warehouseDetails": "Warehouse Details",
+    "noWarehouses": "No warehouses found",
+    "search": "Search warehouses...",
+    "pagination": {
+      "itemsPerPage": "Items per page:",
+      "showing": "Showing",
+      "of": "of",
+      "page": "Page",
+      "next": "Next",
+      "previous": "Previous"
+    },
+    "filters": {
+      "title": "Filters",
+      "country": "Country",
+      "status": "Status",
+      "all": "All",
+      "active": "Active",
+      "inactive": "Inactive",
+      "clear": "Clear Filters",
+      "apply": "Apply Filters"
+    },
+    "table": {
+      "name": "Name",
+      "country": "Country",
+      "city": "City",
+      "currency": "Currency",
+      "capacity": "Capacity",
+      "conversionEnabled": "Conversion",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "form": {
+      "editWarehouse": "Edit Warehouse",
+      "name": "Warehouse Name",
+      "nameDescription": "A unique name for the warehouse",
+      "country": "Country",
+      "countryDescription": "Country where the warehouse is located",
+      "city": "City (Optional)",
+      "cityDescription": "City where the warehouse is located",
+      "currency": "Currency",
+      "currencyDescription": "Primary currency used for this warehouse",
+      "address": "Address (Optional)",
+      "addressDescription": "Physical address of the warehouse",
+      "capacity": "Capacity (Optional)",
+      "capacityDescription": "Maximum storage capacity",
+      "capacityUnit": "Capacity Unit (Optional)",
+      "capacityUnitDescription": "Unit for measuring capacity (e.g., items, pallets)",
+      "status": "Status",
+      "statusDescription": "Whether the warehouse is active or inactive",
+      "active": "Active",
+      "inactive": "Inactive",
+      "currencyConversion": "Currency Conversion",
+      "conversionEnabled": "Enable Currency Conversion",
+      "conversionEnabledDescription": "Convert prices to target currency",
+      "targetCurrency": "Target Currency",
+      "targetCurrencyDescription": "Currency to convert prices to",
+      "conversionRate": "Conversion Rate",
+      "conversionRateDescription": "Exchange rate between warehouse currency and target currency",
+      "autoUpdateRate": "Auto-Update Rate",
+      "autoUpdateRateDescription": "Automatically update the exchange rate periodically",
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "createWarehouse": "Create New Warehouse",
+      "details": {
+        "basicInfo": "Basic Information",
+        "properties": "Properties"
+      },
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "confirmDelete": "Are you sure you want to delete this warehouse?",
+      "confirmToggleStatus": "Are you sure you want to change the status of this warehouse?",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "details": {
+      "basicInfo": "Basic Information",
+      "location": "Location",
+      "properties": "Properties",
+      "currencySettings": "Currency Settings",
+      "conversionStatus": "Conversion Status",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "lastUpdated": "Last Updated",
+      "createdAt": "Created",
+      "updatedAt": "Last Modified"
+    },
+    "messages": {
+      "createSuccess": "Warehouse created successfully",
+      "updateSuccess": "Warehouse updated successfully",
+      "deleteSuccess": "Warehouse deleted successfully",
+      "statusToggleSuccess": "Warehouse status updated successfully",
+      "currencySettingsSuccess": "Currency settings updated successfully",
+      "error": "An error occurred. Please try again."
+    }
+  },
+  "notifications": {
+    "types": {
+      "info": "Information",
+      "success": "Success",
+      "warning": "Warning",
+      "error": "Error",
+      "order": "Order",
+      "delivery": "Delivery",
+      "payment": "Payment",
+      "system": "System",
+      "chat": "Message"
+    }
+  },
+  "dashboard": {
+    "navbar": {
+      "notifications": {
+        "title": "Notifications",
+        "unreadCount": "You have {count} unread notifications",
+        "empty": "No notifications",
+        "markAllRead": "Mark all as read",
+        "viewAll": "View all"
+      },
+      "user": {
+        "account": "Account",
+        "profile": "Profile",
+        "settings": "Settings",
+        "notifications": "Notifications",
+        "logout": "Logout",
+        "status": {
+          "online": "Online",
+          "offline": "Offline",
+          "away": "Away"
+        }
+      }
+    },
+
+    "sidebar": {
+      "users": "Users",
+      "overview": "Overview",
+      "products": "Products",
+      "warehouse": "Warehouse",
+      "orders": "Orders",
+      "expeditions": "Expeditions",
+      "inventory": "Inventory",
+      "payments": "Payments",
+      "analytics": "Analytics",
+      "chat": "Chat",
+      "delivery": "Delivery",
+      "settings": "Settings",
+      "help": "Help",
+      "userRole": {
+        "seller": "Seller"
+      }
+    },
+    "seller": {
+      "title": "Seller Dashboard",
+      "welcome": "Welcome back, John!",
+      "subtitle": "Here's what's happening with your store today",
+      "stats": {
+        "totalRevenue": "Total Revenue",
+        "totalOrders": "Total Orders",
+        "activeProducts": "Active Products",
+        "conversionRate": "Conversion Rate"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "addProduct": "Add Product",
+        "viewOrders": "View Orders",
+        "checkInventory": "Check Inventory",
+        "viewAnalytics": "View Analytics"
+      },
+      "recentOrders": {
+        "title": "Recent Orders",
+        "viewAll": "View All Orders",
+        "orderId": "Order ID",
+        "customer": "Customer",
+        "amount": "Amount",
+        "status": "Status",
+        "date": "Date",
+        "delivered": "Delivered",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "pending": "Pending"
+      },
+      "lowStock": {
+        "title": "Low Stock Alerts",
+        "viewInventory": "View Inventory",
+        "itemsLeft": "items left",
+        "sku": "SKU"
+      }
+    }
+  },
+  "login": {
+    "title": "Login to Your Account",
+    "welcome": "Welcome back! Please enter your credentials to sign in.",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Log In",
+    "loggingIn": "Logging In...",
+    "success": "Login successful!",
+    "redirecting": "Redirecting to dashboard...",
+    "error": {
+      "emptyFields": "Please fill in all fields.",
+      "general": "Could not log in. Please try again."
+    },
+    "noAccount": "Don't have an account?",
+    "register": "Register"
+  },
+  "common": {
+    "updatedAt": "Last Updated",
+    "unknown": "Unknown",
+    "weight":"Weight (KG)",
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "about": "About",
+    "contact": "Contact",
+    "getStarted": "Get Started",
+    "login": "Login",
+    "register": "Register",
+    "language": "Language",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings",
+    "search": "Search",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "view": "View",
+    "actions": "Actions",
+    "status": "Status",
+    "role": "Role",
+    "email": "Email",
+    "name": "Name",
+    "phone": "Phone",
+    "country": "Country",
+    "createdAt": "Created At",
+    "lastActive": "Last Active",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "required": "Required",
+    "price": "Price",
+    "stock": "Stock",
+    "warehouse": "Warehouse",
+    "code": "Code",
+    "seller": "Seller",
+    "description": "Description",
+    "image": "Image",
+    "variantCode": "Variant Code",
+    "deleteUserSure": "Are you sure you want to delete this user? This action cannot be undone."
+  },
+  "home": {
+    "heroTag": "Multi-Country Fulfillment Platform",
+    "heroTitle1": "Streamline Your",
+    "heroTitle2": "Logistics",
+    "heroTitle3": "Across Africa",
+    "heroSubtitle": "Simplify fulfillment with our centralized platform for warehousing, inventory tracking, and seamless delivery management across multiple African countries.",
+    "getStartedBtn": "Get Started",
+    "learnMoreBtn": "Learn More",
+    "companiesUse": "businesses trust our platform",
+    "instantDelivery": "Instant Delivery Updates",
+    "realTimeTracking": "Real-Time Tracking",
+    "multiCountrySupport": "Multi-Country Support",
+    "automatedProcessing": "Automated Processing",
+    "dedicatedSupport": "Dedicated Support",
+    "countries": "Countries Covered",
+    "businesses": "Happy Businesses",
+    "deliveryRate": "Delivery Success Rate",
+    "dailyDeliveries": "Daily Deliveries",
+
+    "featuresTitle": "Powerful Features for Your Business",
+    "featuresSubtitle": "Everything you need to streamline your logistics and fulfillment operations",
+
+    "feature1Eyebrow": "Smart Logistics",
+    "feature1Title": "Centralized Management",
+    "feature1Desc": "Manage multi-country operations from a single dashboard with real-time inventory tracking and automated order processing.",
+    "feature1Tag": "Centralized Dashboard",
+    "feature1Benefit1": "Real-time inventory tracking across all warehouses",
+    "feature1Benefit2": "Simplified order management with bulk import tools",
+    "feature1Benefit3": "Automated stock updates for confirmed orders and returns",
+
+    "feature2Eyebrow": "Data Insights",
+    "feature2Title": "Advanced Analytics",
+    "feature2Desc": "Make data-driven decisions with comprehensive analytics on sales, warehouse capacity, and delivery performance.",
+    "feature2Tag": "Performance Analytics",
+    "feature2Benefit1": "Visualize sales trends and forecast demand patterns",
+    "feature2Benefit2": "Track delivery performance metrics and identify bottlenecks",
+    "feature2Benefit3": "Generate exportable reports in multiple formats (PDF, Excel, CSV)",
+
+    "feature3Eyebrow": "Expand Your Reach",
+    "feature3Title": "Global Reach",
+    "feature3Desc": "Seamlessly expand your business with our network covering multiple African countries with integrated local support.",
+    "feature3Tag": "Multi-Country Support",
+    "feature3Benefit1": "Operate in 15+ African countries with a single platform",
+    "feature3Benefit2": "Localized shipping rates and delivery options",
+    "feature3Benefit3": "Multi-currency support and automated exchange rate updates",
+
+    "feature4Eyebrow": "Secure Operations",
+    "feature4Title": "Enterprise Security",
+    "feature4Desc": "Protect your data and operations with advanced security features, role-based access control, and encrypted communications.",
+    "feature4Tag": "Advanced Security",
+    "feature4Benefit1": "Role-based access control for team members",
+    "feature4Benefit2": "Two-factor authentication and secure password policies",
+    "feature4Benefit3": "End-to-end encryption for sensitive customer data",
+
+    "learnMoreAboutFeature": "Learn more about this feature",
+    "exploreAllFeatures": "Explore All Features",
+    "featuresExploreHint": "Discover how our platform can transform your logistics operations",
+
+    "howItWorksTitle": "How It Works",
+    "howItWorksSubtitle": "Three simple steps to transform your logistics operations",
+    "step1Title": "Register & Connect",
+    "step1Desc": "Create your account, set up your warehouses, and configure your products.",
+    "step2Title": "Manage Orders",
+    "step2Desc": "Process orders, schedule deliveries, and track inventory in real-time.",
+    "step3Title": "Grow Your Business",
+    "step3Desc": "Expand operations across countries with detailed analytics and insights.",
+
+    "testimonialsTitle": "What Our Clients Say",
+    "testimonialsSubtitle": "Discover how AvolShip has transformed logistics for businesses across Africa",
+    "testimonial1": "AvolShip has completely revolutionized our delivery process. The real-time tracking and centralized dashboard have saved us countless hours of manual work.",
+    "testimonial2": "Expanding to multiple countries was seamless with AvolShip. Their platform handles all the complexity, allowing us to focus on growing our business.",
+    "testimonial3": "The delivery success rate improved by 24% after implementing AvolShip. Their customer support team is always responsive and helpful.",
+
+    "ctaTitle": "Ready to Transform Your Logistics Operations?",
+    "ctaSubtitle": "Join thousands of businesses already using AvolShip to streamline their fulfillment across Africa.",
+    "startToday": "Start Today",
+    "contactSales": "Contact Sales",
+
+    "footerTagline": "Streamlining logistics and fulfillment operations across Africa.",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "newsletter": "Newsletter",
+    "stayUpdated": "Subscribe to stay updated with the latest features and news.",
+    "emailPlaceholder": "Your email address",
+    "subscribe": "Subscribe",
+    "allRightsReserved": "All Rights Reserved.",
+
+    "footerAbout": "About Us",
+    "footerFeatures": "Features",
+    "footerPricing": "Pricing",
+    "footerBlog": "Blog",
+    "footerContact": "Contact Us",
+    "footerHelp": "Help Center",
+    "footerFaq": "FAQ",
+    "footerPrivacy": "Privacy Policy",
+    "footerTerms": "Terms of Service",
+    "footerCookies": "Cookies Policy"
+  },
+  "register": {
+    "title": "Join Avolship",
+    "subtitle": "Create your account and transform your logistics operations with our advanced tools and integrations",
+    "platformTitle": "Welcome to the Fulfillment Services Platform",
+    "platformDescription": "Streamline your logistics operations with our centralized management system",
+    "keyBenefits": "Key Benefits",
+    "realTimeTracking": "Real-time Tracking",
+    "trackingDesc": "Monitor inventory across warehouses in real-time with detailed analytics",
+    "orderAutomation": "Order Automation",
+    "automationDesc": "Process orders automatically with advanced workflows and validations",
+    "multiCountry": "Multi-country Support",
+    "multiCountryDesc": "Manage operations seamlessly across multiple African countries",
+    "paymentTracking": "Payment Tracking",
+    "paymentDesc": "Simplified financial management with detailed reporting",
+    "sellerTab": "Seller",
+    "providerTab": "Provider",
+    "registerAs": "Register as a",
+    "createAccount": "Create your account to get started",
+    "personalDetails": "Personal Information",
+    "securityDetails": "Security Credentials",
+    "businessDetails": "Business Details",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Enter your full name",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email address",
+    "password": "Password",
+    "passwordPlaceholder": "Create a secure password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "phoneNumber": "Phone Number",
+    "phonePlaceholder": "Enter your phone number",
+    "country": "Country",
+    "countryPlaceholder": "Select your country",
+    "businessName": "Business Name",
+    "businessNamePlaceholder": "Enter your business name",
+    "serviceType": "Service Type",
+    "serviceTypePlaceholder": "Type of service you provide",
+    "businessInfo": "Business Information",
+    "servicesDescription": "Services Description",
+    "businessInfoPlaceholder": "Tell us about your business",
+    "servicesDescPlaceholder": "Describe the services you provide",
+    "registerButton": "Create Account",
+    "registeringButton": "Creating Account...",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginLink": "Log in",
+    "termsText": "By registering, you agree to our",
+    "termsLink": "Terms of Service",
+    "andText": "and",
+    "privacyLink": "Privacy Policy",
+    "successMessage": "Registration successful! Your account is pending approval by an administrator.",
+    "errorEmailExists": "A user with this email already exists",
+    "errorGeneric": "Registration failed. Please try again later.",
+    "nameError": "Name must be at least 2 characters",
+    "emailError": "Please enter a valid email address",
+    "passwordLengthError": "Password must be at least 8 characters",
+    "passwordUppercaseError": "Password must contain at least one uppercase letter",
+    "passwordLowercaseError": "Password must contain at least one lowercase letter",
+    "passwordNumberError": "Password must contain at least one number",
+    "phoneError": "Phone number must be at least 5 digits",
+    "countryError": "Please select a country",
+    "businessNameError": "Business name must be at least 2 characters",
+    "businessInfoError": "Please provide more details",
+    "passwordsMatchError": "Passwords don't match",
+    "serviceTypeRequiredError": "Service type is required for providers"
+  }
+}
