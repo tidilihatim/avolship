@@ -1,9 +1,9 @@
 'use server';
 
+import { authOptions } from '@/config/auth';
 import { withDbConnection } from '@/lib/db/db-connect';
 import User, { UserStatus, UserRole } from '@/lib/db/models/user';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
 
 // Type definitions for form data
 type SellerFormData = {

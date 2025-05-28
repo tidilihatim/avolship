@@ -8,7 +8,7 @@ import { ExpeditionTableData, ExpeditionFilters, WarehouseOption, SellerOption, 
 import { PaginationData } from '@/types/user';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from '@/config/auth';
 import mongoose from 'mongoose';
 import Expedition, { IExpedition } from '@/lib/db/models/expedition';
 import { ExpeditionStatus } from '../dashboard/_constant/expedition';

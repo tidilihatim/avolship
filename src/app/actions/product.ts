@@ -9,7 +9,7 @@ import { ProductFilters, ProductInput, ProductResponse, ProductTableData, Wareho
 import mongoose from 'mongoose';
 import { withDbConnection } from '@/lib/db/db-connect';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from '@/config/auth';
 import { cookies } from 'next/headers';
 import { deleteFromCloudinary, uploadToCloudinary } from '@/lib/cloudinary';
 

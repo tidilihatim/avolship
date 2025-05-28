@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getExpeditionById } from '@/app/actions/expedition';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/config/auth';
 import User from '@/lib/db/models/user';
 import ExpeditionDetails from '../_components/expedition-detail';
 

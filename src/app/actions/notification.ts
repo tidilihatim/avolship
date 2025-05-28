@@ -3,7 +3,7 @@
 
 import { withDbConnection } from '@/lib/db/db-connect';
 import Notification, { NotificationType } from '@/lib/db/models/notification';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from '@/config/auth';
 import { getServerSession } from 'next-auth';
 
 /**

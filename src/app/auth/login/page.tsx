@@ -1,7 +1,7 @@
 import React from "react";
 import LoginForm from "@/components/forms/login-form";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from '@/config/auth';
 import { redirect } from "next/navigation";
 
 export const metadata = {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/config/auth';
 import { UserRole } from '@/lib/db/models/user';
 import { connectToDatabase } from '@/lib/db/mongoose';
 import Warehouse from '@/lib/db/models/warehouse';

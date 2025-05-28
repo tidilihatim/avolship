@@ -13,7 +13,7 @@ import {
 import { UserRole } from "@/lib/db/models/user";
 import ExpeditionTable from "./_components/expedition-table";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from '@/config/auth';
 import User from "@/lib/db/models/user";
 
 const ALL_STATUSES = "all_statuses";

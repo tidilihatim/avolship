@@ -5,10 +5,10 @@ import Warehouse from '@/lib/db/models/warehouse';
 import { WarehouseFormValues } from '@/types/warehouse';
 import { UserRole } from '@/lib/db/models/user';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
 import { withDbConnection } from '@/lib/db/db-connect';
 import { getLoginUserRole } from './auth';
 import { sendNotification, sendNotificationToUserType } from '@/lib/notifications/send-notification';
+import { authOptions } from '@/config/auth';
 
 
 /**

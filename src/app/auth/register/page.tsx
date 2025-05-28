@@ -3,7 +3,7 @@ import { useTranslations } from 'next-intl';
 import RegistrationForm from '@/components/forms/registeration-form';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/config/auth';
 import { redirect } from 'next/navigation';
 import { get } from 'http';
 import { getTranslations } from 'next-intl/server';
