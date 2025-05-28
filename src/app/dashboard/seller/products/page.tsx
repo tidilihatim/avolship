@@ -90,13 +90,13 @@ async function parseSearchParams(searchParams: {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  searchParams = await searchParams
+  const searchParamsPlain = await searchParams
   const t = await getTranslations("products");
   
   // Parse search params for filtering and pagination
-  const filters = await parseSearchParams(searchParams);
+  const filters = await parseSearchParams(searchParamsPlain);
 
   // Set default pagination values if not provided
   if (!filters.page) filters.page = 1;
@@ -123,20 +123,20 @@ export default async function ProductsPage({
     sellersPromise
   ]);
 
-  // For client-side component, we need to pass the original searchParams values
+  // For client-side component, we need to pass the original searchParamsPlain values
   const clientFilters: ProductFilters & { stockLevel?: string } = {
     ...filters,
-    status: searchParams.status && typeof searchParams.status === "string"
-      ? (searchParams.status as ProductStatus)
+    status: searchParamsPlain.status && typeof searchParamsPlain.status === "string"
+      ? (searchParamsPlain.status as ProductStatus)
       : undefined,
-    warehouseId: searchParams.warehouseId && typeof searchParams.warehouseId === "string"
-      ? searchParams.warehouseId
+    warehouseId: searchParamsPlain.warehouseId && typeof searchParamsPlain.warehouseId === "string"
+      ? searchParamsPlain.warehouseId
       : undefined,
-    sellerId: isAdminOrModerator && searchParams.sellerId && typeof searchParams.sellerId === "string"
-      ? searchParams.sellerId
+    sellerId: isAdminOrModerator && searchParamsPlain.sellerId && typeof searchParamsPlain.sellerId === "string"
+      ? searchParamsPlain.sellerId
       : undefined,
-    stockLevel: searchParams.stockLevel && typeof searchParams.stockLevel === "string"
-      ? searchParams.stockLevel
+    stockLevel: searchParamsPlain.stockLevel && typeof searchParamsPlain.stockLevel === "string"
+      ? searchParamsPlain.stockLevel
       : undefined,
   };
 

@@ -12,11 +12,6 @@ export const metadata: Metadata = {
   description: 'View detailed information about an expedition',
 };
 
-interface ExpeditionDetailsPageProps {
-  params: {
-    id: string;
-  };
-}
 
 /**
  * ExpeditionDetailsPage
@@ -24,9 +19,12 @@ interface ExpeditionDetailsPageProps {
  */
 export default async function ExpeditionDetailsPage({
   params,
-}: ExpeditionDetailsPageProps) {
-  const resolvedParams = await params;
-  const { expedition, success, message } = await getExpeditionById(resolvedParams.id);
+}: {
+  params: Promise<{ id: string }>
+}) {
+
+  const {id} = await params
+  const { expedition, success, message } = await getExpeditionById(id);
   
   
   if (!success || !expedition) {

@@ -1,6 +1,5 @@
 
 import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import UserDetails from '../_components/user-details';
 import { getUserById } from '@/app/actions/user';
@@ -10,11 +9,7 @@ export const metadata: Metadata = {
   description: 'View detailed information about a user',
 };
 
-interface UserDetailsPageProps {
-  params: {
-    id: string;
-  };
-}
+
 
 /**
  * UserDetailsPage
@@ -22,9 +17,11 @@ interface UserDetailsPageProps {
  */
 export default async function UserDetailsPage({
   params,
-}: UserDetailsPageProps) {
-  params = await params
-  const { user, success, message } = await getUserById(params.id);
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const {id} = await params
+  const { user, success, message } = await getUserById(id);
   
   if (!success || !user) {
     notFound();

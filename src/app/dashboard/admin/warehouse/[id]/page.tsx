@@ -10,11 +10,6 @@ export const metadata: Metadata = {
   description: 'View detailed information about a warehouse',
 };
 
-interface WarehouseDetailsPageProps {
-  params: {
-    id: string;
-  };
-}
 
 /**
  * WarehouseDetailsPage
@@ -22,8 +17,11 @@ interface WarehouseDetailsPageProps {
  */
 export default async function WarehouseDetailsPage({
   params,
-}: WarehouseDetailsPageProps) {
-  const { warehouse, error } = await getWarehouseById(params.id);
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const {id} = await params
+  const { warehouse, error } = await getWarehouseById(id);
   
   if (error || !warehouse) {
     notFound();

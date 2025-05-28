@@ -1,6 +1,5 @@
 // src/app/[locale]/dashboard/seller/products/stock-history/[productId]/page.tsx
 import { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 import { StockHistoryFilters } from "@/types/stock-history";
 import { StockMovementType, StockMovementReason } from "@/lib/db/models/stock-history";
 import { 
@@ -99,22 +98,21 @@ export default async function StockHistoryPage({
   params,
   searchParams,
 }: {
-  params: { productId: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ productId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolvedParams = await params;
-  const resolvedSearchParams = await searchParams;
-  const t = await getTranslations("stockHistory");
+  const resolvedParamsPlain = await params;
+  const resolvedSearchParamsPlain = await searchParams;
   
   // Parse search params for filtering and pagination
-  const filters = await parseSearchParams(resolvedSearchParams);
+  const filters = await parseSearchParams(resolvedSearchParamsPlain);
 
   // Set default pagination values if not provided
   if (!filters.page) filters.page = 1;
   if (!filters.limit) filters.limit = 10;
 
   // Get product information
-  const {product} = await getProductById(resolvedParams.productId);
+  const {product} = await getProductById(resolvedParamsPlain.productId);
   if (!product) {
     notFound();
   }
@@ -125,17 +123,17 @@ export default async function StockHistoryPage({
 
   // Fetch stock history with filters and pagination
   const { stockHistory, pagination, success, message } = await getStockHistory(
-    resolvedParams.productId,
+    resolvedParamsPlain.productId,
     filters.page,
     filters.limit,
     filters
   );
 
   // Fetch stock summary and related data in parallel
-  const summaryPromise = getStockSummary(resolvedParams.productId);
-  const warehousesPromise = getWarehousesForProduct(resolvedParams.productId);
+  const summaryPromise = getStockSummary(resolvedParamsPlain.productId);
+  const warehousesPromise = getWarehousesForProduct(resolvedParamsPlain.productId);
   const usersPromise = isAdminOrModerator 
-    ? getUsersForStockHistory(resolvedParams.productId) 
+    ? getUsersForStockHistory(resolvedParamsPlain.productId) 
     : Promise.resolve([]);
   
   const [summaryResult, warehouses, users] = await Promise.all([
@@ -152,17 +150,17 @@ export default async function StockHistoryPage({
     userFilter?: string;
   } = {
     ...filters,
-    movementTypeFilter: resolvedSearchParams.movementType && typeof resolvedSearchParams.movementType === "string"
-      ? resolvedSearchParams.movementType
+    movementTypeFilter: resolvedSearchParamsPlain.movementType && typeof resolvedSearchParamsPlain.movementType === "string"
+      ? resolvedSearchParamsPlain.movementType
       : ALL_MOVEMENT_TYPES,
-    reasonFilter: resolvedSearchParams.reason && typeof resolvedSearchParams.reason === "string"
-      ? resolvedSearchParams.reason
+    reasonFilter: resolvedSearchParamsPlain.reason && typeof resolvedSearchParamsPlain.reason === "string"
+      ? resolvedSearchParamsPlain.reason
       : ALL_REASONS,
-    warehouseFilter: resolvedSearchParams.warehouseId && typeof resolvedSearchParams.warehouseId === "string"
-      ? resolvedSearchParams.warehouseId
+    warehouseFilter: resolvedSearchParamsPlain.warehouseId && typeof resolvedSearchParamsPlain.warehouseId === "string"
+      ? resolvedSearchParamsPlain.warehouseId
       : ALL_WAREHOUSES,
-    userFilter: isAdminOrModerator && resolvedSearchParams.userId && typeof resolvedSearchParams.userId === "string"
-      ? resolvedSearchParams.userId
+    userFilter: isAdminOrModerator && resolvedSearchParamsPlain.userId && typeof resolvedSearchParamsPlain.userId === "string"
+      ? resolvedSearchParamsPlain.userId
       : ALL_USERS,
   };
 
@@ -176,7 +174,7 @@ export default async function StockHistoryPage({
         summary={summaryResult.success ? summaryResult.summary : undefined}
         error={success ? undefined : message}
         filters={clientFilters}
-        productId={resolvedParams.productId}
+        productId={resolvedParamsPlain.productId}
         productName={product.name}
       />
     </div>

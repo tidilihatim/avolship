@@ -130,13 +130,13 @@ async function parseSearchParams(searchParams: {
 export default async function ExpeditionsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  searchParams = await searchParams;
+  const searchParamsPlain = await searchParams;
   const t = await getTranslations("expeditions");
   
   // Parse search params for filtering and pagination
-  const filters = await parseSearchParams(searchParams);
+  const filters = await parseSearchParams(searchParamsPlain);
 
   // Set default pagination values if not provided
   if (!filters.page) filters.page = 1;
@@ -175,39 +175,39 @@ export default async function ExpeditionsPage({
     countriesPromise
   ]);
 
-  // For client-side component, we need to pass the original searchParams values
+  // For client-side component, we need to pass the original searchParamsPlain values
   const clientFilters: ExpeditionFilters & { 
     weightLevel?: string;
     transportMode?: string;
     providerType?: string;
   } = {
     ...filters,
-    status: searchParams.status && typeof searchParams.status === "string"
-      ? (searchParams.status as ExpeditionStatus)
+    status: searchParamsPlain.status && typeof searchParamsPlain.status === "string"
+      ? (searchParamsPlain.status as ExpeditionStatus)
       : undefined,
-    transportMode: searchParams.transportMode && typeof searchParams.transportMode === "string"
-      ? searchParams.transportMode as any
+    transportMode: searchParamsPlain.transportMode && typeof searchParamsPlain.transportMode === "string"
+      ? searchParamsPlain.transportMode as any
       : undefined,
-    providerType: searchParams.providerType && typeof searchParams.providerType === "string"
-      ? searchParams.providerType as any
+    providerType: searchParamsPlain.providerType && typeof searchParamsPlain.providerType === "string"
+      ? searchParamsPlain.providerType as any
       : undefined,
-    warehouseId: searchParams.warehouseId && typeof searchParams.warehouseId === "string"
-      ? searchParams.warehouseId
+    warehouseId: searchParamsPlain.warehouseId && typeof searchParamsPlain.warehouseId === "string"
+      ? searchParamsPlain.warehouseId
       : undefined,
-    sellerId: isAdminOrModerator && searchParams.sellerId && typeof searchParams.sellerId === "string"
-      ? searchParams.sellerId
+    sellerId: isAdminOrModerator && searchParamsPlain.sellerId && typeof searchParamsPlain.sellerId === "string"
+      ? searchParamsPlain.sellerId
       : undefined,
-    fromCountry: searchParams.fromCountry && typeof searchParams.fromCountry === "string"
-      ? searchParams.fromCountry
+    fromCountry: searchParamsPlain.fromCountry && typeof searchParamsPlain.fromCountry === "string"
+      ? searchParamsPlain.fromCountry
       : undefined,
-    weightLevel: searchParams.weightLevel && typeof searchParams.weightLevel === "string"
-      ? searchParams.weightLevel
+    weightLevel: searchParamsPlain.weightLevel && typeof searchParamsPlain.weightLevel === "string"
+      ? searchParamsPlain.weightLevel
       : undefined,
-    dateFrom: searchParams.dateFrom && typeof searchParams.dateFrom === "string"
-      ? searchParams.dateFrom
+    dateFrom: searchParamsPlain.dateFrom && typeof searchParamsPlain.dateFrom === "string"
+      ? searchParamsPlain.dateFrom
       : undefined,
-    dateTo: searchParams.dateTo && typeof searchParams.dateTo === "string"
-      ? searchParams.dateTo
+    dateTo: searchParamsPlain.dateTo && typeof searchParamsPlain.dateTo === "string"
+      ? searchParamsPlain.dateTo
       : undefined,
   };
 

@@ -35,7 +35,7 @@ export const initializeSocket = (userId: string, role: string): SocketClient => 
     // Send authentication after connection
     socket.on('connect', () => {
       console.log('Socket connected');
-      socket.emit('authenticate', { userId, role });
+      socket.emit('authenticate', { userId});
     });
     
     // For reconnect, we use the Socket.IO event 'reconnect_attempt' instead of 'reconnect'
@@ -46,7 +46,7 @@ export const initializeSocket = (userId: string, role: string): SocketClient => 
     
     socket.io.on('reconnect', () => {
       console.log('Socket reconnected');
-      socket.emit('authenticate', { userId, role });
+      socket.emit('authenticate', { userId });
     });
     
     // Log disconnections

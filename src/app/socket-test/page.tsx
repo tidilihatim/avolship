@@ -17,7 +17,7 @@ export default function SocketTestPage() {
 
   // Connect to socket
   const handleConnect = () => {
-    connect(userId, role);
+    connect(userId);
     addMessage('Connecting to server...');
   };
 

@@ -14,11 +14,6 @@ export const metadata: Metadata = {
   description: 'Edit product details',
 };
 
-interface EditProductPageProps {
-  params: {
-    id: string;
-  };
-}
 
 /**
  * EditUserPage
@@ -26,11 +21,13 @@ interface EditProductPageProps {
  */
 export default async function EditProductPage({
   params,
-}: EditProductPageProps) {
+}: {
+  params: Promise<{ id: string }>
+}) {
   const t = await getTranslations('users');
-  params = await params;
+  const {id} = await params
   
-  const { product, success, message } = await getProductById(params.id);
+  const { product, success, message } = await getProductById(id);
   const warehouses = await getAllWarehouses();
   
   if (!success || !product) {
@@ -40,7 +37,7 @@ export default async function EditProductPage({
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <Link href={`/dashboard/seller/products/${params.id}`} passHref>
+        <Link href={`/dashboard/seller/products/${id}`} passHref>
           <Button variant="outline" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>

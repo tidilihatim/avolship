@@ -19,11 +19,6 @@ export const metadata: Metadata = {
   description: "Edit Expedition details",
 };
 
-interface EditExpeditionPageProps {
-  params: {
-    id: string;
-  };
-}
 
 /**
  * EditUserPage
@@ -31,11 +26,13 @@ interface EditExpeditionPageProps {
  */
 export default async function EditExpeditionPage({
   params,
-}: EditExpeditionPageProps) {
+}: {
+  params: Promise<{ id: string }>
+}) {
   const t = await getTranslations("expeditions");
-  params = await params;
+  const {id} = await params
 
-  const { expedition, success } = await getExpeditionById(params.id);
+  const { expedition, success } = await getExpeditionById(id);
 
   const [warehouses, providers, countries] = await Promise.all([
     getAllWarehousesForExpedition(),

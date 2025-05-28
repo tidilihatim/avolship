@@ -98,13 +98,13 @@ async function getAllCountries(): Promise<{ countries: string[] }> {
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const t = await getTranslations("users");
-  searchParams = await searchParams;
+  const searchParamsPlain = await searchParams;
   
   // Parse search params for filtering and pagination
-  const filters = await parseSearchParams(searchParams);
+  const filters = await parseSearchParams(searchParamsPlain);
 
   // Set default pagination values if not provided
   if (!filters.page) filters.page = 1;
@@ -120,17 +120,17 @@ export default async function UsersPage({
   // Fetch all available countries for the filter
   const { countries = [] } = await getAllCountries();
 
-  // For client-side component, we need to pass the original searchParams values
+  // For client-side component, we need to pass the original searchParamsPlain values
   const clientFilters: UserFilters = {
     ...filters,
-    role: searchParams.role && typeof searchParams.role === "string"
-      ? (searchParams.role as UserRole)
+    role: searchParamsPlain.role && typeof searchParamsPlain.role === "string"
+      ? (searchParamsPlain.role as UserRole)
       : undefined,
-    status: searchParams.status && typeof searchParams.status === "string"
-      ? (searchParams.status as UserStatus)
+    status: searchParamsPlain.status && typeof searchParamsPlain.status === "string"
+      ? (searchParamsPlain.status as UserStatus)
       : undefined,
-    country: searchParams.country && typeof searchParams.country === "string"
-      ? searchParams.country
+    country: searchParamsPlain.country && typeof searchParamsPlain.country === "string"
+      ? searchParamsPlain.country
       : undefined,
   };
 

@@ -10,11 +10,6 @@ export const metadata: Metadata = {
   description: 'Edit product details',
 };
 
-interface ProductDetailsPageProps {
-  params: {
-    id: string;
-  };
-}
 
 /**
  * ProductDetailsPage
@@ -22,9 +17,12 @@ interface ProductDetailsPageProps {
  */
 export default async function ProductDetailsPage({
   params,
-}: ProductDetailsPageProps) {
-  const resolvedParams = await params;
-  const { product, success, message } = await getProductById(resolvedParams.id);
+}: {
+  params: Promise<{ id: string }>
+}) {
+
+  const {id} = await params
+  const { product, success, message } = await getProductById(id);
   
   if (!success || !product) {
     notFound();

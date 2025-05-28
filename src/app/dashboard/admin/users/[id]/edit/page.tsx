@@ -14,11 +14,6 @@ export const metadata: Metadata = {
   description: 'Edit user details',
 };
 
-interface EditUserPageProps {
-  params: {
-    id: string;
-  };
-}
 
 /**
  * EditUserPage
@@ -26,11 +21,13 @@ interface EditUserPageProps {
  */
 export default async function EditUserPage({
   params,
-}: EditUserPageProps) {
+}: {
+  params: Promise<{ id: string }>
+}) {
   const t = await getTranslations('users');
-  params = await params;
+  const {id} = await params
   
-  const { user, success, message } = await getUserById(params.id);
+  const { user, success, message } = await getUserById(id);
   
   if (!success || !user) {
     notFound();
@@ -39,7 +36,7 @@ export default async function EditUserPage({
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <Link href={`/dashboard/admin/users/${params.id}`} passHref>
+        <Link href={`/dashboard/admin/users/${id}`} passHref>
           <Button variant="outline" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>

@@ -14,22 +14,18 @@ export const metadata: Metadata = {
   description: 'Edit warehouse details',
 };
 
-interface EditWarehousePageProps {
-  params: {
-    id: string;
-  };
-}
-
 /**
  * EditWarehousePage
  * Page for editing an existing warehouse
  */
 export default async function EditWarehousePage({
   params,
-}: EditWarehousePageProps) {
+}: {
+  params: Promise<{ id: string }>
+}) {
   const t = await getTranslations('warehouse');
-  params = await params
-  const { warehouse, error } = await getWarehouseById(params.id);
+  const {id} = await params
+  const { warehouse, error } = await getWarehouseById(id);
   
   if (error || !warehouse) {
     notFound();
@@ -38,7 +34,7 @@ export default async function EditWarehousePage({
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <Link href={`/dashboard/admin/warehouse/${params.id}`} passHref>
+        <Link href={`/dashboard/admin/warehouse/${id}`} passHref>
           <Button variant="outline" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>
