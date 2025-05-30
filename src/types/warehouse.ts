@@ -1,6 +1,16 @@
 /**
  * TypeScript interfaces for warehouse module (without Zod dependencies)
+ * Updated to include seller assignment functionality
  */
+
+// Simplified seller info for warehouse assignment
+export interface SellerInfo {
+  _id: string;
+  name: string;
+  email: string;
+  businessName?: string;
+  country?: string;
+}
 
 // Form values for warehouse create/update
 export interface WarehouseFormValues {
@@ -16,6 +26,9 @@ export interface WarehouseFormValues {
   targetCurrency?: string;
   conversionRate?: number | null;
   autoUpdateRate: boolean;
+  // New fields for seller assignment
+  isAvailableToAll: boolean;
+  assignedSellers: string[]; // Array of seller IDs
 }
 
 // Warehouse object from the database
@@ -35,6 +48,10 @@ export interface Warehouse {
     autoUpdate: boolean;
     lastUpdated?: string; // ISO date string
   };
+  // New fields for seller assignment
+  isAvailableToAll: boolean;
+  assignedSellers: string[]; // Array of seller IDs
+  sellerDetails?: SellerInfo[]; // Populated seller details (when requested)
   isActive: boolean;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
@@ -45,8 +62,10 @@ export interface WarehouseFilterParams {
   search?: string;
   country?: string;
   isActive?: boolean;
+  sellerId?: string; // Filter warehouses accessible by a specific seller
   page?: number;
   limit?: number;
+  isAvailableToAll?: boolean;
 }
 
 // Pagination information
@@ -81,6 +100,20 @@ export interface CurrencyOption {
   symbol: string;
 }
 
+// Seller assignment update interface
+export interface WarehouseSellerAssignment {
+  warehouseId: string;
+  isAvailableToAll: boolean;
+  assignedSellers: string[]; // Array of seller IDs
+}
+
+// Response for seller list queries
+export interface SellerListResponse {
+  sellers: SellerInfo[];
+  total: number;
+  error?: string;
+}
+
 // Common currency codes that might be used
 export const commonCurrencies: CurrencyOption[] = [
   { code: 'USD', name: 'US Dollar', symbol: '$' },
@@ -97,3 +130,18 @@ export const commonCurrencies: CurrencyOption[] = [
   { code: 'KES', name: 'Kenyan Shilling', symbol: 'KSh' },
   { code: 'EGP', name: 'Egyptian Pound', symbol: 'E£' },
 ];
+
+// Helper type for warehouse access check
+export interface WarehouseAccessCheck {
+  warehouseId: string;
+  sellerId: string;
+  hasAccess: boolean;
+}
+
+// Bulk assignment operation
+export interface BulkWarehouseAssignment {
+  warehouseIds: string[];
+  operation: 'add' | 'remove' | 'set';
+  sellerIds: string[];
+  setAvailableToAll?: boolean;
+}

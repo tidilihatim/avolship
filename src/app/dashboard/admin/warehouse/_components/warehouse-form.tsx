@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, Users, UserCheck, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,9 +20,17 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
-import { Warehouse, commonCurrencies } from "@/types/warehouse";
-import { createWarehouse, updateWarehouse } from "@/app/actions/warehouse";
+import { Warehouse, commonCurrencies, SellerInfo } from "@/types/warehouse";
+import { createWarehouse, updateWarehouse, getApprovedSellers } from "@/app/actions/warehouse";
 import { africanCountries } from "@/app/dashboard/_constant";
 
 interface WarehouseFormProps {
@@ -42,6 +50,10 @@ export default function WarehouseForm({
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [sellers, setSellers] = useState<SellerInfo[]>([]);
+  const [loadingSellers, setLoadingSellers] = useState(false);
+  const [sellerSearch, setSellerSearch] = useState("");
+  const [isSellerSectionOpen, setIsSellerSectionOpen] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -57,8 +69,14 @@ export default function WarehouseForm({
     targetCurrency: "USD",
     conversionRate: 1 as number | undefined,
     autoUpdateRate: false,
+    isAvailableToAll: false,
+    assignedSellers: [] as string[],
   });
-  console.log("🚀 ~ WarehouseForm ~ formData:", formData);
+
+  // Load sellers when component mounts
+  useEffect(() => {
+    fetchSellers();
+  }, []);
 
   // Populate form values when editing
   useEffect(() => {
@@ -76,9 +94,33 @@ export default function WarehouseForm({
         targetCurrency: warehouse.currencyConversion.targetCurrency,
         conversionRate: warehouse.currencyConversion.rate,
         autoUpdateRate: warehouse.currencyConversion.autoUpdate,
+        isAvailableToAll: warehouse.isAvailableToAll || false,
+        assignedSellers: warehouse.assignedSellers || [],
       });
+      
+      // Open seller section if warehouse has assigned sellers
+      if (!warehouse.isAvailableToAll && warehouse.assignedSellers && warehouse.assignedSellers.length > 0) {
+        setIsSellerSectionOpen(true);
+      }
     }
   }, [warehouse, isEdit]);
+
+  // Fetch sellers from server
+  const fetchSellers = async () => {
+    setLoadingSellers(true);
+    try {
+      const result = await getApprovedSellers();
+      if (result.sellers) {
+        setSellers(result.sellers);
+      } else if (result.error) {
+        toast.error("Failed to load sellers");
+      }
+    } catch (error) {
+      toast.error("Failed to load sellers");
+    } finally {
+      setLoadingSellers(false);
+    }
+  };
 
   // Handle input changes
   const handleChange = (
@@ -115,6 +157,62 @@ export default function WarehouseForm({
       ...formData,
       [name]: checked,
     });
+    
+    // Clear assigned sellers if switching to "available to all"
+    if (name === "isAvailableToAll" && checked) {
+      setFormData(prev => ({
+        ...prev,
+        assignedSellers: []
+      }));
+    }
+  };
+
+  // Handle seller selection
+  const handleSellerToggle = (sellerId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      assignedSellers: prev.assignedSellers.includes(sellerId)
+        ? prev.assignedSellers.filter(id => id !== sellerId)
+        : [...prev.assignedSellers, sellerId]
+    }));
+  };
+
+  // Handle select all sellers
+  const handleSelectAllSellers = () => {
+    const filteredSellers = getFilteredSellers();
+    const allSelected = filteredSellers.every(seller => 
+      formData.assignedSellers.includes(seller._id)
+    );
+
+    if (allSelected) {
+      // Deselect all filtered sellers
+      setFormData(prev => ({
+        ...prev,
+        assignedSellers: prev.assignedSellers.filter(id => 
+          !filteredSellers.find(seller => seller._id === id)
+        )
+      }));
+    } else {
+      // Select all filtered sellers
+      const newSellerIds = filteredSellers.map(seller => seller._id);
+      setFormData(prev => ({
+        ...prev,
+        assignedSellers: [...new Set([...prev.assignedSellers, ...newSellerIds])]
+      }));
+    }
+  };
+
+  // Filter sellers based on search
+  const getFilteredSellers = () => {
+    return sellers.filter(seller => {
+      const search = sellerSearch.toLowerCase();
+      return (
+        seller.name.toLowerCase().includes(search) ||
+        seller.email.toLowerCase().includes(search) ||
+        (seller.businessName && seller.businessName.toLowerCase().includes(search)) ||
+        (seller.country && seller.country.toLowerCase().includes(search))
+      );
+    });
   };
 
   // Simple validation
@@ -150,7 +248,7 @@ export default function WarehouseForm({
         newErrors.conversionRate = "Conversion rate must be a positive number";
       }
     }
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -163,7 +261,7 @@ export default function WarehouseForm({
       // Show first error as toast
       const firstError = Object.values(errors)[0];
       if (firstError) {
-        toast(firstError);
+        toast.error(firstError);
       }
       return;
     }
@@ -180,9 +278,9 @@ export default function WarehouseForm({
       }
 
       if (result.error) {
-        toast(result.error);
+        toast.error(result.error);
       } else {
-        toast(
+        toast.success(
           isEdit
             ? t("messages.updateSuccess", { ns: "warehouse" })
             : t("messages.createSuccess", { ns: "warehouse" })
@@ -190,11 +288,16 @@ export default function WarehouseForm({
         router.push("/dashboard/admin/warehouse");
       }
     } catch (error) {
-      toast(t("messages.error", { ns: "warehouse" }));
+      toast.error(t("messages.error", { ns: "warehouse" }));
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const filteredSellers = getFilteredSellers();
+  const allFilteredSelected = filteredSellers.length > 0 && 
+    filteredSellers.every(seller => formData.assignedSellers.includes(seller._id));
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -423,6 +526,121 @@ export default function WarehouseForm({
             </div>
           </div>
 
+          {/* Seller Assignment */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">{t("sellerAssignment")}</h3>
+            <Separator />
+
+            <div className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <Switch
+                id="isAvailableToAll"
+                checked={formData.isAvailableToAll}
+                onCheckedChange={(checked) =>
+                  handleSwitchChange("isAvailableToAll", checked)
+                }
+              />
+              <div className="space-y-1 leading-none">
+                <Label
+                  htmlFor="isAvailableToAll"
+                  className="text-sm font-medium"
+                >
+                  {t("availableToAllSellers")}
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  {t("availableToAllDescription")}
+                </p>
+              </div>
+            </div>
+
+            {!formData.isAvailableToAll && (
+              <Collapsible open={isSellerSectionOpen} onOpenChange={setIsSellerSectionOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    <span className="flex items-center gap-2">
+                      <UserCheck className="h-4 w-4" />
+                      {t("assignSellers")}
+                    </span>
+                    <Badge variant="secondary">
+                      {formData.assignedSellers.length} {t("selected")}
+                    </Badge>
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-4 space-y-4">
+                  <div className="relative">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                    <Input
+                      type="search"
+                      placeholder={t("searchSellers")}
+                      className="pl-8"
+                      value={sellerSearch}
+                      onChange={(e) => setSellerSearch(e.target.value)}
+                    />
+                  </div>
+
+                  {loadingSellers ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm text-muted-foreground">
+                          {filteredSellers.length} {t("sellersFound")}
+                        </p>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleSelectAllSellers}
+                        >
+                          {allFilteredSelected ? t("deselectAll") : t("selectAll")}
+                        </Button>
+                      </div>
+
+                      <ScrollArea className="h-[300px] rounded-md border p-4">
+                        <div className="space-y-2">
+                          {filteredSellers.map((seller) => (
+                            <div
+                              key={seller._id}
+                              className="flex items-center space-x-3 rounded-lg p-3 hover:bg-muted/50 transition-colors"
+                            >
+                              <Checkbox
+                                id={`seller-${seller._id}`}
+                                checked={formData.assignedSellers.includes(seller._id)}
+                                onCheckedChange={() => handleSellerToggle(seller._id)}
+                              />
+                              <label
+                                htmlFor={`seller-${seller._id}`}
+                                className="flex-1 cursor-pointer space-y-1"
+                              >
+                                <div className="font-medium">{seller.name}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  {seller.email}
+                                  {seller.businessName && (
+                                    <span> • {seller.businessName}</span>
+                                  )}
+                                  {seller.country && (
+                                    <Badge variant="outline" className="ml-2">
+                                      {seller.country}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </>
+                  )}
+                  
+                  {errors.assignedSellers && (
+                    <p className="text-sm text-destructive">{errors.assignedSellers}</p>
+                  )}
+                </CollapsibleContent>
+              </Collapsible>
+            )}
+          </div>
+
           {/* Currency Conversion */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">{t("currencyConversion")}</h3>
@@ -565,7 +783,7 @@ export default function WarehouseForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push("/admin/warehouse")}
+              onClick={() => router.push("/dashboard/admin/warehouse")}
               disabled={isSubmitting}
             >
               {t("cancel")}

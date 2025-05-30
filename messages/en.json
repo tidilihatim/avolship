@@ -875,6 +875,7 @@
       "selectedWarehouse": "Selected Warehouse",
       "switchWarehouse": "Switch Warehouse"
     },
+
     "title": "Warehouses",
     "manageWarehouses": "Manage Warehouses",
     "createWarehouse": "Create Warehouse",
@@ -897,8 +898,11 @@
       "all": "All",
       "active": "Active",
       "inactive": "Inactive",
+      "availability": "Availability",
       "clear": "Clear Filters",
-      "apply": "Apply Filters"
+      "apply": "Apply Filters",
+      "availableToAll": "Available to All",
+      "assignedSellers": "Assigned Sellers"
     },
     "table": {
       "name": "Name",
@@ -908,9 +912,23 @@
       "capacity": "Capacity",
       "conversionEnabled": "Conversion",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "availability": "Availability",
+      "allSellers": "All Sellers",
+      "availableToAllSellers": "Available to all sellers",
+      "assignedTo": "Assigned to",
+      "sellers": "sellers"
     },
     "form": {
+      "sellerAssignment": "Seller Assignment",
+      "availableToAllSellers": "Available to All Sellers",
+      "availableToAllDescription": "All approved sellers can use this warehouse",
+      "assignSellers": "Assign Specific Sellers",
+      "selected": "selected",
+      "searchSellers": "Search sellers by name, email, or business...",
+      "sellersFound": "sellers found",
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
       "editWarehouse": "Edit Warehouse",
       "name": "Warehouse Name",
       "nameDescription": "A unique name for the warehouse",
@@ -971,7 +989,14 @@
       "disabled": "Disabled",
       "lastUpdated": "Last Updated",
       "createdAt": "Created",
-      "updatedAt": "Last Modified"
+      "updatedAt": "Last Modified",
+      "sellerAccess": "Seller Access",
+      "availableToAll": "Available to All Sellers",
+      "availableToAllDescription": "This warehouse can be used by all approved sellers in the system",
+      "assignedSellersDescription": "The following sellers have access to this warehouse:",
+      "noAssignedSellers": "No Assigned Sellers",
+      "noAssignedSellersDescription": "No sellers are currently assigned to this warehouse",
+      "business": "Business"
     },
     "messages": {
       "createSuccess": "Warehouse created successfully",

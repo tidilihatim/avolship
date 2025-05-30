@@ -107,10 +107,6 @@ const ProductSchema = new Schema<IProduct>(
         trim: true,
       },
     },
-    price: {
-      type: Number,
-      min: [0, 'Price cannot be negative'],
-    },
     totalStock: {
       type: Number,
       default: 0,

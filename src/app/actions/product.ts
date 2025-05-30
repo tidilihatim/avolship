@@ -155,7 +155,6 @@ async function getProductsImpl(
         sellerId,
         sellerName: sellerMap.get(sellerId)?.name || 'Unknown Seller',
         image: product.image,
-        price: product.price,
         totalStock: product.totalStock,
         status: product.status,
         createdAt: product.createdAt,
@@ -262,7 +261,6 @@ async function getProductByIdImpl(id: string): Promise<ProductResponse> {
       sellerId: product.sellerId.toString(),
       sellerName: seller?.name || 'Unknown Seller',
       image: product.image,
-      price: product.price,
       totalStock: product.totalStock,
       status: product.status,
       createdAt: product.createdAt,
@@ -294,7 +292,13 @@ async function getAllWarehousesImpl(): Promise<{ _id: string; name: string; coun
     }
 
     // Query to get all warehouses
-    const warehouses: any[] = await Warehouse.find({ isActive: true })
+    const warehouses: any[] = await Warehouse.find({ 
+      isActive: true,
+      $or: [
+        { isAvailableToAll: true },
+        { assignedSellers: user._id }
+      ]
+     })
       .select('_id name country')
       .sort({ name: 1 })
       .lean();
@@ -454,7 +458,6 @@ async function createProductImpl(productData: ProductInput): Promise<ProductResp
       })),
       sellerId: new mongoose.Types.ObjectId(productData.sellerId),
       image: productData.image,
-      price: productData.price,
       totalStock,
       status: totalStock > 0 ? (productData.status || ProductStatus.ACTIVE) : ProductStatus.OUT_OF_STOCK,
     });
@@ -605,10 +608,6 @@ async function updateProductImpl(id: string, productData: ProductInput): Promise
     // Only update image if provided
     if (productData.image) {
       product.image = productData.image;
-    }
-    
-    if (productData.price !== undefined) {
-      product.price = productData.price;
     }
     
     product.totalStock = totalStock;

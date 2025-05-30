@@ -57,7 +57,6 @@ export interface ProductInput {
     url: string;
     publicId: string;
   };
-  price?: number;
   status?: ProductStatus;
 }
 

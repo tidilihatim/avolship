@@ -901,7 +901,10 @@
       "active": "Actif",
       "inactive": "Inactif",
       "clear": "Effacer les Filtres",
-      "apply": "Appliquer les Filtres"
+      "apply": "Appliquer les Filtres",
+      "availableToAll": "Disponible pour tous",
+      "assignedSellers": "Vendeurs assignés",
+      "availability": "Disponibilité"
     },
     "table": {
       "name": "Nom",
@@ -911,9 +914,23 @@
       "capacity": "Capacité",
       "conversionEnabled": "Conversion",
       "status": "Statut",
-      "actions": "Actions"
+      "actions": "Actions",
+      "availability": "Disponibilité",
+      "allSellers": "Tous les vendeurs",
+      "availableToAllSellers": "Disponible pour tous les vendeurs",
+      "assignedTo": "Attribué à",
+      "sellers": "vendeurs"
     },
     "form": {
+      "sellerAssignment": "Attribution des vendeurs",
+      "availableToAllSellers": "Disponible pour tous les vendeurs",
+      "availableToAllDescription": "Tous les vendeurs approuvés peuvent utiliser cet entrepôt",
+      "assignSellers": "Attribuer des vendeurs spécifiques",
+      "selected": "sélectionnés",
+      "searchSellers": "Rechercher des vendeurs par nom, email ou entreprise...",
+      "sellersFound": "vendeurs trouvés",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner",
       "editWarehouse": "Modifier l'Entrepôt",
       "name": "Nom de l'Entrepôt",
       "nameDescription": "Un nom unique pour l'entrepôt",
@@ -978,7 +995,14 @@
       "disabled": "Désactivé",
       "lastUpdated": "Dernière Mise à Jour",
       "createdAt": "Créé le",
-      "updatedAt": "Dernière Modification"
+      "updatedAt": "Dernière Modification",
+      "sellerAccess": "Accès des vendeurs",
+      "availableToAll": "Disponible pour tous les vendeurs",
+      "availableToAllDescription": "Cet entrepôt peut être utilisé par tous les vendeurs approuvés dans le système",
+      "assignedSellersDescription": "Les vendeurs suivants ont accès à cet entrepôt :",
+      "noAssignedSellers": "Aucun vendeur assigné",
+      "noAssignedSellersDescription": "Aucun vendeur n'est actuellement assigné à cet entrepôt",
+      "business": "Entreprise"
     },
     "messages": {
       "createSuccess": "Entrepôt créé avec succès",

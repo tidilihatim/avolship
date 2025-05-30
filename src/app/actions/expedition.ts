@@ -29,10 +29,10 @@ export const getExpeditions = withDbConnection(async (
   message: string;
 }> => {
   try {
-    
+
     // Get current user and check permissions
     const session = await getServerSession(authOptions);
-    if(!session?.user?.id) return { expeditions: null, pagination: null, success: false, message: 'Unauthorized' };
+    if (!session?.user?.id) return { expeditions: null, pagination: null, success: false, message: 'Unauthorized' };
     const user = await User.findById(session?.user?.id) as IUser | null;
     if (!user) {
       redirect('/auth/login');
@@ -40,12 +40,12 @@ export const getExpeditions = withDbConnection(async (
 
     // Build query based on user role
     const query: any = {};
-    
+
     // Sellers can only see their own expeditions
     if (user.role === UserRole.SELLER) {
       query.sellerId = user._id;
     }
-    
+
     // Apply filters
     if (filters.search) {
       query.$or = [
@@ -111,12 +111,12 @@ export const getExpeditions = withDbConnection(async (
 
     // Fetch expeditions with proper typing
     const expeditions = await Expedition.find(query)
-    .sort({ createdAt: -1 })
-    .populate("warehouseId")
-    .skip(skip)
-    .limit(limit)
-    .lean();
-    
+      .sort({ createdAt: -1 })
+      .populate("warehouseId")
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
     // Transform data for table display
     const expeditionData: ExpeditionTableData[] = expeditions.map((expedition: any) => ({
       _id: expedition._id.toString(),
@@ -178,16 +178,16 @@ export const getExpeditions = withDbConnection(async (
  */
 export const getAllSellersForExpedition = withDbConnection(async (): Promise<SellerOption[]> => {
   try {
-    
+
     const session = await getServerSession(authOptions);
-    if(!session?.user?.id) return [];
+    if (!session?.user?.id) return [];
     const user = await User.findById(session?.user?.id) as IUser | null;
-    
+
     if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
       return [];
     }
 
-    const sellers = await User.find({ 
+    const sellers = await User.find({
       role: UserRole.SELLER,
       status: 'approved'
     })
@@ -211,7 +211,7 @@ export const getAllSellersForExpedition = withDbConnection(async (): Promise<Sel
 export const getAllProvidersForExpedition = withDbConnection(async (): Promise<ProviderOption[]> => {
   try {
 
-    const providers = await User.find({ 
+    const providers = await User.find({
       role: UserRole.PROVIDER,
       status: 'approved'
     })
@@ -236,10 +236,10 @@ export const getAllProvidersForExpedition = withDbConnection(async (): Promise<P
  */
 export const getCountriesForExpedition = withDbConnection(async (): Promise<string[]> => {
   try {
-    
+
     // Get unique countries from expeditions
     const countries = await Expedition.distinct('fromCountry') as string[];
-    
+
     return countries.sort();
   } catch (error) {
     console.error('Error fetching countries:', error);
@@ -259,11 +259,11 @@ export const updateExpeditionStatus = withDbConnection(async (
   message: string;
 }> => {
   try {
-    
+
     const session = await getServerSession(authOptions);
-    if(!session?.user?.id) return {success: false, message: 'Unauthorized' };
+    if (!session?.user?.id) return { success: false, message: 'Unauthorized' };
     const user = await User.findById(session?.user?.id) as IUser | null;
-    
+
     if (!user) {
       return { success: false, message: 'Unauthorized' };
     }
@@ -308,17 +308,17 @@ export const getExpeditionById = withDbConnection(async (expeditionId: string): 
   message: string;
 }> => {
   try {
-    
+
     const session = await getServerSession(authOptions);
-    if(!session?.user?.id) return { expedition: null, success: false, message: 'Unauthorized' };
+    if (!session?.user?.id) return { expedition: null, success: false, message: 'Unauthorized' };
     const user = await User.findById(session?.user?.id) as IUser | null;
-    
+
     if (!user) {
       return { expedition: null, success: false, message: 'Unauthorized' };
     }
 
     const query: any = { _id: expeditionId };
-    
+
     // Sellers can only view their own expeditions
     if (user.role === UserRole.SELLER) {
       query.sellerId = user._id;
@@ -377,7 +377,7 @@ export const createExpedition = withDbConnection(async (expeditionData: Expediti
       if (!product) {
         return { success: false, message: `Product not found: ${productInput.productId}` };
       }
-      
+
       // Check if product belongs to the seller
       if (product.sellerId.toString() !== user._id.toString()) {
         return { success: false, message: `Product ${product.name} does not belong to you` };
@@ -404,12 +404,12 @@ export const createExpedition = withDbConnection(async (expeditionData: Expediti
       warehouseName: warehouse.name,
       providerType: expeditionData.providerType,
       providerId: expeditionData.providerId,
-      providerName: expeditionData.providerId ? 
+      providerName: expeditionData.providerId ?
         (await User.findById(expeditionData.providerId))?.name : undefined,
       carrierInfo: expeditionData.carrierInfo,
       products: products,
       trackingNumber: expeditionData.trackingNumber,
-      estimatedDelivery: expeditionData.estimatedDelivery ? 
+      estimatedDelivery: expeditionData.estimatedDelivery ?
         new Date(expeditionData.estimatedDelivery) : undefined,
     });
 
@@ -421,7 +421,7 @@ export const createExpedition = withDbConnection(async (expeditionData: Expediti
     };
   } catch (error: any) {
     console.error('Error creating expedition:', error);
-    
+
     // Handle mongoose validation errors
     if (error.name === 'ValidationError') {
       const errors: Record<string, string> = {};
@@ -446,7 +446,7 @@ export const createExpedition = withDbConnection(async (expeditionData: Expediti
  * Update an existing expedition
  */
 export const updateExpedition = withDbConnection(async (
-  expeditionId: string, 
+  expeditionId: string,
   expeditionData: ExpeditionInput
 ): Promise<{
   success: boolean;
@@ -493,7 +493,7 @@ export const updateExpedition = withDbConnection(async (
       if (!product) {
         return { success: false, message: `Product not found: ${productInput.productId}` };
       }
-      
+
       // Check if product belongs to the seller (for seller users)
       if (user.role === UserRole.SELLER && product.sellerId.toString() !== user._id.toString()) {
         return { success: false, message: `Product ${product.name} does not belong to you` };
@@ -517,12 +517,12 @@ export const updateExpedition = withDbConnection(async (
     expedition.warehouseName = warehouse.name;
     expedition.providerType = expeditionData.providerType;
     expedition.providerId = expeditionData.providerId;
-    expedition.providerName = expeditionData.providerId ? 
+    expedition.providerName = expeditionData.providerId ?
       (await User.findById(expeditionData.providerId))?.name : undefined;
     expedition.carrierInfo = expeditionData.carrierInfo;
     expedition.products = products;
     expedition.trackingNumber = expeditionData.trackingNumber;
-    expedition.estimatedDelivery = expeditionData.estimatedDelivery ? 
+    expedition.estimatedDelivery = expeditionData.estimatedDelivery ?
       new Date(expeditionData.estimatedDelivery) : undefined;
 
     await expedition.save();
@@ -533,7 +533,7 @@ export const updateExpedition = withDbConnection(async (
     };
   } catch (error: any) {
     console.error('Error updating expedition:', error);
-    
+
     // Handle mongoose validation errors
     if (error.name === 'ValidationError') {
       const errors: Record<string, string> = {};
@@ -573,7 +573,7 @@ export const getCountriesForForm = withDbConnection(async (): Promise<string[]> 
       'Somalia', 'South Africa', 'South Sudan', 'Sudan', 'Tanzania', 'Togo',
       'Tunisia', 'Uganda', 'Zambia', 'Zimbabwe'
     ];
-    
+
     return countries.sort();
   } catch (error) {
     console.error('Error fetching countries:', error);
@@ -619,12 +619,12 @@ export const getProductsForWarehouse = withDbConnection(async (warehouseId: stri
 
     const productOptions: ProductOption[] = products.map((product: any) => {
       // Find the warehouse-specific stock
-      const warehouseStock = product.warehouses?.find((w: any) => 
+      const warehouseStock = product.warehouses?.find((w: any) =>
         w.warehouseId.toString() === warehouseId
       );
-      
+
       const stock = warehouseStock?.stock || 0; // Use warehouse-specific stock, default to 0
-      
+
       console.log(`Product ${product.name}: warehouse stock = ${stock}, total stock = ${product.totalStock}`);
 
       return {
@@ -637,7 +637,7 @@ export const getProductsForWarehouse = withDbConnection(async (warehouseId: stri
     }); // Remove the filter - show all products including those with 0 stock
 
     console.log('All products (including 0 stock):', productOptions.length);
-    
+
     return productOptions;
   } catch (error) {
     console.error('Error fetching products for warehouse:', error);
@@ -655,7 +655,7 @@ export const getWarehouseById = withDbConnection(async (warehouseId: string): Pr
 }> => {
   try {
     const warehouse = await Warehouse.findById(warehouseId).lean();
-    
+
     if (!warehouse) {
       return { warehouse: null, success: false, message: 'Warehouse not found' };
     }
@@ -680,7 +680,18 @@ export const getWarehouseById = withDbConnection(async (warehouseId: string): Pr
  */
 export const getAllWarehousesForExpedition = withDbConnection(async (): Promise<(WarehouseOption & { currency: string })[]> => {
   try {
-    const warehouses = await Warehouse.find({ isActive: true })
+
+    const session = await getServerSession(authOptions);
+    const id = session?.user?.id;
+    if (!id) return [];
+
+    const warehouses = await Warehouse.find({
+      isActive: true,
+      $or: [
+        { isAvailableToAll: true },
+        { assignedSellers: id }
+      ]
+    })
       .select('name country currency')
       .sort({ name: 1 })
       .lean();

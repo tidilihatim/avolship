@@ -681,9 +681,6 @@ export default function ProductTable({
                         {t("common.seller")}
                       </TableHead>
                     )}
-                    <TableHead className="hidden sm:table-cell">
-                      {t("common.price")}
-                    </TableHead>
                     <TableHead>{t("common.stock")}</TableHead>
                     <TableHead className="hidden md:table-cell">
                       {t("common.status")}
@@ -765,9 +762,6 @@ export default function ProductTable({
                           {product.sellerName || "-"}
                         </TableCell>
                       )}
-                      <TableCell className="hidden sm:table-cell">
-                        {formatPrice(product.price)}
-                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <span

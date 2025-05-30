@@ -5,6 +5,7 @@ import { WarehouseFilterParams } from "@/types/warehouse";
 import { getAllCountries, getWarehouses } from "@/app/actions/warehouse";
 
 const ALL_COUNTRIES = "all_countries";
+const ALL_AVAILABILITY = "all";
 
 export const metadata: Metadata = {
   title: "Warehouse Management | AvolShip",
@@ -35,6 +36,15 @@ async function parseSearchParams(searchParams: {
       filters.isActive = true;
     } else if (isActiveParam === "false") {
       filters.isActive = false;
+    }
+  }
+
+  if (searchParams.isAvailableToAll !== undefined) {
+    const isAvailableToAllParam = searchParams.isAvailableToAll;
+    if (isAvailableToAllParam === "true") {
+      filters.isAvailableToAll = true;
+    } else if (isAvailableToAllParam === "false") {
+      filters.isAvailableToAll = false;
     }
   }
 

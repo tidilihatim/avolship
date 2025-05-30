@@ -1,7 +1,8 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 /**
  * Warehouse interface based on requirements
+ * Now includes seller assignment functionality
  */
 export interface IWarehouse extends Document {
   name: string;
@@ -18,6 +19,9 @@ export interface IWarehouse extends Document {
     autoUpdate: boolean;
     lastUpdated?: Date;
   };
+  // New fields for seller assignment
+  isAvailableToAll: boolean; // If true, all sellers can use this warehouse
+  assignedSellers: Types.ObjectId[]; // Specific sellers who can use this warehouse
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -25,6 +29,7 @@ export interface IWarehouse extends Document {
 
 /**
  * Mongoose schema for Warehouse model
+ * Updated to include seller assignment capabilities
  */
 const WarehouseSchema = new Schema<IWarehouse>(
   {
@@ -81,6 +86,25 @@ const WarehouseSchema = new Schema<IWarehouse>(
         type: Date,
       },
     },
+    // New fields for seller assignment
+    isAvailableToAll: {
+      type: Boolean,
+      default: false,
+      index: true, // Add index for better query performance
+    },
+    assignedSellers: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      validate: {
+        validator: async function(sellerId: Types.ObjectId) {
+          // Ensure the referenced user exists and is a seller
+          const User = mongoose.model('User');
+          const user = await User.findById(sellerId);
+          return user && user.role === 'seller';
+        },
+        message: 'Assigned user must be a valid seller',
+      },
+    }],
     isActive: {
       type: Boolean,
       default: true,
@@ -90,6 +114,22 @@ const WarehouseSchema = new Schema<IWarehouse>(
     timestamps: true, // Automatically add createdAt and updatedAt fields
   }
 );
+
+// Compound index for efficient queries when finding warehouses for a specific seller
+WarehouseSchema.index({ isAvailableToAll: 1, assignedSellers: 1, isActive: 1 });
+
+// Virtual field to get assigned sellers with their details (useful for population)
+WarehouseSchema.virtual('sellerDetails', {
+  ref: 'User',
+  localField: 'assignedSellers',
+  foreignField: '_id',
+  justOne: false,
+});
+
+// Enable virtual fields in JSON responses
+WarehouseSchema.set('toJSON', {
+  virtuals: true,
+});
 
 // Create the model only if it doesn't already exist
 const Warehouse = mongoose.models?.Warehouse || mongoose.model<IWarehouse>('Warehouse', WarehouseSchema);

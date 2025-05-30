@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import Warehouse from '@/lib/db/models/warehouse';
 import { WarehouseFormValues } from '@/types/warehouse';
-import { UserRole } from '@/lib/db/models/user';
+import User, { UserRole, UserStatus } from '@/lib/db/models/user';
 import { getServerSession } from 'next-auth';
 import { withDbConnection } from '@/lib/db/db-connect';
 import { getLoginUserRole } from './auth';
@@ -19,22 +19,36 @@ export const getActiveWarehouses = withDbConnection(async () => {
   try {
     // Verify seller access
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
       return { error: 'Unauthorized access' };
     }
-    
+
+    const userRole = await getLoginUserRole()
+    const id = session?.user?.id
+
+    let query = {}
+        if (userRole === UserRole.SELLER) {
+          query = {
+            isActive: true,
+            $or: [
+              { isAvailableToAll: true },
+              { assignedSellers: id },
+            ]
+          }
+        }
+
     // Find all active warehouses
-    const warehouses = await Warehouse.find({ isActive: true })
+    const warehouses = await Warehouse.find(query)
       .sort({ name: 1 })
       .select('_id name country city currency');
-    
+
     if (!warehouses || warehouses.length === 0) {
       return { warehouses: [], message: 'No active warehouses found' };
     }
-    
+
     return { warehouses: JSON.parse(JSON.stringify(warehouses)) };
-  } catch (error:any) {
+  } catch (error: any) {
     throw new Error(error)
   }
 });
@@ -95,8 +109,8 @@ export const createWarehouse = withDbConnection(async (data: WarehouseFormValues
 
     sendNotificationToUserType(UserRole.SELLER, {
       title: "Introducing a new warehouse",
-      message:`We have added a new warehouse for you in ${data?.country}. You can now start selling products from this location.`,
-      icon:"bell"
+      message: `We have added a new warehouse for you in ${data?.country}. You can now start selling products from this location.`,
+      icon: "bell"
     })
 
     revalidatePath('/admin/warehouse');
@@ -117,6 +131,7 @@ export const getWarehouses = withDbConnection(async (params?: {
   search?: string;
   page?: number;
   limit?: number;
+  isAvailableToAll?: boolean;
 }) => {
   try {
     // Verify admin access
@@ -132,6 +147,10 @@ export const getWarehouses = withDbConnection(async (params?: {
 
     if (params?.country) {
       query.country = params.country;
+    }
+
+    if (params?.isAvailableToAll !== undefined) {
+      query.isAvailableToAll = params.isAvailableToAll;
     }
 
     if (params?.isActive !== undefined) {
@@ -157,6 +176,10 @@ export const getWarehouses = withDbConnection(async (params?: {
     // Get paginated warehouses
     const warehouses = await Warehouse.find(query)
       .sort({ createdAt: -1 })
+      .populate({
+        path: 'sellerDetails',
+        select: '-password -twoFactorEnabled -status -role -phone -country -createdAt -updatedAt',
+      })
       .skip(skip)
       .limit(limit);
 
@@ -189,7 +212,10 @@ export const getWarehouseById = withDbConnection(async (id: string) => {
     }
 
 
-    const warehouse = await Warehouse.findById(id);
+    const warehouse = await Warehouse.findById(id).populate({
+      path: 'sellerDetails',
+      select: '-password -twoFactorEnabled -status -role -phone -country -createdAt -updatedAt',
+    });
 
     if (!warehouse) {
       return { error: 'Warehouse not found' };
@@ -208,6 +234,7 @@ export const getWarehouseById = withDbConnection(async (id: string) => {
  * @returns Updated warehouse object or error
  */
 export const updateWarehouse = withDbConnection(async (id: string, data: WarehouseFormValues) => {
+
   try {
     // Verify admin access
     const session = await getServerSession(authOptions);
@@ -232,6 +259,8 @@ export const updateWarehouse = withDbConnection(async (id: string, data: Warehou
     warehouse.capacity = data.capacity;
     warehouse.capacityUnit = data.capacityUnit;
     warehouse.isActive = data.isActive;
+    warehouse.isAvailableToAll = data.isAvailableToAll;
+    warehouse.assignedSellers = data.assignedSellers;
 
     // Update currency conversion settings
     warehouse.currencyConversion = {
@@ -369,8 +398,95 @@ export const getWarehouseCurrency = withDbConnection(async (id: string) => {
     if (!warehouse) {
       return { error: 'Warehouse not found' };
     }
-    return warehouse.currency ;
+    return warehouse.currency;
   } catch (error: any) {
     throw new Error(error)
+  }
+});
+
+
+/**
+ * Get all approved sellers for warehouse assignment
+ * Only accessible by admin users
+ * @param params - Optional filter parameters
+ * @returns List of approved sellers with their basic information
+ */
+export const getApprovedSellers = withDbConnection(async (params?: {
+  search?: string;
+  country?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  try {
+    // Verify admin access
+    const session = await getServerSession(authOptions);
+    const role = await getLoginUserRole();
+
+    if (!session?.user || role !== UserRole.ADMIN) {
+      return { error: 'Unauthorized access' };
+    }
+
+    // Build query for approved sellers only
+    const query: any = {
+      role: UserRole.SELLER,
+      status: UserStatus.APPROVED
+    };
+
+    // Add search filter if provided
+    if (params?.search) {
+      query.$or = [
+        { name: { $regex: params.search, $options: 'i' } },
+        { email: { $regex: params.search, $options: 'i' } },
+        { businessName: { $regex: params.search, $options: 'i' } }
+      ];
+    }
+
+    // Add country filter if provided
+    if (params?.country) {
+      query.country = params.country;
+    }
+
+    // Pagination parameters
+    const page = params?.page || 1;
+    const limit = params?.limit || 1000; // Default to 1000 for dropdown/selection purposes
+    const skip = (page - 1) * limit;
+
+    // Get total count for pagination
+    const totalCount = await User.countDocuments(query);
+
+    // Fetch sellers with selected fields only
+    const sellers = await User.find(query)
+      .select('_id name email businessName country phone createdAt')
+      .sort({ name: 1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(); // Use lean() for better performance since we don't need Mongoose document methods
+
+    // Transform the data to match the SellerInfo interface
+    const transformedSellers = sellers.map((seller: any) => ({
+      _id: seller?._id.toString() as string,
+      name: seller.name,
+      email: seller.email,
+      businessName: seller.businessName,
+      country: seller.country
+    }));
+
+    return {
+      sellers: transformedSellers,
+      total: totalCount,
+      pagination: {
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.ceil(totalCount / limit)
+      }
+    };
+  } catch (error: any) {
+    console.error('Error fetching approved sellers:', error);
+    return {
+      error: 'Failed to fetch sellers',
+      sellers: [],
+      total: 0
+    };
   }
 });

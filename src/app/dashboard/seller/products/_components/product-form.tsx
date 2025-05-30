@@ -4,23 +4,14 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Loader2, Upload, X, ImageIcon, CheckCircle2 } from "lucide-react";
-import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { ProductInput } from "@/types/product";
@@ -60,8 +51,6 @@ export default function ProductForm({
     code: "",
     variantCode: "",
     verificationLink: "",
-    price: "",
-    status: ProductStatus.ACTIVE,
   });
 
   // Populate form values when editing
@@ -73,8 +62,6 @@ export default function ProductForm({
         code: product.code || "",
         variantCode: product.variantCode || "",
         verificationLink: product.verificationLink || "",
-        price: product.price ? String(product.price) : "",
-        status: product.status || ProductStatus.ACTIVE,
       });
 
       // Set warehouse selections
@@ -210,10 +197,6 @@ export default function ProductForm({
       newErrors.code = t('products.validation.codeRequired');
     }
 
-    if (formData.price && isNaN(parseFloat(formData.price))) {
-      newErrors.price = t('products.validation.priceInvalid');
-    }
-
     if (selectedWarehouses.length === 0) {
       newErrors.warehouses = t('products.validation.warehouseRequired');
     }
@@ -255,8 +238,6 @@ export default function ProductForm({
         variantCode: formData.variantCode,
         verificationLink: formData.verificationLink,
         warehouses: warehousesData,
-        price: formData.price ? parseFloat(formData.price) : undefined,
-        status: formData.status as ProductStatus,
       };
 
       // Add image if available
@@ -373,27 +354,6 @@ export default function ProductForm({
                   {t('products.help.optionalVariant')}
                 </p>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-sm font-medium">
-                  {t('products.fields.price')}
-                </Label>
-                <Input
-                  id="price"
-                  name="price"
-                  type="text"
-                  value={formData.price}
-                  onChange={handleChange}
-                  placeholder={t('products.placeholders.enterPrice')}
-                  className={errors.price ? "border-destructive" : ""}
-                />
-                <p className="text-sm text-muted-foreground">
-                  {t('products.help.price')}
-                </p>
-                {errors.price && (
-                  <p className="text-sm text-destructive">{errors.price}</p>
-                )}
-              </div>
             </div>
 
             <div className="space-y-2">
@@ -488,27 +448,6 @@ export default function ProductForm({
               {errors.warehouses && (
                 <p className="text-sm text-destructive mt-2">{errors.warehouses}</p>
               )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status" className="text-sm font-medium">
-                {t('products.fields.status')}
-              </Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange("status", value)}
-              >
-                <SelectTrigger id="status">
-                  <SelectValue placeholder={t('products.placeholders.selectStatus')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(ProductStatus).map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {t(`products.statuses.${status}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
           </div>
 

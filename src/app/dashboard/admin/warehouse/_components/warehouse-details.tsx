@@ -1,22 +1,21 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { Edit, ArrowLeft, Building2, Globe, BarChart, CreditCard } from 'lucide-react';
+import { Edit, ArrowLeft, Building2, Globe, BarChart, CreditCard, Users, UserCheck } from 'lucide-react';
 import { format } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 
 import { Warehouse, commonCurrencies } from '@/types/warehouse';
@@ -167,6 +166,88 @@ export default function WarehouseDetails({ warehouse }: WarehouseDetailsProps) {
                 <p className="text-base whitespace-pre-line">{warehouse.address || '-'}</p>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Seller Assignment Information */}
+        <Card className="md:col-span-2">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Users className="h-5 w-5 text-muted-foreground" />
+                <CardTitle>{t('details.sellerAccess')}</CardTitle>
+              </div>
+              {warehouse.isAvailableToAll ? (
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200">
+                  <Users className="w-3 h-3 mr-1" />
+                  {t('table.allSellers')}
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="bg-purple-50 text-purple-700 hover:bg-purple-50 border-purple-200">
+                  <UserCheck className="w-3 h-3 mr-1" />
+                  {warehouse.assignedSellers?.length || 0} {t('table.sellers')}
+                </Badge>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {warehouse.isAvailableToAll ? (
+              <div className="text-center py-8">
+                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-lg font-medium">{t('details.availableToAll')}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {t('details.availableToAllDescription')}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {warehouse.sellerDetails && warehouse.sellerDetails.length > 0 ? (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      {t('details.assignedSellersDescription')}
+                    </p>
+                    <ScrollArea className="h-[300px] rounded-md border">
+                      <div className="p-4 space-y-3">
+                        {warehouse.sellerDetails.map((seller, index) => (
+                          <div
+                            key={seller._id}
+                            className="flex items-start justify-between p-3 rounded-lg bg-muted/50"
+                          >
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium">{seller.name}</p>
+                                {seller.country && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {seller.country}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground">{seller.email}</p>
+                              {seller.businessName && (
+                                <p className="text-sm text-muted-foreground">
+                                  {t('details.business')}: {seller.businessName}
+                                </p>
+                              )}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              #{index + 1}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-lg font-medium">{t('details.noAssignedSellers')}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {t('details.noAssignedSellersDescription')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
