@@ -1,4 +1,316 @@
 {
+   "orders": {
+    "title": "Orders",
+    "manageOrders": "Manage Orders",
+    "searchOrders": "Search by order ID, customer name, or phone...",
+    "applyFilters": "Apply Filters",
+    "clearFilters": "Clear All Filters",
+    "noOrdersFound": "No orders found",
+    "orderDetails": "Order Details",
+    "customerInfo": "Customer Information",
+    "orderSummary": "Order Summary",
+    "doubleOrders": "Double Orders",
+    "viewDoubleOrders": "View Double Orders",
+    "similarOrders": "Similar Orders Found",
+    "orderCreated": "Order created successfully",
+    "orderUpdated": "Order updated successfully",
+    "orderDeleted": "Order deleted successfully",
+    "sections": {
+      "orderInfo": "Order Information",
+      "customerInfo": "Customer Information",
+      "productsList": "Order Products",
+      "statusInfo": "Status & Information",
+      "callHistory": "Call History",
+      "statusHistory": "Status History",
+      "warehouseInfo": "Warehouse Information",
+      "sellerInfo": "Seller Information",
+      "doubleOrderDetection": "Double Orders Detected"
+    },
+"callHistory": {
+      "title": "Call History",
+      "totalAttempts": "Total Call Attempts",
+      "lastAttempt": "Last Call Attempt",
+      "lastStatus": "Last Call Status",
+      "attemptDetails": "Call Attempts Details",
+      "attemptNumber": "Attempt",
+      "noAttempts": "No call attempts yet",
+      "phoneNumber": "Phone Number"
+    },
+    "actions": {
+      "makeCall": "Make Call",
+      "updateStatus": "Update Status",
+      "viewHistory": "View History",
+      "copyToClipboard": "Copy to clipboard",
+      "viewOrder": "View Order",
+      "backToOrders": "Back to Orders"
+    },
+
+    "statusHistory": {
+      "title": "Status History",
+      "description": "Complete timeline of status changes for this order",
+      "noHistory": "No status changes recorded",
+      "changedFrom": "from",
+      "changedTo": "to",
+      "timeInPreviousStatus": "Time in previous status",
+      "automaticChange": "Automatic Change",
+      "manualChange": "Manual Change",
+      "systemChange": "System Change"
+    },
+
+    "messages": {
+      "copiedToClipboard": "Copied to clipboard",
+      "failedToCopy": "Failed to copy",
+      "orderNotFound": "Order not found",
+      "unauthorized": "Unauthorized access",
+      "loadingOrder": "Loading order details...",
+      "noProductsInOrder": "No products in this order",
+      "noCallAttemptsYet": "No call attempts yet",
+      "noStatusHistory": "No status changes recorded",
+      "duplicateOrderWarning": "This order has been flagged as a potential duplicate. Please review the similar orders below."
+    },
+
+    
+    
+    "statuses": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "wrong_number": "Wrong Number",
+      "double": "Double",
+      "unreached": "Unreached",
+      "expired": "Expired"
+    },
+
+    "statusDescriptions": {
+      "pending": "Order is waiting for confirmation",
+      "confirmed": "Order has been confirmed and will be processed",
+      "cancelled": "Order has been cancelled",
+      "wrong_number": "Customer phone number is incorrect",
+      "double": "Duplicate order detected",
+      "unreached": "Unable to reach customer",
+      "expired": "Order has expired"
+    },
+
+    
+
+
+    
+    "callStatuses": {
+      "answered": "Answered",
+      "unreached": "Unreached", 
+      "busy": "Busy",
+      "invalid": "Invalid"
+    },
+    
+    "fields": {
+      "orderId": "Order ID",
+      "customer": "Customer",
+      "customerName": "Customer Name",
+      "phoneNumbers": "Phone Numbers",
+      "shippingAddress": "Shipping Address",
+      "warehouse": "Warehouse",
+      "seller": "Seller",
+      "products": "Products",
+      "totalPrice": "Total Price",
+      "status": "Status",
+      "orderDate": "Order Date",
+      "callAttempts": "Call Attempts",
+      "lastCall": "Last Call",
+      "statusComment": "Status Comment",
+      "changedBy": "Changed By",
+      "timeInStatus": "Time in Status",
+     
+      "orderIdInternal": "Order ID (Internal)",
+      
+      "warehouseName": "Warehouse Name",
+      "warehouseLocation": "Location",
+      "warehouseCurrency": "Currency",
+
+      "sellerName": "Seller Name",
+      "sellerId": "Seller ID",
+    
+      "orderTotal": "Order Total",
+ 
+      "currentStatus": "Current Status",
+      "previousStatus": "Previous Status",
+      
+      "createdAt": "Created At",
+      "lastUpdated": "Last Updated",
+      "updatedAt": "Updated At",
+   
+      "totalCallAttempts": "Total Call Attempts",
+    
+      "lastCallAttempt": "Last Call Attempt",
+      "lastCallStatus": "Last Call Status",
+    
+      "statusChangedAt": "Status Changed At",
+      "statusChangedBy": "Changed By",
+
+      "timeConsumed": "Time Consumed",
+      "changeDate": "Change Date",
+      "comment": "Comment",
+      "automaticChange": "Automatic",
+      "systemReason": "System Reason",
+      "unitPrice": "Unit Price",
+      "quantity": "Quantity",
+      "subtotal": "Subtotal",
+      "totalItems": "Total Items",
+      "productCode": "Product Code",
+      "variantCode": "Variant Code",
+      "productName": "Product Name"
+    },
+
+    "products": {
+      "noProducts": "No products in this order",
+      "item": "item",
+      "items": "items",
+      "qty": "Qty",
+      "unitPrice": "Unit Price",
+      "quantity": "Quantity",
+      "subtotal": "Subtotal",
+      "orderTotal": "Order Total",
+      "moreProducts": "more products"
+    },
+    
+    
+    
+    "doubleOrderDetection": {
+      "title": "Double Orders Detected",
+      "description": "This order has been flagged as a potential duplicate. Please review the similar orders below.",
+      "similarOrderFound": "Similar Order Found",
+      "comparisonSections": {
+        "customerNameComparison": "Customer Name Comparison",
+        "phoneNumberComparison": "Phone Number Comparison", 
+        "productsComparison": "Products Comparison",
+        "orderTimingComparison": "Order Timing Comparison"
+      },
+      "labels": {
+        "currentOrder": "Current Order",
+        "similarOrder": "Similar Order",
+        "currentOrderProducts": "Current Order Products",
+        "similarOrderProducts": "Similar Order Products",
+        "timeDifference": "Time difference",
+        "hoursApart": "hours",
+        "similarityScore": "Similarity Score",
+        "phoneNotAvailable": "Phone not available",
+        "productDetailsNotAvailable": "Product details not available"
+      },
+      "warnings": {
+        "sameCustomerName": "Same Customer Name",
+        "samePhoneNumber": "Same Phone Number",
+        "sameProducts": "Same Products",
+        "sameCustomer": "Same Customer",
+        "samePhone": "Same Phone",
+        "within24Hours": "Within 24 hours"
+      }
+    },
+    
+    "time": {
+      "lessThanMinute": "< 1 min",
+      "minutes": "m",
+      "hours": "h",
+      "invalidDate": "Invalid date",
+      "notAvailable": "N/A"
+    },
+    
+    "filters": {
+      "globallySelectedWarehouse": "Globally Selected Warehouse",
+      "filterByStatus": "Filter by Status",
+      "filterByWarehouse": "Filter by Warehouse", 
+      "filterBySeller": "Filter by Seller",
+      "filterByCallStatus": "Filter by Call Status",
+      "filterByDate": "Filter by Date Range",
+      "filterByDoubleOrders": "Show Double Orders Only",
+      "allStatuses": "All Statuses",
+      "allWarehouses": "All Warehouses",
+      "allSellers": "All Sellers",
+      "allCallStatuses": "All Call Statuses",
+      "dateRange": "Date Range",
+      "from": "From",
+      "to": "To",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastWeek": "Last 7 Days",
+      "lastMonth": "Last 30 Days",
+      "customRange": "Custom Range"
+    },
+    
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemsPerPage": "Items per page"
+    },
+    
+    "tooltips": {
+      "callAttempts": "Total call attempts made",
+      "doubleOrder": "This order has similar orders",
+      "statusTime": "Time spent in current status",
+      "phoneNumbers": "Customer phone numbers",
+      "copyOrderId": "Copy order ID to clipboard",
+      "copyPhoneNumber": "Copy phone number to clipboard",
+      "viewOrderHistory": "View complete order history",
+      "makePhoneCall": "Make a phone call to customer"
+    },
+    
+    "badges": {
+      "highPriority": "High Priority",
+      "doubleOrder": "Double",
+      "newOrder": "New",
+      "urgent": "Urgent",
+      "auto": "Auto"
+    },
+    
+    "misc": {
+      "unknown": "Unknown",
+      "unknownWarehouse": "Unknown Warehouse",
+      "unknownSeller": "Unknown Seller",
+      "unknownProduct": "Unknown Product",
+      "unknownCode": "Unknown Code",
+      "code": "Code"
+    }
+  },
+    
+    "filters": {
+      "filterByStatus": "Filter by Status",
+      "filterByWarehouse": "Filter by Warehouse", 
+      "filterBySeller": "Filter by Seller",
+      "filterByCallStatus": "Filter by Call Status",
+      "filterByDate": "Filter by Date Range",
+      "filterByDoubleOrders": "Show Double Orders Only",
+      "allStatuses": "All Statuses",
+      "allWarehouses": "All Warehouses",
+      "allSellers": "All Sellers",
+      "allCallStatuses": "All Call Statuses",
+      "dateRange": "Date Range",
+      "from": "From",
+      "to": "To",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastWeek": "Last 7 Days",
+      "lastMonth": "Last 30 Days",
+      "customRange": "Custom Range"
+    },
+    
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "itemsPerPage": "Items per page"
+    },
+    
+    "tooltips": {
+      "callAttempts": "Total call attempts made",
+      "doubleOrder": "This order has similar orders",
+      "statusTime": "Time spent in current status",
+      "phoneNumbers": "Customer phone numbers"
+    },
+    
+    "badges": {
+      "highPriority": "High Priority",
+      "doubleOrder": "Double",
+      "newOrder": "New",
+      "urgent": "Urgent"
+    },
+  
   "expeditions": {
     "warehouseName": "Warehouse Name",
     "expeditionDate": "Expedition Date",

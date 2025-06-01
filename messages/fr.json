@@ -1,11 +1,266 @@
 {
-    "expeditions": {
-      "warehouseName": "Entrepôts",
-      "expeditionDate": "Date d'Expédition",
+  "orders": {
+    "title": "Commandes",
+    "manageOrders": "Gérer les Commandes",
+    "searchOrders": "Rechercher par ID de commande, nom du client ou téléphone...",
+    "applyFilters": "Appliquer les Filtres",
+    "clearFilters": "Effacer Tous les Filtres",
+    "noOrdersFound": "Aucune commande trouvée",
+    "orderDetails": "Détails de la Commande",
+    "customerInfo": "Informations Client",
+    "orderSummary": "Résumé de la Commande",
+    "doubleOrders": "Commandes Doublées",
+    "viewDoubleOrders": "Voir les Commandes Doublées",
+    "similarOrders": "Commandes Similaires Trouvées",
+    "orderCreated": "Commande créée avec succès",
+    "orderUpdated": "Commande mise à jour avec succès",
+    "orderDeleted": "Commande supprimée avec succès",
+
+    "doubleOrderDetection": {
+      "title": "Commandes Dupliquées Détectées",
+      "description": "Cette commande a été signalée comme un potentiel doublon. Veuillez examiner les commandes similaires ci-dessous.",
+      "similarOrderFound": "Commande Similaire Trouvée",
+      "comparisonSections": {
+        "customerNameComparison": "Comparaison des Noms de Client",
+        "phoneNumberComparison": "Comparaison des Numéros de Téléphone",
+        "productsComparison": "Comparaison des Produits",
+        "orderTimingComparison": "Comparaison du Timing des Commandes"
+      }
+    },
+
+    "labels": {
+      "currentOrder": "Commande Actuelle",
+      "similarOrder": "Commande Similaire",
+      "currentOrderProducts": "Produits de la Commande Actuelle",
+      "similarOrderProducts": "Produits de la Commande Similaire",
+      "timeDifference": "Différence de temps",
+      "hoursApart": "heures",
+      "similarityScore": "Score de Similarité",
+      "phoneNotAvailable": "Téléphone non disponible",
+      "productDetailsNotAvailable": "Détails du produit non disponibles"
+    },
+
+    "time": {
+      "lessThanMinute": "< 1 min",
+      "minutes": "min",
+      "hours": "h",
+      "invalidDate": "Date invalide",
+      "notAvailable": "N/A"
+    },
+
+    "warnings": {
+      "sameCustomerName": "Même Nom de Client",
+      "samePhoneNumber": "Même Numéro de Téléphone",
+      "sameProducts": "Mêmes Produits",
+      "sameCustomer": "Même Client",
+      "samePhone": "Même Téléphone",
+      "within24Hours": "Dans les 24 heures"
+    },
+
+    "sections": {
+      "orderInfo": "Informations de la Commande",
+      "customerInfo": "Informations Client",
+      "productsList": "Produits de la Commande",
+      "statusInfo": "Statut et Informations",
+      "callHistory": "Historique des Appels",
+      "statusHistory": "Historique du Statut",
+      "warehouseInfo": "Informations de l'Entrepôt",
+      "sellerInfo": "Informations du Vendeur",
+      "doubleOrderDetection": "Commandes Dupliquées Détectées"
+    },
+
+    "messages": {
+      "copiedToClipboard": "Copié dans le presse-papiers",
+      "failedToCopy": "Échec de la copie",
+      "orderNotFound": "Commande introuvable",
+      "unauthorized": "Accès non autorisé",
+      "loadingOrder": "Chargement des détails de la commande...",
+      "noProductsInOrder": "Aucun produit dans cette commande",
+      "noCallAttemptsYet": "Aucune tentative d'appel pour le moment",
+      "noStatusHistory": "Aucun changement de statut enregistré",
+      "duplicateOrderWarning": "Cette commande a été signalée comme un potentiel doublon. Veuillez examiner les commandes similaires ci-dessous."
+    },
+
+    "actions": {
+      "makeCall": "Passer un Appel",
+      "updateStatus": "Mettre à Jour le Statut",
+      "viewHistory": "Voir l'Historique",
+      "copyToClipboard": "Copier dans le presse-papiers",
+      "viewOrder": "Voir la Commande",
+      "backToOrders": "Retour aux Commandes"
+    },
+
+    "statuses": {
+      "pending": "En Attente",
+      "confirmed": "Confirmée",
+      "cancelled": "Annulée",
+      "wrong_number": "Mauvais Numéro",
+      "double": "Doublée",
+      "unreached": "Injoignable",
+      "expired": "Expirée"
+    },
+
+    "callStatuses": {
+      "answered": "Répondu",
+      "unreached": "Injoignable",
+      "busy": "Occupé",
+      "invalid": "Invalide"
+    },
+
+    "statusDescriptions": {
+      "pending": "La commande attend confirmation",
+      "confirmed": "La commande a été confirmée et sera traitée",
+      "cancelled": "La commande a été annulée",
+      "wrong_number": "Le numéro de téléphone du client est incorrect",
+      "double": "Commande dupliquée détectée",
+      "unreached": "Impossible de joindre le client",
+      "expired": "La commande a expiré"
+    },
+
+    "fields": {
+      "orderId": "ID de Commande",
+      "orderIdInternal": "ID de Commande (Interne)",
+      "customer": "Client",
+      "customerName": "Nom du Client",
+      "phoneNumbers": "Numéros de Téléphone",
+      "shippingAddress": "Adresse de Livraison",
+      "warehouse": "Entrepôt",
+      "warehouseName": "Nom de l'Entrepôt",
+      "warehouseLocation": "Emplacement",
+      "warehouseCurrency": "Devise",
+      "seller": "Vendeur",
+      "sellerName": "Nom du Vendeur",
+      "sellerId": "ID du Vendeur",
+      "products": "Produits",
+      "totalPrice": "Prix Total",
+      "orderTotal": "Total de la Commande",
+      "status": "Statut",
+      "currentStatus": "Statut Actuel",
+      "previousStatus": "Statut Précédent",
+      "orderDate": "Date de Commande",
+      "createdAt": "Créé le",
+      "lastUpdated": "Dernière Mise à Jour",
+      "updatedAt": "Mis à Jour le",
+      "callAttempts": "Tentatives d'Appel",
+      "totalCallAttempts": "Total des Tentatives d'Appel",
+      "lastCall": "Dernier Appel",
+      "lastCallAttempt": "Dernière Tentative d'Appel",
+      "lastCallStatus": "Statut du Dernier Appel",
+      "statusComment": "Commentaire du Statut",
+      "changedBy": "Modifié par",
+      "statusChangedAt": "Statut Modifié le",
+      "statusChangedBy": "Modifié par",
+      "timeInStatus": "Temps dans le Statut",
+      "timeConsumed": "Temps Consommé",
+      "changeDate": "Date de Modification",
+      "comment": "Commentaire",
+      "automaticChange": "Automatique",
+      "systemReason": "Raison Système",
+      "unitPrice": "Prix Unitaire",
+      "quantity": "Quantité",
+      "subtotal": "Sous-total",
+      "totalItems": "Total des Articles",
+      "productCode": "Code Produit",
+      "variantCode": "Code Variante",
+      "productName": "Nom du Produit"
+    },
+
+    "products": {
+      "noProducts": "Aucun produit dans cette commande",
+      "item": "article",
+      "items": "articles",
+      "qty": "Qté",
+      "unitPrice": "Prix Unitaire",
+      "quantity": "Quantité",
+      "subtotal": "Sous-total",
+      "orderTotal": "Total de la Commande",
+      "moreProducts": "produits supplémentaires"
+    },
+
+    "callHistory": {
+      "title": "Historique des Appels",
+      "totalAttempts": "Total des Tentatives d'Appel",
+      "lastAttempt": "Dernière Tentative d'Appel",
+      "lastStatus": "Statut du Dernier Appel",
+      "attemptDetails": "Détails des Tentatives d'Appel",
+      "attemptNumber": "Tentative",
+      "noAttempts": "Aucune tentative d'appel pour le moment",
+      "phoneNumber": "Numéro de Téléphone"
+    },
+
+    "filters": {
+      "filterByStatus": "Filtrer par Statut",
+      "filterByWarehouse": "Filtrer par Entrepôt",
+      "filterBySeller": "Filtrer par Vendeur",
+      "filterByCallStatus": "Filtrer par Statut d'Appel",
+      "filterByDate": "Filtrer par Plage de Dates",
+      "filterByDoubleOrders": "Afficher Seulement les Commandes Doublées",
+      "allStatuses": "Tous les Statuts",
+      "allWarehouses": "Tous les Entrepôts",
+      "allSellers": "Tous les Vendeurs",
+      "allCallStatuses": "Tous les Statuts d'Appel",
+      "dateRange": "Plage de Dates",
+      "from": "De",
+      "to": "À",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "lastWeek": "7 Derniers Jours",
+      "lastMonth": "30 Derniers Jours",
+      "customRange": "Plage Personnalisée"
+    },
+
+    "tooltips": {
+      "callAttempts": "Total des tentatives d'appel effectuées",
+      "doubleOrder": "Cette commande a des commandes similaires",
+      "statusTime": "Temps passé dans le statut actuel",
+      "phoneNumbers": "Numéros de téléphone du client",
+      "copyOrderId": "Copier l'ID de commande dans le presse-papiers",
+      "copyPhoneNumber": "Copier le numéro de téléphone dans le presse-papiers",
+      "viewOrderHistory": "Voir l'historique complet de la commande",
+      "makePhoneCall": "Passer un appel téléphonique au client"
+    },
+
+    "pagination": {
+      "showing": "Affichage",
+      "of": "de",
+      "itemsPerPage": "Éléments par page"
+    },
+
+    "badges": {
+      "highPriority": "Haute Priorité",
+      "doubleOrder": "Doublon",
+      "newOrder": "Nouveau",
+      "urgent": "Urgent",
+      "auto": "Auto"
+    },
+
+    "misc": {
+      "unknown": "Inconnu",
+      "unknownWarehouse": "Entrepôt Inconnu",
+      "unknownSeller": "Vendeur Inconnu",
+      "unknownProduct": "Produit Inconnu",
+      "unknownCode": "Code Inconnu",
+      "code": "Code"
+    },
+    "statusHistory": {
+      "title": "Historique du Statut",
+      "description": "Chronologie complète des changements de statut pour cette commande",
+      "noHistory": "Aucun changement de statut enregistré",
+      "changedFrom": "de",
+      "changedTo": "vers",
+      "timeInPreviousStatus": "Temps dans le statut précédent",
+      "automaticChange": "Changement Automatique",
+      "manualChange": "Changement Manuel",
+      "systemChange": "Changement Système"
+    }
+  },
+  "expeditions": {
+    "warehouseName": "Entrepôts",
+    "expeditionDate": "Date d'Expédition",
     "title": "Expéditions",
-    "totalProducts":"Total Produits",
+    "totalProducts": "Total Produits",
     "filterByTransportMode": "Filtrer par Mode de Transport",
-    "clearFilters":"Effacer les Filtres",
+    "clearFilters": "Effacer les Filtres",
     "filterByDate": "Filtrer par Date",
     "filterByWeight": "Filtrer par Poids",
     "filterByCountry": "Filtrer par Pays",
@@ -13,7 +268,7 @@
     "filterByProviderType": "Filtrer par Type de Transporteur",
     "filterByStatus": "Filtrer par Statut",
     "applyFilters": "Appliquer les Filtres",
-    "fromCountry":"Pays d'Origine",
+    "fromCountry": "Pays d'Origine",
     "manageExpeditions": "Gérer les Expéditions",
     "addExpedition": "Ajouter une Expédition",
     "createExpedition": "Créer une Expédition",
@@ -27,7 +282,7 @@
     "noProductsSelected": "Aucun produit sélectionné. Veuillez sélectionner des produits dans la liste disponible ci-dessus.",
     "searchExpeditions": "Rechercher des expéditions...",
     "expeditionCode": "Code d'Expédition",
-    
+
     "filtering": {
       "applyFilters": "Appliquer les Filtres",
       "clearFilters": "Effacer les Filtres",
@@ -87,17 +342,17 @@
       "rejectionReason": "Raison du Rejet",
       "statusUpdated": "Statut de l'expédition mis à jour avec succès"
     },
-    
+
     "sections": {
       "packageInfo": "Informations du Colis",
-      "providerInfo": "Informations du Transporteur", 
+      "providerInfo": "Informations du Transporteur",
       "productSelection": "Sélection des Produits",
       "optionalInfo": "Informations Optionnelles",
       "expeditionDetails": "Détails de l'Expédition",
       "summary": "Résumé",
-       "basicInfo": "Informations de Base",
+      "basicInfo": "Informations de Base",
       "statusTracking": "Statut et Suivi",
-      "warehouseInfo": "Informations de l'Entrepôt", 
+      "warehouseInfo": "Informations de l'Entrepôt",
       "products": "Produits",
       "sellerInfo": "Informations du Vendeur",
       "approvalInfo": "Informations d'Approbation"
@@ -127,7 +382,7 @@
       "warehouseName": "Entrepôt",
       "providerName": "Transporteur",
       "totalProducts": "Total Produits",
-      "totalQuantity": "Quantité Totale", 
+      "totalQuantity": "Quantité Totale",
       "totalValue": "Valeur Totale",
       "createdAt": "Date de Création",
       "updatedAt": "Dernière Mise à Jour",
@@ -166,7 +421,7 @@
 
     "transportModes": {
       "AIR": "Transport Aérien",
-      "SEA": "Transport Maritime", 
+      "SEA": "Transport Maritime",
       "LAND": "Transport Terrestre",
       "RAIL": "Transport Ferroviaire",
       "MULTIMODAL": "Transport Multimodal",
@@ -182,7 +437,11 @@
       "AIR": {
         "name": "Transport Aérien",
         "description": "Livraison rapide par avion. Idéal pour les envois urgents et longues distances.",
-        "benefits": ["Livraison la plus rapide", "Portée mondiale", "Manipulation sécurisée"],
+        "benefits": [
+          "Livraison la plus rapide",
+          "Portée mondiale",
+          "Manipulation sécurisée"
+        ],
         "timeframe": "1-5 jours"
       },
       "SEA": {
@@ -206,7 +465,11 @@
       "MULTIMODAL": {
         "name": "Transport Multimodal",
         "description": "Combinaison de plusieurs modes de transport pour une efficacité optimale.",
-        "benefits": ["Meilleur de tous les modes", "Coût optimisé", "Routage flexible"],
+        "benefits": [
+          "Meilleur de tous les modes",
+          "Coût optimisé",
+          "Routage flexible"
+        ],
         "timeframe": "Variable"
       }
     },
@@ -225,21 +488,46 @@
       "REGISTERED": {
         "name": "Transporteur Enregistré",
         "description": "Utilisez l'un de nos transporteurs vérifiés et enregistrés.",
-        "benefits": ["Transporteurs pré-vérifiés", "Suivi intégré", "Couverture d'assurance", "Support 24/7"],
-        "requirements": ["Sélectionner parmi les transporteurs disponibles", "Tarifs standards appliqués"],
+        "benefits": [
+          "Transporteurs pré-vérifiés",
+          "Suivi intégré",
+          "Couverture d'assurance",
+          "Support 24/7"
+        ],
+        "requirements": [
+          "Sélectionner parmi les transporteurs disponibles",
+          "Tarifs standards appliqués"
+        ],
         "recommended": true
       },
       "OWN": {
         "name": "Transporteur Propre",
         "description": "Utilisez votre propre transporteur ou entreprise de logistique.",
-        "benefits": ["Contrôle total", "Arrangements personnalisés", "Relation directe", "Conditions flexibles"],
-        "requirements": ["Fournir les détails du transporteur", "Entrer les informations de contact", "Gérer le suivi manuellement"]
+        "benefits": [
+          "Contrôle total",
+          "Arrangements personnalisés",
+          "Relation directe",
+          "Conditions flexibles"
+        ],
+        "requirements": [
+          "Fournir les détails du transporteur",
+          "Entrer les informations de contact",
+          "Gérer le suivi manuellement"
+        ]
       },
       "THIRD_PARTY": {
         "name": "Tiers",
         "description": "Utilisez un prestataire logistique externe non enregistré dans notre système.",
-        "benefits": ["Large sélection", "Tarifs compétitifs", "Arrangements spéciaux"],
-        "requirements": ["Fournir tous les détails du prestataire", "Coordination manuelle requise", "Intégration système limitée"]
+        "benefits": [
+          "Large sélection",
+          "Tarifs compétitifs",
+          "Arrangements spéciaux"
+        ],
+        "requirements": [
+          "Fournir tous les détails du prestataire",
+          "Coordination manuelle requise",
+          "Intégration système limitée"
+        ]
       }
     },
 
@@ -280,7 +568,7 @@
     "filters": {
       "all": "Tous",
       "pending": "En Attente",
-      "approved": "Approuvés", 
+      "approved": "Approuvés",
       "rejected": "Rejetés",
       "inTransit": "En Transit",
       "delivered": "Livrés",
@@ -361,7 +649,7 @@
         "seller": "Vendeur",
         "fromCountry": "Origine",
         "weight": "Poids (KG)",
-        "date": "Date", 
+        "date": "Date",
         "transport": "Transport",
         "warehouse": "Entrepôt",
         "provider": "Transporteur",
@@ -981,10 +1269,10 @@
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "markAsActive": "Marquer comme Actif",
-    "markAsInactive": "Marquer comme Inactif",
-    "markAsOutOfStock": "Marquer comme Rupture de Stock"
+      "markAsInactive": "Marquer comme Inactif",
+      "markAsOutOfStock": "Marquer comme Rupture de Stock"
     },
-    
+
     "details": {
       "basicInfo": "Informations de Base",
       "location": "Emplacement",
@@ -1080,7 +1368,7 @@
       "overview": "Aperçu",
       "products": "Produits",
       "orders": "Commandes",
-      "expeditions":"Expéditions",
+      "expeditions": "Expéditions",
       "inventory": "Inventaire",
       "payments": "Paiements",
       "analytics": "Analyses",
@@ -1196,7 +1484,7 @@
     "no": "Non",
     "confirm": "Confirmer",
     "required": "Requis",
-    "deleteUserSure":"Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible."
+    "deleteUserSure": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible."
   },
   "home": {
     "heroTag": "Plateforme de Logistique Multi-Pays",

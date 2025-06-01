@@ -89,16 +89,6 @@ export default function ProductForm({
     });
   };
 
-  // Handle select changes
-  const handleSelectChange = (name: string, value: string) => {
-    if (name && value) {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
-  };
-
   // Handle warehouse selection
   const handleWarehouseToggle = (warehouseId: string) => {
     if (selectedWarehouses.includes(warehouseId)) {

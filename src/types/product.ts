@@ -32,7 +32,6 @@ export interface ProductTableData {
     url: string;
     publicId: string;
   };
-  price?: number;
   totalStock: number;
   status: ProductStatus;
   createdAt: Date;

@@ -37,6 +37,7 @@ type RegistrationResult = {
   message: string;
 };
 
+
 /**
  * Server action to register a new seller
  */

@@ -12,17 +12,11 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/config/auth';
 import { cookies } from 'next/headers';
 import { deleteFromCloudinary, uploadToCloudinary } from '@/lib/cloudinary';
+import { getCurrentUser } from './auth';
 
-/**
- * Get the current user from session
- */
-async function getCurrentUser() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) return null;
-  
-  const user = await User.findOne({ email: session.user.email });
-  return user;
-}
+
+
+
 
 /**
  * Get products with pagination and filtering
