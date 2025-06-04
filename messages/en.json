@@ -1,5 +1,63 @@
 {
    "orders": {
+    "form": {
+      "titleCreate": "Create New Order",
+      "titleEdit": "Edit Order",
+      "customerInfoTitle": "Customer Information",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Enter customer full name",
+      "phoneNumbersLabel": "Phone Numbers",
+      "phoneNumbersPlaceholder": "e.g., +1234567890 | +0987654321",
+      "phoneNumbersHelpText": "Separate multiple phone numbers with | (pipe symbol)",
+      "shippingAddressLabel": "Shipping Address",
+      "shippingAddressPlaceholder": "Enter complete shipping address",
+      "warehouseSelectionTitle": "Warehouse Selection",
+      "selectWarehouseLabel": "Select Warehouse",
+      "selectWarehousePlaceholder": "Select a warehouse",
+      "currencyPrefix": "Currency:",
+      "productSelectionTitle": "Product Selection",
+      "availableProductsLabel": "Available Products",
+      "loadingProducts": "Loading products...",
+      "outOfStockBadge": "Out of Stock",
+      "noExpeditionsBadge": "No Expeditions",
+      "basePricePrefix": "Base:",
+      "noProductsInWarehouse": "No products available in this warehouse",
+      "selectedProductsLabel": "Selected Products",
+      "quantityLabel": "Quantity",
+      "expeditionLabel": "Expedition",
+      "selectExpeditionPlaceholder": "Select expedition",
+      "unitPriceLabel": "Unit Price",
+      "totalLabel": "Total",
+      "noProductsSelected": "No products selected",
+      "selectProductsHelpText": "Select products from the available list above",
+      "summaryTotalProducts": "Total Products",
+      "summaryTotalQuantity": "Total Quantity",
+      "summaryTotalValue": "Total Value",
+      "cancelButton": "Cancel",
+      "createButton": "Create Order",
+      "creatingButton": "Creating Order...",
+      "messages": {
+        "failedToLoadWarehouses": "Failed to load warehouses",
+        "failedToLoadProducts": "Failed to load products",
+        "productAlreadySelected": "Product already selected",
+        "productHasNoExpeditions": "{productName} has no available expeditions. Cannot create order without expedition pricing.",
+        "productOutOfStockAdded": "{productName} is out of stock but has been added to the order.",
+        "failedToCreateOrder": "Failed to create order",
+        "unexpectedErrorCreatingOrder": "An unexpected error occurred",
+        "orderCreatedWithDoubleOrderWarning": "Order created successfully, but {count} potential double order(s) detected!"
+      },
+      "validations": {
+        "customerNameRequired": "Customer name is required",
+        "phoneNumbersRequired": "Phone number is required",
+        "shippingAddressRequired": "Shipping address is required",
+        "warehouseRequired": "Warehouse is required",
+        "productsRequired": "At least one product is required",
+        "productNeedsExpedition": "Product {productName} must have an expedition selected"
+      }
+    },
+    "addOrder":"Add Order",
+    "createOrder": "Create Order",
+    "createOrderDescription":"Create a new order for a customer. Fill out all required information including customer details, shipping address, and product selection.",
     "title": "Orders",
     "manageOrders": "Manage Orders",
     "searchOrders": "Search by order ID, customer name, or phone...",
@@ -90,11 +148,6 @@
       "unreached": "Unable to reach customer",
       "expired": "Order has expired"
     },
-
-    
-
-
-    
     "callStatuses": {
       "answered": "Answered",
       "unreached": "Unreached", 

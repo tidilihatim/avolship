@@ -8,11 +8,9 @@ import {
   Plus,
   X,
   Package,
-  CheckCircle2,
   Truck,
   Calendar,
   MapPin,
-  Weight,
   User,
   Building,
 } from "lucide-react";
@@ -20,7 +18,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -40,7 +37,6 @@ import {
   SelectedProduct,
 } from "@/types/expedition-form";
 import {
-  ExpeditionStatus,
   TransportMode,
   ProviderType,
 } from "@/app/dashboard/_constant/expedition";
@@ -48,7 +44,6 @@ import {
   createExpedition,
   updateExpedition,
   getProductsForWarehouse,
-  getWarehouseById,
 } from "@/app/actions/expedition";
 
 interface ExtendedWarehouse {
@@ -64,6 +59,7 @@ interface ExpeditionFormProps {
   providers?: { _id: string; name: string; businessName?: string }[];
   countries?: string[];
   isEdit?: boolean;
+  userRole: string
 }
 
 /**
@@ -76,6 +72,7 @@ export default function ExpeditionForm({
   providers = [],
   countries = [],
   isEdit = false,
+  userRole
 }: ExpeditionFormProps) {
   const t = useTranslations();
   const router = useRouter();
@@ -438,7 +435,7 @@ export default function ExpeditionForm({
             ? t("expeditions.expeditionUpdated")
             : t("expeditions.expeditionCreated")
         );
-        router.push("/dashboard/seller/expeditions");
+        router.push(`/dashboard/${userRole}/expeditions`);
       }
     } catch (error) {
       console.error("Error saving expedition:", error);
@@ -1130,7 +1127,7 @@ export default function ExpeditionForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push("/dashboard/seller/expeditions")}
+              onClick={() => router.push(`/dashboard/${userRole}/expeditions`)}
               disabled={isSubmitting}
             >
               {t("common.cancel")}

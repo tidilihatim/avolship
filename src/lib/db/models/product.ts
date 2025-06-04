@@ -41,7 +41,6 @@ export interface IProduct extends Document {
   warehouses: WarehouseInventory[]; // Multiple warehouses
   sellerId: mongoose.Types.ObjectId; // Link to seller user
   image?: CloudinaryImage; // Cloudinary image with public ID
-  price?: number;
   totalStock: number; // Calculated from warehouses
   status: ProductStatus;
   createdAt: Date;

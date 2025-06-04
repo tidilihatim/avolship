@@ -9,6 +9,89 @@ export interface OrderProduct {
   unitPrice: number;
 }
 
+export interface OrderInput {
+  customer: {
+    name: string;
+    phoneNumbers: string[];
+    shippingAddress: string;
+  };
+  warehouseId: string;
+  products: {
+    productId: string;
+    quantity: number;
+    unitPrice: number;
+    expeditionId: string;
+  }[];
+}
+
+export interface ProductOption {
+  _id: string;
+  name: string;
+  code: string;
+  price?: number;
+  totalStock: number;
+  description: string;
+  availableExpeditions: ExpeditionOption[];
+}
+
+export interface ExpeditionOption {
+  _id: string;
+  expeditionCode: string;
+  unitPrice: number;
+  status: string;
+  expeditionDate: Date;
+  transportMode: string;
+}
+
+export interface SelectedProduct {
+  _id: string;
+  name: string;
+  code: string;
+  price?: number;
+  totalStock: number;
+  quantity: number;
+  unitPrice: number;
+  expeditionId: string;
+  expeditionCode: string;
+  availableExpeditions: ExpeditionOption[];
+}
+
+export interface OrderFormProps {
+  order?: any;
+  warehouses?: Array<{
+    _id: string;
+    name: string;
+    country: string;
+    currency: string;
+  }>;
+  isEdit?: boolean;
+  currentUser?: {
+    _id: string;
+    role: string;
+  };
+}
+
+// src/app/dashboard/_constant/order.ts
+export const ORDER_STATUS_LABELS = {
+  [OrderStatus.PENDING]: 'Pending',
+  [OrderStatus.CONFIRMED]: 'Confirmed', 
+  [OrderStatus.CANCELLED]: 'Cancelled',
+  [OrderStatus.WRONG_NUMBER]: 'Wrong Number',
+  [OrderStatus.DOUBLE]: 'Double Order',
+  [OrderStatus.UNREACHED]: 'Unreached',
+  [OrderStatus.EXPIRED]: 'Expired',
+} as const;
+
+export const ORDER_STATUS_COLORS = {
+  [OrderStatus.PENDING]: 'bg-yellow-100 text-yellow-800',
+  [OrderStatus.CONFIRMED]: 'bg-green-100 text-green-800',
+  [OrderStatus.CANCELLED]: 'bg-red-100 text-red-800',
+  [OrderStatus.WRONG_NUMBER]: 'bg-orange-100 text-orange-800',
+  [OrderStatus.DOUBLE]: 'bg-purple-100 text-purple-800',
+  [OrderStatus.UNREACHED]: 'bg-gray-100 text-gray-800',
+  [OrderStatus.EXPIRED]: 'bg-gray-100 text-gray-800',
+} as const;
+
 export interface CallAttempt {
   attemptNumber: number;
   phoneNumber: string;

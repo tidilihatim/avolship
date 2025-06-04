@@ -534,7 +534,6 @@ export default function ExpeditionTable({
 
   // Format currency
   const formatCurrency = async (value?: number,warehouseCurrency?: string) => {
-    console.log("🚀 ~ formatCurrency ~ warehouseCurrency:", warehouseCurrency)
     if (value === undefined || value === null) return "-";
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -785,7 +784,7 @@ export default function ExpeditionTable({
             </SheetContent>
           </Sheet>
 
-          <Link href="/dashboard/seller/expeditions/create" passHref>
+          <Link href={`/dashboard/${currentUserRole}/expeditions/create`} passHref>
             <Button className="flex gap-2">
               <PlusCircle className="h-4 w-4" />
               {t("expeditions.addExpedition")}
@@ -932,7 +931,7 @@ export default function ExpeditionTable({
                               {t("common.actions")}
                             </DropdownMenuLabel>
                             <DropdownMenuItem className="cursor-pointer" asChild>
-                              <Link href={`/dashboard/seller/expeditions/${expedition._id}`}>
+                              <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}`}>
                                 <Eye className="mr-2 h-4 w-4" />
                                 {t("common.view")}
                               </Link>
@@ -1007,7 +1006,7 @@ export default function ExpeditionTable({
                               <>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem asChild>
-                                  <Link href={`/dashboard/seller/expeditions/${expedition._id}/edit`}>
+                                  <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}/edit`}>
                                     <Edit className="mr-2 h-4 w-4" />
                                     {t("common.edit")}
                                   </Link>
@@ -1066,7 +1065,7 @@ export default function ExpeditionTable({
               <p className="text-muted-foreground text-center">
                 {t("expeditions.noExpeditionsFound")}
               </p>
-              <Link href="/dashboard/seller/expeditions/create" passHref>
+              <Link href={`/dashboard/${currentUserRole}/expeditions/create`} passHref>
                 <Button variant="outline">{t("expeditions.addExpedition")}</Button>
               </Link>
             </div>

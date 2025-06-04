@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getAllWarehousesForExpedition, getAllProvidersForExpedition, getCountriesForForm } from "@/app/actions/expedition";
-import ExpeditionForm from "../_components/expedition-form";
+import ExpeditionForm from "@/app/dashboard/seller/expeditions/_components/expedition-form";
 import { getCurrentUser } from "@/app/actions/auth";
 
 export const metadata: Metadata = {
@@ -39,11 +39,11 @@ export default async function ExpeditionCreatePage() {
       </div>
 
       <ExpeditionForm
-        userRole={user?.role}
         warehouses={warehouses}
         providers={providers}
         countries={countries}
         isEdit={false}
+        userRole={user?.role}
       />
     </div>
   );

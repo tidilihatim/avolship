@@ -45,7 +45,7 @@ export default async function SellerDashboardLayout({
             </DashboardLayout>
           </WarehouseProvider>
         </SocketProvider>
-        <Toaster />
+        <Toaster  />
       </NextIntlClientProvider>
     </ThemeProvider>
   );

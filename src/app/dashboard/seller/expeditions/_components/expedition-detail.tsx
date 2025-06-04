@@ -184,7 +184,7 @@ export default function ExpeditionDetails({ expedition, userRole }: ExpeditionDe
           <Button
             variant="outline"
             size="icon"
-            onClick={() => router.push('/dashboard/seller/expeditions')}
+            onClick={() => router.push(`/dashboard/${userRole}/expeditions`)}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -255,7 +255,7 @@ export default function ExpeditionDetails({ expedition, userRole }: ExpeditionDe
             <Button
               variant="outline"
               className="flex items-center gap-2"
-              onClick={() => router.push(`/dashboard/expeditions/${expedition._id}/edit`)}
+              onClick={() => router.push(`/dashboard/${userRole}/expeditions/${expedition._id}/edit`)}
             >
               <Edit className="h-4 w-4" />
               {t('common.edit')}

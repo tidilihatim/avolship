@@ -7,7 +7,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Globe } from "lucide-react";
+import { ChevronDown, Globe, PlusCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   Search,
@@ -877,6 +877,13 @@ export default function OrderTable({
               </div>
             </SheetContent>
           </Sheet>
+
+          <Link href="/dashboard/seller/orders/create" passHref>
+            <Button className="flex gap-2">
+              <PlusCircle className="h-4 w-4" />
+              {t("orders.addOrder")}
+            </Button>
+          </Link>
         </div>
       </div>
 
