@@ -13,6 +13,7 @@ import {
   getExpeditionById,
 } from "@/app/actions/expedition";
 import ExpeditionForm from "../../_components/expedition-form";
+import { getCurrentUser } from "@/app/actions/auth";
 
 export const metadata: Metadata = {
   title: "Edit Expedition | AvolShip",
@@ -33,6 +34,7 @@ export default async function EditExpeditionPage({
   const {id} = await params
 
   const { expedition, success } = await getExpeditionById(id);
+  const user = await getCurrentUser();
 
   const [warehouses, providers, countries] = await Promise.all([
     getAllWarehousesForExpedition(),
@@ -63,6 +65,7 @@ export default async function EditExpeditionPage({
         countries={countries}
         isEdit
         expedition={expedition}
+        userRole={user?.role}
       />
     </div>
   );
