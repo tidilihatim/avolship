@@ -27,6 +27,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: Warehouse,
     },
     {
+      name: "orders",
+      href: "/dashboard/admin/orders",
+      icon: ShoppingCart
+    },
+    {
       name:"expeditions",
       href: "/dashboard/admin/expeditions",
       icon: PlaneIcon

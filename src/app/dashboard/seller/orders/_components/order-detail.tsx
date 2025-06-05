@@ -211,7 +211,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => router.push('/dashboard/seller/orders')}
+                onClick={() => router.push(`/dashboard/${userRole}/orders`)}
                 className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl"
               >
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -225,7 +225,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
                   </Button>
                 )}
                 <Button variant="outline" size="sm" asChild>
-                  <Link href={`/dashboard/seller/orders/${order._id}#history`}>
+                  <Link href={`/dashboard/${userRole}/orders/${order._id}#history`}>
                     <History className="h-4 w-4" />
                   </Link>
                 </Button>
@@ -285,7 +285,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
                   </>
                 )}
                 <Button variant="outline" className="h-11 px-6" asChild>
-                  <Link href={`/dashboard/seller/orders/${order._id}#history`}>
+                  <Link href={`/dashboard/${userRole}/orders/${order._id}#history`}>
                     <History className="h-4 w-4 mr-2" />
                     {t('statusHistory.title')}
                   </Link>
@@ -938,7 +938,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
                             {ref.orderDate ? formatDate(ref.orderDate) : t('time.notAvailable')}
                           </p>
                           <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
-                            <Link href={`/dashboard/seller/orders/${ref.orderId}`}>
+                            <Link href={`/dashboard/${userRole}/orders/${ref.orderId}`}>
                               <Eye className="h-4 w-4 mr-2" />
                               {t('actions.viewOrder')}
                             </Link>

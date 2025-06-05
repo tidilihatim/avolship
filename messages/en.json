@@ -1,5 +1,8 @@
 {
    "orders": {
+    "common":{
+      "cancel":"Cancel"
+    },
     "form": {
       "titleCreate": "Create New Order",
       "titleEdit": "Edit Order",
@@ -97,6 +100,7 @@
     "actions": {
       "makeCall": "Make Call",
       "updateStatus": "Update Status",
+      "assignToAgent": "Assign to Agent",
       "viewHistory": "View History",
       "copyToClipboard": "Copy to clipboard",
       "viewOrder": "View Order",
@@ -267,6 +271,7 @@
     },
     
     "filters": {
+      "title":"Title",
       "globallySelectedWarehouse": "Globally Selected Warehouse",
       "filterByStatus": "Filter by Status",
       "filterByWarehouse": "Filter by Warehouse", 
@@ -320,10 +325,26 @@
       "unknownProduct": "Unknown Product",
       "unknownCode": "Unknown Code",
       "code": "Code"
+    },
+
+    "statusUpdate": {
+      "title": "Update Order Status",
+      "description": "Update the status for order {orderId}",
+      "currentStatus": "Current Status",
+      "newStatus": "New Status",
+      "selectStatus": "Select new status",
+      "comment": "Comment (Optional)",
+      "commentPlaceholder": "Add a comment explaining the status change...",
+      "updateStatus": "Update Status",
+      "updating": "Updating...",
+      "successMessage": "Order status updated successfully",
+      "errorMessage": "Failed to update order status",
+      "noChangesMessage": "No changes detected. Please select a different status or add a comment."
     }
   },
     
     "filters": {
+      "title": "Filters",
       "filterByStatus": "Filter by Status",
       "filterByWarehouse": "Filter by Warehouse", 
       "filterBySeller": "Filter by Seller",

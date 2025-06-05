@@ -1,5 +1,8 @@
 {
   "orders": {
+    "common":{
+      "cancel":"Annuler"
+    },
     "form": {
       "titleCreate": "Créer une nouvelle commande",
       "titleEdit": "Modifier la commande",
@@ -142,6 +145,7 @@
     "actions": {
       "makeCall": "Passer un Appel",
       "updateStatus": "Mettre à Jour le Statut",
+      "assignToAgent": "Assigner à un Agent",
       "viewHistory": "Voir l'Historique",
       "copyToClipboard": "Copier dans le presse-papiers",
       "viewOrder": "Voir la Commande",
@@ -247,6 +251,7 @@
     },
 
     "filters": {
+      "title": "Filtres",
       "filterByStatus": "Filtrer par Statut",
       "filterByWarehouse": "Filtrer par Entrepôt",
       "filterBySeller": "Filtrer par Vendeur",
@@ -299,6 +304,21 @@
       "unknownProduct": "Produit Inconnu",
       "unknownCode": "Code Inconnu",
       "code": "Code"
+    },
+
+    "statusUpdate": {
+      "title": "Mettre à jour le statut de la commande",
+      "description": "Mettre à jour le statut de la commande {orderId}",
+      "currentStatus": "Statut actuel",
+      "newStatus": "Nouveau statut",
+      "selectStatus": "Sélectionner le nouveau statut",
+      "comment": "Commentaire (Optionnel)",
+      "commentPlaceholder": "Ajoutez un commentaire expliquant le changement de statut...",
+      "updateStatus": "Mettre à jour le statut",
+      "updating": "Mise à jour...",
+      "successMessage": "Statut de la commande mis à jour avec succès",
+      "errorMessage": "Échec de la mise à jour du statut de la commande",
+      "noChangesMessage": "Aucun changement détecté. Veuillez sélectionner un statut différent ou ajouter un commentaire."
     },
     "statusHistory": {
       "title": "Historique du Statut",

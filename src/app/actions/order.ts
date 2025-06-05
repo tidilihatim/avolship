@@ -857,3 +857,78 @@ export const getOrderByIdAdd = withDbConnection(async (orderId: string) => {
     };
   }
 });
+
+/**
+ * Update order status (Admin/Moderator only)
+ */
+export const updateOrderStatus = withDbConnection(async (
+  orderId: string,
+  newStatus: OrderStatus,
+  comment?: string
+) => {
+  try {
+    // Get the current user
+    const user = await getCurrentUser();
+    if (!user) {
+      return {
+        success: false,
+        message: 'Unauthorized',
+      };
+    }
+
+    // Check if user has permission to update status
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR) {
+      return {
+        success: false,
+        message: 'Only admins and moderators can update order status',
+      };
+    }
+
+    // Find the order
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return {
+        success: false,
+        message: 'Order not found',
+      };
+    }
+
+    // Store previous status for status history
+    const previousStatus = order.status;
+
+    // Update order status
+    order.status = newStatus;
+    order.statusComment = comment || '';
+    order.statusChangedBy = user._id;
+    order.statusChangedAt = new Date();
+
+    await order.save();
+
+    // Create status history entry
+    await OrderStatusHistory.create({
+      orderId: order._id,
+      previousStatus,
+      currentStatus: newStatus,
+      changedBy: user._id,
+      changedByRole: user.role,
+      changeDate: new Date(),
+      comment: comment || '',
+      automaticChange: false,
+    });
+
+    // Revalidate the orders page
+    revalidatePath('/dashboard/admin/orders');
+    revalidatePath('/dashboard/seller/orders');
+
+    return {
+      success: true,
+      message: 'Order status updated successfully',
+    };
+  } catch (error: any) {
+    console.error('Error updating order status:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to update order status',
+    };
+  }
+});

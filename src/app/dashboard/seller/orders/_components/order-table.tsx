@@ -97,6 +97,7 @@ import { Label } from "@/components/ui/label";
 import { OrderStatus } from "@/lib/db/models/order";
 import { UserRole } from "@/lib/db/models/user";
 import { getLoginUserRole } from "@/app/actions/auth";
+import StatusUpdateDialog from "./status-update-dialog";
 
 // Constants for filter values
 const ALL_STATUSES = "all_statuses";
@@ -227,7 +228,6 @@ export default function OrderTable({
   const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
   const [userRole, setUserRole] = useState<string | null>(null);
 
   // State for search and filters
@@ -255,6 +255,15 @@ export default function OrderTable({
     filters.dateRange || CUSTOM_DATE_RANGE
   );
   const [itemsPerPage, setItemsPerPage] = useState<number>(filters.limit || 10);
+
+  // State for status update dialog
+  const [statusUpdateDialog, setStatusUpdateDialog] = useState<{
+    isOpen: boolean;
+    order: OrderTableData | null;
+  }>({
+    isOpen: false,
+    order: null,
+  });
 
   // Fetch current user role on component mount
   useEffect(() => {
@@ -633,12 +642,28 @@ export default function OrderTable({
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("Copied to clipboard");
+      toast.success(t("messages.copiedToClipboard"));
     } catch (error) {
-      toast.error("Failed to copy");
+      toast.error(t("messages.failedToCopy"));
     }
   };
 
+  // Status update dialog handlers
+  const openStatusUpdateDialog = (order: OrderTableData) => {
+    setStatusUpdateDialog({
+      isOpen: true,
+      order,
+    });
+  };
+
+  const closeStatusUpdateDialog = () => {
+    setStatusUpdateDialog({
+      isOpen: false,
+      order: null,
+    });
+  };
+
+  
   if (error) {
     return (
       <Card>
@@ -674,12 +699,12 @@ export default function OrderTable({
             <SheetTrigger asChild>
               <Button variant="outline" className="flex gap-2">
                 <Filter className="h-4 w-4" />
-                Filters
+                {t("orders.filters.title")}
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="p-4 w-[400px] sm:w-[540px]">
               <SheetHeader className="px-1">
-                <SheetTitle className="text-xl">Filters</SheetTitle>
+                <SheetTitle className="text-xl">{t("orders.filters.title")}</SheetTitle>
                 <SheetDescription className="text-sm">
                   {t("orders.applyFilters")}
                 </SheetDescription>
@@ -878,7 +903,7 @@ export default function OrderTable({
             </SheetContent>
           </Sheet>
 
-          <Link href="/dashboard/seller/orders/create" passHref>
+          <Link href={`/dashboard/${userRole}/orders/create`} passHref>
             <Button className="flex gap-2">
               <PlusCircle className="h-4 w-4" />
               {t("orders.addOrder")}
@@ -1192,8 +1217,24 @@ export default function OrderTable({
                           {order.statusComment && (
                             <div className="text-xs text-muted-foreground bg-muted p-2 rounded border max-w-[150px]">
                               <div className="font-medium mb-1">Comment:</div>
-                              <div className="leading-tight">
-                                {order.statusComment}
+                              <div className="leading-tight overflow-hidden">
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="cursor-help truncate max-w-full">
+                                        {order.statusComment.length > 30 
+                                          ? `${order.statusComment.substring(0, 30)}...`
+                                          : order.statusComment
+                                        }
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-xs">
+                                      <p className="whitespace-pre-wrap break-words">
+                                        {order.statusComment}
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
                               </div>
                             </div>
                           )}
@@ -1270,7 +1311,7 @@ export default function OrderTable({
                               asChild
                             >
                               <Link
-                                href={`/dashboard/seller/orders/${order._id}`}
+                                href={`/dashboard/${userRole}/orders/${order._id}`}
                               >
                                 <Eye className="mr-2 h-4 w-4" />
                                 {t("common.view")}
@@ -1282,7 +1323,7 @@ export default function OrderTable({
                               asChild
                             >
                               <Link
-                                href={`/dashboard/seller/orders/${order._id}#history`}
+                                href={`/dashboard/${userRole}/orders/${order._id}#history`}
                               >
                                 <History className="mr-2 h-4 w-4" />
                                 {t("orders.statusHistory.title")}
@@ -1296,7 +1337,7 @@ export default function OrderTable({
                                   asChild
                                 >
                                   <Link
-                                    href={`/dashboard/seller/orders/${order._id}#double`}
+                                    href={`/dashboard/${userRole}/orders/${order._id}#double`}
                                   >
                                     <Users className="mr-2 h-4 w-4" />
                                     {t("orders.viewDoubleOrders")}
@@ -1326,11 +1367,14 @@ export default function OrderTable({
                             {isAdminOrModerator && (
                               <>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem className="cursor-pointer">
-                                  Update Status
+                                <DropdownMenuItem 
+                                  className="cursor-pointer"
+                                  onClick={() => openStatusUpdateDialog(order)}
+                                >
+                                  {t("orders.actions.updateStatus")}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer">
-                                  Assign to Agent
+                                  {t("orders.actions.assignToAgent")}
                                 </DropdownMenuItem>
                               </>
                             )}
@@ -1391,6 +1435,15 @@ export default function OrderTable({
           </CardFooter>
         )}
       </Card>
+
+      {/* Status Update Dialog */}
+      {statusUpdateDialog.order && (
+        <StatusUpdateDialog
+          isOpen={statusUpdateDialog.isOpen}
+          onClose={closeStatusUpdateDialog}
+          order={statusUpdateDialog.order}
+        />
+      )}
     </div>
   );
 }
