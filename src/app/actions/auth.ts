@@ -167,7 +167,7 @@ export const getCurrentUser = withDbConnection(async () => {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) throw new Error('User not found');
     const user = await User.findById(session.user.id);
-    return user;
+    return JSON.parse(JSON.stringify(user));
   } catch (error: any) {
     throw new Error(error.message)
   }

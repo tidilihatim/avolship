@@ -162,6 +162,7 @@ const OrderSchema = new Schema<IOrder>(
       type: Number,
       required: [true, 'Total price is required'],
       min: [0, 'Total price cannot be negative'],
+      default: 0, // Add default value
     },
     
     // Status Management
@@ -281,9 +282,10 @@ OrderSchema.pre('save', async function (next) {
   next();
 });
 
-// Pre-save middleware to calculate total price
+// Pre-save middleware to calculate total price (only if not already set)
 OrderSchema.pre('save', function (next) {
-  if (this.products && this.products.length > 0) {
+  // Only calculate if totalPrice is not already set and we have products
+  if ((this.totalPrice === 0 || this.totalPrice === undefined) && this.products && this.products.length > 0) {
     this.totalPrice = this.products.reduce(
       (total, product) => total + (product.unitPrice * product.quantity),
       0

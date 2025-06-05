@@ -320,6 +320,7 @@
     "filterByTransportMode": "Filtrer par Mode de Transport",
     "clearFilters": "Effacer les Filtres",
     "filterByDate": "Filtrer par Date",
+    "filterBySeller": "Filtrer par Vendeur",
     "filterByWeight": "Filtrer par Poids",
     "filterByCountry": "Filtrer par Pays",
     "filterByWarehouse": "Filtrer par Entrepôts",

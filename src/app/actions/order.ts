@@ -597,7 +597,8 @@ const detectDoubleOrders = withDbConnection(async (
 /**
  * Create a new order
  */
-export const createOrder = withDbConnection(async (orderData :any) => {
+export const createOrder = withDbConnection(async (orderData: any) => {
+  console.log("🚀 ~ createOrder ~ orderData:", orderData)
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -627,8 +628,8 @@ export const createOrder = withDbConnection(async (orderData :any) => {
     }
 
     // Validate products and expeditions
-    const productIds = orderData.products.map((p:any) => p.productId);
-    const expeditionIds = orderData.products.map((p:any) => p.expeditionId);
+    const productIds = orderData.products.map((p: any) => p.productId);
+    const expeditionIds = orderData.products.map((p: any) => p.expeditionId);
 
     // Check if all products exist and have stock
     const products = await Product.find({
@@ -659,7 +660,7 @@ export const createOrder = withDbConnection(async (orderData :any) => {
 
     // Validate expedition pricing matches
     const expeditionMap = new Map();
-    expeditions.forEach((exp:any) => {
+    expeditions.forEach((exp: any) => {
       expeditionMap.set(exp._id.toString(), exp);
     });
 
@@ -686,7 +687,7 @@ export const createOrder = withDbConnection(async (orderData :any) => {
 
     // Parse phone numbers from string (separated by |)
     const phoneNumbers = typeof orderData.customer.phoneNumbers === 'string'
-      ? orderData?.customer.phoneNumbers.split()
+      ? orderData.customer.phoneNumbers.split('|').map((p: string) => p.trim()).filter(Boolean)
       : orderData.customer.phoneNumbers;
 
     // Detect potential double orders
@@ -706,7 +707,7 @@ export const createOrder = withDbConnection(async (orderData :any) => {
     // Prepare order products with enhanced data
     const orderProducts = await Promise.all(
       orderData.products.map(async (orderProduct: any) => {
-        const product = products.find((p:any) => p._id.toString() === orderProduct.productId);
+        const product = products.find((p: any) => p._id.toString() === orderProduct.productId);
         return {
           productId: orderProduct.productId,
           quantity: orderProduct.quantity,
@@ -716,7 +717,13 @@ export const createOrder = withDbConnection(async (orderData :any) => {
       })
     );
 
-    // Create the order
+    // Calculate total price before creating the order
+    const totalPrice = orderProducts.reduce(
+      (total, product) => total + (product.unitPrice * product.quantity),
+      0
+    );
+
+    // Create the order with totalPrice included
     const newOrder = new Order({
       customer: {
         name: orderData.customer.name,
@@ -726,6 +733,7 @@ export const createOrder = withDbConnection(async (orderData :any) => {
       warehouseId: orderData.warehouseId,
       sellerId: user._id,
       products: orderProducts,
+      totalPrice, // Add the calculated total price here
       status: OrderStatus.PENDING,
       statusChangedAt: new Date(),
       isDouble: doubleOrders.length > 0,

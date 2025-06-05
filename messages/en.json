@@ -371,6 +371,7 @@
     "totalProducts":"Total Products",
     "applyFilters":"Apply Filters",
     "title": "Expeditions",
+    "filterBySeller":"Filter by Seller",
     "filterByTransportMode": "Filter by Transport Mode",
     "filterByStatus": "Filter by Status",
     "filterByProviderType": "Filter by Provider Type",

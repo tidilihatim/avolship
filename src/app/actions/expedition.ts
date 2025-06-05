@@ -14,6 +14,9 @@ import Expedition, { IExpedition } from '@/lib/db/models/expedition';
 import { ExpeditionStatus } from '../dashboard/_constant/expedition';
 import { ExpeditionInput, ProductOption } from '@/types/expedition-form';
 import Product from '@/lib/db/models/product';
+import { sendNotification } from '@/lib/notifications/send-notification';
+import { NotificationType } from '@/types/notification';
+import { stat } from 'fs';
 
 /**
  * Get expeditions with filters and pagination
@@ -284,7 +287,25 @@ export const updateExpeditionStatus = withDbConnection(async (
       updateData.approvedAt = undefined;
     }
 
+    const expedition = await Expedition.findById(expeditionId);
+
+    if (!expedition) {
+      return {
+        success: false,
+        message: 'Expedition not found',
+      };
+    }
     await Expedition.findByIdAndUpdate(expeditionId, updateData);
+
+    // send notification
+
+    sendNotification({
+      userId: expedition?.sellerId?.toString(),
+      type: status === ExpeditionStatus.APPROVED ? NotificationType.SUCCESS : NotificationType.ERROR,
+      title: status === ExpeditionStatus.APPROVED ? `Expedition Approved ${expedition?.expeditionCode}` : `Expedition Rejected ${expedition?.expeditionCode}`,
+      message: status === ExpeditionStatus.APPROVED ? 'Your expedition has been approved by admin, you can now start selling your products on the marketplaces' : `Expedition has been rejected by admin. We apologize for the inconvenience.`,
+      actionLink: `/dashboard/seller/expeditions/${expeditionId}`,
+    })
 
     return {
       success: true,
