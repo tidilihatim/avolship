@@ -1,10 +1,10 @@
 import { 
   BarChart3, CreditCard, LayoutDashboard, 
   MessageCircle, Package, PlaneIcon, ShoppingCart, 
-  Truck, User, Warehouse 
+  Truck, User, Warehouse, Phone, Clock, Users, FileText 
 } from "lucide-react";
 
-type UserType = 'admin' | 'seller' | 'customer-support' | 'delivery' | 'provider';
+type UserType = 'admin' | 'seller' | 'customer-support' | 'delivery' | 'provider' | 'call_center';
 
 // Define the structure of a navigation item
 interface NavigationItem {
@@ -82,6 +82,33 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "delivery",
       href: "/dashboard/seller/delivery",
       icon: Truck,
+    },
+  ],
+  'call_center': [
+    {
+      name: "overview",
+      href: "/dashboard/call_center",
+      icon: LayoutDashboard,
+    },
+    {
+      name: "queue",
+      href: "/dashboard/call_center/queue",
+      icon: Clock,
+    },
+    {
+      name: "orders",
+      href: "/dashboard/call_center/orders",
+      icon: ShoppingCart,
+    },
+    {
+      name: "customers",
+      href: "/dashboard/call_center/customers",
+      icon: Users,
+    },
+    {
+      name: "reports",
+      href: "/dashboard/call_center/reports",
+      icon: FileText,
     },
   ],
   // Provide empty arrays or add real data if needed

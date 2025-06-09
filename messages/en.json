@@ -185,6 +185,8 @@
 
       "sellerName": "Seller Name",
       "sellerId": "Seller ID",
+      "assignedAgent": "Assigned Agent",
+      "assignedAt": "Assigned At",
     
       "orderTotal": "Order Total",
  
@@ -316,6 +318,13 @@
       "newOrder": "New",
       "urgent": "Urgent",
       "auto": "Auto"
+    },
+    
+    "waitingTime": {
+      "title": "Waiting Time",
+      "minutes": "minutes",
+      "hours": "hours",
+      "days": "days"
     },
     
     "misc": {
@@ -1442,6 +1451,9 @@
       "analytics": "Analytics",
       "chat": "Chat",
       "delivery": "Delivery",
+      "queue": "Order Queue",
+      "customers": "Customers",
+      "reports": "Reports",
       "settings": "Settings",
       "help": "Help",
       "userRole": {
@@ -1651,6 +1663,131 @@
     "footerPrivacy": "Privacy Policy",
     "footerTerms": "Terms of Service",
     "footerCookies": "Cookies Policy"
+  },
+  "callCenter": {
+    "title": "Call Center Dashboard",
+    "subtitle": "Manage customer confirmations and track performance",
+    "welcome": "Welcome to Call Center Operations",
+    "overview": "Overview",
+    "queue": "Order Queue",
+    "customers": "Customers",
+    "orders": "Orders",
+    "reports": "Reports",
+    "settings": "Settings",
+    
+    "dashboard": {
+      "totalOrdersToday": "Orders Today",
+      "pendingConfirmations": "Pending Confirmations",
+      "successfulCalls": "Successful Calls",
+      "successRate": "Success Rate",
+      "averageCallTime": "Avg Call Time",
+      "queueLength": "Queue Length",
+      "activeCalls": "Active Calls",
+      "customersContacted": "Customers Contacted",
+      "conversionRate": "Conversion Rate",
+      "callsPerHour": "Calls per Hour",
+      "responseTime": "Avg Response Time",
+      "confirmedCalls": "confirmed calls",
+      "totalAttempts": "total attempts"
+    },
+
+    "actions": {
+      "priorityQueue": "Priority Queue",
+      "startCalling": "Start Calling",
+      "customerDatabase": "Customer Database",
+      "viewReports": "View Reports",
+      "call": "Call",
+      "viewAll": "View All"
+    },
+
+    "priority": {
+      "urgent": "urgent",
+      "high": "high",
+      "normal": "normal"
+    },
+
+    "sections": {
+      "keyMetrics": "Key Metrics",
+      "priorityQueue": "Priority Queue",
+      "recentActivity": "Recent Activity",
+      "quickActions": "Quick Actions"
+    },
+
+    "messages": {
+      "noOrdersInQueue": "No orders in queue",
+      "noRecentActivity": "No recent activity"
+    },
+
+    "queue": {
+      "title": "Order Confirmation Queue",
+      "priorityOrders": "Priority Orders",
+      "regularOrders": "Regular Orders",
+      "orderDetails": "Order Details",
+      "customerInfo": "Customer Information",
+      "callNow": "Call Now",
+      "markAsConfirmed": "Mark as Confirmed",
+      "markAsUnreached": "Mark as Unreached",
+      "addNote": "Add Note",
+      "waitingTime": "Waiting Time",
+      "attempts": "Attempts",
+      "lastContact": "Last Contact",
+      "nextCallTime": "Next Call Time"
+    },
+
+    "calls": {
+      "makeCall": "Make Call",
+      "endCall": "End Call",
+      "callDuration": "Call Duration",
+      "callStatus": "Call Status",
+      "callNotes": "Call Notes",
+      "reschedule": "Reschedule",
+      "customerResponse": "Customer Response",
+      "confirmed": "Confirmed",
+      "declined": "Declined",
+      "callback": "Callback Requested",
+      "wrongNumber": "Wrong Number",
+      "noAnswer": "No Answer"
+    },
+
+    "performance": {
+      "title": "Performance Metrics",
+      "callVolume": "Call Volume",
+      "successRate": "Success Rate",
+      "averageHandlingTime": "Average Handling Time",
+      "firstCallResolution": "First Call Resolution",
+      "customerSatisfaction": "Customer Satisfaction",
+      "dailyStats": "Daily Statistics",
+      "weeklyTrend": "Weekly Trend",
+      "monthlyPerformance": "Monthly Performance"
+    },
+
+    "reports": {
+      "title": "Call Center Reports",
+      "generateReport": "Generate Report",
+      "exportData": "Export Data",
+      "callLogs": "Call Logs",
+      "orderConfirmations": "Order Confirmations",
+      "agentPerformance": "Agent Performance",
+      "customerFeedback": "Customer Feedback",
+      "dateRange": "Date Range",
+      "reportType": "Report Type"
+    },
+
+    "notifications": {
+      "newOrderInQueue": "New order added to queue",
+      "highPriorityOrder": "High priority order requires attention",
+      "customerCallbackRequest": "Customer requested callback",
+      "queueAlmostEmpty": "Queue is almost empty",
+      "systemMaintenance": "System maintenance scheduled"
+    },
+
+    "statuses": {
+      "online": "Online",
+      "onCall": "On Call",
+      "break": "On Break",
+      "busy": "Busy",
+      "offline": "Offline"
+    }
   },
   "register": {
     "title": "Join Avolship",

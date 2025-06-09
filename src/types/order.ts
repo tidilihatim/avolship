@@ -148,6 +148,7 @@ export interface OrderTableData {
   isDouble: boolean;
   doubleOrderReferences: DoubleOrderReference[];
   orderDate: Date;
+  assignedAgent?: string;
   createdAt: Date;
   updatedAt: Date;
 }

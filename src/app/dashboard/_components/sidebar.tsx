@@ -108,11 +108,13 @@ export default function Sidebar({
   onMobileClose,
   userType,
 }: SidebarProps) {
+  console.log(userType)
   const t = useTranslations();
   const pathname = usePathname();
   const { status, data: session } = useSession();
 
   const navigation = sidebarNavigations[userType];
+  console.log(navigation)
 
   const bottomNavigation = [
     {

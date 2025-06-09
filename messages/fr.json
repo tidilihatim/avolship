@@ -193,6 +193,8 @@
       "seller": "Vendeur",
       "sellerName": "Nom du Vendeur",
       "sellerId": "ID du Vendeur",
+      "assignedAgent": "Agent assigné",
+      "assignedAt": "Assigné le",
       "products": "Produits",
       "totalPrice": "Prix Total",
       "orderTotal": "Total de la Commande",
@@ -295,6 +297,13 @@
       "newOrder": "Nouveau",
       "urgent": "Urgent",
       "auto": "Auto"
+    },
+    
+    "waitingTime": {
+      "title": "Temps d'attente",
+      "minutes": "minutes",
+      "hours": "heures",
+      "days": "jours"
     },
 
     "misc": {
@@ -1453,6 +1462,9 @@
       "analytics": "Analyses",
       "chat": "Chat",
       "delivery": "Livraison",
+      "queue": "File d'Attente",
+      "customers": "Clients",
+      "reports": "Rapports",
       "settings": "Paramètres",
       "help": "Aide",
       "userRole": {
@@ -1662,6 +1674,100 @@
     "footerPrivacy": "Politique de Confidentialité",
     "footerTerms": "Conditions d'Utilisation",
     "footerCookies": "Politique de Cookies"
+  },
+  "callCenter": {
+    "title": "Tableau de Bord du Centre d'Appels",
+    "welcome": "Bienvenue aux Opérations du Centre d'Appels",
+    "overview": "Aperçu",
+    "queue": "File d'Attente des Commandes",
+    "customers": "Clients",
+    "orders": "Commandes",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    
+    "dashboard": {
+      "totalOrdersToday": "Commandes Aujourd'hui",
+      "pendingConfirmations": "Confirmations en Attente",
+      "successfulCalls": "Appels Réussis",
+      "averageCallTime": "Temps d'Appel Moyen",
+      "queueLength": "Longueur de la File",
+      "activeCalls": "Appels Actifs",
+      "customersContacted": "Clients Contactés",
+      "conversionRate": "Taux de Conversion",
+      "callsPerHour": "Appels par Heure",
+      "responseTime": "Temps de Réponse Moyen"
+    },
+
+    "queue": {
+      "title": "File d'Attente de Confirmation des Commandes",
+      "priorityOrders": "Commandes Prioritaires",
+      "regularOrders": "Commandes Régulières",
+      "orderDetails": "Détails de la Commande",
+      "customerInfo": "Informations Client",
+      "callNow": "Appeler Maintenant",
+      "markAsConfirmed": "Marquer comme Confirmé",
+      "markAsUnreached": "Marquer comme Injoignable",
+      "addNote": "Ajouter une Note",
+      "waitingTime": "Temps d'Attente",
+      "attempts": "Tentatives",
+      "lastContact": "Dernier Contact",
+      "nextCallTime": "Heure du Prochain Appel"
+    },
+
+    "calls": {
+      "makeCall": "Passer un Appel",
+      "endCall": "Terminer l'Appel",
+      "callDuration": "Durée de l'Appel",
+      "callStatus": "Statut de l'Appel",
+      "callNotes": "Notes d'Appel",
+      "reschedule": "Reprogrammer",
+      "customerResponse": "Réponse du Client",
+      "confirmed": "Confirmé",
+      "declined": "Refusé",
+      "callback": "Rappel Demandé",
+      "wrongNumber": "Mauvais Numéro",
+      "noAnswer": "Pas de Réponse"
+    },
+
+    "performance": {
+      "title": "Métriques de Performance",
+      "callVolume": "Volume d'Appels",
+      "successRate": "Taux de Réussite",
+      "averageHandlingTime": "Temps de Traitement Moyen",
+      "firstCallResolution": "Résolution au Premier Appel",
+      "customerSatisfaction": "Satisfaction Client",
+      "dailyStats": "Statistiques Quotidiennes",
+      "weeklyTrend": "Tendance Hebdomadaire",
+      "monthlyPerformance": "Performance Mensuelle"
+    },
+
+    "reports": {
+      "title": "Rapports du Centre d'Appels",
+      "generateReport": "Générer un Rapport",
+      "exportData": "Exporter les Données",
+      "callLogs": "Journaux d'Appels",
+      "orderConfirmations": "Confirmations de Commandes",
+      "agentPerformance": "Performance des Agents",
+      "customerFeedback": "Commentaires des Clients",
+      "dateRange": "Plage de Dates",
+      "reportType": "Type de Rapport"
+    },
+
+    "notifications": {
+      "newOrderInQueue": "Nouvelle commande ajoutée à la file",
+      "highPriorityOrder": "Commande haute priorité nécessite attention",
+      "customerCallbackRequest": "Client a demandé un rappel",
+      "queueAlmostEmpty": "La file est presque vide",
+      "systemMaintenance": "Maintenance système programmée"
+    },
+
+    "statuses": {
+      "online": "En Ligne",
+      "onCall": "En Appel",
+      "break": "En Pause",
+      "busy": "Occupé",
+      "offline": "Hors Ligne"
+    }
   },
   "register": {
     "title": "Rejoignez Avolship",

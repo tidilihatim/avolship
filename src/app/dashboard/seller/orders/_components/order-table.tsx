@@ -69,6 +69,14 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -98,6 +106,8 @@ import { OrderStatus } from "@/lib/db/models/order";
 import { UserRole } from "@/lib/db/models/user";
 import { getLoginUserRole } from "@/app/actions/auth";
 import StatusUpdateDialog from "./status-update-dialog";
+import { assignOrderToAgent, autoAssignOrders } from "@/app/actions/call-center";
+import { getCallCenterAgents } from "@/app/actions/user";
 
 // Constants for filter values
 const ALL_STATUSES = "all_statuses";
@@ -167,6 +177,7 @@ interface OrderTableData {
   isDouble: boolean;
   doubleOrderReferences: DoubleOrderReference[];
   orderDate: Date;
+  assignedAgent?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -265,12 +276,39 @@ export default function OrderTable({
     order: null,
   });
 
-  // Fetch current user role on component mount
+  // State for assignment dialog
+  const [assignmentDialog, setAssignmentDialog] = useState<{
+    isOpen: boolean;
+    order: OrderTableData | null;
+  }>({
+    isOpen: false,
+    order: null,
+  });
+
+  // State for call center agents
+  const [callCenterAgents, setCallCenterAgents] = useState<Array<{
+    _id: string;
+    name: string;
+    email: string;
+  }>>([]);
+
+  const [selectedAgent, setSelectedAgent] = useState<string>("");
+  const [isAssigning, setIsAssigning] = useState(false);
+
+  // Fetch current user role and call center agents on component mount
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
         const role = await getLoginUserRole();
         setUserRole(role);
+        
+        // If user is admin/moderator, fetch call center agents
+        if (role === UserRole.ADMIN || role === UserRole.MODERATOR) {
+          const agentsResult = await getCallCenterAgents();
+          if (agentsResult.success) {
+            setCallCenterAgents(agentsResult.agents);
+          }
+        }
       } catch (error) {
         console.error("Error fetching user role:", error);
       }
@@ -663,6 +701,71 @@ export default function OrderTable({
     });
   };
 
+  // Assignment dialog handlers
+  const openAssignmentDialog = (order: OrderTableData) => {
+    setAssignmentDialog({
+      isOpen: true,
+      order,
+    });
+    setSelectedAgent("");
+  };
+
+  const closeAssignmentDialog = () => {
+    setAssignmentDialog({
+      isOpen: false,
+      order: null,
+    });
+    setSelectedAgent("");
+  };
+
+  // Handle order assignment
+  const handleAssignOrder = async () => {
+    if (!selectedAgent || !assignmentDialog.order) {
+      toast.error("Please select an agent");
+      return;
+    }
+
+    setIsAssigning(true);
+    try {
+      const result = await assignOrderToAgent(assignmentDialog.order._id, selectedAgent);
+      
+      if (result.success) {
+        toast.success(result.message);
+        closeAssignmentDialog();
+        // Refresh the page to show updated data
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error assigning order:", error);
+      toast.error("Failed to assign order");
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+
+  // Handle auto-assignment
+  const handleAutoAssign = async () => {
+    setIsAssigning(true);
+    try {
+      const result = await autoAssignOrders(20);
+      
+      if (result.success) {
+        toast.success(result.message);
+        // Refresh the page to show updated data
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error auto-assigning orders:", error);
+      toast.error("Failed to auto-assign orders");
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+
   
   if (error) {
     return (
@@ -903,6 +1006,17 @@ export default function OrderTable({
             </SheetContent>
           </Sheet>
 
+          {isAdminOrModerator && (
+            <Button 
+              variant="outline"
+              className="flex gap-2 mr-2"
+              onClick={handleAutoAssign}
+              disabled={isAssigning}
+            >
+              <Users className="h-4 w-4" />
+              {isAssigning ? "Auto-Assigning..." : "Auto-Assign Orders"}
+            </Button>
+          )}
           <Link href={`/dashboard/${userRole}/orders/create`} passHref>
             <Button className="flex gap-2">
               <PlusCircle className="h-4 w-4" />
@@ -937,6 +1051,11 @@ export default function OrderTable({
                     {isAdminOrModerator && (
                       <TableHead className="table-cell">
                         {t("orders.fields.seller")}
+                      </TableHead>
+                    )}
+                    {isAdminOrModerator && (
+                      <TableHead className="table-cell">
+                        {t("orders.fields.assignedAgent")}
                       </TableHead>
                     )}
                     <TableHead className="table-cell">
@@ -1078,6 +1197,25 @@ export default function OrderTable({
                             <span className="text-sm font-medium">
                               {order.sellerName}
                             </span>
+                          </div>
+                        </TableCell>
+                      )}
+
+                      {isAdminOrModerator && (
+                        <TableCell className="hidden lg:table-cell">
+                          <div className="flex items-center gap-2">
+                            {order.assignedAgent ? (
+                              <>
+                                <User className="h-4 w-4 text-blue-600" />
+                                <span className="text-sm font-medium text-blue-600">
+                                  {order.assignedAgent}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-sm text-gray-500 italic">
+                                Unassigned
+                              </span>
+                            )}
                           </div>
                         </TableCell>
                       )}
@@ -1373,7 +1511,10 @@ export default function OrderTable({
                                 >
                                   {t("orders.actions.updateStatus")}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer">
+                                <DropdownMenuItem 
+                                  className="cursor-pointer"
+                                  onClick={() => openAssignmentDialog(order)}
+                                >
                                   {t("orders.actions.assignToAgent")}
                                 </DropdownMenuItem>
                               </>
@@ -1444,6 +1585,56 @@ export default function OrderTable({
           order={statusUpdateDialog.order}
         />
       )}
+
+      {/* Assignment Dialog */}
+      <Dialog open={assignmentDialog.isOpen} onOpenChange={(open) => {
+        if (!open) closeAssignmentDialog();
+      }}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Assign Order to Agent</DialogTitle>
+            <DialogDescription>
+              Select a call center agent to assign order {assignmentDialog.order?.orderId} to.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="agent-select" className="text-sm font-medium">
+                Select Call Center Agent
+              </label>
+              <Select value={selectedAgent} onValueChange={setSelectedAgent}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose an agent..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {callCenterAgents.map((agent) => (
+                    <SelectItem key={agent._id} value={agent._id}>
+                      {agent.name} ({agent.email})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={closeAssignmentDialog}
+              disabled={isAssigning}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleAssignOrder}
+              disabled={isAssigning || !selectedAgent}
+            >
+              {isAssigning ? "Assigning..." : "Assign Order"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

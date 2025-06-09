@@ -85,6 +85,13 @@ export interface IOrder extends Document {
   totalCallAttempts: number;
   lastCallAttempt?: Date;
   
+  // Agent Assignment & Locking
+  assignedAgent?: mongoose.Types.ObjectId; // Call center agent assigned to this order
+  assignedAt?: Date; // When the order was assigned
+  lockedBy?: mongoose.Types.ObjectId; // Agent currently working on this order
+  lockedAt?: Date; // When the order was locked
+  lockExpiry?: Date; // When the lock expires (auto-unlock)
+  
   // Double Order Detection
   isDouble: boolean;
   doubleOrderReferences: DoubleOrderReference[];
@@ -220,6 +227,28 @@ const OrderSchema = new Schema<IOrder>(
     },
     lastCallAttempt: {
       type: Date,
+    },
+    
+    // Agent Assignment & Locking
+    assignedAgent: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      index: true,
+    },
+    assignedAt: {
+      type: Date,
+    },
+    lockedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      index: true,
+    },
+    lockedAt: {
+      type: Date,
+    },
+    lockExpiry: {
+      type: Date,
+      index: true, // For cleanup queries
     },
     
     // Double Order Detection

@@ -1,9 +1,9 @@
 // src/app/actions/order.ts
 "use server";
 
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 import { cookies } from 'next/headers';
-import { UserRole } from '@/lib/db/models/user';
+import { UserRole, UserStatus } from '@/lib/db/models/user';
 import { OrderStatus } from '@/lib/db/models/order';
 import Order from '@/lib/db/models/order';
 import Warehouse from '@/lib/db/models/warehouse';
@@ -276,6 +276,9 @@ export const getOrders = withDbConnection(async (
 
     // Calculate pagination
     const skip = (page - 1) * limit;
+    if(user.role === UserRole.CALL_CENTER){
+      query.assignedAgent = user._id
+    }
     
     // Execute query with pagination
     const orders: any[] = await Order.find(query)
@@ -283,11 +286,11 @@ export const getOrders = withDbConnection(async (
       .skip(skip)
       .limit(limit)
       .lean();
-    
+
     // Count total results for pagination
     const total = await Order.countDocuments(query);
     
-    // Get unique warehouseIds, sellerIds, and productIds for populating names
+    // Get unique warehouseIds, sellerIds, productIds, and assignedAgentIds for populating names
     const warehouseIds = [...new Set(orders.map(o => o.warehouseId))];
     const sellerIds = [...new Set(orders.map(o => o.sellerId))];
     const productIds = orders.flatMap(o => o.products.map((p: any) => p.productId));
@@ -295,13 +298,18 @@ export const getOrders = withDbConnection(async (
       .map(o => o.statusChangedBy)
       .filter(Boolean)
       .filter((id, index, arr) => arr.indexOf(id) === index);
+    const assignedAgentIds = orders
+      .map(o => o.assignedAgent)
+      .filter(Boolean)
+      .filter((id, index, arr) => arr.indexOf(id) === index);
     
     // Fetch related data in parallel
-    const [warehouses, sellers, products, statusChangedByUsers] = await Promise.all([
+    const [warehouses, sellers, products, statusChangedByUsers, assignedAgents] = await Promise.all([
       Warehouse.find({ _id: { $in: warehouseIds } }).lean(),
       User.find({ _id: { $in: sellerIds } }).lean(),
       Product.find({ _id: { $in: productIds } }, { name: 1, code: 1 }).lean(),
-      User.find({ _id: { $in: statusChangedByIds } }, { name: 1, role: 1 }).lean()
+      User.find({ _id: { $in: statusChangedByIds } }, { name: 1, role: 1 }).lean(),
+      User.find({ _id: { $in: assignedAgentIds } }, { name: 1, email: 1 }).lean()
     ]);
     
     // Create lookup maps for efficient access
@@ -325,6 +333,11 @@ export const getOrders = withDbConnection(async (
       statusChangedByMap.set(u._id.toString(), u);
     });
     
+    const assignedAgentMap = new Map();
+    assignedAgents.forEach((agent:any) => {
+      assignedAgentMap.set(agent._id.toString(), agent);
+    });
+    
     // Map orders to include warehouse, seller, and product names
     const ordersWithNames: OrderTableData[] = [];
     
@@ -341,6 +354,11 @@ export const getOrders = withDbConnection(async (
       // Get status changed by user data
       const statusChangedByData = order.statusChangedBy 
         ? statusChangedByMap.get(order.statusChangedBy.toString())
+        : null;
+      
+      // Get assigned agent data
+      const assignedAgentData = order.assignedAgent 
+        ? assignedAgentMap.get(order.assignedAgent.toString())
         : null;
       
       // Map products with names
@@ -387,6 +405,7 @@ export const getOrders = withDbConnection(async (
         isDouble: order.isDouble || false,
         doubleOrderReferences: order.doubleOrderReferences || [],
         orderDate: order.orderDate,
+        assignedAgent: assignedAgentData?.name,
         createdAt: order.createdAt,
         updatedAt: order.updatedAt,
       });
@@ -598,7 +617,6 @@ const detectDoubleOrders = withDbConnection(async (
  * Create a new order
  */
 export const createOrder = withDbConnection(async (orderData: any) => {
-  console.log("🚀 ~ createOrder ~ orderData:", orderData)
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -877,10 +895,10 @@ export const updateOrderStatus = withDbConnection(async (
     }
 
     // Check if user has permission to update status
-    if (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR) {
+    if (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR && user.role !== UserRole.CALL_CENTER) {
       return {
         success: false,
-        message: 'Only admins and moderators can update order status',
+        message: 'Only admins, moderators, and call center agents can update order status',
       };
     }
 

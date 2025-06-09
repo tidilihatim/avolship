@@ -416,3 +416,34 @@ export const bulkDeleteUsers = withDbConnection(async (userIds: string[]): Promi
     };
   }
 });
+
+/**
+ * Get all call center agents for assignment dropdown
+ */
+export const getCallCenterAgents = withDbConnection(async () => {
+  try {
+    const agents = await User.find({ 
+      role: 'call_center',
+      status: { $ne: 'inactive' }
+    })
+    .select('name email')
+    .sort({ name: 1 })
+    .lean();
+
+    return {
+      success: true,
+      agents: agents.map((agent: any) => ({
+        _id: agent._id.toString(),
+        name: agent.name,
+        email: agent.email,
+      }))
+    };
+  } catch (error) {
+    console.error('Error fetching call center agents:', error);
+    return {
+      success: false,
+      message: 'Failed to fetch call center agents',
+      agents: []
+    };
+  }
+});
