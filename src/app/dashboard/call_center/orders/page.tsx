@@ -164,6 +164,7 @@ export default async function CallCenterOrdersPage({
       : undefined,
   };
   
+  console.log(orders[0]?.products)
 
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">

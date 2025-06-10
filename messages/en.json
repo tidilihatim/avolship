@@ -1517,6 +1517,8 @@
     "register": "Register"
   },
   "common": {
+    "retry":"Retry",
+    "refresh":"Refresh",
     "updatedAt": "Last Updated",
     "unknown": "Unknown",
     "weight":"Weight (KG)",
@@ -1669,10 +1671,8 @@
     "subtitle": "Manage customer confirmations and track performance",
     "welcome": "Welcome to Call Center Operations",
     "overview": "Overview",
-    "queue": "Order Queue",
     "customers": "Customers",
     "orders": "Orders",
-    "reports": "Reports",
     "settings": "Settings",
     
     "dashboard": {
@@ -1719,6 +1719,11 @@
     },
 
     "queue": {
+      "callHistory": {
+        "title": "Call History",
+        "description": "Your recent call attempts",
+        "empty": "No calls made today"
+      },
       "title": "Order Confirmation Queue",
       "priorityOrders": "Priority Orders",
       "regularOrders": "Regular Orders",
@@ -1731,7 +1736,82 @@
       "waitingTime": "Waiting Time",
       "attempts": "Attempts",
       "lastContact": "Last Contact",
-      "nextCallTime": "Next Call Time"
+      "nextCallTime": "Next Call Time",
+      "description": "Manage your assigned orders and request new assignments",
+      "myQueue": "My Queue",
+      "availableOrders": "Available Orders",
+      "stats": {
+        "myQueue": "My Queue",
+        "available": "Available",
+        "status": "Status",
+        "teamWorkload": "Team Workload",
+        "activeAgents": "Active Agents",
+        "totalOrders": "Total Orders"
+      },
+      "status": {
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "connected": "Connected",
+        "disconnected": "Disconnected",
+        "online": "Online",
+        "offline": "Offline"
+      },
+      "order": {
+        "orderNumber": "Order Number",
+        "customer": "Customer",
+        "phoneNumbers": "Phone Numbers",
+        "shippingAddress": "Shipping Address",
+        "totalPrice": "Total Price",
+        "products": "Products",
+        "items": "items",
+        "item": "item",
+        "warehouse": "Warehouse",
+        "seller": "Seller",
+        "assignedAt": "Assigned At",
+        "expiresIn": "Expires In",
+        "createdAt": "Created At"
+      },
+      "actions": {
+        "requestAssignment": "Request Assignment",
+        "complete": "Complete",
+        "completeOrder": "Complete Order",
+        "viewDetails": "View Details",
+        "callCustomer": "Call Customer"
+      },
+      "badges": {
+        "assigned": "Assigned",
+        "available": "Available",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "cancelled": "Cancelled",
+        "expired": "Expired"
+      },
+      "empty": {
+        "noOrdersInQueue": "No orders in your queue",
+        "noOrdersInQueueDescription": "Check the available orders tab to request new assignments",
+        "noAvailableOrders": "No available orders",
+        "noAvailableOrdersDescription": "All orders are currently assigned to agents"
+      },
+      "notifications": {
+        "orderAssigned": "New order {orderNumber} assigned to you!",
+        "orderAvailable": "New order {orderNumber} is available!",
+        "assignmentSuccess": "Order assigned successfully",
+        "assignmentFailed": "Failed to assign order",
+        "orderCompleted": "Order completed successfully",
+        "orderRemoved": "Order removed from your queue",
+        "connectionLost": "Connection lost. Trying to reconnect...",
+        "connectionRestored": "Connection restored",
+        "notConnected": "Not connected to server"
+      },
+      "workload": {
+        "title": "Team Workload",
+        "description": "Real-time workload distribution across all agents",
+        "averageWorkload": "Average Workload",
+        "totalAgents": "Total Agents",
+        "loadingStats": "Loading workload statistics...",
+        "errorLoadingStats": "Failed to load workload statistics"
+      }
+      
     },
 
     "calls": {

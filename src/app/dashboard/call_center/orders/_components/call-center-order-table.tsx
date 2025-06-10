@@ -26,8 +26,9 @@ const ALL_CALL_STATUSES = "all_call_statuses";
 
 interface OrderProduct {
   productId: string;
-  productName: string;
-  productCode: string;
+  name: string;
+  code: string;
+  description: string;
   quantity: number;
   unitPrice: number;
 }

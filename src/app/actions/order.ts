@@ -23,9 +23,6 @@ import { revalidatePath } from 'next/cache';
 /**
  * Get order by ID with full details
  */
-/**
- * Get order by ID with full details
- */
 export const getOrderById = withDbConnection(async (orderId: string) => {
   try {
     // Get the current user
@@ -614,6 +611,69 @@ const detectDoubleOrders = withDbConnection(async (
 });
 
 /**
+ * Create order in real-time server for call center assignment
+ * Only called in development mode
+ */
+export async function createOrderInRealtimeServer(orderData: any) {
+  try {
+    const REALTIME_SERVER_URL = process.env.REALTIME_SERVER_URL || 'http://localhost:5000';
+    const API_KEY = process.env.REALTIME_API_KEY || 'your-api-key';
+
+    // Prepare order data for real-time server API
+    const orderPayload = {
+      customer: {
+        name: orderData.customer.name,
+        phoneNumbers: orderData.customer.phoneNumbers,
+        shippingAddress: orderData.customer.shippingAddress
+      },
+      warehouseId: orderData.warehouseId.toString(),
+      sellerId: orderData.sellerId.toString(),
+      products: orderData.products.map((product: any) => ({
+        productId: product.productId.toString(),
+        quantity: product.quantity,
+        unitPrice: product.unitPrice,
+        expeditionId: product.expeditionId.toString()
+      })),
+      totalPrice: orderData.totalPrice,
+      // Don't set assignedAgentId - let the auto-assignment work
+    };
+
+    console.log('📤 Creating order in real-time server:', {
+      customer: orderPayload.customer.name,
+      totalPrice: orderPayload.totalPrice,
+      productsCount: orderPayload.products.length
+    });
+
+    const response = await fetch(`${REALTIME_SERVER_URL}/api/orders/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': API_KEY
+      },
+      body: JSON.stringify(orderPayload)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+
+    const result = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Real-time server failed to create order');
+    }
+
+    console.log('✅ Real-time server created order:', result.data?.orderNumber || 'Unknown order number');
+    
+    return result;
+  } catch (error) {
+    console.error('❌ Error creating order in real-time server:', error);
+    throw error;
+  }
+}
+
+/**
  * Create a new order
  */
 export const createOrder = withDbConnection(async (orderData: any) => {
@@ -742,7 +802,11 @@ export const createOrder = withDbConnection(async (orderData: any) => {
     );
 
     // Create the order with totalPrice included
-    const newOrder = new Order({
+
+    const REALTIME_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+    const API_KEY = process.env.SOCKET_SERVER_API_SECRET_KEY || 'your-api-key';
+
+    const orderPayload = {
       customer: {
         name: orderData.customer.name,
         phoneNumbers,
@@ -757,17 +821,38 @@ export const createOrder = withDbConnection(async (orderData: any) => {
       isDouble: doubleOrders.length > 0,
       doubleOrderReferences: doubleOrders,
       orderDate: new Date(),
+    }
+
+    const response = await fetch(`${REALTIME_SERVER_URL}/api/orders/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': API_KEY
+      },
+      body: JSON.stringify(orderPayload)
     });
 
-    await newOrder.save();
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
 
+    const result = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Real-time server failed to create order');
+    }
+
+    console.log('✅ Real-time server created order:', result.data?.orderNumber || 'Unknown order number');
+
+    
     revalidatePath("/dashboard/seller/orders");
     revalidatePath("/dashboard/admin/orders");
 
     return {
       success: true,
       message: "Order created successfully",
-      orderId: newOrder._id.toString(),
+      orderId: result?.orderId ,
       isDouble: doubleOrders.length > 0,
       doubleOrderCount: doubleOrders.length,
     };

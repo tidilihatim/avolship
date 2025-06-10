@@ -1529,6 +1529,8 @@
     "register": "S'inscrire"
   },
   "common": {
+    "retry":"réessayer",
+    "refresh":"rafraîchir",
     "updatedAt": "Dernière Mise à Jour",
     "unknown": "Inconnu",
     "weight": "Poids (KG)",
@@ -1679,10 +1681,8 @@
     "title": "Tableau de Bord du Centre d'Appels",
     "welcome": "Bienvenue aux Opérations du Centre d'Appels",
     "overview": "Aperçu",
-    "queue": "File d'Attente des Commandes",
     "customers": "Clients",
     "orders": "Commandes",
-    "reports": "Rapports",
     "settings": "Paramètres",
     
     "dashboard": {
@@ -1711,7 +1711,86 @@
       "waitingTime": "Temps d'Attente",
       "attempts": "Tentatives",
       "lastContact": "Dernier Contact",
-      "nextCallTime": "Heure du Prochain Appel"
+      "nextCallTime": "Heure du Prochain Appel",
+       "description": "Gérez vos commandes assignées et demandez de nouvelles affectations",
+      "myQueue": "Ma file d'attente",
+      "availableOrders": "Commandes disponibles",
+      "stats": {
+        "myQueue": "Ma file d'attente",
+        "available": "Disponible",
+        "status": "Statut",
+        "teamWorkload": "Charge de travail de l'équipe",
+        "activeAgents": "Agents actifs",
+        "totalOrders": "Total des commandes"
+      },
+      "status": {
+        "available": "Disponible",
+        "unavailable": "Indisponible",
+        "connected": "Connecté",
+        "disconnected": "Déconnecté",
+        "online": "En ligne",
+        "offline": "Hors ligne"
+      },
+      "order": {
+        "orderNumber": "Numéro de commande",
+        "customer": "Client",
+        "phoneNumbers": "Numéros de téléphone",
+        "shippingAddress": "Adresse de livraison",
+        "totalPrice": "Prix total",
+        "products": "Produits",
+        "items": "articles",
+        "item": "article",
+        "warehouse": "Entrepôt",
+        "seller": "Vendeur",
+        "assignedAt": "Assigné à",
+        "expiresIn": "Expire dans",
+        "createdAt": "Créé à"
+      },
+      "actions": {
+        "requestAssignment": "Demander l'affectation",
+        "complete": "Terminer",
+        "completeOrder": "Terminer la commande",
+        "viewDetails": "Voir les détails",
+        "callCustomer": "Appeler le client"
+      },
+      "badges": {
+        "assigned": "Assigné",
+        "available": "Disponible",
+        "pending": "En attente",
+        "confirmed": "Confirmé",
+        "cancelled": "Annulé",
+        "expired": "Expiré"
+      },
+      "empty": {
+        "noOrdersInQueue": "Aucune commande dans votre file d'attente",
+        "noOrdersInQueueDescription": "Consultez l'onglet des commandes disponibles pour demander de nouvelles affectations",
+        "noAvailableOrders": "Aucune commande disponible",
+        "noAvailableOrdersDescription": "Toutes les commandes sont actuellement assignées aux agents"
+      },
+      "notifications": {
+        "orderAssigned": "Nouvelle commande {orderNumber} qui vous a été assignée !",
+        "orderAvailable": "Nouvelle commande {orderNumber} est disponible !",
+        "assignmentSuccess": "Commande assignée avec succès",
+        "assignmentFailed": "Échec de l'assignation de la commande",
+        "orderCompleted": "Commande terminée avec succès",
+        "orderRemoved": "Commande supprimée de votre file d'attente",
+        "connectionLost": "Connexion perdue. Tentative de reconnexion...",
+        "connectionRestored": "Connexion rétablie",
+        "notConnected": "Non connecté au serveur"
+      },
+      "workload": {
+        "title": "Charge de travail de l'équipe",
+        "description": "Distribution en temps réel de la charge de travail entre tous les agents",
+        "averageWorkload": "Charge de travail moyenne",
+        "totalAgents": "Total des agents",
+        "loadingStats": "Chargement des statistiques de charge de travail...",
+        "errorLoadingStats": "Échec du chargement des statistiques de charge de travail"
+      },
+      "callHistory": {
+        "title": "Historique des Appels",
+        "description": "Vos tentatives d'appels récentes",
+        "empty": "Aucun appel effectué aujourd'hui"
+      }
     },
 
     "calls": {

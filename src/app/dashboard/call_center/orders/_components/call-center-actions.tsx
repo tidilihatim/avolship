@@ -45,8 +45,9 @@ import { updateOrderStatus } from "@/app/actions/order";
 
 interface OrderProduct {
   productId: string;
-  productName: string;
-  productCode: string;
+  name: string;
+  code: string;
+  description: string;
   quantity: number;
   unitPrice: number;
 }

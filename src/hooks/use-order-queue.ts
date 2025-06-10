@@ -1,0 +1,238 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { OrderItem, QueueStats } from '@/types/socket';
+import { useSession } from 'next-auth/react';
+import { toast } from 'sonner';
+import { useSocket } from '@/lib/socket/use-socket';
+
+export function useOrderQueue() {
+  const [queueStats, setQueueStats] = useState<QueueStats>({
+    queueCount: 0,
+    workloadCount: 0,
+    orders: []
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [availableOrders, setAvailableOrders] = useState<OrderItem[]>([]);
+  const [isAvailable, setIsAvailable] = useState(true);
+
+  const { socket, isConnected, on, emit } = useSocket();
+  const { data: session } = useSession();
+
+  // Set up socket event listeners
+  useEffect(() => {
+    if (!isConnected || !socket) return;
+
+    console.log('Setting up order queue socket listeners');
+
+    // Authentication success
+    const unsubscribeAuthSuccess = on('auth:success', (data) => {
+      console.log('Authentication successful:', data);
+      // If user is call center agent, the socket will automatically send queue data
+    });
+
+    // Authentication error
+    const unsubscribeAuthError = on('auth:error', (data) => {
+      console.error('Authentication failed:', data);
+      toast.error(`Authentication failed: ${data.message}`);
+      setIsLoading(false);
+    });
+
+    // Initial queue data
+    const unsubscribeInitial = on('queue:initial', (data) => {
+      console.log('Received initial queue data:', data);
+      setQueueStats({
+        queueCount: data.queueCount,
+        workloadCount: data.workloadCount,
+        orders: data.orders
+      });
+      setIsLoading(false);
+    });
+
+    // Queue updates
+    const unsubscribeUpdate = on('queue:update', (data) => {
+      console.log('Received queue update:', data);
+      setQueueStats(prev => ({
+        ...prev,
+        queueCount: data.queueCount
+      }));
+    });
+
+    // New order assigned to this agent
+    const unsubscribeAssigned = on('order:assigned', (data) => {
+      console.log('Order assigned to me:', data);
+      const newOrder: OrderItem = {
+        orderId: data.orderId,
+        orderNumber: data.orderNumber,
+        customer: data.customer,
+        products: data.products,
+        totalPrice: data.totalPrice,
+        status: data.status,
+        createdAt: new Date(),
+        assignedAt: data.assignedAt,
+        lockExpiry: data.lockExpiry,
+        seller: data.seller,
+        warehouse: data.warehouse
+      };
+
+      setQueueStats(prev => ({
+        ...prev,
+        orders: [...prev.orders, newOrder],
+        queueCount: prev.queueCount + 1,
+        workloadCount: prev.workloadCount + 1
+      }));
+
+      toast.success(`New order ${data.orderNumber} assigned to you!`);
+    });
+
+    // New order available (broadcast to all agents)
+    const unsubscribeNewOrder = on('order:new', (data) => {
+      console.log('New order available:', data);
+      if (!data.isAssigned) {
+        const newAvailableOrder: OrderItem = {
+          orderId: data.orderId,
+          orderNumber: data.orderNumber,
+          customer: data.customer,
+          totalPrice: data.totalPrice,
+          status: data.status,
+          createdAt: data.createdAt
+        };
+
+        setAvailableOrders(prev => [...prev, newAvailableOrder]);
+        toast.info(`New order ${data.orderNumber} is available!`);
+      }
+    });
+
+    // Order no longer available
+    const unsubscribeUnavailable = on('order:unavailable', (data) => {
+      console.log('Order no longer available:', data);
+      setAvailableOrders(prev => 
+        prev.filter(order => order.orderId !== data.orderId)
+      );
+    });
+
+    // Assignment result
+    const unsubscribeAssignmentResult = on('order:assignment-result', (data) => {
+      console.log('Assignment result:', data);
+      if (data.success) {
+        toast.success(data.message);
+        // Remove from available orders
+        setAvailableOrders(prev => 
+          prev.filter(order => order.orderId !== data.orderId)
+        );
+      } else {
+        toast.error(data.message);
+      }
+    });
+
+    // Order removed from queue
+    const unsubscribeRemoved = on('order:removed', (data) => {
+      console.log('Order removed from queue:', data);
+      setQueueStats(prev => ({
+        ...prev,
+        orders: prev.orders.filter(order => order.orderId !== data.orderId),
+        queueCount: Math.max(0, prev.queueCount - 1),
+        workloadCount: Math.max(0, prev.workloadCount - 1)
+      }));
+      toast.info(data.message);
+    });
+
+    // Cleanup function
+    return () => {
+      unsubscribeAuthSuccess();
+      unsubscribeAuthError();
+      unsubscribeInitial();
+      unsubscribeUpdate();
+      unsubscribeAssigned();
+      unsubscribeNewOrder();
+      unsubscribeUnavailable();
+      unsubscribeAssignmentResult();
+      unsubscribeRemoved();
+    };
+  }, [isConnected, socket, on]);
+
+  // Request order assignment
+  const requestOrderAssignment = useCallback((orderId: string) => {
+    if (!isConnected) {
+      toast.error('Not connected to server');
+      return;
+    }
+
+    console.log('Requesting assignment for order:', orderId);
+    emit('order:request-assignment', { orderId });
+  }, [isConnected, emit]);
+
+  // Complete order (remove from queue)
+  const completeOrder = useCallback((orderId: string) => {
+    if (!isConnected) {
+      toast.error('Not connected to server');
+      return;
+    }
+
+    console.log('Completing order:', orderId);
+    emit('order:complete', { orderId });
+  }, [isConnected, emit]);
+
+  // Update agent availability status
+  const updateAvailability = useCallback((available: boolean) => {
+    if (!isConnected) {
+      toast.error('Not connected to server');
+      return;
+    }
+
+    console.log('Updating availability to:', available);
+    setIsAvailable(available);
+    emit('agent:status', { available });
+  }, [isConnected, emit]);
+
+  // Refresh queue data
+  const refreshQueue = useCallback(async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      setIsLoading(true);
+      // The socket will automatically send updated queue data
+      // when the agent reconnects or requests fresh data
+      // Fetch fresh queue data from the API
+      const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+      const response = await fetch(`${SOCKET_URL}/api/orders/queue/${session.user.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || 'your-api-key'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to fetch workload stats');
+      }
+
+      setQueueStats(result.data);
+      
+      
+    } catch (error) {
+      console.error('Error refreshing queue:', error);
+      toast.error('Failed to refresh queue');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [session?.user?.id, isConnected, emit]);
+
+  return {
+    queueStats,
+    availableOrders,
+    isLoading,
+    isAvailable,
+    isConnected,
+    requestOrderAssignment,
+    completeOrder,
+    updateAvailability,
+    refreshQueue
+  };
+}

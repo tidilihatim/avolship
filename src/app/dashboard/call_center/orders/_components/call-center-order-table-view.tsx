@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { toast } from "sonner";
 import {
   Collapsible,
@@ -16,13 +14,9 @@ import {
   MapPin,
   Package,
   Users,
-  Calendar,
   PhoneCall,
   User,
   Copy,
-  Eye,
-  History,
-  MoreHorizontal,
   AlertTriangle,
   Clock,
 } from "lucide-react";
@@ -37,28 +31,20 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { OrderStatus } from "@/lib/db/models/order";
-import { UserRole } from "@/lib/db/models/user";
 
 import { CallCenterActions } from "./call-center-actions";
 
 interface OrderProduct {
   productId: string;
-  productName: string;
-  productCode: string;
+  name: string;
+  code: string;
+  description: string;
   quantity: number;
   unitPrice: number;
 }
@@ -264,18 +250,6 @@ export function CallCenterOrderTableView({
     }
   };
 
-  const calculateWaitingTime = (orderDate: Date) => {
-    const now = new Date();
-    const diffMs = now.getTime() - new Date(orderDate).getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-    
-    if (diffHours > 0) {
-      return `${diffHours}h ${diffMinutes}m`;
-    }
-    return `${diffMinutes}m`;
-  };
-
   if (orders.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-10 space-y-4">
@@ -303,7 +277,6 @@ export function CallCenterOrderTableView({
             <TableHead className="table-cell">{t("orders.fields.products")}</TableHead>
             <TableHead>{t("orders.fields.totalPrice")}</TableHead>
             <TableHead>{t("orders.fields.status")}</TableHead>
-            <TableHead className="table-cell">{t("callCenter.queue.waitingTime")}</TableHead>
             <TableHead className="table-cell">{t("orders.fields.callAttempts")}</TableHead>
             <TableHead className="text-right">{t("callCenter.actions.call")}</TableHead>
           </TableRow>
@@ -465,9 +438,21 @@ export function CallCenterOrderTableView({
                           <div className="space-y-2">
                             <div className="flex items-start justify-between">
                               <h4 className="font-medium text-sm leading-tight">
-                                {product.productName?.slice(0, 50) +
-                                  (product.productName?.length > 50 ? "..." : "")}
+                                {product.name?.slice(0, 50) +
+                                  (product.name?.length > 50 ? "..." : "")}
                               </h4>
+                              <Badge variant="secondary" className="text-xs ml-2">
+                                #{index + 1}
+                              </Badge>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div className="space-y-1">
+                                <div className="text-muted-foreground">Product Code</div>
+                                <div className="font-mono bg-muted px-2 py-1 rounded">
+                                  {product.code}
+                                </div>
+                              </div>
                             </div>
                             <div className="flex items-center justify-between pt-2 border-t">
                               <div className="flex items-center gap-4 text-sm">
@@ -476,16 +461,31 @@ export function CallCenterOrderTableView({
                                   <span className="font-medium ml-1">{product.quantity}</span>
                                 </div>
                                 <div>
-                                  <span className="text-muted-foreground">Unit:</span>
+                                  <span className="text-muted-foreground">Unit Price:</span>
                                   <span className="font-medium ml-1">
                                     {formatPrice(product.unitPrice, order.warehouseId)}
                                   </span>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-xs text-muted-foreground">Subtotal</div>
+                                <div className="font-semibold">
+                                  {formatPrice(product.unitPrice * product.quantity, order.warehouseId)}
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       ))}
+
+                      <div className="bg-primary/10 border-primary/20 p-3 rounded border-2 mt-3">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">Order Total</span>
+                          <span className="font-bold text-lg">
+                            {formatPrice(order.totalPrice, order.warehouseId)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </CollapsibleContent>
                 </Collapsible>
@@ -529,15 +529,7 @@ export function CallCenterOrderTableView({
                 </div>
               </TableCell>
 
-              <TableCell className="hidden md:table-cell">
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">
-                    {calculateWaitingTime(order.orderDate)}
-                  </span>
-                </div>
-              </TableCell>
-
+    
               <TableCell className="hidden md:table-cell">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">

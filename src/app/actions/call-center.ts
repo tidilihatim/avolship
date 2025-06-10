@@ -650,6 +650,7 @@ export const getMyAssignedOrders = withDbConnection(async (page = 1, limit = 20)
     const orders = await Order.find(query)
     .populate('warehouseId', 'name country currency')
     .populate('sellerId', 'name email businessName')
+    .populate('products.productId', 'name code description')
     .populate('assignedAgent', 'name')
     .populate('lockedBy', 'name')
     .populate('statusChangedBy', 'name role')
@@ -673,7 +674,10 @@ export const getMyAssignedOrders = withDbConnection(async (page = 1, limit = 20)
       sellerName: order.sellerId?.name || 'Unknown Seller',
       products: order.products.map((product: any) => ({
         ...product,
-        productId: product.productId.toString(),
+        productId: product.productId._id?.toString() || product.productId.toString(),
+        name: product.productId.name,
+        code: product.productId.code,
+        description: product.productId.description,
         expeditionId: product.expeditionId?.toString(),
       })),
       totalPrice: order.totalPrice,
@@ -702,7 +706,7 @@ export const getMyAssignedOrders = withDbConnection(async (page = 1, limit = 20)
 
     return {
       success: true,
-      orders: formattedOrders,
+      orders: JSON.parse(JSON.stringify(formattedOrders)),
       pagination: {
         page,
         limit,
