@@ -47,14 +47,6 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { OrderStatus } from '@/lib/db/models/order';
@@ -560,7 +552,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ScrollArea className="h-auto max-h-96">
+                  <ScrollArea className="h-auto">
                     <div className="space-y-4">
                       {order.statusHistory.map((history: any, index: number) => {
                         const statusConfig = getStatusConfig(history.currentStatus);

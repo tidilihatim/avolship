@@ -614,7 +614,7 @@ export const unlockOrder = withDbConnection(async (orderId: string) => {
 /**
  * Get orders assigned to current agent (formatted like getOrders)
  */
-export const getMyAssignedOrders = withDbConnection(async (page = 1, limit = 20) => {
+export const getMyAssignedOrders = withDbConnection(async (page = 1, limit = 20, filters: any = {}) => {
   try {
     const user = await getCurrentUser();
     if (!user || user.role !== UserRole.CALL_CENTER) {
@@ -639,9 +639,56 @@ export const getMyAssignedOrders = withDbConnection(async (page = 1, limit = 20)
     );
 
     // For call center agents: show only their assigned orders (any status)
-    const query = {
+    const query: any = {
       assignedAgent: user._id
     };
+
+    // Apply filters to the query
+    if (filters.status) {
+      query.status = filters.status;
+    }
+
+    if (filters.warehouseId) {
+      query.warehouseId = filters.warehouseId;
+    }
+
+    if (filters.sellerId) {
+      query.sellerId = filters.sellerId;
+    }
+
+    if (filters.callStatus) {
+      if (filters.callStatus === 'answered') {
+        query.status = 'confirmed';
+      } else if (filters.callStatus === 'unreached') {
+        query.status = 'unreached';
+      } else if (filters.callStatus === 'busy') {
+        query['callAttempts.status'] = 'busy';
+      } else if (filters.callStatus === 'invalid') {
+        query.status = 'wrong_number';
+      }
+    }
+
+    if (filters.dateFrom || filters.dateTo) {
+      query.orderDate = {};
+      if (filters.dateFrom) {
+        query.orderDate.$gte = new Date(filters.dateFrom);
+      }
+      if (filters.dateTo) {
+        query.orderDate.$lte = new Date(filters.dateTo);
+      }
+    }
+
+    if (filters.showDoubleOnly) {
+      query.isDouble = true;
+    }
+
+    if (filters.search) {
+      query.$or = [
+        { orderId: { $regex: filters.search, $options: 'i' } },
+        { 'customer.name': { $regex: filters.search, $options: 'i' } },
+        { 'customer.phoneNumbers': { $regex: filters.search, $options: 'i' } },
+      ];
+    }
 
     console.log('Call center agent ID:', user._id);
     console.log('Query for assigned orders:', query);

@@ -114,6 +114,7 @@ interface OrderTableData {
 interface CallCenterActionsProps {
   order: OrderTableData;
   userRole: string | null;
+  actionType?: "call" | "actions";
 }
 
 interface CallDialog {
@@ -124,7 +125,7 @@ interface CallDialog {
   orderStatus?: OrderStatus;
 }
 
-export function CallCenterActions({ order, userRole }: CallCenterActionsProps) {
+export function CallCenterActions({ order, userRole, actionType = "actions" }: CallCenterActionsProps) {
   const t = useTranslations();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -262,11 +263,115 @@ export function CallCenterActions({ order, userRole }: CallCenterActionsProps) {
     return actions;
   };
 
-  return (
-    <div className="flex items-center gap-2">
-      {/* Quick Actions */}
-      {getQuickActions()}
+  // If actionType is "call", only show the call button
+  if (actionType === "call") {
+    return (
+      <div className="flex justify-center">
+        {getQuickActions()}
+        {/* Call Dialog */}
+        <Dialog open={callDialog.isOpen} onOpenChange={(open) => setCallDialog(prev => ({ ...prev, isOpen: open }))}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>{t("callCenter.calls.makeCall")}</DialogTitle>
+              <DialogDescription>
+                Record call attempt for order {order.orderId}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label>Customer: {order.customer.name}</Label>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  <span className="font-mono">{callDialog.selectedPhone}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => window.open(`tel:${callDialog.selectedPhone}`)}
+                  >
+                    Call Now
+                  </Button>
+                </div>
+              </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="callStatus">{t("callCenter.calls.callStatus")}</Label>
+                <Select
+                  value={callDialog.callStatus}
+                  onValueChange={(value) => setCallDialog(prev => ({ 
+                    ...prev, 
+                    callStatus: value as "answered" | "unreached" | "busy" | "invalid"
+                  }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select call result" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="answered">{t("orders.callStatuses.answered")}</SelectItem>
+                    <SelectItem value="unreached">{t("orders.callStatuses.unreached")}</SelectItem>
+                    <SelectItem value="busy">{t("orders.callStatuses.busy")}</SelectItem>
+                    <SelectItem value="invalid">{t("orders.callStatuses.invalid")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {callDialog.callStatus === "answered" && (
+                <div className="space-y-2">
+                  <Label htmlFor="orderStatus">Order Status</Label>
+                  <Select
+                    value={callDialog.orderStatus}
+                    onValueChange={(value) => setCallDialog(prev => ({ 
+                      ...prev, 
+                      orderStatus: value as OrderStatus
+                    }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Update order status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={OrderStatus.CONFIRMED}>{t("orders.statuses.confirmed")}</SelectItem>
+                      <SelectItem value={OrderStatus.CANCELLED}>{t("orders.statuses.cancelled")}</SelectItem>
+                      <SelectItem value={OrderStatus.WRONG_NUMBER}>{t("orders.statuses.wrong_number")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="notes">{t("callCenter.calls.callNotes")}</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Add call notes..."
+                  value={callDialog.notes}
+                  onChange={(e) => setCallDialog(prev => ({ ...prev, notes: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setCallDialog(prev => ({ ...prev, isOpen: false }))}
+                disabled={isLoading}
+              >
+                {t("orders.common.cancel")}
+              </Button>
+              <Button 
+                onClick={handleCallComplete}
+                disabled={isLoading}
+              >
+                {isLoading ? "Recording..." : "Record Call"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-end">
       {/* More Actions Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -382,105 +487,6 @@ export function CallCenterActions({ order, userRole }: CallCenterActionsProps) {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {/* Call Dialog */}
-      <Dialog open={callDialog.isOpen} onOpenChange={(open) => setCallDialog(prev => ({ ...prev, isOpen: open }))}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{t("callCenter.calls.makeCall")}</DialogTitle>
-            <DialogDescription>
-              Record call attempt for order {order.orderId}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label>Customer: {order.customer.name}</Label>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <span className="font-mono">{callDialog.selectedPhone}</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.open(`tel:${callDialog.selectedPhone}`)}
-                >
-                  Call Now
-                </Button>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="callStatus">{t("callCenter.calls.callStatus")}</Label>
-              <Select
-                value={callDialog.callStatus}
-                onValueChange={(value) => setCallDialog(prev => ({ 
-                  ...prev, 
-                  callStatus: value as "answered" | "unreached" | "busy" | "invalid"
-                }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select call result" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="answered">{t("orders.callStatuses.answered")}</SelectItem>
-                  <SelectItem value="unreached">{t("orders.callStatuses.unreached")}</SelectItem>
-                  <SelectItem value="busy">{t("orders.callStatuses.busy")}</SelectItem>
-                  <SelectItem value="invalid">{t("orders.callStatuses.invalid")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {callDialog.callStatus === "answered" && (
-              <div className="space-y-2">
-                <Label htmlFor="orderStatus">Order Status</Label>
-                <Select
-                  value={callDialog.orderStatus}
-                  onValueChange={(value) => setCallDialog(prev => ({ 
-                    ...prev, 
-                    orderStatus: value as OrderStatus
-                  }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Update order status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={OrderStatus.CONFIRMED}>{t("orders.statuses.confirmed")}</SelectItem>
-                    <SelectItem value={OrderStatus.CANCELLED}>{t("orders.statuses.cancelled")}</SelectItem>
-                    <SelectItem value={OrderStatus.WRONG_NUMBER}>{t("orders.statuses.wrong_number")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="notes">{t("callCenter.calls.callNotes")}</Label>
-              <Textarea
-                id="notes"
-                placeholder="Add call notes..."
-                value={callDialog.notes}
-                onChange={(e) => setCallDialog(prev => ({ ...prev, notes: e.target.value }))}
-                rows={3}
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setCallDialog(prev => ({ ...prev, isOpen: false }))}
-              disabled={isLoading}
-            >
-              {t("orders.common.cancel")}
-            </Button>
-            <Button 
-              onClick={handleCallComplete}
-              disabled={isLoading}
-            >
-              {isLoading ? "Recording..." : "Record Call"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

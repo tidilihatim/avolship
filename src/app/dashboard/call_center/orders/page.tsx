@@ -115,7 +115,7 @@ export default async function CallCenterOrdersPage({
   
   if (userRole === UserRole.CALL_CENTER) {
     // Call center agents see only their assigned orders
-    const result = await getMyAssignedOrders(filters.page, filters.limit);
+    const result = await getMyAssignedOrders(filters.page, filters.limit, filters);
     orders = result.orders;
     pagination = result.pagination;
     success = result.success;
@@ -164,7 +164,6 @@ export default async function CallCenterOrdersPage({
       : undefined,
   };
   
-  console.log(orders[0]?.products)
 
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">

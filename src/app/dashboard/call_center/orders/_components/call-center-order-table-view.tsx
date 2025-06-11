@@ -270,15 +270,17 @@ export function CallCenterOrderTableView({
           <TableRow>
             <TableHead>{t("orders.fields.orderId")}</TableHead>
             <TableHead>{t("orders.fields.customer")}</TableHead>
-            <TableHead className="table-cell">{t("orders.fields.warehouse")}</TableHead>
+            <TableHead className="hidden md:table-cell">{t("orders.fields.warehouse")}</TableHead>
             {isAdminOrModerator && (
-              <TableHead className="table-cell">{t("orders.fields.seller")}</TableHead>
+              <TableHead className="hidden lg:table-cell">{t("orders.fields.seller")}</TableHead>
             )}
-            <TableHead className="table-cell">{t("orders.fields.products")}</TableHead>
+            <TableHead className="hidden xl:table-cell">{t("orders.fields.products")}</TableHead>
             <TableHead>{t("orders.fields.totalPrice")}</TableHead>
             <TableHead>{t("orders.fields.status")}</TableHead>
-            <TableHead className="table-cell">{t("orders.fields.callAttempts")}</TableHead>
-            <TableHead className="text-right">{t("callCenter.actions.call")}</TableHead>
+            <TableHead className="hidden sm:table-cell">{t("orders.fields.orderDate")}</TableHead>
+            <TableHead className="hidden md:table-cell">{t("orders.fields.callAttempts")}</TableHead>
+            <TableHead className="text-center">{t("callCenter.actions.call")}</TableHead>
+            <TableHead className="text-right">{t("common.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -529,7 +531,15 @@ export function CallCenterOrderTableView({
                 </div>
               </TableCell>
 
-    
+              <TableCell className="hidden sm:table-cell">
+                <div className="text-sm">
+                  <div className="font-medium">
+                    {formatDate(order.orderDate)}
+                  </div>
+                  {getPriorityBadge(order.priority)}
+                </div>
+              </TableCell>
+
               <TableCell className="hidden md:table-cell">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
@@ -565,8 +575,12 @@ export function CallCenterOrderTableView({
                 </div>
               </TableCell>
 
+              <TableCell className="text-center">
+                <CallCenterActions order={order} userRole={userRole} actionType="call" />
+              </TableCell>
+
               <TableCell className="text-right">
-                <CallCenterActions order={order} userRole={userRole} />
+                <CallCenterActions order={order} userRole={userRole} actionType="actions" />
               </TableCell>
             </TableRow>
           ))}
