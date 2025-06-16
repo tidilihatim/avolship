@@ -194,7 +194,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
   
   return (
     <div className="min-h-screen bg-muted/20 p-3 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         {/* Modern Header - Responsive */}
         <div className="bg-gradient-to-r from-background via-background to-muted/30 border rounded-xl sm:rounded-2xl p-4 sm:p-8 shadow-sm">
           <div className="flex flex-col gap-4 sm:gap-6">
@@ -922,7 +922,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
                         <div className="space-y-2">
                           <h4 className="text-base sm:text-lg font-semibold">{t('doubleOrderDetection.similarOrderFound')}</h4>
                           <code className="bg-muted border px-3 py-2 rounded text-xs sm:text-sm font-mono">
-                            {ref.orderId}
+                            {ref.orderNumber}
                           </code>
                         </div>
                         <div className="text-left sm:text-right space-y-2">
@@ -940,138 +940,41 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
                       
                       <Separator />
                       
-                      {/* Customer Name Comparison */}
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-muted-foreground">{t('doubleOrderDetection.comparisonSections.customerNameComparison')}</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">{t('doubleOrderDetection.labels.currentOrder')}</p>
-                            <div className={`p-3 rounded-lg border ${ref.similarity?.sameName ? 'border-destructive bg-destructive/10 font-bold' : 'bg-muted/30'}`}>
-                              <p className="text-sm truncate">{order.customer?.name}</p>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">{t('doubleOrderDetection.labels.similarOrder')}</p>
-                            <div className={`p-3 rounded-lg border ${ref.similarity?.sameName ? 'border-destructive bg-destructive/10 font-bold' : 'bg-muted/30'}`}>
-                              <p className="text-sm truncate">{ref.customerName}</p>
-                            </div>
-                          </div>
-                        </div>
-                        {ref.similarity?.sameName && (
-                          <Badge variant="destructive" className="text-xs">⚠️ {t('doubleOrderDetection.warnings.sameCustomerName')}</Badge>
-                        )}
-                      </div>
-
-                      {/* Phone Number Comparison */}
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-muted-foreground">{t('doubleOrderDetection.comparisonSections.phoneNumberComparison')}</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">{t('doubleOrderDetection.labels.currentOrder')}</p>
-                            <div className="space-y-2">
-                              {order.customer?.phoneNumbers?.map((phone: string, idx: number) => (
-                                <div key={idx} className={`p-2 rounded border font-mono text-xs sm:text-sm ${ref.similarity?.samePhone ? 'border-destructive bg-destructive/10 font-bold' : 'bg-muted/30'}`}>
-                                  <span className="break-all">{phone}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">{t('doubleOrderDetection.labels.similarOrder')}</p>
-                            <div className={`p-2 rounded border font-mono text-xs sm:text-sm ${ref.similarity?.samePhone ? 'border-destructive bg-destructive/10 font-bold' : 'bg-muted/30'}`}>
-                              <span className="break-all">{ref.phoneNumbers || t('doubleOrderDetection.labels.phoneNotAvailable')}</span>
-                            </div>
-                          </div>
-                        </div>
-                        {ref.similarity?.samePhone && (
-                          <Badge variant="destructive" className="text-xs">⚠️ {t('doubleOrderDetection.warnings.samePhoneNumber')}</Badge>
-                        )}
-                      </div>
-
-                      {/* Products Comparison */}
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-muted-foreground">{t('doubleOrderDetection.comparisonSections.productsComparison')}</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">{t('doubleOrderDetection.labels.currentOrderProducts')}</p>
-                            <div className="space-y-2">
-                              {order.products?.slice(0, 3).map((product: any, idx: number) => (
-                                <div key={idx} className={`p-3 rounded-lg border ${ref.similarity?.sameProduct ? 'border-destructive bg-destructive/10' : 'bg-muted/30'}`}>
-                                  <p className={`font-medium text-xs sm:text-sm ${ref.similarity?.sameProduct ? 'font-bold' : ''} truncate`}>
-                                    {product.productName}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-1 truncate">
-                                    {t('misc.code')}: {product.productCode} | {t('products.qty')}: {product.quantity}
-                                  </p>
-                                </div>
-                              ))}
-                              {order.products?.length > 3 && (
-                                <p className="text-xs text-muted-foreground text-center py-2">
-                                  +{order.products.length - 3} {t('products.moreProducts')}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">{t('doubleOrderDetection.labels.similarOrderProducts')}</p>
-                            <div className={`p-3 rounded-lg border text-xs sm:text-sm ${ref.similarity?.sameProduct ? 'border-destructive bg-destructive/10 font-bold' : 'bg-muted/30'}`}>
-                              <span className="break-words">{ref.products || t('doubleOrderDetection.labels.productDetailsNotAvailable')}</span>
-                            </div>
-                          </div>
-                        </div>
-                        {ref.similarity?.sameProduct && (
-                          <Badge variant="destructive" className="text-xs">⚠️ {t('doubleOrderDetection.warnings.sameProducts')}</Badge>
-                        )}
-                      </div>
-
-                      {/* Order Date Comparison */}
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-muted-foreground">{t('doubleOrderDetection.comparisonSections.orderTimingComparison')}</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">{t('doubleOrderDetection.labels.currentOrder')}</p>
-                            <div className="p-3 rounded-lg border bg-muted/30">
-                              <p className="text-xs sm:text-sm">{formatDate(order.orderDate)}</p>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">{t('doubleOrderDetection.labels.similarOrder')}</p>
-                            <div className="p-3 rounded-lg border bg-muted/30">
-                              <p className="text-xs sm:text-sm">{ref.orderDate ? formatDate(ref.orderDate) : t('time.notAvailable')}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs bg-muted/50 p-3 rounded-lg gap-2">
-                          <span className="text-muted-foreground">
-                            {t('doubleOrderDetection.labels.timeDifference')}: {ref.similarity?.orderDateDifference || 0} {t('doubleOrderDetection.labels.hoursApart')}
-                          </span>
-                          {(ref.similarity?.orderDateDifference || 0) < 24 && (
-                            <Badge variant="outline" className="text-xs border-orange-500 bg-orange-500/10 w-fit">
-                              ⏰ {t('doubleOrderDetection.warnings.within24Hours')}
+                      {/* Rule-based Detection Information */}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground mb-1">
+                              {t('doubleOrderDetection.detectionRule')}
+                            </p>
+                            <Badge variant="outline" className="border-destructive bg-destructive/10 text-destructive font-medium">
+                              {ref.matchedRule}
                             </Badge>
-                          )}
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-muted-foreground mb-1">
+                              {t('doubleOrderDetection.detectedAt')}
+                            </p>
+                            <p className="text-xs font-mono">
+                              {ref.detectedAt ? formatDate(ref.detectedAt) : t('time.notAvailable')}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-
-                      {/* Summary */}
-                      <div className="pt-4 border-t">
-                        <div className="flex flex-wrap gap-3">
-                          <Badge variant="outline" className="text-xs sm:text-sm px-3 py-1">
-                            {t('doubleOrderDetection.labels.similarityScore')}: {[
-                              ref.similarity?.sameName,
-                              ref.similarity?.samePhone,
-                              ref.similarity?.sameProduct
-                            ].filter(Boolean).length}/3
-                          </Badge>
-                          {ref.similarity?.sameName && (
-                            <Badge variant="destructive" className="text-xs">{t('doubleOrderDetection.warnings.sameCustomer')}</Badge>
-                          )}
-                          {ref.similarity?.samePhone && (
-                            <Badge variant="destructive" className="text-xs">{t('doubleOrderDetection.warnings.samePhone')}</Badge>
-                          )}
-                          {ref.similarity?.sameProduct && (
-                            <Badge variant="destructive" className="text-xs">{t('doubleOrderDetection.warnings.sameProducts')}</Badge>
-                          )}
+                        
+                        <Separator />
+                        
+                        <div className="bg-muted/50 p-4 rounded-lg">
+                          <div className="flex items-start gap-3">
+                            <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-medium text-destructive mb-2">
+                                {t('doubleOrderDetection.warningTitle')}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {t('doubleOrderDetection.ruleBasedMessage', { rule: ref.matchedRule })}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>

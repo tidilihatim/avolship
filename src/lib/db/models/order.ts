@@ -47,16 +47,13 @@ export interface CallAttempt {
 }
 
 /**
- * Double order reference interface
+ * Double order reference interface - Updated for rule-based detection
  */
 export interface DoubleOrderReference {
   orderId: mongoose.Types.ObjectId;
-  similarity: {
-    sameName: boolean;
-    samePhone: boolean;
-    sameProduct: boolean;
-    orderDateDifference: number; // Hours difference
-  };
+  orderNumber: string; // The display order ID (e.g., ORD-12345678-ABCD)
+  matchedRule: string; // Name of the rule that detected this duplicate
+  detectedAt: Date; // When this duplicate was detected
 }
 
 /**
@@ -261,24 +258,21 @@ const OrderSchema = new Schema<IOrder>(
       orderId: {
         type: Schema.Types.ObjectId,
         ref: 'Order',
+        required: true,
       },
-      similarity: {
-        sameName: {
-          type: Boolean,
-          default: false,
-        },
-        samePhone: {
-          type: Boolean,
-          default: false,
-        },
-        sameProduct: {
-          type: Boolean,
-          default: false,
-        },
-        orderDateDifference: {
-          type: Number, // Hours difference
-          default: 0,
-        },
+      orderNumber: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      matchedRule: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      detectedAt: {
+        type: Date,
+        default: Date.now,
       },
     }],
     

@@ -1927,5 +1927,113 @@
     "businessInfoError": "Veuillez fournir plus de détails",
     "passwordsMatchError": "Les mots de passe ne correspondent pas",
     "serviceTypeRequiredError": "Le type de service est requis pour les fournisseurs"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "description": "Gérez vos paramètres de compte et préférences",
+    "comingSoon": "Cette fonctionnalité arrive bientôt",
+    "badges": {
+      "new": "Nouveau"
+    },
+    "sections": {
+      "account": {
+        "title": "Compte",
+        "description": "Gérez vos informations de compte personnel et profil"
+      },
+      "business": {
+        "title": "Entreprise",
+        "description": "Configurez les informations et préférences de votre entreprise"
+      },
+      "products": {
+        "title": "Produits",
+        "description": "Paramètres par défaut pour la gestion des produits"
+      },
+      "duplicates": {
+        "title": "Détection de Doublons",
+        "description": "Configurez les règles de détection automatique des commandes en double"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Gérez les préférences de notifications par email et dans l'application"
+      },
+      "security": {
+        "title": "Sécurité",
+        "description": "Mot de passe, authentification à deux facteurs et paramètres de sécurité"
+      },
+      "payment": {
+        "title": "Paiement et Facturation",
+        "description": "Méthodes de paiement et informations de facturation"
+      }
+    },
+    "duplicateDetection": {
+      "title": "Détection de Commandes en Double",
+      "description": "Configurez les règles pour détecter et prévenir automatiquement les commandes en double",
+      "enableToggle": "Activer la détection de doublons",
+      "noRules": "Aucune règle configurée",
+      "noRulesDescription": "Créez votre première règle pour commencer à détecter les commandes en double",
+      "addRule": "Ajouter une Nouvelle Règle",
+      "editRule": "Modifier la Règle",
+      "deleteRule": "Supprimer la Règle",
+      "defaultTimeWindow": "Fenêtre de Temps par Défaut",
+      "timeWindowDescription": "Période de temps par défaut pour comparer les commandes quand aucune règle spécifique ne s'applique",
+      "ruleName": "Nom de la Règle",
+      "ruleNamePlaceholder": "Entrez le nom de la règle",
+      "conditions": "Conditions",
+      "conditionsDescription": "Sélectionnez les champs à comparer lors de la détection de doublons",
+      "logicalOperator": "Logique",
+      "logicalOperatorDescription": "Comment les conditions doivent être combinées",
+      "timeWindow": "Fenêtre de Temps",
+      "timeWindowDescription": "Les commandes doivent être dans cette période de temps pour être considérées comme des doublons",
+      "isActive": "Actif",
+      "save": "Enregistrer les Modifications",
+      "cancel": "Annuler",
+      "saving": "Enregistrement...",
+      "operators": {
+        "and": "ET - Toutes les conditions doivent correspondre",
+        "or": "OU - N'importe quelle condition peut correspondre"
+      },
+      "timeUnits": {
+        "minutes": "Minutes",
+        "hours": "Heures",
+        "days": "Jours"
+      },
+      "fields": {
+        "customerName": "Nom du Client",
+        "customerPhone": "Téléphone du Client",
+        "customerAddress": "Adresse de Livraison",
+        "productId": "ID du Produit",
+        "productName": "Nom du Produit",
+        "productCode": "Code du Produit",
+        "orderTotal": "Total de la Commande",
+        "warehouse": "Entrepôt"
+      },
+      "fieldDescriptions": {
+        "customerName": "Comparer les noms des clients (insensible à la casse)",
+        "customerPhone": "Comparer les numéros de téléphone",
+        "customerAddress": "Comparer les adresses de livraison",
+        "productId": "Comparer les ID de produits exacts",
+        "productName": "Comparer les noms de produits",
+        "productCode": "Comparer les codes de produits",
+        "orderTotal": "Comparer le montant total de la commande",
+        "warehouse": "Comparer les emplacements d'entrepôts"
+      },
+      "categories": {
+        "customer": "Client",
+        "product": "Produit",
+        "order": "Commande"
+      },
+      "messages": {
+        "settingsLoaded": "Paramètres chargés avec succès",
+        "settingsSaved": "Paramètres enregistrés avec succès",
+        "ruleAdded": "Règle ajoutée avec succès",
+        "ruleUpdated": "Règle mise à jour avec succès",
+        "ruleDeleted": "Règle supprimée avec succès",
+        "errorLoading": "Échec du chargement des paramètres",
+        "errorSaving": "Échec de l'enregistrement des paramètres",
+        "ruleNameRequired": "Le nom de la règle est requis",
+        "conditionsRequired": "Au moins une condition est requise",
+        "timeWindowRequired": "La fenêtre de temps est requise"
+      }
+    }
   }
 }

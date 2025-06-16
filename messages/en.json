@@ -1948,5 +1948,113 @@
     "businessInfoError": "Please provide more details",
     "passwordsMatchError": "Passwords don't match",
     "serviceTypeRequiredError": "Service type is required for providers"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account settings and preferences",
+    "comingSoon": "This feature is coming soon",
+    "badges": {
+      "new": "New"
+    },
+    "sections": {
+      "account": {
+        "title": "Account",
+        "description": "Manage your personal account information and profile"
+      },
+      "business": {
+        "title": "Business",
+        "description": "Configure your business information and preferences"
+      },
+      "products": {
+        "title": "Products",
+        "description": "Default settings for product management"
+      },
+      "duplicates": {
+        "title": "Duplicate Detection",
+        "description": "Configure automatic duplicate order detection rules"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Manage email and in-app notification preferences"
+      },
+      "security": {
+        "title": "Security",
+        "description": "Password, two-factor authentication, and security settings"
+      },
+      "payment": {
+        "title": "Payment & Billing",
+        "description": "Payment methods and billing information"
+      }
+    },
+    "duplicateDetection": {
+      "title": "Duplicate Order Detection",
+      "description": "Configure rules to automatically detect and prevent duplicate orders",
+      "enableToggle": "Enable duplicate detection",
+      "noRules": "No rules configured",
+      "noRulesDescription": "Create your first rule to start detecting duplicate orders",
+      "addRule": "Add New Rule",
+      "editRule": "Edit Rule",
+      "deleteRule": "Delete Rule",
+      "defaultTimeWindow": "Default Time Window",
+      "timeWindowDescription": "Default time period for comparing orders when no specific rule applies",
+      "ruleName": "Rule Name",
+      "ruleNamePlaceholder": "Enter rule name",
+      "conditions": "Conditions",
+      "conditionsDescription": "Select which fields to compare when detecting duplicates",
+      "logicalOperator": "Logic",
+      "logicalOperatorDescription": "How conditions should be combined",
+      "timeWindow": "Time Window",
+      "timeWindowDescription": "Orders must be within this time period to be considered duplicates",
+      "isActive": "Active",
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "operators": {
+        "and": "AND - All conditions must match",
+        "or": "OR - Any condition can match"
+      },
+      "timeUnits": {
+        "minutes": "Minutes",
+        "hours": "Hours",
+        "days": "Days"
+      },
+      "fields": {
+        "customerName": "Customer Name",
+        "customerPhone": "Customer Phone",
+        "customerAddress": "Shipping Address",
+        "productId": "Product ID",
+        "productName": "Product Name",
+        "productCode": "Product Code",
+        "orderTotal": "Order Total",
+        "warehouse": "Warehouse"
+      },
+      "fieldDescriptions": {
+        "customerName": "Compare customer names (case-insensitive)",
+        "customerPhone": "Compare phone numbers",
+        "customerAddress": "Compare shipping addresses",
+        "productId": "Compare exact product IDs",
+        "productName": "Compare product names",
+        "productCode": "Compare product codes",
+        "orderTotal": "Compare total order amount",
+        "warehouse": "Compare warehouse locations"
+      },
+      "categories": {
+        "customer": "Customer",
+        "product": "Product",
+        "order": "Order"
+      },
+      "messages": {
+        "settingsLoaded": "Settings loaded successfully",
+        "settingsSaved": "Settings saved successfully",
+        "ruleAdded": "Rule added successfully",
+        "ruleUpdated": "Rule updated successfully",
+        "ruleDeleted": "Rule deleted successfully",
+        "errorLoading": "Failed to load settings",
+        "errorSaving": "Failed to save settings",
+        "ruleNameRequired": "Rule name is required",
+        "conditionsRequired": "At least one condition is required",
+        "timeWindowRequired": "Time window is required"
+      }
+    }
   }
 }

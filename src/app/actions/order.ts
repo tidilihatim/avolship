@@ -17,6 +17,7 @@ import { ProductOption } from '@/types/expedition-form';
 import Expedition from '@/lib/db/models/expedition';
 import { ExpeditionStatus } from '../dashboard/_constant/expedition';
 import { revalidatePath } from 'next/cache';
+import { checkDuplicatesForNewOrder } from '@/lib/duplicate-detection/duplicate-checker';
 
 // Add this function to src/app/actions/order.ts
 
@@ -568,47 +569,6 @@ export const getProductsForOrder = withDbConnection(async (warehouseId: string) 
   }
 });
 
-/**
- * Detect potential double orders
- */
-const detectDoubleOrders = withDbConnection(async (
-  customerName: string,
-  phoneNumbers: string[],
-  productIds: string[],
-  orderDate: Date,
-  excludeOrderId?: string
-) => {
-  try {
-    const potentialDoubles = await (Order as any).findPotentialDoubles(
-      customerName,
-      phoneNumbers,
-      productIds.map(id => new mongoose.Types.ObjectId(id)),
-      orderDate,
-      excludeOrderId ? new mongoose.Types.ObjectId(excludeOrderId) : undefined
-    );
-
-    return potentialDoubles.map((order: any) => ({
-      orderId: order._id.toString(),
-      customerName: order.customer.name,
-      orderDate: order.orderDate,
-      similarity: {
-        sameName: order.customer.name.toLowerCase() === customerName.toLowerCase(),
-        samePhone: order.customer.phoneNumbers.some((phone: string) => 
-          phoneNumbers.includes(phone)
-        ),
-        sameProduct: order.products.some((p: any) => 
-          productIds.includes(p.productId.toString())
-        ),
-        orderDateDifference: Math.abs(
-          new Date(orderDate).getTime() - new Date(order.orderDate).getTime()
-        ) / (1000 * 60 * 60), // Hours difference
-      },
-    }));
-  } catch (error: any) {
-    console.error("Error detecting double orders:", error);
-    return [];
-  }
-});
 
 
 /**
@@ -706,13 +666,27 @@ export const createOrder = withDbConnection(async (orderData: any) => {
       ? orderData.customer.phoneNumbers.split('|').map((p: string) => p.trim()).filter(Boolean)
       : orderData.customer.phoneNumbers;
 
-    // Detect potential double orders
-    const doubleOrders = await detectDoubleOrders(
-      orderData.customer.name,
-      phoneNumbers,
-      productIds,
-      new Date()
-    );
+    // Detect potential double orders using rule-based detection
+    const duplicateDetectionResult = await checkDuplicatesForNewOrder({
+      customer: {
+        name: orderData.customer.name,
+        phoneNumbers,
+        shippingAddress: orderData.customer.shippingAddress,
+      },
+      products: orderData.products.map((p: any) => ({
+        productId: p.productId,
+        quantity: p.quantity,
+        unitPrice: p.unitPrice,
+      })),
+      totalPrice: orderData.products.reduce(
+        (total: number, product: any) => total + (product.unitPrice * product.quantity),
+        0
+      ),
+      warehouseId: orderData.warehouseId,
+      sellerId: user._id,
+    });
+
+    console.log(`Duplicate Detection Result ${JSON.stringify(duplicateDetectionResult)}`)
 
     // Get warehouse and seller information
     const [warehouse, seller] = await Promise.all([
@@ -754,10 +728,15 @@ export const createOrder = withDbConnection(async (orderData: any) => {
       sellerId: user._id,
       products: orderProducts,
       totalPrice, // Add the calculated total price here
-      status: OrderStatus.PENDING,
+      status: duplicateDetectionResult?.isDuplicate ? OrderStatus.DOUBLE : OrderStatus.PENDING,
       statusChangedAt: new Date(),
-      isDouble: doubleOrders.length > 0,
-      doubleOrderReferences: doubleOrders,
+      isDouble: duplicateDetectionResult.isDuplicate,
+      doubleOrderReferences: duplicateDetectionResult.duplicateOrders.map(duplicate => ({
+        orderId: duplicate.orderId,
+        orderNumber: duplicate.orderNumber,
+        matchedRule: duplicate.matchedRule,
+        detectedAt: new Date(),
+      })),
       orderDate: new Date(),
     }
 
@@ -788,8 +767,8 @@ export const createOrder = withDbConnection(async (orderData: any) => {
       success: true,
       message: "Order created successfully",
       orderId: result?.orderId ,
-      isDouble: doubleOrders.length > 0,
-      doubleOrderCount: doubleOrders.length,
+      isDouble: duplicateDetectionResult.isDuplicate,
+      doubleOrderCount: duplicateDetectionResult.duplicateOrders.length,
     };
   } catch (error: any) {
     console.error("Error creating order:", error);
