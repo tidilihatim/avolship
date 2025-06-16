@@ -346,6 +346,7 @@
     "expeditionDate": "Date d'Expédition",
     "title": "Expéditions",
     "totalProducts": "Total Produits",
+    "products": "Produits",
     "filterByTransportMode": "Filtrer par Mode de Transport",
     "clearFilters": "Effacer les Filtres",
     "filterByDate": "Filtrer par Date",

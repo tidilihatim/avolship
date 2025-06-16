@@ -10,7 +10,7 @@ import {
   getAllProvidersForExpedition,
   getCountriesForExpedition
 } from "@/app/actions/expedition";
-import { UserRole } from "@/lib/db/models/user";
+import { UserRole } from "@/app/dashboard/_constant/user";
 import { getServerSession } from "next-auth";
 import { authOptions } from '@/config/auth';
 import User from "@/lib/db/models/user";

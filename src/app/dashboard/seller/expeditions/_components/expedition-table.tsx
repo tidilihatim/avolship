@@ -90,16 +90,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 import { ExpeditionStatus, TransportMode, ProviderType } from "@/app/dashboard/_constant/expedition";
+import { UserRole } from "@/app/dashboard/_constant/user";
 import { ExpeditionTableData, ExpeditionFilters, WarehouseOption, SellerOption, ProviderOption } from "@/types/expedition";
 import { updateExpeditionStatus } from "@/app/actions/expedition";
-import { UserRole } from "@/lib/db/models/user";
 import { PaginationData } from "@/types/user";
 
 // Constants for filter values
@@ -533,11 +533,11 @@ export default function ExpeditionTable({
   };
 
   // Format currency
-  const formatCurrency = async (value?: number,warehouseCurrency?: string) => {
+  const formatCurrency = (value?: number, warehouseCurrency?: string) => {
     if (value === undefined || value === null) return "-";
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: warehouseCurrency,
+      currency: warehouseCurrency || "USD",
     }).format(value);
   };
 
@@ -831,8 +831,8 @@ export default function ExpeditionTable({
                     <TableHead className="min-w-[120px]">
                       {t("expeditions.warehouseName")}
                     </TableHead>
-                    <TableHead className="min-w-[120px]">
-                      {t("expeditions.totalProducts")}
+                    <TableHead className="min-w-[200px]">
+                      {t("expeditions.products")}
                     </TableHead>
                     <TableHead className="min-w-[100px]">{t("common.status")}</TableHead>
                     <TableHead className="text-right min-w-[80px]">
@@ -886,29 +886,71 @@ export default function ExpeditionTable({
                       <TableCell>
                         {expedition.warehouseName || "-"}
                       </TableCell>
-                      <TableCell>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div className="flex items-center gap-1 cursor-help">
-                                <Package className="h-3 w-3 text-muted-foreground" />
-                                <span>{expedition.totalProducts}</span>
-                                <span className="text-muted-foreground">
-                                  ({expedition.totalQuantity})
-                                </span>
+                      <TableCell className="min-w-[200px]">
+                        <Accordion type="single" collapsible className="w-full">
+                          <AccordionItem value="products" className="border-none">
+                            <AccordionTrigger className="hover:no-underline py-2 px-0">
+                              <div className="flex items-center gap-2">
+                                <Package className="h-4 w-4 text-muted-foreground" />
+                                <div className="text-left">
+                                  <div className="font-medium">
+                                    {expedition.totalProducts} Products
+                                  </div>
+                                  <div className="text-sm text-muted-foreground">
+                                    Qty: {expedition.totalQuantity}
+                                    {expedition.totalValue && (
+                                      <span className="ml-2">
+                                        • {formatCurrency(expedition.totalValue, expedition.warehouse?.currency)}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <div className="text-xs space-y-1">
-                                <p>{expedition.totalProducts} Products</p>
-                                <p>{expedition.totalQuantity} Total Quantity</p>
-                                {expedition.totalValue && (
-                                  <p>{formatCurrency(expedition.totalValue,expedition.warehouse?.currency)} Total Value</p>
-                                )}
+                            </AccordionTrigger>
+                            <AccordionContent className="pb-0">
+                              <div className="space-y-2 max-h-48 overflow-y-auto">
+                                {expedition.products?.map((product, index) => (
+                                  <div
+                                    key={product.productId || index}
+                                    className="flex items-center gap-3 p-2 rounded-lg border bg-muted/50"
+                                  >
+                                    {product.image ? (
+                                      <div className="w-8 h-8 rounded overflow-hidden bg-background border">
+                                        <img
+                                          src={product.image}
+                                          alt={product.productName}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div className="w-8 h-8 rounded bg-muted border flex items-center justify-center">
+                                        <Package className="h-4 w-4 text-muted-foreground" />
+                                      </div>
+                                    )}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="font-medium text-sm truncate">
+                                        {product.productName}
+                                      </div>
+                                      <div className="text-xs text-muted-foreground">
+                                        {product.productCode}
+                                      </div>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="font-medium text-sm">
+                                        x{product.quantity}
+                                      </div>
+                                      {product.unitPrice && (
+                                        <div className="text-xs text-muted-foreground">
+                                          {formatCurrency(product.unitPrice, expedition.warehouse?.currency)}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -998,6 +1040,19 @@ export default function ExpeditionTable({
                                     Mark Delivered
                                   </DropdownMenuItem>
                                 )}
+                              </>
+                            )}
+
+                            {/* Edit for Admin/Moderator */}
+                            {isAdminOrModerator && (
+                              <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                  <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}/edit`}>
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    {t("common.edit")}
+                                  </Link>
+                                </DropdownMenuItem>
                               </>
                             )}
 

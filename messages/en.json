@@ -399,6 +399,7 @@
     "expeditionDate": "Expedition Date",
     "fromCountry":"Origin Country",
     "totalProducts":"Total Products",
+    "products":"Products",
     "applyFilters":"Apply Filters",
     "title": "Expeditions",
     "filterBySeller":"Filter by Seller",

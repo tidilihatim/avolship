@@ -5,6 +5,20 @@ import { ProviderType } from "next-auth/providers/index";
 import { Warehouse } from "./warehouse";
 
 /**
+ * Product details for expedition display
+ */
+export interface ExpeditionProductDetail {
+  productId: string;
+  productName: string;
+  productCode: string;
+  quantity: number;
+  unitPrice?: number;
+  image?: string;
+  description?: string;
+  category?: string;
+}
+
+/**
  * Expedition table data interface for display
  */
 export interface ExpeditionTableData {
@@ -24,6 +38,7 @@ export interface ExpeditionTableData {
   providerName?: string;
   carrierName?: string;
   carrierPhone?: string;
+  products: ExpeditionProductDetail[];
   totalProducts: number;
   totalQuantity: number;
   totalValue?: number;

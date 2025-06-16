@@ -112,45 +112,64 @@ export const getExpeditions = withDbConnection(async (
     const total = await Expedition.countDocuments(query);
     const totalPages = Math.ceil(total / limit);
 
-    // Fetch expeditions with proper typing
+    // Fetch expeditions with proper typing and populate products
     const expeditions = await Expedition.find(query)
       .sort({ createdAt: -1 })
       .populate("warehouseId")
+      .populate({
+        path: 'products.productId',
+        model: 'Product',
+        select: 'name code description image'
+      })
       .skip(skip)
       .limit(limit)
       .lean();
 
     // Transform data for table display
-    const expeditionData: ExpeditionTableData[] = expeditions.map((expedition: any) => ({
-      _id: expedition._id.toString(),
-      expeditionCode: expedition.expeditionCode,
-      sellerId: expedition.sellerId.toString(),
-      sellerName: expedition.sellerName,
-      fromCountry: expedition.fromCountry,
-      weight: expedition.weight,
-      expeditionDate: expedition.expeditionDate,
-      transportMode: expedition.transportMode,
-      warehouseId: expedition.warehouseId.toString(),
-      warehouse: expedition.warehouseId,
-      warehouseName: expedition.warehouseName,
-      providerType: expedition.providerType,
-      providerId: expedition.providerId?.toString(),
-      providerName: expedition.providerName,
-      carrierName: expedition.carrierInfo?.name,
-      carrierPhone: expedition.carrierInfo?.phone,
-      totalProducts: expedition.totalProducts,
-      totalQuantity: expedition.totalQuantity,
-      totalValue: expedition.totalValue,
-      status: expedition.status,
-      approvedBy: expedition.approvedBy?.toString(),
-      approvedAt: expedition.approvedAt,
-      rejectedReason: expedition.rejectedReason,
-      trackingNumber: expedition.trackingNumber,
-      estimatedDelivery: expedition.estimatedDelivery,
-      actualDelivery: expedition.actualDelivery,
-      createdAt: expedition.createdAt,
-      updatedAt: expedition.updatedAt,
-    }));
+    const expeditionData: ExpeditionTableData[] = expeditions.map((expedition: any) => {
+      // Transform products with populated data
+      const transformedProducts = expedition.products?.map((product: any) => ({
+        productId: product.productId?._id?.toString() || product.productId?.toString() || '',
+        productName: product.productName || product.productId?.name || '',
+        productCode: product.productCode || product.productId?.code || '',
+        quantity: product.quantity || 0,
+        unitPrice: product.unitPrice,
+        image: product.productId?.image?.url || '',
+        description: product.productId?.description || '',
+      })) || [];
+
+      return {
+        _id: expedition._id.toString(),
+        expeditionCode: expedition.expeditionCode,
+        sellerId: expedition.sellerId.toString(),
+        sellerName: expedition.sellerName,
+        fromCountry: expedition.fromCountry,
+        weight: expedition.weight,
+        expeditionDate: expedition.expeditionDate,
+        transportMode: expedition.transportMode,
+        warehouseId: expedition.warehouseId.toString(),
+        warehouse: expedition.warehouseId,
+        warehouseName: expedition.warehouseName,
+        providerType: expedition.providerType,
+        providerId: expedition.providerId?.toString(),
+        providerName: expedition.providerName,
+        carrierName: expedition.carrierInfo?.name,
+        carrierPhone: expedition.carrierInfo?.phone,
+        products: transformedProducts,
+        totalProducts: expedition.totalProducts,
+        totalQuantity: expedition.totalQuantity,
+        totalValue: expedition.totalValue,
+        status: expedition.status,
+        approvedBy: expedition.approvedBy?.toString(),
+        approvedAt: expedition.approvedAt,
+        rejectedReason: expedition.rejectedReason,
+        trackingNumber: expedition.trackingNumber,
+        estimatedDelivery: expedition.estimatedDelivery,
+        actualDelivery: expedition.actualDelivery,
+        createdAt: expedition.createdAt,
+        updatedAt: expedition.updatedAt,
+      };
+    });
 
     const pagination: PaginationData = {
       page,
@@ -166,7 +185,6 @@ export const getExpeditions = withDbConnection(async (
       message: 'Expeditions fetched successfully',
     };
   } catch (error) {
-    console.error('Error fetching expeditions:', error);
     return {
       expeditions: null,
       pagination: null,
@@ -204,7 +222,6 @@ export const getAllSellersForExpedition = withDbConnection(async (): Promise<Sel
       email: seller.email,
     }));
   } catch (error) {
-    console.error('Error fetching sellers:', error);
     return [];
   }
 });
@@ -229,7 +246,6 @@ export const getAllProvidersForExpedition = withDbConnection(async (): Promise<P
       serviceType: provider.serviceType,
     }));
   } catch (error) {
-    console.error('Error fetching providers:', error);
     return [];
   }
 });
@@ -245,7 +261,6 @@ export const getCountriesForExpedition = withDbConnection(async (): Promise<stri
 
     return countries.sort();
   } catch (error) {
-    console.error('Error fetching countries:', error);
     return [];
   }
 });
@@ -312,7 +327,6 @@ export const updateExpeditionStatus = withDbConnection(async (
       message: `Expedition status updated to ${status}`,
     };
   } catch (error) {
-    console.error('Error updating expedition status:', error);
     return {
       success: false,
       message: 'Failed to update expedition status',
@@ -357,7 +371,6 @@ export const getExpeditionById = withDbConnection(async (expeditionId: string): 
       message: 'Expedition fetched successfully',
     };
   } catch (error) {
-    console.error('Error fetching expedition:', error);
     return {
       expedition: null,
       success: false,
@@ -441,7 +454,6 @@ export const createExpedition = withDbConnection(async (expeditionData: Expediti
       message: 'Expedition created successfully',
     };
   } catch (error: any) {
-    console.error('Error creating expedition:', error);
 
     // Handle mongoose validation errors
     if (error.name === 'ValidationError') {
@@ -553,7 +565,6 @@ export const updateExpedition = withDbConnection(async (
       message: 'Expedition updated successfully',
     };
   } catch (error: any) {
-    console.error('Error updating expedition:', error);
 
     // Handle mongoose validation errors
     if (error.name === 'ValidationError') {
@@ -597,7 +608,6 @@ export const getCountriesForForm = withDbConnection(async (): Promise<string[]> 
 
     return countries.sort();
   } catch (error) {
-    console.error('Error fetching countries:', error);
     return [];
   }
 });
@@ -609,9 +619,9 @@ export const getCountriesForForm = withDbConnection(async (): Promise<string[]> 
 // src/app/actions/expedition.ts - Updated sections
 
 /**
- * Get products for a specific warehouse (seller's products only)
+ * Get products for a specific warehouse (supports both seller and admin access)
  */
-export const getProductsForWarehouse = withDbConnection(async (warehouseId: string): Promise<ProductOption[]> => {
+export const getProductsForWarehouse = withDbConnection(async (warehouseId: string, sellerId?: string): Promise<ProductOption[]> => {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
@@ -619,24 +629,61 @@ export const getProductsForWarehouse = withDbConnection(async (warehouseId: stri
     }
 
     const user = await User.findById(session.user.id);
-    if (!user || user.role !== UserRole.SELLER) {
+    if (!user) {
       return [];
     }
 
-    // Debug logging to see what's happening
-    console.log('Getting products for warehouse:', warehouseId);
-    console.log('Seller ID:', user._id.toString());
+    let targetSellerId: string;
 
-    // Get products that belong to this seller and are associated with the specified warehouse
+    // Determine which seller's products to fetch
+    if (user.role === UserRole.ADMIN || user.role === UserRole.MODERATOR) {
+      // Admin/Moderator: Use provided sellerId or fetch all products for the warehouse
+      if (sellerId) {
+        targetSellerId = sellerId;
+      } else {
+        // If no sellerId provided, get all products for this warehouse (from all sellers)
+        const products = await Product.find({
+          $or: [
+            { 'warehouses.warehouseId': warehouseId },
+            { 'warehouses.warehouseId': new mongoose.Types.ObjectId(warehouseId) }
+          ],
+        }).lean();
+
+        const productOptions: ProductOption[] = products.map((product: any) => {
+          const warehouseStock = product.warehouses?.find((w: any) =>
+            w.warehouseId.toString() === warehouseId
+          );
+          const stock = warehouseStock?.stock || 0;
+
+          return {
+            _id: product._id.toString(),
+            name: product.name,
+            code: product.code,
+            price: product.price,
+            totalStock: stock,
+          };
+        });
+
+        return productOptions;
+      }
+    } else if (user.role === UserRole.SELLER) {
+      // Seller: Use their own ID
+      targetSellerId = user._id.toString();
+    } else {
+      return [];
+    }
+
+    // Debug logging
+
+    // Get products that belong to the target seller and are associated with the specified warehouse
     const products = await Product.find({
-      sellerId: user._id,
+      sellerId: targetSellerId,
       $or: [
         { 'warehouses.warehouseId': warehouseId },
         { 'warehouses.warehouseId': new mongoose.Types.ObjectId(warehouseId) }
       ],
     }).lean();
 
-    console.log('Found products:', products.length);
 
     const productOptions: ProductOption[] = products.map((product: any) => {
       // Find the warehouse-specific stock
@@ -644,24 +691,20 @@ export const getProductsForWarehouse = withDbConnection(async (warehouseId: stri
         w.warehouseId.toString() === warehouseId
       );
 
-      const stock = warehouseStock?.stock || 0; // Use warehouse-specific stock, default to 0
+      const stock = warehouseStock?.stock || 0;
 
-      console.log(`Product ${product.name}: warehouse stock = ${stock}, total stock = ${product.totalStock}`);
 
       return {
         _id: product._id.toString(),
         name: product.name,
         code: product.code,
         price: product.price,
-        totalStock: stock, // Show actual warehouse stock (including 0)
+        totalStock: stock,
       };
-    }); // Remove the filter - show all products including those with 0 stock
-
-    console.log('All products (including 0 stock):', productOptions.length);
+    });
 
     return productOptions;
   } catch (error) {
-    console.error('Error fetching products for warehouse:', error);
     return [];
   }
 });
@@ -687,7 +730,6 @@ export const getWarehouseById = withDbConnection(async (warehouseId: string): Pr
       message: 'Warehouse fetched successfully',
     };
   } catch (error) {
-    console.error('Error fetching warehouse:', error);
     return {
       warehouse: null,
       success: false,
@@ -701,18 +743,27 @@ export const getWarehouseById = withDbConnection(async (warehouseId: string): Pr
  */
 export const getAllWarehousesForExpedition = withDbConnection(async (): Promise<(WarehouseOption & { currency: string })[]> => {
   try {
-
     const session = await getServerSession(authOptions);
     const id = session?.user?.id;
     if (!id) return [];
 
-    const warehouses = await Warehouse.find({
-      isActive: true,
-      $or: [
+    const user = await User.findById(id);
+    if (!user) return [];
+
+    let query: any = { isActive: true };
+
+    // Admin and moderators can see all active warehouses
+    if (user.role === UserRole.ADMIN || user.role === UserRole.MODERATOR) {
+      // No additional filtering needed - they can see all active warehouses
+    } else {
+      // Sellers can only see warehouses available to all or assigned to them
+      query.$or = [
         { isAvailableToAll: true },
         { assignedSellers: id }
-      ]
-    })
+      ];
+    }
+
+    const warehouses = await Warehouse.find(query)
       .select('name country currency')
       .sort({ name: 1 })
       .lean();
@@ -724,7 +775,6 @@ export const getAllWarehousesForExpedition = withDbConnection(async (): Promise<
       currency: warehouse.currency,
     }));
   } catch (error) {
-    console.error('Error fetching warehouses:', error);
     return [];
   }
 });

@@ -108,6 +108,11 @@ export default function ExpeditionForm({
   // Populate form values when editing
   useEffect(() => {
     if (expedition && isEdit) {
+      // Handle warehouseId - it might be a populated object or just an ID string
+      const warehouseId = typeof expedition.warehouseId === 'object' 
+        ? expedition.warehouseId._id 
+        : expedition.warehouseId;
+      
       setFormData({
         fromCountry: expedition.fromCountry || "",
         weight: expedition.weight ? String(expedition.weight) : "",
@@ -115,7 +120,7 @@ export default function ExpeditionForm({
           ? new Date(expedition.expeditionDate).toISOString().split("T")[0]
           : "",
         transportMode: expedition.transportMode || "",
-        warehouseId: expedition.warehouseId || "",
+        warehouseId: warehouseId || "",
         providerType: expedition.providerType || "",
         providerId: expedition.providerId || "",
         carrierName: expedition.carrierInfo?.name || "",
@@ -129,13 +134,20 @@ export default function ExpeditionForm({
       });
 
       // Set warehouse currency for edit mode
-      if (expedition.warehouseId) {
-        const warehouse = warehouses.find(
-          (w) => w._id === expedition.warehouseId
-        );
-        if (warehouse) {
-          setWarehouseCurrency(warehouse.currency);
+      if (warehouseId) {
+        // First try to get currency from populated warehouse object
+        let currency = "USD";
+        if (typeof expedition.warehouseId === 'object' && expedition.warehouseId.currency) {
+          currency = expedition.warehouseId.currency;
+        } else {
+          // Fallback to finding in warehouses array
+          const warehouse = warehouses.find((w) => w._id === warehouseId);
+          if (warehouse) {
+            currency = warehouse.currency;
+          }
         }
+        setWarehouseCurrency(currency);
+        console.log("Edit mode: Warehouse currency set to:", currency);
       }
 
       // Set selected products
@@ -184,7 +196,17 @@ export default function ExpeditionForm({
     setIsLoadingProducts(true);
     try {
       console.log("Loading products for warehouse:", warehouseId);
-      const products = await getProductsForWarehouse(warehouseId);
+      
+      // If we're in edit mode and have expedition data, pass the seller ID
+      let sellerId: string | undefined;
+      if (isEdit && expedition?.sellerId) {
+        sellerId = typeof expedition.sellerId === 'object' 
+          ? expedition.sellerId._id || expedition.sellerId.toString()
+          : expedition.sellerId;
+      }
+      
+      console.log("Seller ID for product loading:", sellerId);
+      const products = await getProductsForWarehouse(warehouseId, sellerId);
       console.log("Received products:", products);
       setAvailableProducts(products);
 
