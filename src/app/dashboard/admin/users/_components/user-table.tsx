@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { PlusCircle, Search, FilterX, Filter, MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react';
 import Link from 'next/link';
@@ -61,9 +61,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
-import { UserRole, UserStatus } from '@/lib/db/models/user';
+import { UserRole, UserStatus } from '@/app/dashboard/_constant/user';
 import { UserTableData, UserFilters, PaginationData } from '@/types/user';
 import { deleteUser, updateUserStatus } from '@/app/actions/user';
+import SellerAgentAssignment from './seller-agent-assignment';
 
 // Constants for filter values
 const ALL_ROLES = "all_roles";
@@ -95,6 +96,15 @@ export default function UserList({ users, allCountries = [], pagination, error, 
   const [statusFilter, setStatusFilter] = useState(filters.status || ALL_STATUSES);
   const [countryFilter, setCountryFilter] = useState(filters.country || ALL_COUNTRIES);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
+  
+  // Extract call center agents from users data
+  const callCenterAgents = users
+    .filter(user => user.role === UserRole.CALL_CENTER)
+    .map(agent => ({
+      _id: agent._id,
+      name: agent.name,
+      email: agent.email
+    }));
   
   // Use countries provided from the database, or fallback to extracting from current users
   const countries = allCountries.length > 0 
@@ -527,6 +537,7 @@ export default function UserList({ users, allCountries = [], pagination, error, 
                     <TableHead className="hidden md:table-cell">{t('common.status')}</TableHead>
                     <TableHead className="hidden lg:table-cell">{t('common.country')}</TableHead>
                     <TableHead className="hidden lg:table-cell">2FA</TableHead>
+                    <TableHead className="hidden xl:table-cell">{t('users.assignment.title')}</TableHead>
                     <TableHead className="hidden xl:table-cell">{t('common.createdAt')}</TableHead>
                     <TableHead className="text-right">{t('common.actions')}</TableHead>
                   </TableRow>
@@ -560,6 +571,17 @@ export default function UserList({ users, allCountries = [], pagination, error, 
                           <Badge variant="outline" className="bg-gray-50 text-gray-600 hover:bg-gray-50 border-gray-200">
                             Disabled
                           </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden xl:table-cell">
+                        {user.role === UserRole.SELLER ? (
+                          <SellerAgentAssignment
+                            sellerId={user._id}
+                            currentAgent={user.assignedCallCenterAgent}
+                            agents={callCenterAgents}
+                          />
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
                         )}
                       </TableCell>
                       <TableCell className="hidden xl:table-cell">

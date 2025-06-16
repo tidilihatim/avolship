@@ -1147,6 +1147,20 @@
       "updateBusinessInfo": "Update business information",
       "updateSecuritySettings": "Update security settings"
     },
+    "assignment": {
+      "title": "Call Center Assignment",
+      "description": "Assign sellers to call center agents",
+      "currentlyAssigned": "Currently assigned to:",
+      "noAssignment": "No assignment",
+      "selectAgent": "Select a call center agent",
+      "updateAssignment": "Update Assignment",
+      "updating": "Updating...",
+      "assignmentSuccess": "Assignment updated successfully",
+      "assignmentError": "Failed to update assignment",
+      "unassignConfirm": "Remove call center agent assignment?",
+      "assignedSellers": "Assigned Sellers",
+      "noAssignedSellers": "No sellers assigned to this agent"
+    },
     "messages": {
       "passwordKeepCurrent": "(leave blank to keep current password)",
       "twoFactorEnabled": "Two-factor authentication is enabled",

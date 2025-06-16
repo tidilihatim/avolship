@@ -1130,6 +1130,20 @@
       "sellerInfo": "Informations du Vendeur",
       "additionalInfo": "Informations Supplémentaires"
     },
+    "assignment": {
+      "title": "Attribution au Centre d'Appel",
+      "description": "Attribuer les vendeurs aux agents du centre d'appel",
+      "currentlyAssigned": "Actuellement attribué à :",
+      "noAssignment": "Aucune attribution",
+      "selectAgent": "Sélectionner un agent du centre d'appel",
+      "updateAssignment": "Mettre à Jour l'Attribution",
+      "updating": "Mise à jour...",
+      "assignmentSuccess": "Attribution mise à jour avec succès",
+      "assignmentError": "Échec de la mise à jour de l'attribution",
+      "unassignConfirm": "Supprimer l'attribution de l'agent du centre d'appel ?",
+      "assignedSellers": "Vendeurs Attribués",
+      "noAssignedSellers": "Aucun vendeur attribué à cet agent"
+    },
     "messages": {
       "passwordKeepCurrent": "(laisser vide pour conserver le mot de passe actuel)",
       "twoFactorEnabled": "L'authentification à deux facteurs est activée",

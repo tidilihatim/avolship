@@ -5,18 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Warehouse,
-  CreditCard,
-  BarChart3,
   Settings,
   HelpCircle,
   X,
-  MessageCircle,
-  Truck,
-  Building,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -108,14 +99,13 @@ export default function Sidebar({
   onMobileClose,
   userType,
 }: SidebarProps) {
-  console.log(userType)
+  
   const t = useTranslations();
   const pathname = usePathname();
   const { status, data: session } = useSession();
 
   const navigation = sidebarNavigations[userType];
-  console.log(navigation)
-
+  
   const bottomNavigation = [
     {
       name: "settings",
@@ -148,9 +138,7 @@ export default function Sidebar({
         <nav className="space-y-1">
           {navigation.map((item: any) => {
             const isActive =
-              pathname === item.href ||
-              (item.href !== `/dashboard/${userType}` &&
-                pathname.startsWith(item.href));
+              pathname === item.href 
 
             return (
               <NavItem
@@ -266,7 +254,7 @@ export default function Sidebar({
             {navigation.map((item: any) => {
               const isActive =
                 pathname === item.href ||
-                (item.href !== "/dashboard/seller" &&
+                (item.href !== `/dashboard/${userType}` &&
                   pathname.startsWith(item.href));
 
               return (

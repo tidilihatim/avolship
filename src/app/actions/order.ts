@@ -610,68 +610,6 @@ const detectDoubleOrders = withDbConnection(async (
   }
 });
 
-/**
- * Create order in real-time server for call center assignment
- * Only called in development mode
- */
-export async function createOrderInRealtimeServer(orderData: any) {
-  try {
-    const REALTIME_SERVER_URL = process.env.REALTIME_SERVER_URL || 'http://localhost:5000';
-    const API_KEY = process.env.REALTIME_API_KEY || 'your-api-key';
-
-    // Prepare order data for real-time server API
-    const orderPayload = {
-      customer: {
-        name: orderData.customer.name,
-        phoneNumbers: orderData.customer.phoneNumbers,
-        shippingAddress: orderData.customer.shippingAddress
-      },
-      warehouseId: orderData.warehouseId.toString(),
-      sellerId: orderData.sellerId.toString(),
-      products: orderData.products.map((product: any) => ({
-        productId: product.productId.toString(),
-        quantity: product.quantity,
-        unitPrice: product.unitPrice,
-        expeditionId: product.expeditionId.toString()
-      })),
-      totalPrice: orderData.totalPrice,
-      // Don't set assignedAgentId - let the auto-assignment work
-    };
-
-    console.log('📤 Creating order in real-time server:', {
-      customer: orderPayload.customer.name,
-      totalPrice: orderPayload.totalPrice,
-      productsCount: orderPayload.products.length
-    });
-
-    const response = await fetch(`${REALTIME_SERVER_URL}/api/orders/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': API_KEY
-      },
-      body: JSON.stringify(orderPayload)
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
-    }
-
-    const result = await response.json();
-    
-    if (!result.success) {
-      throw new Error(result.message || 'Real-time server failed to create order');
-    }
-
-    console.log('✅ Real-time server created order:', result.data?.orderNumber || 'Unknown order number');
-    
-    return result;
-  } catch (error) {
-    console.error('❌ Error creating order in real-time server:', error);
-    throw error;
-  }
-}
 
 /**
  * Create a new order
@@ -843,9 +781,6 @@ export const createOrder = withDbConnection(async (orderData: any) => {
       throw new Error(result.message || 'Real-time server failed to create order');
     }
 
-    console.log('✅ Real-time server created order:', result.data?.orderNumber || 'Unknown order number');
-
-    
     revalidatePath("/dashboard/seller/orders");
     revalidatePath("/dashboard/admin/orders");
 

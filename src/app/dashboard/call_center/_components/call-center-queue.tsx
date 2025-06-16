@@ -23,6 +23,7 @@ import { useOrderQueue } from '@/hooks/use-order-queue';
 import EnhancedOrderCard, { OrderStatus, CallAttempt } from './order-card';
 import { toast } from 'sonner';
 import { updateOrderStatus } from '@/app/actions/order';
+import { useSession } from 'next-auth/react';
 
 // Queue Status Indicator
 function QueueStatus({
@@ -93,6 +94,7 @@ function CallHistoryCard({ t }: { t: any }) {
 // Main Enhanced Component
 export default function EnhancedCallCenterQueue() {
   const t = useTranslations();
+  const { data: session } = useSession();
 
   const {
     queueStats,
@@ -285,7 +287,7 @@ export default function EnhancedCallCenterQueue() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6">
               {queueStats.orders.map((order) => (
                 <EnhancedOrderCard
                   key={order.orderId}
@@ -294,6 +296,7 @@ export default function EnhancedCallCenterQueue() {
                   onCompleteOrder={completeOrder}
                   onUpdateOrderStatus={handleUpdateOrderStatus}
                   onMakeCallAttempt={handleMakeCallAttempt}
+                  currentAgentId={session?.user?.id}
                   t={t}
                 />
               ))}
@@ -322,6 +325,7 @@ export default function EnhancedCallCenterQueue() {
                   order={order}
                   type="available"
                   onRequestAssignment={requestOrderAssignment}
+                  currentAgentId={session?.user?.id}
                   t={t}
                 />
               ))}

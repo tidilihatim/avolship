@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -88,6 +88,7 @@ function EnhancedOrderCard({
   onCompleteOrder,
   onUpdateOrderStatus,
   onMakeCallAttempt,
+  currentAgentId,
   t
 }: {
   order: OrderItem;
@@ -96,6 +97,7 @@ function EnhancedOrderCard({
   onCompleteOrder?: (orderId: string) => void;
   onUpdateOrderStatus?: (orderId: string, status: OrderStatus, comment?: string) => void;
   onMakeCallAttempt?: (orderId: string, attempt: CallAttempt) => void;
+  currentAgentId?: string;
   t: any;
 }) {
   const [isCallDialogOpen, setIsCallDialogOpen] = useState(false);
@@ -105,9 +107,39 @@ function EnhancedOrderCard({
   const [callNotes, setCallNotes] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(OrderStatus.CONFIRMED);
   const [statusComment, setStatusComment] = useState('');
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
+  // Update current time every minute for real-time countdown
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 60000); // Update every minute (60,000ms)
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Check if seller is assigned to current agent
+  const isSellerAssignedToMe = order.seller?.assignedCallCenterAgent === currentAgentId;
+  
+  // Calculate remaining time in minutes
+  const getRemainingTime = () => {
+    if (!order.lockExpiry) return null;
+    
+    const remainingMs = new Date(order.lockExpiry).getTime() - currentTime;
+    const remainingMinutes = Math.floor(remainingMs / (1000 * 60));
+    
+    if (remainingMinutes <= 0) return "Expired";
+    if (remainingMinutes < 60) return `${remainingMinutes}m`;
+    
+    const hours = Math.floor(remainingMinutes / 60);
+    const minutes = remainingMinutes % 60;
+    return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  };
+
+  // Only show timing warnings for orders from sellers who are NOT assigned to this agent
   const isExpiringSoon = order.lockExpiry && 
-    new Date(order.lockExpiry).getTime() - Date.now() < 10 * 60 * 1000; // 10 minutes
+    new Date(order.lockExpiry).getTime() - currentTime < 10 * 60 * 1000 && // 10 minutes
+    !isSellerAssignedToMe; // Don't show warnings for assigned sellers
 
   // Status color mapping
   const getStatusColor = (status: string) => {
@@ -173,7 +205,8 @@ function EnhancedOrderCard({
   return (
     <Card className={cn(
       "transition-all duration-200 hover:shadow-md",
-      type === 'assigned' && isExpiringSoon && "border-orange-300"
+      type === 'assigned' && isExpiringSoon && "border-orange-300",
+      isSellerAssignedToMe && "border-primary border-2 bg-primary/5"
     )}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
@@ -187,12 +220,17 @@ function EnhancedOrderCard({
                 : t('callCenter.queue.badges.available')
               }
             </Badge>
+            {isSellerAssignedToMe && (
+              <Badge variant="default" className="bg-primary text-primary-foreground">
+                Priority
+              </Badge>
+            )}
           </div>
           <div className="flex items-center gap-2">
-            {order.lockExpiry && type === 'assigned' && (
+            {order.lockExpiry && type === 'assigned' && !isSellerAssignedToMe && (
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Clock className="w-4 h-4" />
-                {formatDistanceToNow(new Date(order.lockExpiry), { addSuffix: true })}
+                <span>{getRemainingTime()}</span>
               </div>
             )}
             
@@ -247,6 +285,25 @@ function EnhancedOrderCard({
             <User className="w-4 h-4 text-muted-foreground" />
             <span className="font-medium">{order.customer.name}</span>
           </div>
+          
+          {/* Seller Info */}
+          {order.seller && (
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-muted-foreground" />
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Seller:</span>
+                <span className="text-sm font-medium">{order.seller.name}</span>
+                {order.seller.businessName && (
+                  <span className="text-xs text-muted-foreground">({order.seller.businessName})</span>
+                )}
+                {isSellerAssignedToMe && (
+                  <Badge variant="secondary" className="text-xs">
+                    Assigned to you
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <Phone className="w-4 h-4 text-muted-foreground" />
             <div className="flex flex-wrap gap-1">

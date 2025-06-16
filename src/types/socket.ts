@@ -37,6 +37,7 @@ export interface ServerToClientEvents {
       name: string;
       email: string;
       businessName?: string;
+      assignedCallCenterAgent?: string;
     };
     warehouse: {
       _id: string;
@@ -168,6 +169,7 @@ export interface OrderItem {
     name: string;
     email: string;
     businessName?: string;
+    assignedCallCenterAgent?: string;
   };
   warehouse?: {
     _id: string;

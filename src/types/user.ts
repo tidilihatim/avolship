@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from "@/lib/db/models/user";
+import { UserRole, UserStatus } from "@/app/dashboard/_constant/user";
 
 /**
  * User form data interface for creating/updating users
@@ -29,6 +29,11 @@ export interface UserTableData {
   phone?: string;
   businessName?: string;
   country?: string;
+  assignedCallCenterAgent?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
   twoFactorEnabled: boolean;
   createdAt: Date;
   lastActive?: Date;

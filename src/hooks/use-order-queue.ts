@@ -54,7 +54,8 @@ export function useOrderQueue() {
       console.log('Received queue update:', data);
       setQueueStats(prev => ({
         ...prev,
-        queueCount: data.queueCount
+        queueCount: data.queueCount,
+        orders:data.orders
       }));
     });
 

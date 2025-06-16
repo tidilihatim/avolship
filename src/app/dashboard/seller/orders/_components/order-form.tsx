@@ -41,7 +41,6 @@ import {
   createOrder,
   getProductsForOrder,
   getWarehousesForOrder,
-  createOrderInRealtimeServer
 } from "@/app/actions/order";
 
 /**
@@ -165,12 +164,6 @@ export default function OrderForm({
         t("form.messages.productHasNoExpeditions", { productName: product.name })
       );
       return;
-    }
-
-    if (product.totalStock === 0) {
-      toast.warning(
-        t("form.messages.productOutOfStockAdded", { productName: product.name })
-      );
     }
 
     const defaultExpedition = product.availableExpeditions[0];

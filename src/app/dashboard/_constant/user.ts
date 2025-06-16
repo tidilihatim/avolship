@@ -7,16 +7,17 @@ export enum UserRole {
   ADMIN = 'admin',
   MODERATOR = 'moderator',
   SELLER = 'seller',
-  CALL_CENTER_AGENT = 'call_center_agent',
+  CALL_CENTER = 'call_center',
   PROVIDER = 'provider',
+  DELIVERY = 'delivery',
+  SUPPORT = 'support',
 }
 
 /**
  * User status enum
  */
 export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive', 
   PENDING = 'pending',
-  SUSPENDED = 'suspended',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
 }

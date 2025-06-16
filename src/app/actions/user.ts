@@ -133,6 +133,11 @@ export const getUsers = withDbConnection(async (
     // Fetch users
     const users = await User.find(query)
       .select('-password -twoFactorSecret -passwordResetToken')
+      .populate({
+        path: 'assignedCallCenterAgent',
+        select: 'name email',
+        model: 'User'
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -444,6 +449,140 @@ export const getCallCenterAgents = withDbConnection(async () => {
       success: false,
       message: 'Failed to fetch call center agents',
       agents: []
+    };
+  }
+});
+
+/**
+ * Assign a seller to a call center agent
+ * @param sellerId - ID of the seller to assign
+ * @param agentId - ID of the call center agent (null to unassign)
+ * @returns API response
+ */
+export const assignSellerToAgent = withDbConnection(async (
+  sellerId: string, 
+  agentId: string | null
+): Promise<UserApiResponse> => {
+  try {
+    // Validate seller exists and is a seller
+    const seller = await User.findById(sellerId);
+    if (!seller) {
+      return {
+        success: false,
+        message: 'Seller not found'
+      };
+    }
+
+    if (seller.role !== 'seller') {
+      return {
+        success: false,
+        message: 'User is not a seller'
+      };
+    }
+
+    // If agentId is provided, validate agent exists and is a call center agent
+    if (agentId) {
+      const agent = await User.findById(agentId);
+      if (!agent) {
+        return {
+          success: false,
+          message: 'Call center agent not found'
+        };
+      }
+
+      if (agent.role !== 'call_center') {
+        return {
+          success: false,
+          message: 'User is not a call center agent'
+        };
+      }
+    }
+
+    // Update seller's assignedCallCenterAgent field
+    await User.findByIdAndUpdate(sellerId, {
+      assignedCallCenterAgent: agentId
+    });
+
+    // Send notification to the seller about assignment change
+    if (agentId) {
+      const agent = await User.findById(agentId);
+      await sendNotification({
+        userId: sellerId,
+        type: NotificationType.SYSTEM,
+        title: 'Call Center Agent Assigned',
+        message: `You have been assigned to call center agent: ${agent?.name}`,
+        actionLink: '/dashboard/seller/orders',
+      });
+
+      // Send notification to the agent about new assignment
+      await sendNotification({
+        userId: agentId,
+        type: NotificationType.SYSTEM,
+        title: 'New Seller Assigned',
+        message: `Seller ${seller.name} has been assigned to you. You will receive their orders automatically.`,
+        actionLink: '/dashboard/call_center/orders',
+      });
+    } else {
+      // Unassignment notification
+      await sendNotification({
+        userId: sellerId,
+        type: NotificationType.SYSTEM,
+        title: 'Call Center Agent Unassigned',
+        message: 'You are no longer assigned to a call center agent.',
+        actionLink: '/dashboard/seller/orders',
+      });
+    }
+
+    // Revalidate related pages
+    revalidatePath('/dashboard/admin/users');
+    revalidatePath('/dashboard/call_center/orders');
+
+    return {
+      success: true,
+      message: agentId 
+        ? 'Seller successfully assigned to call center agent' 
+        : 'Seller successfully unassigned from call center agent'
+    };
+  } catch (error) {
+    console.error('Error assigning seller to agent:', error);
+    return {
+      success: false,
+      message: 'Failed to assign seller to agent. Please try again.'
+    };
+  }
+});
+
+/**
+ * Get sellers assigned to a specific call center agent
+ * @param agentId - ID of the call center agent
+ * @returns List of assigned sellers
+ */
+export const getAssignedSellers = withDbConnection(async (agentId: string) => {
+  try {
+    const sellers = await User.find({
+      role: 'seller',
+      assignedCallCenterAgent: agentId
+    })
+    .select('name email businessName createdAt')
+    .sort({ name: 1 })
+    .lean();
+
+    return {
+      success: true,
+      sellers: sellers.map((seller: any) => ({
+        _id: seller._id.toString(),
+        name: seller.name,
+        email: seller.email,
+        businessName: seller.businessName,
+        createdAt: seller.createdAt,
+      }))
+    };
+  } catch (error) {
+    console.error('Error fetching assigned sellers:', error);
+    return {
+      success: false,
+      message: 'Failed to fetch assigned sellers',
+      sellers: []
     };
   }
 });

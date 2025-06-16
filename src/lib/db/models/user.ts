@@ -3,7 +3,7 @@ import { compare, hash } from 'bcryptjs';
 import crypto from 'crypto';
 
 /**
- * User roles according to SRS section 3.1
+ * User roles
  */
 export enum UserRole {
   SELLER = 'seller',
@@ -39,6 +39,7 @@ export interface IUser extends Document {
   businessInfo?: string;
   serviceType?: string; // Added for providers
   country?: string;
+  assignedCallCenterAgent?: mongoose.Types.ObjectId; // For sellers: which call center agent handles their orders
   twoFactorEnabled: boolean;
   twoFactorSecret?: string;
   passwordResetToken?: string;
@@ -106,6 +107,11 @@ const UserSchema = new Schema<IUser>(
     country: {
       type: String,
       trim: true,
+    },
+    assignedCallCenterAgent: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      // Only for sellers - references a call center agent
     },
     twoFactorEnabled: {
       type: Boolean,
