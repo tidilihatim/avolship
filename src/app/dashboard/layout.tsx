@@ -10,6 +10,7 @@ import { cookies } from "next/headers";
 import { SocketProvider } from "@/lib/socket/socket-provider";
 import { deleteCookie } from "../actions/cookie";
 import { Toaster } from "@/components/ui/sonner";
+import ThemeAwareTopLoader from "@/components/ui/loader";
 
 type Props = {
   children: React.ReactNode;
@@ -45,6 +46,7 @@ export default async function SellerDashboardLayout({
             </DashboardLayout>
           </WarehouseProvider>
         </SocketProvider>
+        <ThemeAwareTopLoader />
         <Toaster  />
       </NextIntlClientProvider>
     </ThemeProvider>

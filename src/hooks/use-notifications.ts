@@ -77,9 +77,15 @@ export function useNotifications() {
         const formattedNotifications = result.notifications.map(formatNotification);
         setNotifications(formattedNotifications);
 
-        // Calculate unread count
-        const unread = formattedNotifications.filter((n: any) => !n.read).length;
-        setUnreadCount(unread);
+        // Get actual unread count from server instead of counting loaded notifications
+        const unreadCountResult = await getUnreadNotificationCount();
+        if (unreadCountResult.success) {
+          setUnreadCount(unreadCountResult.count);
+        } else {
+          // Fallback to counting loaded notifications if server call fails
+          const unread = formattedNotifications.filter((n: any) => !n.read).length;
+          setUnreadCount(unread);
+        }
 
         // Check if there are more notifications to load
         setHasMore(result.notifications.length === limit);

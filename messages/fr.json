@@ -59,6 +59,7 @@
       }
     },
     "addOrder": "Ajouter une Commande",
+    "importOrders": "Importer des Commandes",
     "createOrder": "Créer la Commande",
     "createOrderDescription": "Créez une nouvelle commande pour un client. Remplissez toutes les informations requises incluant les details du client, l'adresse de livraison et la selection des produits.",
     "title": "Commandes",
@@ -339,6 +340,114 @@
       "automaticChange": "Changement Automatique",
       "manualChange": "Changement Manuel",
       "systemChange": "Changement Système"
+    },
+    
+    "import": {
+      "title": "Importer des Commandes",
+      "description": "Importer des commandes depuis des fichiers CSV ou Excel",
+      "backToOrders": "Retour aux Commandes",
+      "warehouseSelection": {
+        "title": "Sélectionner l'Entrepôt",
+        "description": "Choisissez l'entrepôt où ces commandes seront assignées",
+        "placeholder": "Sélectionner un entrepôt...",
+        "noWarehouses": "Aucun entrepôt disponible. Veuillez contacter un administrateur."
+      },
+      "fileStructure": {
+        "title": "Exigences de Structure de Fichier",
+        "description": "Votre fichier doit suivre cette structure exacte",
+        "show": "Afficher",
+        "hide": "Masquer",
+        "downloadExamples": "Télécharger des Fichiers d'Exemple",
+        "csvExample": "Exemple CSV",
+        "excelExample": "Exemple Excel",
+        "multipleProducts": "Produits Multiples",
+        "multipleProductsDesc": "Pour ajouter plusieurs produits à une commande, séparez les valeurs avec | (symbole pipe)",
+        "fieldName": "Nom du Champ",
+        "fieldDescription": "Description",
+        "required": "Requis",
+        "optional": "Optionnel",
+        "fields": {
+          "orderId": {
+            "name": "ID COMMANDE",
+            "description": "Identifiant unique pour la commande"
+          },
+          "productId": {
+            "name": "ID PRODUIT", 
+            "description": "Identifiants des produits (séparer plusieurs avec |)"
+          },
+          "date": {
+            "name": "DATE",
+            "description": "Date de commande (format AAAA-MM-JJ)"
+          },
+          "productName": {
+            "name": "NOM PRODUIT",
+            "description": "Noms des produits (séparer plusieurs avec |)"
+          },
+          "productLink": {
+            "name": "LIEN PRODUIT",
+            "description": "Liens des produits (optionnel)"
+          },
+          "customerName": {
+            "name": "NOM CLIENT",
+            "description": "Nom complet du client"
+          },
+          "phoneNumber": {
+            "name": "TELEPHONE",
+            "description": "Numéro de téléphone du client"
+          },
+          "address": {
+            "name": "ADRESSE",
+            "description": "Adresse de livraison"
+          },
+          "price": {
+            "name": "PRIX",
+            "description": "Prix des produits (séparer plusieurs avec |)"
+          },
+          "quantity": {
+            "name": "QUANTITE",
+            "description": "Quantités des produits (séparer plusieurs avec |)"
+          },
+          "storeName": {
+            "name": "NOM MAGASIN",
+            "description": "Nom du magasin ou vendeur"
+          }
+        }
+      },
+      "fileUpload": {
+        "title": "Télécharger le Fichier",
+        "description": "Téléchargez votre fichier CSV ou Excel contenant les données de commande",
+        "clickToUpload": "Cliquez pour télécharger le fichier",
+        "selectWarehouseFirst": "Sélectionnez d'abord l'entrepôt",
+        "supportedFormats": "Supporte les fichiers CSV et Excel",
+        "processing": "Traitement du fichier...",
+        "selectWarehouseAlert": "Veuillez sélectionner un entrepôt avant de télécharger un fichier."
+      },
+      "results": {
+        "title": "Résultats du Traitement",
+        "description": "Vérifiez les commandes analysées avant l'importation",
+        "validOrders": "{count} Commandes Valides",
+        "ordersWithErrors": "{count} Commandes avec Erreurs",
+        "products": "{count} produit(s)",
+        "customerInfo": "Informations Client",
+        "name": "Nom",
+        "phone": "Téléphone", 
+        "address": "Adresse",
+        "quantity": "Qté",
+        "importValidOrders": "Importer {count} Commandes Valides",
+        "exportCorrectedCsv": "Exporter CSV Corrigé"
+      },
+      "status": {
+        "valid": "Valide",
+        "errors": "Erreurs", 
+        "warnings": "Avertissements"
+      },
+      "messages": {
+        "fileDownloaded": "Fichier d'exemple {type} téléchargé",
+        "fileProcessed": "Traité {count} commandes du fichier",
+        "invalidFileType": "Veuillez télécharger un fichier CSV ou Excel valide",
+        "selectWarehouseFirst": "Veuillez d'abord sélectionner un entrepôt",
+        "fileProcessingFailed": "Échec du traitement du fichier"
+      }
     }
   },
   "expeditions": {
@@ -2021,6 +2130,27 @@
         "customer": "Client",
         "product": "Produit",
         "order": "Commande"
+      },
+      "table": {
+        "ruleName": "Nom de la règle",
+        "conditions": "Conditions",
+        "logic": "Logique",
+        "timeWindow": "Fenêtre de temps",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "inactive": "Inactif",
+      "tooltips": {
+        "deactivateRule": "Désactiver la règle",
+        "activateRule": "Activer la règle",
+        "editRule": "Modifier la règle",
+        "deleteRule": "Supprimer la règle"
+      },
+      "dialogs": {
+        "deleteRule": {
+          "title": "Supprimer la règle",
+          "description": "Êtes-vous sûr de vouloir supprimer la règle \"{ruleName}\" ? Cette action ne peut pas être annulée."
+        }
       },
       "messages": {
         "settingsLoaded": "Paramètres chargés avec succès",

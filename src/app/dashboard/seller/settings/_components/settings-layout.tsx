@@ -108,20 +108,20 @@ export default function SettingsLayout() {
           {settingSections.map((section) => (
             <Card 
               key={section.id}
-              className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+              className={`group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 hover:scale-[1.02] ${
                 activeTab === section.id 
-                  ? 'border-primary bg-primary/5' 
-                  : 'hover:border-muted-foreground/20'
+                  ? 'border-primary bg-primary/5 shadow-md' 
+                  : 'hover:border-primary/30 hover:bg-primary/5'
               }`}
               onClick={() => setActiveTab(section.id)}
             >
               <CardContent className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${
+                    <div className={`p-2 rounded-lg transition-all duration-300 ${
                       activeTab === section.id 
                         ? 'bg-primary text-primary-foreground' 
-                        : 'bg-muted'
+                        : 'bg-muted group-hover:bg-primary group-hover:text-primary-foreground'
                     }`}>
                       {section.icon}
                     </div>

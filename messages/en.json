@@ -59,6 +59,7 @@
       }
     },
     "addOrder":"Add Order",
+    "importOrders": "Import Orders",
     "createOrder": "Create Order",
     "createOrderDescription":"Create a new order for a customer. Fill out all required information including customer details, shipping address, and product selection.",
     "title": "Orders",
@@ -273,7 +274,7 @@
     },
     
     "filters": {
-      "title":"Title",
+      "title":"Filters",
       "globallySelectedWarehouse": "Globally Selected Warehouse",
       "filterByStatus": "Filter by Status",
       "filterByWarehouse": "Filter by Warehouse", 
@@ -349,6 +350,114 @@
       "successMessage": "Order status updated successfully",
       "errorMessage": "Failed to update order status",
       "noChangesMessage": "No changes detected. Please select a different status or add a comment."
+    },
+    
+    "import": {
+      "title": "Import Orders",
+      "description": "Import orders from CSV or Excel files",
+      "backToOrders": "Back to Orders",
+      "warehouseSelection": {
+        "title": "Select Warehouse",
+        "description": "Choose the warehouse where these orders will be assigned",
+        "placeholder": "Select a warehouse...",
+        "noWarehouses": "No warehouses available. Please contact an administrator."
+      },
+      "fileStructure": {
+        "title": "File Structure Requirements",
+        "description": "Your file must follow this exact structure",
+        "show": "Show",
+        "hide": "Hide",
+        "downloadExamples": "Download Example Files",
+        "csvExample": "CSV Example",
+        "excelExample": "Excel Example",
+        "multipleProducts": "Multiple Products",
+        "multipleProductsDesc": "To add multiple products to one order, separate values with | (pipe symbol)",
+        "fieldName": "Field Name",
+        "fieldDescription": "Description",
+        "required": "Required",
+        "optional": "Optional",
+        "fields": {
+          "orderId": {
+            "name": "ORDER ID",
+            "description": "Unique identifier for the order"
+          },
+          "productId": {
+            "name": "PRODUCT ID", 
+            "description": "Product identifiers (separate multiple with |)"
+          },
+          "date": {
+            "name": "DATE",
+            "description": "Order date (YYYY-MM-DD format)"
+          },
+          "productName": {
+            "name": "PRODUCT NAME",
+            "description": "Product names (separate multiple with |)"
+          },
+          "productLink": {
+            "name": "PRODUCT LINK",
+            "description": "Product links (optional)"
+          },
+          "customerName": {
+            "name": "CUSTOMER NAME",
+            "description": "Customer full name"
+          },
+          "phoneNumber": {
+            "name": "PHONE NUMBER",
+            "description": "Customer phone number"
+          },
+          "address": {
+            "name": "ADDRESS",
+            "description": "Shipping address"
+          },
+          "price": {
+            "name": "PRICE",
+            "description": "Product prices (separate multiple with |)"
+          },
+          "quantity": {
+            "name": "QUANTITY",
+            "description": "Product quantities (separate multiple with |)"
+          },
+          "storeName": {
+            "name": "STORE NAME",
+            "description": "Store or seller name"
+          }
+        }
+      },
+      "fileUpload": {
+        "title": "Upload File",
+        "description": "Upload your CSV or Excel file containing order data",
+        "clickToUpload": "Click to upload file",
+        "selectWarehouseFirst": "Select warehouse first",
+        "supportedFormats": "Supports CSV and Excel files",
+        "processing": "Processing file...",
+        "selectWarehouseAlert": "Please select a warehouse before uploading a file."
+      },
+      "results": {
+        "title": "Processing Results",
+        "description": "Review the parsed orders before importing",
+        "validOrders": "{count} Valid Orders",
+        "ordersWithErrors": "{count} Orders with Errors",
+        "products": "{count} product(s)",
+        "customerInfo": "Customer Information",
+        "name": "Name",
+        "phone": "Phone", 
+        "address": "Address",
+        "quantity": "Qty",
+        "importValidOrders": "Import {count} Valid Orders",
+        "exportCorrectedCsv": "Export Corrected CSV"
+      },
+      "status": {
+        "valid": "Valid",
+        "errors": "Errors", 
+        "warnings": "Warnings"
+      },
+      "messages": {
+        "fileDownloaded": "Example {type} file downloaded",
+        "fileProcessed": "Processed {count} orders from file",
+        "invalidFileType": "Please upload a valid CSV or Excel file",
+        "selectWarehouseFirst": "Please select a warehouse first",
+        "fileProcessingFailed": "Failed to process file"
+      }
     }
   },
     
@@ -2042,6 +2151,27 @@
         "customer": "Customer",
         "product": "Product",
         "order": "Order"
+      },
+      "table": {
+        "ruleName": "Rule Name",
+        "conditions": "Conditions",
+        "logic": "Logic",
+        "timeWindow": "Time Window",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "inactive": "Inactive",
+      "tooltips": {
+        "deactivateRule": "Deactivate rule",
+        "activateRule": "Activate rule",
+        "editRule": "Edit rule",
+        "deleteRule": "Delete rule"
+      },
+      "dialogs": {
+        "deleteRule": {
+          "title": "Delete Rule",
+          "description": "Are you sure you want to delete the rule \"{ruleName}\"? This action cannot be undone."
+        }
       },
       "messages": {
         "settingsLoaded": "Settings loaded successfully",

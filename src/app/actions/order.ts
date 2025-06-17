@@ -780,6 +780,290 @@ export const createOrder = withDbConnection(async (orderData: any) => {
 });
 
 /**
+ * Create multiple orders in bulk
+ */
+export const createBulkOrder = withDbConnection(async (ordersData: any[], warehouseId: string) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return {
+        success: false,
+        message: "Unauthorized",
+        results: []
+      };
+    }
+
+    // Validate warehouse access for sellers
+    if (user.role !== UserRole.ADMIN) {
+      const warehouse = await Warehouse.findOne({
+        _id: warehouseId,
+        isActive: true,
+        $or: [
+          { isAvailableToAll: true },
+          { assignedSellers: new mongoose.Types.ObjectId(user._id) }
+        ]
+      });
+      
+      if (!warehouse) {
+        return {
+          success: false,
+          message: "Warehouse not accessible",
+          results: []
+        };
+      }
+    }
+
+    const results: any[] = [];
+    const validOrderPayloads: any[] = [];
+    let errorCount = 0;
+
+    // First pass: Process and validate all orders, collect valid payloads
+    for (const orderData of ordersData) {
+      try {
+        // Get the first available expedition for each product
+        const orderProducts = [];
+        let hasError = false;
+        let errorMessage = '';
+
+        for (const product of orderData.products) {
+          // Find the product and its expeditions
+          const productDoc = await Product.findOne({
+            code: product.id,
+            'warehouses.warehouseId': warehouseId,
+          }).lean() as any;
+
+          if (!productDoc) {
+            hasError = true;
+            errorMessage = `Product ${product.id} not found in selected warehouse`;
+            break;
+          }
+
+          // Find approved expeditions for this product
+          const expeditions = await Expedition.find({
+            warehouseId: warehouseId,
+            'products.productId': productDoc._id,
+            status: ExpeditionStatus.APPROVED,
+          }).lean();
+
+          if (!expeditions || expeditions.length === 0) {
+            hasError = true;
+            errorMessage = `Product ${product.id} has no approved expeditions`;
+            break;
+          }
+
+          // Use the first available expedition
+          const expedition = expeditions[0] as any;
+          const expeditionProduct = expedition.products.find(
+            (p: any) => p.productId.toString() === productDoc._id.toString()
+          );
+
+          if (!expeditionProduct) {
+            hasError = true;
+            errorMessage = `Product ${product.id} not found in expedition products`;
+            break;
+          }
+
+          orderProducts.push({
+            productId: (productDoc._id as any).toString(),
+            quantity: product.quantity,
+            unitPrice: expeditionProduct.unitPrice,
+            expeditionId: (expedition._id as any).toString(),
+          });
+        }
+
+        if (hasError) {
+          results.push({
+            orderId: orderData.orderId,
+            success: false,
+            message: errorMessage
+          });
+          errorCount++;
+          continue;
+        }
+
+        // Parse phone numbers
+        const phoneNumbers = typeof orderData.customer.phone === 'string'
+          ? orderData.customer.phone.split('|').map((p: string) => p.trim()).filter(Boolean)
+          : [orderData.customer.phone];
+
+        // Calculate total price
+        const totalPrice = orderProducts.reduce(
+          (total, product) => total + (product.unitPrice * product.quantity),
+          0
+        );
+
+        // Detect potential double orders
+        const duplicateDetectionResult = await checkDuplicatesForNewOrder({
+          customer: {
+            name: orderData.customer.name,
+            phoneNumbers,
+            shippingAddress: orderData.customer.address,
+          },
+          products: orderProducts.map((p: any) => ({
+            productId: p.productId,
+            quantity: p.quantity,
+            unitPrice: p.unitPrice,
+          })),
+          totalPrice,
+          warehouseId,
+          sellerId: user._id,
+        });
+
+        // Prepare order payload
+        const orderPayload = {
+          originalOrderId: orderData.orderId, // Keep track of original ID for results
+          customer: {
+            name: orderData.customer.name,
+            phoneNumbers,
+            shippingAddress: orderData.customer.address,
+          },
+          warehouseId: warehouseId,
+          sellerId: user._id,
+          products: orderProducts,
+          totalPrice,
+          status: duplicateDetectionResult?.isDuplicate ? OrderStatus.DOUBLE : OrderStatus.PENDING,
+          statusChangedAt: new Date(),
+          isDouble: duplicateDetectionResult.isDuplicate,
+          doubleOrderReferences: duplicateDetectionResult.duplicateOrders.map(duplicate => ({
+            orderId: duplicate.orderId,
+            orderNumber: duplicate.orderNumber,
+            matchedRule: duplicate.matchedRule,
+            detectedAt: new Date(),
+          })),
+          orderDate: new Date(orderData.date),
+          duplicateInfo: {
+            isDuplicate: duplicateDetectionResult.isDuplicate,
+            duplicateCount: duplicateDetectionResult.duplicateOrders.length
+          }
+        };
+
+        validOrderPayloads.push(orderPayload);
+
+      } catch (error: any) {
+        console.error(`Error processing order ${orderData.orderId}:`, error);
+        results.push({
+          orderId: orderData.orderId,
+          success: false,
+          message: error.message || "Failed to process order"
+        });
+        errorCount++;
+      }
+    }
+
+    let successCount = 0;
+
+    // Second pass: Make single API call for all valid orders
+    if (validOrderPayloads.length > 0) {
+      try {
+        const REALTIME_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+        const API_KEY = process.env.SOCKET_SERVER_API_SECRET_KEY || 'your-api-key';
+
+        // Make single bulk API call
+        const response = await fetch(`${REALTIME_SERVER_URL}/api/orders/add-bulk`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': API_KEY
+          },
+          body: JSON.stringify({ orders: validOrderPayloads })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+
+        const bulkResult = await response.json();
+        
+        if (!bulkResult.success) {
+          throw new Error(bulkResult.message || 'Real-time server failed to create bulk orders');
+        }
+
+        // Process bulk results based on your controller response structure
+        if (bulkResult.data && bulkResult.data.orders && Array.isArray(bulkResult.data.orders)) {
+          successCount = bulkResult.data.successfulOrders || bulkResult.data.orders.length;
+          const failedOrdersFromAPI = bulkResult.data.failedOrders || 0;
+          
+          // Map successful orders
+          bulkResult.data.orders.forEach((createdOrder: any, index: number) => {
+            const originalPayload = validOrderPayloads[index];
+            results.push({
+              orderId: originalPayload?.originalOrderId || `order-${index + 1}`,
+              success: true,
+              message: "Order created successfully",
+              newOrderId: createdOrder.orderId || createdOrder.orderNumber,
+              isDouble: originalPayload?.duplicateInfo?.isDuplicate || false,
+              doubleOrderCount: originalPayload?.duplicateInfo?.duplicateCount || 0,
+            });
+          });
+          
+          // Handle any failed orders reported by the API
+          if (failedOrdersFromAPI > 0) {
+            const failedStartIndex = bulkResult.data.orders.length;
+            for (let i = 0; i < failedOrdersFromAPI; i++) {
+              const failedPayload = validOrderPayloads[failedStartIndex + i];
+              if (failedPayload) {
+                results.push({
+                  orderId: failedPayload.originalOrderId,
+                  success: false,
+                  message: "Failed to create order during bulk processing"
+                });
+                errorCount++;
+              }
+            }
+          }
+          
+        } else {
+          // Fallback if bulk result doesn't have expected structure
+          successCount = validOrderPayloads.length;
+          validOrderPayloads.forEach(payload => {
+            results.push({
+              orderId: payload.originalOrderId,
+              success: true,
+              message: "Order created successfully",
+              isDouble: payload.duplicateInfo.isDuplicate,
+              doubleOrderCount: payload.duplicateInfo.duplicateCount,
+            });
+          });
+        }
+
+      } catch (error: any) {
+        console.error("Error in bulk API call:", error);
+        // Mark all valid orders as failed
+        validOrderPayloads.forEach(payload => {
+          results.push({
+            orderId: payload.originalOrderId,
+            success: false,
+            message: error.message || "Failed to create order in bulk API call"
+          });
+          errorCount++;
+        });
+      }
+    }
+
+    revalidatePath("/dashboard/seller/orders");
+    revalidatePath("/dashboard/admin/orders");
+
+    return {
+      success: true,
+      message: `Bulk import completed: ${successCount} successful, ${errorCount} failed`,
+      results,
+      successCount,
+      errorCount,
+      totalCount: ordersData.length
+    };
+
+  } catch (error: any) {
+    console.error("Error in bulk order creation:", error);
+    return {
+      success: false,
+      message: error.message || "Failed to create bulk orders",
+      results: []
+    };
+  }
+});
+
+/**
  * Get order by ID with full details
  */
 export const getOrderByIdAdd = withDbConnection(async (orderId: string) => {

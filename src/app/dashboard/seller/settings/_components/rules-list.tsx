@@ -33,7 +33,6 @@ import {
   deleteDuplicateDetectionRule, 
   updateDuplicateDetectionRule 
 } from '@/app/actions/duplicate-detection';
-import { AVAILABLE_FIELDS } from '@/types/duplicate-detection';
 
 interface RulesListProps {
   rules: any[];
@@ -87,8 +86,19 @@ export default function RulesList({ rules, onUpdate, onEdit }: RulesListProps) {
   };
 
   const getFieldLabel = (fieldValue: string) => {
-    const field = AVAILABLE_FIELDS.find(f => f.value === fieldValue);
-    return field ? t(`fields.${field.value.split('.').pop()}` as any) : fieldValue;
+    const fieldKeyMap: Record<string, string> = {
+      'customer.name': 'customerName',
+      'customer.phoneNumbers': 'customerPhone',
+      'customer.shippingAddress': 'customerAddress',
+      'products.productId': 'productId',
+      'products.name': 'productName',
+      'products.code': 'productCode',
+      'totalPrice': 'orderTotal',
+      'warehouseId': 'warehouse'
+    };
+    
+    const translationKey = fieldKeyMap[fieldValue];
+    return translationKey ? t(`fields.${translationKey}` as any) : fieldValue;
   };
 
   const getOperatorLabel = (operator: string) => {
@@ -114,12 +124,12 @@ export default function RulesList({ rules, onUpdate, onEdit }: RulesListProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Rule Name</TableHead>
-            <TableHead>Conditions</TableHead>
-            <TableHead>Logic</TableHead>
-            <TableHead>Time Window</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t('table.ruleName')}</TableHead>
+            <TableHead>{t('table.conditions')}</TableHead>
+            <TableHead>{t('table.logic')}</TableHead>
+            <TableHead>{t('table.timeWindow')}</TableHead>
+            <TableHead>{t('table.status')}</TableHead>
+            <TableHead className="text-right">{t('table.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -143,7 +153,7 @@ export default function RulesList({ rules, onUpdate, onEdit }: RulesListProps) {
               
               <TableCell>
                 <Badge variant="secondary" className="text-xs">
-                  {rule.logicalOperator}
+                  {getOperatorLabel(rule.logicalOperator)}
                 </Badge>
               </TableCell>
               
@@ -159,7 +169,7 @@ export default function RulesList({ rules, onUpdate, onEdit }: RulesListProps) {
                     variant={rule.isActive ? "default" : "secondary"}
                     className="text-xs"
                   >
-                    {rule.isActive ? t('isActive') : 'Inactive'}
+                    {rule.isActive ? t('isActive') : t('inactive')}
                   </Badge>
                 </div>
               </TableCell>
@@ -172,7 +182,7 @@ export default function RulesList({ rules, onUpdate, onEdit }: RulesListProps) {
                     size="sm"
                     onClick={() => handleToggleRule(rule)}
                     disabled={togglingRuleId === rule._id}
-                    title={rule.isActive ? 'Deactivate rule' : 'Activate rule'}
+                    title={rule.isActive ? t('tooltips.deactivateRule') : t('tooltips.activateRule')}
                   >
                     {rule.isActive ? (
                       <EyeOff className="w-4 h-4" />
@@ -186,7 +196,7 @@ export default function RulesList({ rules, onUpdate, onEdit }: RulesListProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => onEdit(rule)}
-                    title="Edit rule"
+                    title={t('tooltips.editRule')}
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
@@ -198,26 +208,25 @@ export default function RulesList({ rules, onUpdate, onEdit }: RulesListProps) {
                         variant="ghost"
                         size="sm"
                         disabled={deletingRuleId === rule._id}
-                        title="Delete rule"
+                        title={t('tooltips.deleteRule')}
                       >
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Rule</AlertDialogTitle>
+                        <AlertDialogTitle>{t('dialogs.deleteRule.title')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to delete the rule "{rule.name}"? 
-                          This action cannot be undone.
+                          {t('dialogs.deleteRule.description', { ruleName: rule.name })}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={() => handleDeleteRule(rule._id)}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                          Delete
+                          {t('common.delete')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
