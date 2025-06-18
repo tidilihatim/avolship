@@ -150,9 +150,14 @@ export async function checkForDuplicateOrders(orderToCheck: OrderToCheck): Promi
     // Get active rules
     const activeRules = settings.rules.filter((rule: any) => rule.isActive);
     
-    // If no active rules, use default time window for basic check
+    // If no active rules, no need to check further
     if (activeRules.length === 0) {
-      return await performDefaultDuplicateCheck(orderToCheck, settings.defaultTimeWindow, startTime);
+      return {
+        isDuplicate: false,
+        duplicateOrders: [],
+        rulesChecked: 0,
+        processingTime: Date.now() - startTime
+      };
     }
 
     // Calculate the maximum time window from all rules
@@ -221,49 +226,6 @@ export async function checkForDuplicateOrders(orderToCheck: OrderToCheck): Promi
       processingTime: Date.now() - startTime
     };
   }
-}
-
-// Fallback function for default duplicate checking when no rules are configured
-async function performDefaultDuplicateCheck(
-  orderToCheck: OrderToCheck, 
-  defaultTimeWindow: any, 
-  startTime: number
-): Promise<DuplicateDetectionResult> {
-  const timeWindowMs = convertTimeToMilliseconds(defaultTimeWindow.value, defaultTimeWindow.unit);
-  const timeWindowStart = new Date(orderToCheck.orderDate.getTime() - timeWindowMs);
-  const timeWindowEnd = new Date(orderToCheck.orderDate.getTime() + timeWindowMs);
-
-  const query: any = {
-    sellerId: orderToCheck.sellerId,
-    orderDate: {
-      $gte: timeWindowStart,
-      $lte: timeWindowEnd
-    },
-    $or: [
-      { 'customer.name': { $regex: new RegExp(orderToCheck.customer.name, 'i') } },
-      { 'customer.phoneNumbers': { $in: orderToCheck.customer.phoneNumbers } }
-    ]
-  };
-
-  // Exclude current order if updating existing order
-  if (orderToCheck.excludeOrderId) {
-    query._id = { $ne: orderToCheck.excludeOrderId };
-  }
-
-  const potentialDuplicates = await Order.find(query).lean();
-
-  const duplicateOrders = potentialDuplicates.map(order => ({
-    orderId: (order._id as any).toString(),
-    orderNumber: order.orderId,
-    matchedRule: 'Default Rule (Customer Name OR Phone)'
-  }));
-
-  return {
-    isDuplicate: duplicateOrders.length > 0,
-    duplicateOrders,
-    rulesChecked: 1,
-    processingTime: Date.now() - startTime
-  };
 }
 
 // Helper function to check duplicates for an existing order (used when creating orders)
