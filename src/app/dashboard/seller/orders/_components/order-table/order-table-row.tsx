@@ -15,6 +15,8 @@ import {
   MoreHorizontal,
   Eye,
   History,
+  Percent,
+  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +45,7 @@ import { toast } from "sonner";
 import { OrderStatus } from "@/lib/db/models/order";
 import { UserRole } from "@/lib/db/models/user";
 import { OrderTableData, WarehouseOption } from "./order-table-types";
+import { ColumnVisibility } from "./column-toggle";
 
 interface OrderTableRowProps {
   order: OrderTableData;
@@ -51,6 +54,7 @@ interface OrderTableRowProps {
   userRole: string | null;
   onStatusUpdate: (order: OrderTableData) => void;
   onAssignOrder: (order: OrderTableData) => void;
+  columnVisibility: ColumnVisibility;
 }
 
 export default function OrderTableRow({
@@ -60,8 +64,11 @@ export default function OrderTableRow({
   userRole,
   onStatusUpdate,
   onAssignOrder,
+  columnVisibility,
 }: OrderTableRowProps) {
   const t = useTranslations();
+
+  console.log(order)
 
   // Get status badge styling
   const getStatusBadge = (status: OrderStatus) => {
@@ -170,9 +177,28 @@ export default function OrderTableRow({
     }
   };
 
+  // Check if order has discounts
+  const hasDiscounts = order.priceAdjustments && order.priceAdjustments.length > 0;
+  const totalDiscountAmount = order.totalDiscountAmount || 0;
+  const finalTotalPrice = order.finalTotalPrice || order.totalPrice;
+  const originalTotalPrice = hasDiscounts ? order.totalPrice + totalDiscountAmount : order.totalPrice;
+
+  // Calculate discount percentage for display
+  const discountPercentage = hasDiscounts && originalTotalPrice > 0 
+    ? ((totalDiscountAmount / originalTotalPrice) * 100) 
+    : 0;
+
+  // Get product discount info
+  const getProductDiscountInfo = (productId: string) => {
+    if (!hasDiscounts) return null;
+    const adjustment = order.priceAdjustments?.find(adj => adj.productId === productId);
+    return adjustment;
+  };
+
   return (
     <TableRow>
-      <TableCell className="font-medium">
+      {columnVisibility.orderId && (
+        <TableCell className="font-medium">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center gap-2">
             <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
@@ -196,10 +222,21 @@ export default function OrderTableRow({
               {t("orders.badges.doubleOrder")}
             </Badge>
           )}
+          {hasDiscounts && (
+            <Badge
+              variant="outline"
+              className="w-fit bg-green-50 text-green-700 border-green-200"
+            >
+              <Percent className="h-3 w-3 mr-1" />
+              {discountPercentage.toFixed(1)}% off
+            </Badge>
+          )}
         </div>
-      </TableCell>
+        </TableCell>
+      )}
 
-      <TableCell>
+      {columnVisibility.customer && (
+        <TableCell>
         <Collapsible>
           <CollapsibleTrigger asChild>
             <Button
@@ -265,9 +302,11 @@ export default function OrderTableRow({
             </div>
           </CollapsibleContent>
         </Collapsible>
-      </TableCell>
+        </TableCell>
+      )}
 
-      <TableCell className="hidden md:table-cell">
+      {columnVisibility.warehouse && (
+        <TableCell className="table-cell">
         <div className="space-y-1">
           <div className="font-medium text-sm">{order.warehouseName}</div>
           <div className="text-xs text-muted-foreground flex items-center gap-1">
@@ -275,10 +314,11 @@ export default function OrderTableRow({
             {order.warehouseCountry}
           </div>
         </div>
-      </TableCell>
+        </TableCell>
+      )}
 
-      {isAdminOrModerator && (
-        <TableCell className="hidden lg:table-cell">
+      {isAdminOrModerator && columnVisibility.seller && (
+        <TableCell className="table-cell">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">{order.sellerName}</span>
@@ -286,8 +326,8 @@ export default function OrderTableRow({
         </TableCell>
       )}
 
-      {isAdminOrModerator && (
-        <TableCell className="hidden lg:table-cell">
+      {isAdminOrModerator && columnVisibility.assignedAgent && (
+        <TableCell className="table-cell">
           <div className="flex items-center gap-2">
             {order.assignedAgent ? (
               <>
@@ -303,7 +343,8 @@ export default function OrderTableRow({
         </TableCell>
       )}
 
-      <TableCell className="hidden xl:table-cell">
+      {columnVisibility.products && (
+        <TableCell className="table-cell">
         <Collapsible>
           <CollapsibleTrigger asChild>
             <Button
@@ -317,95 +358,194 @@ export default function OrderTableRow({
                     {order.products.length}{" "}
                     {order.products.length === 1 ? "item" : "items"}
                   </span>
-                  <Badge variant="outline" className="text-xs">
-                    {formatPrice(order.totalPrice, order.warehouseId)}
-                  </Badge>
+                  {hasDiscounts ? (
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs line-through text-muted-foreground">
+                        {formatPrice(originalTotalPrice, order.warehouseId)}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                        {formatPrice(finalTotalPrice, order.warehouseId)}
+                      </Badge>
+                    </div>
+                  ) : (
+                    <Badge variant="outline" className="text-xs">
+                      {formatPrice(order.totalPrice, order.warehouseId)}
+                    </Badge>
+                  )}
                 </div>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </div>
             </Button>
           </CollapsibleTrigger>
 
-          <CollapsibleContent className="px-2 pb-2 overflow-hidden transition-all duration-500 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-            <div className="space-y-2 bg-muted/50 p-3 rounded-md border max-h-64 overflow-y-auto">
-              {order.products.map((product, index) => (
-                <div
-                  key={index}
-                  className="bg-background p-3 rounded border"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between">
-                      <h4 className="font-medium text-sm leading-tight">
-                        {product.productName?.slice(0, 50) +
-                          (product.productName?.length > 50 ? "..." : "")}
-                      </h4>
-                      <Badge variant="secondary" className="text-xs ml-2">
-                        #{index + 1}
-                      </Badge>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="space-y-1">
-                        <div className="text-muted-foreground">
-                          Product Code
+          <CollapsibleContent className="px-6 pb-6 overflow-hidden transition-all duration-500 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="space-y-5 bg-muted/30 p-6 rounded-lg border max-h-96 overflow-y-auto w-full">
+              {order.products.map((product, index) => {
+                
+                const discountInfo = getProductDiscountInfo(product.productId);
+                const hasProductDiscount = discountInfo !== null;
+                
+                return (
+                  <div
+                    key={index}
+                    className="bg-background p-6 rounded-lg border shadow-sm w-full"
+                  >
+                    <div className="space-y-4 w-full">
+                      {/* Header with product name and badges */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-base leading-tight truncate" title={product.productName}>
+                            {product.productName}
+                          </h4>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Code: <span className="font-mono">{product.productCode}</span>
+                          </p>
                         </div>
-                        <div className="font-mono bg-muted px-2 py-1 rounded">
-                          {product.productCode}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-2 border-t">
-                      <div className="flex items-center gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Qty:</span>
-                          <span className="font-medium ml-1">
-                            {product.quantity}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">
-                            Unit Price:
-                          </span>
-                          <span className="font-medium ml-1">
-                            {formatPrice(product.unitPrice, order.warehouseId)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs text-muted-foreground">
-                          Subtotal
-                        </div>
-                        <div className="font-semibold">
-                          {formatPrice(
-                            product.unitPrice * product.quantity,
-                            order.warehouseId
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {hasProductDiscount && (
+                            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 whitespace-nowrap">
+                              <Tag className="h-3 w-3 mr-1" />
+                              -{((discountInfo!.discountAmount / discountInfo!.originalPrice) * 100).toFixed(1)}%
+                            </Badge>
                           )}
+                          <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                            #{index + 1}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      {/* Discount reason section - separate row for better readability */}
+                      {hasProductDiscount && (
+                        <div className="bg-green-50 border border-green-200 rounded-md p-3">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Percent className="h-3 w-3 text-green-600" />
+                            <span className="text-xs font-medium text-green-800">Discount Applied</span>
+                          </div>
+                          <p className="text-sm text-green-700 break-words">
+                            <span className="font-medium">Reason:</span> {discountInfo!.reason}
+                          </p>
+                          {discountInfo!.notes && (
+                            <p className="text-xs text-green-600 mt-1 break-words">
+                              <span className="font-medium">Notes:</span> {discountInfo!.notes}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Price and quantity section - full width layout */}
+                      <div className="pt-4 border-t w-full">
+                        <div className="flex flex-wrap items-start gap-6 w-full">
+                          <div className="flex-1 min-w-[120px]">
+                            <div className="text-xs text-muted-foreground mb-1">Quantity</div>
+                            <div className="font-semibold text-xl">{product.quantity}</div>
+                          </div>
+                          
+                          <div className="flex-1 min-w-[150px]">
+                            <div className="text-xs text-muted-foreground mb-1">Unit Price</div>
+                            {hasProductDiscount ? (
+                              <div className="space-y-1">
+                                <div className="line-through text-muted-foreground text-base">
+                                  {formatPrice(discountInfo!.originalPrice, order.warehouseId)}
+                                </div>
+                                <div className="font-semibold text-xl text-green-700">
+                                  {formatPrice(product.unitPrice, order.warehouseId)}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="font-semibold text-xl">
+                                {formatPrice(product.unitPrice, order.warehouseId)}
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="flex-1 min-w-[150px] text-right">
+                            <div className="text-xs text-muted-foreground mb-1">Subtotal</div>
+                            <div className="font-bold text-2xl text-primary break-words">
+                              {formatPrice(
+                                product.unitPrice * product.quantity,
+                                order.warehouseId
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
-              <div className="bg-primary/10 border-primary/20 p-3 rounded border-2 mt-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Order Total</span>
-                  <span className="font-bold text-lg">
-                    {formatPrice(order.totalPrice, order.warehouseId)}
-                  </span>
-                </div>
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mt-8 w-full">
+                {hasDiscounts ? (
+                  <div className="space-y-4 w-full">
+                    <div className="text-center">
+                      <h5 className="font-medium text-lg mb-4 flex items-center justify-center gap-2">
+                        <Percent className="h-5 w-5" />
+                        Order Summary with Discounts
+                      </h5>
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-8 text-center">
+                      <div className="flex-1 min-w-[150px]">
+                        <div className="text-sm  mb-2">Original Total</div>
+                        <div className="line-through  text-xl">
+                          {formatPrice(originalTotalPrice, order.warehouseId)}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-[150px]">
+                        <div className="text-sm  mb-2">Total Savings</div>
+                        <div className="text-green-700 font-semibold text-xl">
+                          -{formatPrice(totalDiscountAmount, order.warehouseId)}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-[150px]">
+                        <div className="text-sm  mb-2">Final Total</div>
+                        <div className="font-bold text-3xl text-green-700 break-words">
+                          {formatPrice(finalTotalPrice, order.warehouseId)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-center pt-3 border-t">
+                      <div className="text-sm ">
+                        You saved {((totalDiscountAmount / originalTotalPrice) * 100).toFixed(1)}% on this order
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center w-full">
+                    <div className="text-sm mb-3">Order Total</div>
+                    <div className="font-bold text-3xl text-primary break-words">
+                      {formatPrice(order.totalPrice, order.warehouseId)}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CollapsibleContent>
         </Collapsible>
-      </TableCell>
+        </TableCell>
+      )}
 
-      <TableCell className="font-semibold text-lg">
-        {formatPrice(order.totalPrice, order.warehouseId)}
-      </TableCell>
+      {columnVisibility.totalPrice && (
+        <TableCell className="font-semibold text-lg">
+        {hasDiscounts ? (
+          <div className="space-y-1">
+            <div className="line-through text-muted-foreground text-sm">
+              {formatPrice(originalTotalPrice, order.warehouseId)}
+            </div>
+            <div className="text-green-700">
+              {formatPrice(finalTotalPrice, order.warehouseId)}
+            </div>
+            <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+              -{formatPrice(totalDiscountAmount, order.warehouseId)}
+            </Badge>
+          </div>
+        ) : (
+          <div>{formatPrice(order.totalPrice, order.warehouseId)}</div>
+        )}
+        </TableCell>
+      )}
 
-      <TableCell>
+      {columnVisibility.status && (
+        <TableCell>
         <div className="space-y-2">
           <Badge
             variant="outline"
@@ -437,9 +577,11 @@ export default function OrderTableRow({
             </div>
           )}
         </div>
-      </TableCell>
+        </TableCell>
+      )}
 
-      <TableCell className="hidden md:table-cell">
+      {columnVisibility.callAttempts && (
+        <TableCell className="table-cell">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <PhoneCall className="h-4 w-4 text-muted-foreground" />
@@ -472,18 +614,22 @@ export default function OrderTableRow({
             </div>
           )}
         </div>
-      </TableCell>
+        </TableCell>
+      )}
 
-      <TableCell className="hidden lg:table-cell">
+      {columnVisibility.orderDate && (
+        <TableCell className="table-cell">
         <div className="flex items-center gap-2 text-sm">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <div>
             <div className="font-medium">{formatDate(order.orderDate)}</div>
           </div>
         </div>
-      </TableCell>
+        </TableCell>
+      )}
 
-      <TableCell className="text-right">
+      {columnVisibility.actions && (
+        <TableCell className="text-right">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -538,7 +684,7 @@ export default function OrderTableRow({
             )}
 
             {/* Admin/Moderator Actions */}
-            {isAdminOrModerator && (
+            {isAdminOrModerator || userRole === UserRole.CALL_CENTER && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -557,7 +703,8 @@ export default function OrderTableRow({
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-      </TableCell>
+        </TableCell>
+      )}
     </TableRow>
   );
 }

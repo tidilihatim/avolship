@@ -117,6 +117,18 @@ export interface DoubleOrderReference {
   };
 }
 
+export interface PriceAdjustment {
+  productId: string;
+  originalPrice: number;
+  adjustedPrice: number;
+  discountAmount: number;
+  discountPercentage: number;
+  reason: string;
+  appliedBy: string;
+  appliedAt: Date;
+  notes?: string;
+}
+
 export interface OrderTableData {
   _id: string;
   orderId: string;
@@ -149,6 +161,10 @@ export interface OrderTableData {
   doubleOrderReferences: DoubleOrderReference[];
   orderDate: Date;
   assignedAgent?: string;
+  // Discount tracking fields
+  priceAdjustments?: PriceAdjustment[];
+  finalTotalPrice?: number;
+  totalDiscountAmount?: number;
   createdAt: Date;
   updatedAt: Date;
 }

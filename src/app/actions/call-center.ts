@@ -216,7 +216,7 @@ export const getCallOutcomeData = withDbConnection(async () => {
     ]);
 
     const total = outcomes.reduce((sum, outcome) => sum + outcome.count, 0);
-    
+
     const formattedData = [
       {
         name: 'Confirmed',
@@ -332,18 +332,18 @@ export const getPriorityQueue = withDbConnection(async () => {
     const priorityOrders = await Order.find({
       status: OrderStatus.PENDING
     })
-    .populate('warehouseId', 'name currency')
-    .populate('sellerId', 'name')
-    .sort({ 
-      totalCallAttempts: -1, // Orders with more attempts first
-      orderDate: 1 // Older orders first
-    })
-    .limit(10)
-    .lean();
+      .populate('warehouseId', 'name currency')
+      .populate('sellerId', 'name')
+      .sort({
+        totalCallAttempts: -1, // Orders with more attempts first
+        orderDate: 1 // Older orders first
+      })
+      .limit(10)
+      .lean();
 
     const formattedOrders = priorityOrders.map((order: any) => {
       const waitingTime = Math.floor((Date.now() - new Date(order.orderDate).getTime()) / (1000 * 60)); // minutes
-      
+
       let priority = 'normal';
       if (waitingTime > 120) priority = 'urgent'; // 2+ hours
       else if (waitingTime > 60) priority = 'high'; // 1+ hour
@@ -398,19 +398,19 @@ export const getRecentActivity = withDbConnection(async () => {
       statusChangedAt: { $gte: oneHourAgo },
       statusChangedBy: { $exists: true }
     })
-    .populate('statusChangedBy', 'name')
-    .sort({ statusChangedAt: -1 })
-    .limit(10)
-    .lean();
+      .populate('statusChangedBy', 'name')
+      .sort({ statusChangedAt: -1 })
+      .limit(10)
+      .lean();
 
     // Get recent call attempts
     const recentCallAttempts = await Order.find({
       'callAttempts.attemptDate': { $gte: oneHourAgo }
     })
-    .populate('callAttempts.callCenterAgent', 'name')
-    .sort({ 'callAttempts.attemptDate': -1 })
-    .limit(5)
-    .lean();
+      .populate('callAttempts.callCenterAgent', 'name')
+      .sort({ 'callAttempts.attemptDate': -1 })
+      .limit(5)
+      .lean();
 
     const activities: any = [];
 
@@ -440,7 +440,7 @@ export const getRecentActivity = withDbConnection(async () => {
     });
 
     // Sort all activities by timestamp
-    activities.sort((a:any, b:any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    activities.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return {
       success: true,
@@ -533,10 +533,10 @@ export const lockOrder = withDbConnection(async (orderId: string) => {
     }
 
     // Check if order is locked by another agent
-    if (order.lockedBy && 
-        order.lockedBy.toString() !== user._id.toString() && 
-        order.lockExpiry && 
-        order.lockExpiry > new Date()) {
+    if (order.lockedBy &&
+      order.lockedBy.toString() !== user._id.toString() &&
+      order.lockExpiry &&
+      order.lockExpiry > new Date()) {
       return {
         success: false,
         message: 'Order is currently being worked on by another agent',
@@ -611,167 +611,6 @@ export const unlockOrder = withDbConnection(async (orderId: string) => {
   }
 });
 
-/**
- * Get orders assigned to current agent (formatted like getOrders)
- */
-export const getMyAssignedOrders = withDbConnection(async (page = 1, limit = 20, filters: any = {}) => {
-  try {
-    const user = await getCurrentUser();
-    if (!user || user.role !== UserRole.CALL_CENTER) {
-      return {
-        success: false,
-        message: 'Unauthorized access',
-      };
-    }
-
-    const skip = (page - 1) * limit;
-
-    // Clean up expired locks first
-    await Order.updateMany(
-      { lockExpiry: { $lte: new Date() } },
-      { 
-        $unset: { 
-          lockedBy: 1, 
-          lockedAt: 1, 
-          lockExpiry: 1 
-        } 
-      }
-    );
-
-    // For call center agents: show only their assigned orders (any status)
-    const query: any = {
-      assignedAgent: user._id
-    };
-
-    // Apply filters to the query
-    if (filters.status) {
-      query.status = filters.status;
-    }
-
-    if (filters.warehouseId) {
-      query.warehouseId = filters.warehouseId;
-    }
-
-    if (filters.sellerId) {
-      query.sellerId = filters.sellerId;
-    }
-
-    if (filters.callStatus) {
-      if (filters.callStatus === 'answered') {
-        query.status = 'confirmed';
-      } else if (filters.callStatus === 'unreached') {
-        query.status = 'unreached';
-      } else if (filters.callStatus === 'busy') {
-        query['callAttempts.status'] = 'busy';
-      } else if (filters.callStatus === 'invalid') {
-        query.status = 'wrong_number';
-      }
-    }
-
-    if (filters.dateFrom || filters.dateTo) {
-      query.orderDate = {};
-      if (filters.dateFrom) {
-        query.orderDate.$gte = new Date(filters.dateFrom);
-      }
-      if (filters.dateTo) {
-        query.orderDate.$lte = new Date(filters.dateTo);
-      }
-    }
-
-    if (filters.showDoubleOnly) {
-      query.isDouble = true;
-    }
-
-    if (filters.search) {
-      query.$or = [
-        { orderId: { $regex: filters.search, $options: 'i' } },
-        { 'customer.name': { $regex: filters.search, $options: 'i' } },
-        { 'customer.phoneNumbers': { $regex: filters.search, $options: 'i' } },
-      ];
-    }
-
-    console.log('Call center agent ID:', user._id);
-    console.log('Query for assigned orders:', query);
-
-    // Get orders with populated data (same format as getOrders)
-    const orders = await Order.find(query)
-    .populate('warehouseId', 'name country currency')
-    .populate('sellerId', 'name email businessName')
-    .populate('products.productId', 'name code description')
-    .populate('assignedAgent', 'name')
-    .populate('lockedBy', 'name')
-    .populate('statusChangedBy', 'name role')
-    .populate('callAttempts.callCenterAgent', 'name role')
-    .sort({ orderDate: 1 }) // Oldest first
-    .skip(skip)
-    .limit(limit)
-    .lean();
-
-    const total = await Order.countDocuments(query);
-
-    // Format orders to match the expected structure
-    const formattedOrders = orders.map((order: any) => ({
-      _id: order._id.toString(),
-      orderId: order.orderId,
-      customer: order.customer,
-      warehouseId: order.warehouseId?._id?.toString(),
-      warehouseName: order.warehouseId?.name || 'Unknown Warehouse',
-      warehouseCountry: order.warehouseId?.country || 'Unknown',
-      sellerId: order.sellerId?._id?.toString(),
-      sellerName: order.sellerId?.name || 'Unknown Seller',
-      products: order.products.map((product: any) => ({
-        ...product,
-        productId: product.productId._id?.toString() || product.productId.toString(),
-        name: product.productId.name,
-        code: product.productId.code,
-        description: product.productId.description,
-        expeditionId: product.expeditionId?.toString(),
-      })),
-      totalPrice: order.totalPrice,
-      status: order.status,
-      statusComment: order.statusComment,
-      statusChangedBy: order.statusChangedBy ? {
-        _id: order.statusChangedBy._id.toString(),
-        name: order.statusChangedBy.name,
-        role: order.statusChangedBy.role,
-      } : undefined,
-      statusChangedAt: order.statusChangedAt,
-      callAttempts: order.callAttempts || [],
-      totalCallAttempts: order.totalCallAttempts || 0,
-      lastCallAttempt: order.lastCallAttempt,
-      lastCallStatus: order.callAttempts?.length > 0 ? 
-        order.callAttempts[order.callAttempts.length - 1].status : undefined,
-      isDouble: order.isDouble || false,
-      doubleOrderReferences: order.doubleOrderReferences || [],
-      orderDate: order.orderDate,
-      assignedAgent: order.assignedAgent?.name,
-      lockedBy: order.lockedBy?.name,
-      lockExpiry: order.lockExpiry,
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
-    }));
-
-    return {
-      success: true,
-      orders: JSON.parse(JSON.stringify(formattedOrders)),
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-      message: total === 0 ? 
-        'No orders assigned to you yet.' : 
-        'Showing your assigned orders'
-    };
-  } catch (error: any) {
-    console.error('Error fetching assigned orders:', error);
-    return {
-      success: false,
-      message: error.message || 'Failed to fetch assigned orders',
-    };
-  }
-});
 
 /**
  * Auto-assign orders to agents based on workload (Admin/Moderator only)
@@ -787,11 +626,11 @@ export const autoAssignOrders = withDbConnection(async (batchSize = 20) => {
     }
 
     // Get all active call center agents
-    const agents = await User.find({ 
+    const agents = await User.find({
       role: UserRole.CALL_CENTER,
       status: { $ne: 'inactive' } // Exclude inactive agents
     }).lean();
-    
+
     if (agents.length === 0) {
       return {
         success: false,
@@ -804,12 +643,12 @@ export const autoAssignOrders = withDbConnection(async (batchSize = 20) => {
       status: { $in: [OrderStatus.PENDING, OrderStatus.UNREACHED] },
       assignedAgent: { $exists: false }
     })
-    .sort({ 
-      orderDate: 1, // Oldest first
-      totalCallAttempts: -1 // Orders with more attempts get priority
-    })
-    .limit(batchSize)
-    .lean();
+      .sort({
+        orderDate: 1, // Oldest first
+        totalCallAttempts: -1 // Orders with more attempts get priority
+      })
+      .limit(batchSize)
+      .lean();
 
     if (unassignedOrders.length === 0) {
       return {
@@ -840,8 +679,8 @@ export const autoAssignOrders = withDbConnection(async (batchSize = 20) => {
         // Calculate workload score (pending orders weight more than unreached)
         const workloadScore = (assignedPending * 1.5) + (assignedUnreached * 1.0);
 
-        return { 
-          agentId: agent._id, 
+        return {
+          agentId: agent._id,
           agentName: agent.name,
           totalAssigned,
           pendingCount: assignedPending,
@@ -860,7 +699,7 @@ export const autoAssignOrders = withDbConnection(async (batchSize = 20) => {
 
     for (const order of unassignedOrders) {
       // Find agent with lowest current workload
-      const selectedAgent = agentWorkloads.reduce((min, current) => 
+      const selectedAgent = agentWorkloads.reduce((min, current) =>
         current.workloadScore < min.workloadScore ? current : min
       );
 
@@ -918,7 +757,7 @@ export const getAgentWorkloadStats = withDbConnection(async () => {
     }
 
     const agents = await User.find({ role: UserRole.CALL_CENTER }).lean();
-    
+
     const agentStats = await Promise.all(
       agents.map(async (agent) => {
         const [pending, unreached, confirmed, total] = await Promise.all([
@@ -1004,7 +843,7 @@ export const addCallAttempt = withDbConnection(async (
     };
 
     order.callAttempts.push(newAttempt);
-    
+
     // Update order status based on call result
     if (status === 'answered') {
       order.status = OrderStatus.CONFIRMED;

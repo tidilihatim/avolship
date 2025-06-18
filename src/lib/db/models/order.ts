@@ -47,6 +47,21 @@ export interface CallAttempt {
 }
 
 /**
+ * Discount tracking interface for price adjustments during confirmation
+ */
+export interface PriceAdjustment {
+  productId: mongoose.Types.ObjectId;
+  originalPrice: number;
+  adjustedPrice: number;
+  discountAmount: number;
+  discountPercentage: number;
+  reason: string; // Reason for discount (e.g., "Customer negotiation", "Promotion", etc.)
+  appliedBy: mongoose.Types.ObjectId; // Call center agent who applied the discount
+  appliedAt: Date;
+  notes?: string; // Additional notes about the discount
+}
+
+/**
  * Double order reference interface - Updated for rule-based detection
  */
 export interface DoubleOrderReference {
@@ -92,6 +107,11 @@ export interface IOrder extends Document {
   // Double Order Detection
   isDouble: boolean;
   doubleOrderReferences: DoubleOrderReference[];
+  
+  // Price Adjustments & Discounts
+  priceAdjustments: PriceAdjustment[];
+  finalTotalPrice: number; // Total price after all discounts applied
+  totalDiscountAmount: number; // Sum of all discounts applied
   
   // Timestamps
   orderDate: Date; // For double order detection (same day logic)
@@ -276,6 +296,64 @@ const OrderSchema = new Schema<IOrder>(
       },
     }],
     
+    // Price Adjustments & Discounts
+    priceAdjustments: [{
+      productId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
+      },
+      originalPrice: {
+        type: Number,
+        required: true,
+        min: [0, 'Original price cannot be negative'],
+      },
+      adjustedPrice: {
+        type: Number,
+        required: true,
+        min: [0, 'Adjusted price cannot be negative'],
+      },
+      discountAmount: {
+        type: Number,
+        required: true,
+        min: [0, 'Discount amount cannot be negative'],
+      },
+      discountPercentage: {
+        type: Number,
+        required: true,
+        min: [0, 'Discount percentage cannot be negative'],
+        max: [100, 'Discount percentage cannot exceed 100%'],
+      },
+      reason: {
+        type: String,
+        required: [true, 'Discount reason is required'],
+        trim: true,
+      },
+      appliedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      appliedAt: {
+        type: Date,
+        default: Date.now,
+      },
+      notes: {
+        type: String,
+        trim: true,
+      },
+    }],
+    finalTotalPrice: {
+      type: Number,
+      min: [0, 'Final total price cannot be negative'],
+      index: true,
+    },
+    totalDiscountAmount: {
+      type: Number,
+      default: 0,
+      min: [0, 'Total discount amount cannot be negative'],
+    },
+    
     // Timestamps
     orderDate: {
       type: Date,
@@ -330,35 +408,6 @@ OrderSchema.pre('save', function (next) {
   next();
 });
 
-// Static method for double order detection
-OrderSchema.statics.findPotentialDoubles = async function(
-  customerName: string,
-  phoneNumbers: string[],
-  productIds: mongoose.Types.ObjectId[],
-  orderDate: Date,
-  excludeOrderId?: mongoose.Types.ObjectId
-) {
-  const startOfDay = new Date(orderDate);
-  startOfDay.setHours(0, 0, 0, 0);
-  
-  const endOfDay = new Date(orderDate);
-  endOfDay.setHours(23, 59, 59, 999);
-  
-  const query: any = {
-    orderDate: { $gte: startOfDay, $lte: endOfDay },
-    $or: [
-      { 'customer.name': { $regex: new RegExp(customerName, 'i') } },
-      { 'customer.phoneNumbers': { $in: phoneNumbers } },
-      { 'products.productId': { $in: productIds } },
-    ],
-  };
-  
-  if (excludeOrderId) {
-    query._id = { $ne: excludeOrderId };
-  }
-  
-  return this.find(query);
-};
 
 // Create the model only if it doesn't already exist
 const Order = mongoose.models?.Order || mongoose.model<IOrder>('Order', OrderSchema);

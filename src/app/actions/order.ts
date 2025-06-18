@@ -19,6 +19,7 @@ import { ExpeditionStatus } from '../dashboard/_constant/expedition';
 import { revalidatePath } from 'next/cache';
 import { checkDuplicatesForNewOrder } from '@/lib/duplicate-detection/duplicate-checker';
 import DuplicateDetectionSettings from '@/lib/db/models/duplicate-settings';
+import { ApplyDiscountRequest, DiscountResponse } from '@/types/discount';
 
 // Add this function to src/app/actions/order.ts
 
@@ -240,7 +241,21 @@ export const getOrders = withDbConnection(async (
 
     // Apply call status filter if provided
     if (filters.callStatus) {
-      query.lastCallStatus = filters.callStatus;
+      if (user.role === UserRole.CALL_CENTER) {
+        // Enhanced call status filtering for call center agents
+        if (filters.callStatus === 'answered') {
+          query.status = 'confirmed';
+        } else if (filters.callStatus === 'unreached') {
+          query.status = 'unreached';
+        } else if (filters.callStatus === 'busy') {
+          query['callAttempts.status'] = 'busy';
+        } else if (filters.callStatus === 'invalid') {
+          query.status = 'wrong_number';
+        }
+      } else {
+        // Standard call status filtering for other roles
+        query.lastCallStatus = filters.callStatus;
+      }
     }
 
     // Apply double orders filter
@@ -275,8 +290,22 @@ export const getOrders = withDbConnection(async (
 
     // Calculate pagination
     const skip = (page - 1) * limit;
+    
+    // For call center agents: show only their assigned orders
     if(user.role === UserRole.CALL_CENTER){
       query.assignedAgent = user._id
+      
+      // Clean up expired locks first
+      await Order.updateMany(
+        { lockExpiry: { $lte: new Date() } },
+        {
+          $unset: {
+            lockedBy: 1,
+            lockedAt: 1,
+            lockExpiry: 1
+          }
+        }
+      );
     }
     
     // Execute query with pagination
@@ -405,6 +434,15 @@ export const getOrders = withDbConnection(async (
         doubleOrderReferences: order.doubleOrderReferences || [],
         orderDate: order.orderDate,
         assignedAgent: assignedAgentData?.name,
+        // Include discount tracking fields
+        priceAdjustments: order.priceAdjustments || [],
+        finalTotalPrice: order.finalTotalPrice,
+        totalDiscountAmount: order.totalDiscountAmount || 0,
+        // Include lock information for call center agents
+        ...(user.role === UserRole.CALL_CENTER && {
+          lockedBy: order.lockedBy ? assignedAgentMap.get(order.lockedBy.toString())?.name : undefined,
+          lockExpiry: order.lockExpiry,
+        }),
         createdAt: order.createdAt,
         updatedAt: order.updatedAt,
       });
@@ -1161,12 +1199,24 @@ export const getOrderByIdAdd = withDbConnection(async (orderId: string) => {
 });
 
 /**
- * Update order status (Admin/Moderator only)
+ * Update order status (Admin/Moderator/Call Center only)
  */
 export const updateOrderStatus = withDbConnection(async (
   orderId: string,
   newStatus: OrderStatus,
-  comment?: string
+  comment?: string,
+  discountData?: {
+    discounts: Array<{
+      productId: string;
+      originalPrice: number;
+      newPrice: number;
+      discountAmount: number;
+      reason: string;
+      notes?: string;
+    }>;
+    totalDiscount: number;
+    finalTotal: number;
+  }
 ) => {
   try {
     // Get the current user
@@ -1198,6 +1248,61 @@ export const updateOrderStatus = withDbConnection(async (
     // Store previous status for status history
     const previousStatus = order.status;
 
+    // Process discount data if provided
+    if (discountData && discountData.discounts.length > 0) {
+      let totalDiscountAmount = 0;
+      const priceAdjustments = [];
+
+      // Process discount data for each product
+      for (const discount of discountData.discounts) {
+        const orderProduct = order.products.find(
+          (p: any) => p.productId.toString() === discount.productId
+        );
+
+        if (!orderProduct) {
+          return {
+            success: false,
+            message: `Product ${discount.productId} not found in order`,
+          };
+        }
+
+        // Validate discount
+        if (discount.newPrice < 0 || discount.newPrice >= discount.originalPrice) {
+          return {
+            success: false,
+            message: 'Invalid discount amount',
+          };
+        }
+
+        const discountAmount = discount.originalPrice - discount.newPrice;
+        const discountPercentage = (discountAmount / discount.originalPrice) * 100;
+
+        // Update product price
+        orderProduct.unitPrice = discount.newPrice;
+
+        // Create price adjustment record
+        priceAdjustments.push({
+          productId: discount.productId,
+          originalPrice: discount.originalPrice,
+          adjustedPrice: discount.newPrice,
+          discountAmount: discountAmount,
+          discountPercentage: discountPercentage,
+          reason: discount.reason,
+          appliedBy: user._id,
+          appliedAt: new Date(),
+          notes: discount.notes || '',
+        });
+
+        totalDiscountAmount += discountAmount * orderProduct.quantity;
+      }
+
+      // Update order with discount information
+      order.priceAdjustments = [...(order.priceAdjustments || []), ...priceAdjustments];
+      order.totalDiscountAmount = (order.totalDiscountAmount || 0) + totalDiscountAmount;
+      order.finalTotalPrice = discountData.finalTotal;
+      order.totalPrice = discountData.finalTotal;
+    }
+
     // Update order status
     order.status = newStatus;
     order.statusComment = comment || '';
@@ -1207,6 +1312,12 @@ export const updateOrderStatus = withDbConnection(async (
     await order.save();
 
     // Create status history entry
+    let statusComment = comment || '';
+    if (discountData && discountData.discounts.length > 0) {
+      const discountSummary = `Applied discounts: ${discountData.totalDiscount.toFixed(2)} total discount. ${statusComment}`.trim();
+      statusComment = discountSummary;
+    }
+
     await OrderStatusHistory.create({
       orderId: order._id,
       previousStatus,
@@ -1214,7 +1325,7 @@ export const updateOrderStatus = withDbConnection(async (
       changedBy: user._id,
       changedByRole: user.role,
       changeDate: new Date(),
-      comment: comment || '',
+      comment: statusComment,
       automaticChange: false,
     });
 
@@ -1296,6 +1407,147 @@ export const getDuplicateOrdersDetails = withDbConnection(async (
     return {
       success: false,
       message: error.message || 'Failed to fetch duplicate orders',
+    };
+  }
+});
+
+/**
+ * Apply discount to order products (Call Center agents only)
+ */
+export const applyDiscountToOrder = withDbConnection(async (
+  request: ApplyDiscountRequest
+): Promise<DiscountResponse> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return {
+        success: false,
+        message: 'Unauthorized',
+      };
+    }
+
+    // Only call center agents can apply discounts
+    if (user.role !== UserRole.CALL_CENTER) {
+      return {
+        success: false,
+        message: 'Only call center agents can apply discounts',
+      };
+    }
+
+    // Find the order
+    const order = await Order.findById(request.orderId);
+    if (!order) {
+      return {
+        success: false,
+        message: 'Order not found',
+      };
+    }
+
+    // Validate that order is in a state where discounts can be applied
+    if (order.status === OrderStatus.CONFIRMED || order.status === OrderStatus.CANCELLED) {
+      return {
+        success: false,
+        message: `Cannot apply discounts to ${order.status} orders`,
+      };
+    }
+
+    let totalOriginalPrice = 0;
+    let totalDiscountAmount = 0;
+    const priceAdjustments = [];
+
+    // Process each discount
+    for (const discount of request.discounts) {
+      // Find the product in the order
+      const orderProduct = order.products.find(
+        (p: any) => p.productId.toString() === discount.productId
+      );
+
+      if (!orderProduct) {
+        return {
+          success: false,
+          message: `Product ${discount.productId} not found in order`,
+        };
+      }
+
+      // Validate discount amount
+      if (discount.newPrice < 0) {
+        return {
+          success: false,
+          message: 'Discounted price cannot be negative',
+        };
+      }
+
+      if (discount.newPrice >= discount.originalPrice) {
+        return {
+          success: false,
+          message: 'Discounted price must be less than original price',
+        };
+      }
+
+      const discountAmount = discount.originalPrice - discount.newPrice;
+      const discountPercentage = (discountAmount / discount.originalPrice) * 100;
+
+      // Update the product price in the order
+      orderProduct.unitPrice = discount.newPrice;
+
+      // Track the price adjustment
+      priceAdjustments.push({
+        productId: discount.productId,
+        originalPrice: discount.originalPrice,
+        adjustedPrice: discount.newPrice,
+        discountAmount: discountAmount,
+        discountPercentage: discountPercentage,
+        reason: discount.reason,
+        appliedBy: user._id,
+        appliedAt: new Date(),
+        notes: discount.notes || '',
+      });
+
+      totalOriginalPrice += discount.originalPrice * orderProduct.quantity;
+      totalDiscountAmount += discountAmount * orderProduct.quantity;
+    }
+
+    // Calculate new total price
+    const newTotalPrice = order.products.reduce(
+      (total: number, product: any) => total + (product.unitPrice * product.quantity),
+      0
+    );
+
+    // Update order with price adjustments
+    order.priceAdjustments = [...(order.priceAdjustments || []), ...priceAdjustments];
+    order.finalTotalPrice = newTotalPrice;
+    order.totalDiscountAmount = (order.totalDiscountAmount || 0) + totalDiscountAmount;
+    order.totalPrice = newTotalPrice; // Update the main total price as well
+
+    await order.save();
+
+    // Create status history entry for discount application
+    await OrderStatusHistory.create({
+      orderId: order._id,
+      previousStatus: order.status,
+      currentStatus: order.status, // Status doesn't change, just tracking the discount
+      changedBy: user._id,
+      changedByRole: user.role,
+      changeDate: new Date(),
+      comment: `Discount applied: ${totalDiscountAmount.toFixed(2)} total discount`,
+      automaticChange: false,
+    });
+
+    revalidatePath('/dashboard/call_center/orders');
+    revalidatePath('/dashboard/admin/orders');
+
+    return {
+      success: true,
+      message: 'Discount applied successfully',
+      totalOriginalPrice,
+      totalFinalPrice: newTotalPrice,
+      totalDiscountAmount,
+    };
+  } catch (error: any) {
+    console.error('Error applying discount:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to apply discount',
     };
   }
 });

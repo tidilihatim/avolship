@@ -30,6 +30,8 @@ import OrderTableHeader from "./order-table/order-table-header";
 import OrderTableRow from "./order-table/order-table-row";
 import OrderPagination from "./order-table/order-pagination";
 import OrderAssignmentDialog from "./order-table/order-assignment-dialog";
+import ColumnToggle from "./order-table/column-toggle";
+import { useColumnVisibility } from "./order-table/use-column-visibility";
 
 // Import types and constants
 import {
@@ -109,13 +111,16 @@ export default function OrderTable({
   const [selectedAgent, setSelectedAgent] = useState<string>("");
   const [isAssigning, setIsAssigning] = useState(false);
 
+  // Column visibility management
+  const { columnVisibility, setColumnVisibility } = useColumnVisibility();
+
   // Fetch current user role and call center agents on component mount
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
         const role = await getLoginUserRole();
         setUserRole(role);
-        
+
         // If user is admin/moderator, fetch call center agents
         if (role === UserRole.ADMIN || role === UserRole.MODERATOR) {
           const agentsResult = await getCallCenterAgents();
@@ -321,7 +326,7 @@ export default function OrderTable({
     setIsAssigning(true);
     try {
       const result = await assignOrderToAgent(assignmentDialog.order._id, selectedAgent);
-      
+
       if (result.success) {
         toast.success(result.message);
         closeAssignmentDialog();
@@ -343,7 +348,7 @@ export default function OrderTable({
     setIsAssigning(true);
     try {
       const result = await autoAssignOrders(20);
-      
+
       if (result.success) {
         toast.success(result.message);
         // Refresh the page to show updated data
@@ -359,7 +364,7 @@ export default function OrderTable({
     }
   };
 
-  
+
   if (error) {
     return (
       <Card>
@@ -380,7 +385,13 @@ export default function OrderTable({
           onSubmit={handleSearch}
         />
 
-        <div className="flex gap-2 w-full sm:w-auto justify-between sm:justify-end">
+        <div className="flex gap-2 w-full sm:w-auto flex-wrap justify-between sm:justify-end">
+          <ColumnToggle
+            isAdminOrModerator={isAdminOrModerator}
+            columnVisibility={columnVisibility}
+            onColumnVisibilityChange={setColumnVisibility}
+          />
+
           <OrderFiltersSheet
             isOpen={isFiltersOpen}
             onOpenChange={setIsFiltersOpen}
@@ -405,7 +416,7 @@ export default function OrderTable({
           />
 
           {isAdminOrModerator && (
-            <Button 
+            <Button
               variant="outline"
               className="flex gap-2 mr-2"
               onClick={handleAutoAssign}
@@ -415,18 +426,23 @@ export default function OrderTable({
               {isAssigning ? "Auto-Assigning..." : "Auto-Assign Orders"}
             </Button>
           )}
-          <Link href={`/dashboard/${userRole}/orders/import`} passHref>
-            <Button variant="outline" className="flex gap-2">
-              <Upload className="h-4 w-4" />
-              {t("orders.importOrders")}
-            </Button>
-          </Link>
-          <Link href={`/dashboard/${userRole}/orders/create`} passHref>
-            <Button className="flex gap-2">
-              <PlusCircle className="h-4 w-4" />
-              {t("orders.addOrder")}
-            </Button>
-          </Link>
+
+          {userRole === UserRole.SELLER && (
+            <>
+              <Link href={`/dashboard/${userRole}/orders/import`} passHref>
+                <Button variant="outline" className="flex gap-2">
+                  <Upload className="h-4 w-4" />
+                  {t("orders.importOrders")}
+                </Button>
+              </Link>
+              <Link href={`/dashboard/${userRole}/orders/create`} passHref>
+                <Button className="flex gap-2">
+                  <PlusCircle className="h-4 w-4" />
+                  {t("orders.addOrder")}
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -435,9 +451,8 @@ export default function OrderTable({
           <CardTitle>{t("orders.title")}</CardTitle>
           <CardDescription>
             {pagination?.total
-              ? `${pagination.total} ${
-                  pagination.total === 1 ? "order" : "orders"
-                } found`
+              ? `${pagination.total} ${pagination.total === 1 ? "order" : "orders"
+              } found`
               : t("orders.noOrdersFound")}
           </CardDescription>
         </CardHeader>
@@ -445,7 +460,10 @@ export default function OrderTable({
           {orders.length > 0 ? (
             <div className="rounded-md border overflow-x-auto">
               <Table>
-                <OrderTableHeader isAdminOrModerator={isAdminOrModerator} />
+                <OrderTableHeader
+                  isAdminOrModerator={isAdminOrModerator}
+                  columnVisibility={columnVisibility}
+                />
                 <TableBody>
                   {orders.map((order) => (
                     <OrderTableRow
@@ -456,6 +474,7 @@ export default function OrderTable({
                       userRole={userRole}
                       onStatusUpdate={openStatusUpdateDialog}
                       onAssignOrder={openAssignmentDialog}
+                      columnVisibility={columnVisibility}
                     />
                   ))}
                 </TableBody>

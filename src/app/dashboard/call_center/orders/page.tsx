@@ -4,10 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { OrderFilters } from "@/types/order";
 import { OrderStatus } from "@/lib/db/models/order";
 import { getAllWarehouses, getAllSellers, getOrders } from "@/app/actions/order";
-import { UserRole } from "@/lib/db/models/user";
-import CallCenterOrderTable from "./_components/call-center-order-table";
 import { getLoginUserRole } from "@/app/actions/auth";
-import { getMyAssignedOrders } from "@/app/actions/call-center";
+import OrderTable from "../../seller/orders/_components/order-table";
 
 const ALL_STATUSES = "all_statuses";
 const ALL_WAREHOUSES = "all_warehouses";
@@ -32,8 +30,8 @@ async function parseSearchParams(searchParams: {
   }
 
   if (searchParams.status && typeof searchParams.status === "string") {
-    if (searchParams.status !== ALL_STATUSES && 
-        Object.values(OrderStatus).includes(searchParams.status as OrderStatus)) {
+    if (searchParams.status !== ALL_STATUSES &&
+      Object.values(OrderStatus).includes(searchParams.status as OrderStatus)) {
       filters.status = searchParams.status as OrderStatus;
     }
   }
@@ -51,8 +49,8 @@ async function parseSearchParams(searchParams: {
   }
 
   if (searchParams.callStatus && typeof searchParams.callStatus === "string") {
-    if (searchParams.callStatus !== ALL_CALL_STATUSES && 
-        ['answered', 'unreached', 'busy', 'invalid'].includes(searchParams.callStatus)) {
+    if (searchParams.callStatus !== ALL_CALL_STATUSES &&
+      ['answered', 'unreached', 'busy', 'invalid'].includes(searchParams.callStatus)) {
       filters.callStatus = searchParams.callStatus as 'answered' | 'unreached' | 'busy' | 'invalid';
     }
   }
@@ -98,7 +96,7 @@ export default async function CallCenterOrdersPage({
 }) {
   const searchParamsPlain = await searchParams;
   const t = await getTranslations();
-  
+
   // Parse search params for filtering and pagination
   const filters = await parseSearchParams(searchParamsPlain);
 
@@ -112,27 +110,20 @@ export default async function CallCenterOrdersPage({
   // For call center agents, only show their assigned orders
   // For admin/moderators, show all orders
   let orders, pagination, success, message;
-  
-  if (userRole === UserRole.CALL_CENTER) {
-    // Call center agents see only their assigned orders
-    const result = await getMyAssignedOrders(filters.page, filters.limit, filters);
-    orders = result.orders;
-    pagination = result.pagination;
-    success = result.success;
-    message = result.message;
-  } else {
-    // Admin/Moderators see all orders
-    const result = await getOrders(filters.page, filters.limit, filters);
-    orders = result.orders;
-    pagination = result.pagination;
-    success = result.success;
-    message = result.message;
-  }
+
+
+  // Admin/Moderators see all orders
+  const result = await getOrders(filters.page, filters.limit, filters);
+  orders = result.orders;
+  pagination = result.pagination;
+  success = result.success;
+  message = result.message;
+
 
   // Fetch all available warehouses and sellers for the filters (in parallel)
   const warehousesPromise = getAllWarehouses();
   const sellersPromise = getAllSellers();
-  
+
   const [warehouses, sellers] = await Promise.all([
     warehousesPromise,
     sellersPromise
@@ -163,17 +154,16 @@ export default async function CallCenterOrdersPage({
       ? searchParamsPlain.showDoubleOnly === "true"
       : undefined,
   };
-  
+
 
   return (
-    <div className="container px-4 py-8 mx-auto space-y-6">
+    <div className="px-4 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">
           {t("callCenter.orders")}
         </h1>
       </div>
-
-      <CallCenterOrderTable
+      <OrderTable
         orders={orders || []}
         allWarehouses={warehouses}
         allSellers={sellers}
