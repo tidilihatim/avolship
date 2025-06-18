@@ -87,19 +87,38 @@
         "phoneNumberComparison": "Comparaison des Numéros de Téléphone",
         "productsComparison": "Comparaison des Produits",
         "orderTimingComparison": "Comparaison du Timing des Commandes"
-      }
-    },
-
-    "labels": {
-      "currentOrder": "Commande Actuelle",
-      "similarOrder": "Commande Similaire",
-      "currentOrderProducts": "Produits de la Commande Actuelle",
-      "similarOrderProducts": "Produits de la Commande Similaire",
-      "timeDifference": "Différence de temps",
-      "hoursApart": "heures",
-      "similarityScore": "Score de Similarité",
-      "phoneNotAvailable": "Téléphone non disponible",
-      "productDetailsNotAvailable": "Détails du produit non disponibles"
+      },
+      "labels": {
+        "currentOrder": "Commande Actuelle",
+        "similarOrder": "Commande Similaire",
+        "currentOrderProducts": "Produits de la Commande Actuelle",
+        "similarOrderProducts": "Produits de la Commande Similaire",
+        "timeDifference": "Différence de temps",
+        "hoursApart": "heures",
+        "similarityScore": "Score de Similarité",
+        "phoneNotAvailable": "Téléphone non disponible",
+        "productDetailsNotAvailable": "Détails du produit non disponibles"
+      },
+      "warnings": {
+        "sameCustomerName": "Même Nom de Client",
+        "samePhoneNumber": "Même Numéro de Téléphone",
+        "sameProducts": "Mêmes Produits",
+        "sameCustomer": "Même Client",
+        "samePhone": "Même Téléphone",
+        "within24Hours": "Dans les 24 heures"
+      },
+      "detectionRule": "Règle de Détection",
+      "detectedAt": "Détecté Le",
+      "warningTitle": "Alerte de Détection de Doublon",
+      "ruleBasedMessage": "Cette commande a été signalée comme doublon par la règle : {rule}",
+      "matchingConditions": "Conditions Correspondantes",
+      "ruleConditions": "Conditions de Règle qui ont Déclenché la Détection",
+      "currentOrderValue": "Commande Actuelle",
+      "duplicateOrderValue": "Commande Dupliquée",
+      "fieldMatches": "Correspondances de Champs",
+      "conditionField": "Champ",
+      "conditionValue": "Valeur",
+      "matchHighlight": "Ce champ a déclenché la détection de doublon"
     },
 
     "time": {

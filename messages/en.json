@@ -262,7 +262,19 @@
         "sameCustomer": "Same Customer",
         "samePhone": "Same Phone",
         "within24Hours": "Within 24 hours"
-      }
+      },
+      "detectionRule": "Detection Rule",
+      "detectedAt": "Detected At",
+      "warningTitle": "Duplicate Detection Alert",
+      "ruleBasedMessage": "This order was flagged as a duplicate by the rule: {rule}",
+      "matchingConditions": "Matching Conditions",
+      "ruleConditions": "Rule Conditions that Triggered Detection",
+      "currentOrderValue": "Current Order",
+      "duplicateOrderValue": "Duplicate Order",
+      "fieldMatches": "Field Matches",
+      "conditionField": "Field",
+      "conditionValue": "Value",
+      "matchHighlight": "This field triggered the duplicate detection"
     },
     
     "time": {

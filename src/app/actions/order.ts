@@ -18,6 +18,7 @@ import Expedition from '@/lib/db/models/expedition';
 import { ExpeditionStatus } from '../dashboard/_constant/expedition';
 import { revalidatePath } from 'next/cache';
 import { checkDuplicatesForNewOrder } from '@/lib/duplicate-detection/duplicate-checker';
+import DuplicateDetectionSettings from '@/lib/db/models/duplicate-settings';
 
 // Add this function to src/app/actions/order.ts
 
@@ -1230,6 +1231,71 @@ export const updateOrderStatus = withDbConnection(async (
     return {
       success: false,
       message: error.message || 'Failed to update order status',
+    };
+  }
+});
+
+/**
+ * Get duplicate orders and their detection settings for comparison
+ */
+export const getDuplicateOrdersDetails = withDbConnection(async (
+  orderIds: string[],
+  sellerId: string
+) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return {
+        success: false,
+        message: 'Unauthorized',
+      };
+    }
+
+    // Validate that the user can access these orders
+    if (user.role === UserRole.SELLER && user._id !== sellerId) {
+      return {
+        success: false,
+        message: 'Access denied',
+      };
+    }
+
+    // Fetch the duplicate orders with populated product data
+    const duplicateOrders = await Order.find({
+      _id: { $in: orderIds }
+    })
+    .populate('products.productId', 'name code')
+    .populate('warehouseId', 'name country currency')
+    .lean();
+
+    // Fetch duplicate detection settings for the seller
+    const duplicateSettings = await DuplicateDetectionSettings.findOne({
+      sellerId: sellerId
+    }).lean();
+
+    // Transform the orders to include product names
+    const enhancedOrders = duplicateOrders.map((order: any) => ({
+      ...order,
+      _id: order._id.toString(),
+      products: order.products.map((product: any) => ({
+        ...product,
+        productId: product.productId._id.toString(),
+        productName: product.productId.name,
+        productCode: product.productId.code,
+      })),
+      warehouseId: order.warehouseId._id.toString(),
+      warehouseName: order.warehouseId.name,
+    }));
+
+    return {
+      success: true,
+      duplicateOrders: JSON.parse(JSON.stringify(enhancedOrders)),
+      duplicateSettings: duplicateSettings ? JSON.parse(JSON.stringify(duplicateSettings)) : null,
+    };
+  } catch (error: any) {
+    console.error('Error fetching duplicate orders:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to fetch duplicate orders',
     };
   }
 });

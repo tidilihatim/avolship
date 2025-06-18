@@ -22,7 +22,7 @@ import { UserRole } from '@/lib/db/models/user';
 
 interface OrderHeaderProps {
   order: any;
-  userRole?: string;
+  userRole: UserRole;
   getStatusConfig: (status: OrderStatus) => any;
   formatPrice: (price: number, warehouseId?: string) => string;
   formatDate: (date: Date | string) => string;
@@ -87,12 +87,6 @@ export default function OrderHeader({
                     <StatusIcon className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     {statusConfig.label}
                   </Badge>
-                  {order.isDouble && (
-                    <Badge variant="outline" className="border-purple-500 bg-purple-500/10 h-6 sm:h-8 px-2 sm:px-4 text-xs sm:text-sm font-medium">
-                      <Users className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                      {t('badges.doubleOrder')}
-                    </Badge>
-                  )}
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-sm sm:text-base text-muted-foreground">
                   <div className="flex items-center gap-2">
