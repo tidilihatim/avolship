@@ -19,7 +19,7 @@ import {
 
 import { UserRole } from "@/lib/db/models/user";
 import { getLoginUserRole } from "@/app/actions/auth";
-import { assignOrderToAgent, autoAssignOrders } from "@/app/actions/call-center";
+import { assignOrderToAgent} from "@/app/actions/call-center";
 import { getCallCenterAgents } from "@/app/actions/user";
 import StatusUpdateDialog from "./order-table/status-update-dialog";
 
@@ -343,28 +343,6 @@ export default function OrderTable({
     }
   };
 
-  // Handle auto-assignment
-  const handleAutoAssign = async () => {
-    setIsAssigning(true);
-    try {
-      const result = await autoAssignOrders(20);
-
-      if (result.success) {
-        toast.success(result.message);
-        // Refresh the page to show updated data
-        router.refresh();
-      } else {
-        toast.error(result.message);
-      }
-    } catch (error) {
-      console.error("Error auto-assigning orders:", error);
-      toast.error("Failed to auto-assign orders");
-    } finally {
-      setIsAssigning(false);
-    }
-  };
-
-
   if (error) {
     return (
       <Card>
@@ -414,18 +392,6 @@ export default function OrderTable({
             onApplyFilters={applyFilters}
             onClearFilters={clearFilters}
           />
-
-          {isAdminOrModerator && (
-            <Button
-              variant="outline"
-              className="flex gap-2 mr-2"
-              onClick={handleAutoAssign}
-              disabled={isAssigning}
-            >
-              <Users className="h-4 w-4" />
-              {isAssigning ? "Auto-Assigning..." : "Auto-Assign Orders"}
-            </Button>
-          )}
 
           {userRole === UserRole.SELLER && (
             <>

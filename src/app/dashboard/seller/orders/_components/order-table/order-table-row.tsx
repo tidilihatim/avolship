@@ -67,9 +67,7 @@ export default function OrderTableRow({
   columnVisibility,
 }: OrderTableRowProps) {
   const t = useTranslations();
-
-  console.log(order)
-
+  
   // Get status badge styling
   const getStatusBadge = (status: OrderStatus) => {
     const statusConfig = {

@@ -1,9 +1,7 @@
 'use client';
 
 // src/app/[locale]/dashboard/orders/[id]/_components/order-details.tsx
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { 
   CheckCircle,
   XCircle,
@@ -29,6 +27,7 @@ import CallHistoryCard from './order-detail/call-history-card';
 import WarehouseInfoCard from './order-detail/warehouse-info-card';
 import SellerInfoCard from './order-detail/seller-info-card';
 import DoubleOrdersCard from './order-detail/double-orders-card';
+import DiscountSummaryCard from './order-detail/discount-summary-card';
 
 interface OrderDetailsProps {
   order: any;
@@ -41,11 +40,9 @@ interface OrderDetailsProps {
  */
 export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
   const t = useTranslations('orders');
-  const router = useRouter();
 
   // Check if user is admin or moderator
   const isAdminOrModerator = userRole === UserRole.ADMIN || userRole === UserRole.MODERATOR;
-  const isCallCenter = userRole === UserRole.CALL_CENTER;
   
   // Get status configuration
   const getStatusConfig = (status: OrderStatus) => {
@@ -101,19 +98,6 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
     };
   };
 
-  const statusConfig = getStatusConfig(order.status);
-  const StatusIcon = statusConfig.icon;
-
-  // Get call status configuration
-  const getCallStatusConfig = (status: string) => {
-    const configs = {
-      answered: { label: t('callStatuses.answered'), className: 'border-primary bg-primary/10', icon: CheckCircle },
-      unreached: { label: t('callStatuses.unreached'), className: 'border-muted-foreground bg-muted/10', icon: Phone },
-      busy: { label: t('callStatuses.busy'), className: 'border-muted-foreground bg-muted/10', icon: Clock3 },
-      invalid: { label: t('callStatuses.invalid'), className: 'border-destructive bg-destructive/10', icon: XCircle },
-    };
-    return configs[status as keyof typeof configs] || configs.unreached;
-  };
 
   // Format price with currency based on warehouse
   const formatPrice = (price: number, warehouseId?: string) => {
@@ -208,6 +192,12 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
 
           {/* Right Column */}
           <div className="space-y-6 sm:space-y-8">
+            {/* Discount Summary */}
+            <DiscountSummaryCard
+              order={order}
+              formatPrice={formatPrice}
+            />
+
             {/* Status & Comments */}
             <StatusInfoCard 
               formatDate={formatDate}

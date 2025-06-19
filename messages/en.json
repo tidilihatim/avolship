@@ -349,6 +349,20 @@
       "code": "Code"
     },
 
+    "discounts": {
+      "title": "Discount Summary",
+      "totalSavings": "Total Savings",
+      "originalTotal": "Original Total",
+      "discountAmount": "Discount Amount",
+      "finalTotal": "Final Total",
+      "appliedDiscounts": "Applied Discounts",
+      "reason": "Reason",
+      "notes": "Notes",
+      "originalPrice": "Original",
+      "newPrice": "New Price",
+      "savingsMessage": "You saved {percentage}% on this order"
+    },
+
     "statusUpdate": {
       "title": "Update Order Status",
       "description": "Update the status for order {orderId}",

@@ -335,6 +335,20 @@
       "code": "Code"
     },
 
+    "discounts": {
+      "title": "Résumé des Remises",
+      "totalSavings": "Économies Totales",
+      "originalTotal": "Total Original",
+      "discountAmount": "Montant de Remise",
+      "finalTotal": "Total Final",
+      "appliedDiscounts": "Remises Appliquées",
+      "reason": "Raison",
+      "notes": "Notes",
+      "originalPrice": "Original",
+      "newPrice": "Nouveau Prix",
+      "savingsMessage": "Vous avez économisé {percentage}% sur cette commande"
+    },
+
     "statusUpdate": {
       "title": "Mettre à jour le statut de la commande",
       "description": "Mettre à jour le statut de la commande {orderId}",

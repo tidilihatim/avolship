@@ -102,7 +102,7 @@ const DuplicateDetectionSettingsSchema = new Schema<IDuplicateDetectionSettings>
 });
 
 // Create default rule for new sellers
-DuplicateDetectionSettingsSchema.statics.createDefaultSettings = function(sellerId: mongoose.Types.ObjectId) {
+DuplicateDetectionSettingsSchema.statics.createDefaultSettings = function (sellerId: mongoose.Types.ObjectId) {
   return new this({
     sellerId,
     isEnabled: true,
@@ -115,9 +115,10 @@ DuplicateDetectionSettingsSchema.statics.createDefaultSettings = function(seller
         name: 'Default Duplicate Detection',
         conditions: [
           { field: FieldType.CUSTOMER_NAME, enabled: true },
-          { field: FieldType.CUSTOMER_PHONE, enabled: true }
+          { field: FieldType.CUSTOMER_PHONE, enabled: true },
+          { field: FieldType.PRODUCT_ID, enabled: true }
         ],
-        logicalOperator: LogicalOperator.OR,
+        logicalOperator: LogicalOperator.AND,
         timeWindow: {
           value: 24,
           unit: TimeUnit.HOURS
@@ -128,7 +129,7 @@ DuplicateDetectionSettingsSchema.statics.createDefaultSettings = function(seller
   });
 };
 
-const DuplicateDetectionSettings = mongoose.models?.DuplicateDetectionSettings || 
+const DuplicateDetectionSettings = mongoose.models?.DuplicateDetectionSettings ||
   mongoose.model<IDuplicateDetectionSettings>('DuplicateDetectionSettings', DuplicateDetectionSettingsSchema);
 
 export default DuplicateDetectionSettings;

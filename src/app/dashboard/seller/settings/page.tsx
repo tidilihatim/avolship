@@ -11,7 +11,7 @@ export default async function SellerSettingsPage() {
   const t = await getTranslations("settings");
 
   return (
-    <div className="container px-4 py-8 mx-auto space-y-6">
+    <div className="px-4 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">

@@ -81,18 +81,6 @@ export const AVAILABLE_FIELDS = [
     category: 'Product'
   },
   {
-    value: FieldType.PRODUCT_NAME,
-    label: 'Product Name',
-    description: 'Compare product names',
-    category: 'Product'
-  },
-  {
-    value: FieldType.PRODUCT_CODE,
-    label: 'Product Code',
-    description: 'Compare product codes',
-    category: 'Product'
-  },
-  {
     value: FieldType.ORDER_TOTAL,
     label: 'Order Total',
     description: 'Compare total order amount',
