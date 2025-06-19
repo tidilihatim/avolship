@@ -16,7 +16,6 @@ import { ExpeditionInput, ProductOption } from '@/types/expedition-form';
 import Product from '@/lib/db/models/product';
 import { sendNotification } from '@/lib/notifications/send-notification';
 import { NotificationType } from '@/types/notification';
-import { stat } from 'fs';
 
 /**
  * Get expeditions with filters and pagination

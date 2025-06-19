@@ -1,9 +1,10 @@
 // src/app/[locale]/dashboard/expeditions/create/page.tsx
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getAllWarehousesForExpedition, getAllProvidersForExpedition, getCountriesForForm } from "@/app/actions/expedition";
+import { getAllWarehousesForExpedition, getAllProvidersForExpedition } from "@/app/actions/expedition";
 import ExpeditionForm from "../_components/expedition-form";
 import { getCurrentUser } from "@/app/actions/auth";
+import { getCountryNames } from "@/constants/countries";
 
 export const metadata: Metadata = {
   title: "Create Expedition | AvolShip",
@@ -19,11 +20,13 @@ export default async function ExpeditionCreatePage() {
   const user = await getCurrentUser();
 
   // Fetch all necessary data for the form
-  const [warehouses, providers, countries] = await Promise.all([
+  const [warehouses, providers] = await Promise.all([
     getAllWarehousesForExpedition(),
     getAllProvidersForExpedition(),
-    getCountriesForForm(),
   ]);
+
+  // Get countries from constants
+  const countries = getCountryNames();
 
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
