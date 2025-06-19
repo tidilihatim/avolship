@@ -32,6 +32,7 @@ yarn-error.log*
 
 SRS.pdf
 notes
+backend-chat-service.txt
 
 # env files (can opt-in for committing if needed)
 .env*
