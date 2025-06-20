@@ -12,6 +12,7 @@ import { useSocket } from '@/lib/socket/use-socket';
 import { getChatHistory, markChatRoomAsRead } from '@/app/actions/chat';
 import { MessageType } from '@/lib/db/models/chat-message';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 interface ChatWindowProps {
   chatRoom: ChatRoom | null;
@@ -30,6 +31,7 @@ export function ChatWindow({
   isSidebarOpen,
   onMarkAsRead
 }: ChatWindowProps) {
+  const t = useTranslations('chat');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -158,10 +160,10 @@ export function ChatWindow({
         setHasMoreMessages(newMessages.length === 20);
         setCurrentPage(page);
       } else {
-        toast.error(result.error || 'Failed to load messages');
+        toast.error(result.error || t('errors.failedToLoadMessages'));
       }
     } catch (error) {
-      toast.error('Failed to load messages');
+      toast.error(t('errors.failedToLoadMessages'));
     } finally {
       if (isLoadingMore) {
         setLoadingMore(false);
@@ -300,7 +302,7 @@ export function ChatWindow({
         }
       }
     } catch (error) {
-      toast.error('Failed to send message');
+      toast.error(t('errors.failedToSendMessage'));
     }
   };
 
@@ -326,10 +328,10 @@ export function ChatWindow({
               <Menu className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              Select a conversation
+              {t('empty.selectConversation')}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Choose a conversation from the sidebar to start messaging, or find new {userRole === 'seller' ? 'providers' : 'sellers'} to connect with.
+              {t('startConversationWith', { userType: userRole === 'seller' ? t('providers') : t('sellers') })}
             </p>
           </div>
           <Button
@@ -338,7 +340,7 @@ export function ChatWindow({
             className="md:hidden"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to conversations
+            {t('chats')}
           </Button>
         </div>
       </div>
@@ -376,7 +378,7 @@ export function ChatWindow({
                   : 'bg-red-500'
               }`} />
               <p className="text-xs text-muted-foreground">
-                {otherUserOnline ? 'Online' : 'Offline'}
+                {otherUserOnline ? t('status.online') : t('status.offline')}
               </p>
             </div>
           </div>

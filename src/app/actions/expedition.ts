@@ -11,11 +11,12 @@ import { redirect } from 'next/navigation';
 import { authOptions } from '@/config/auth';
 import mongoose from 'mongoose';
 import Expedition, { IExpedition } from '@/lib/db/models/expedition';
-import { ExpeditionStatus } from '../dashboard/_constant/expedition';
+import { ExpeditionStatus, ProviderType } from '../dashboard/_constant/expedition';
 import { ExpeditionInput, ProductOption } from '@/types/expedition-form';
 import Product from '@/lib/db/models/product';
-import { sendNotification } from '@/lib/notifications/send-notification';
+import { sendNotification, sendNotificationToUserType } from '@/lib/notifications/send-notification';
 import { NotificationType } from '@/types/notification';
+import { NotificationIcon } from '@/lib/db/models/notification';
 
 /**
  * Get expeditions with filters and pagination
@@ -194,6 +195,180 @@ export const getExpeditions = withDbConnection(async (
 });
 
 /**
+ * Get provider expeditions with filters and pagination
+ */
+export const getProviderExpeditions = withDbConnection(async (
+  page: number = 1,
+  limit: number = 10,
+  filters: ExpeditionFilters = {}
+): Promise<{
+  expeditions: ExpeditionTableData[] | null;
+  pagination: PaginationData | null;
+  success: boolean;
+  message: string;
+}> => {
+  try {
+
+    // Get current user and check permissions
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return { expeditions: null, pagination: null, success: false, message: 'Unauthorized' };
+    const user = await User.findById(session?.user?.id) as IUser | null;
+    if (!user) {
+      redirect('/auth/login');
+    }
+
+    // Only providers can access this function
+    if (user.role !== UserRole.PROVIDER) {
+      return { expeditions: null, pagination: null, success: false, message: 'Only providers can access this endpoint' };
+    }
+
+    // Build query - providers can only see expeditions assigned to them
+    const query: any = {
+      providerId: user._id,
+      providerType: 'registered' // Only registered provider expeditions
+    };
+
+    // Apply filters
+    if (filters.search) {
+      query.$or = [
+        { expeditionCode: { $regex: filters.search, $options: 'i' } },
+        { sellerName: { $regex: filters.search, $options: 'i' } },
+        { warehouseName: { $regex: filters.search, $options: 'i' } },
+        { fromCountry: { $regex: filters.search, $options: 'i' } },
+        { trackingNumber: { $regex: filters.search, $options: 'i' } },
+      ];
+    }
+
+    if (filters.status) {
+      query.status = filters.status;
+    }
+
+    if (filters.transportMode) {
+      query.transportMode = filters.transportMode;
+    }
+
+    if (filters.warehouseId) {
+      query.warehouseId = filters.warehouseId;
+    }
+
+    if (filters.sellerId) {
+      query.sellerId = filters.sellerId;
+    }
+
+    if (filters.fromCountry) {
+      query.fromCountry = filters.fromCountry;
+    }
+
+    // Date range filter
+    if (filters.dateFrom || filters.dateTo) {
+      query.expeditionDate = {};
+      if (filters.dateFrom) {
+        query.expeditionDate.$gte = new Date(filters.dateFrom);
+      }
+      if (filters.dateTo) {
+        query.expeditionDate.$lte = new Date(filters.dateTo);
+      }
+    }
+
+    // Weight range filter
+    if (filters.weightMin !== undefined || filters.weightMax !== undefined) {
+      query.weight = {};
+      if (filters.weightMin !== undefined) {
+        query.weight.$gte = filters.weightMin;
+      }
+      if (filters.weightMax !== undefined) {
+        query.weight.$lte = filters.weightMax;
+      }
+    }
+
+    // Calculate pagination
+    const skip = (page - 1) * limit;
+    const total = await Expedition.countDocuments(query);
+    const totalPages = Math.ceil(total / limit);
+
+    // Fetch expeditions with proper typing and populate products
+    const expeditions = await Expedition.find(query)
+      .sort({ createdAt: -1 })
+      .populate("warehouseId")
+      .populate({
+        path: 'products.productId',
+        model: 'Product',
+        select: 'name code description image'
+      })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // Transform data for table display
+    const expeditionData: ExpeditionTableData[] = expeditions.map((expedition: any) => {
+      // Transform products with populated data
+      const transformedProducts = expedition.products?.map((product: any) => ({
+        productId: product.productId?._id?.toString() || product.productId?.toString() || '',
+        productName: product.productName || product.productId?.name || '',
+        productCode: product.productCode || product.productId?.code || '',
+        quantity: product.quantity || 0,
+        unitPrice: product.unitPrice,
+        image: product.productId?.image?.url || '',
+        description: product.productId?.description || '',
+      })) || [];
+
+      return {
+        _id: expedition._id.toString(),
+        expeditionCode: expedition.expeditionCode,
+        sellerId: expedition.sellerId.toString(),
+        sellerName: expedition.sellerName,
+        fromCountry: expedition.fromCountry,
+        weight: expedition.weight,
+        expeditionDate: expedition.expeditionDate,
+        transportMode: expedition.transportMode,
+        warehouseId: expedition.warehouseId.toString(),
+        warehouse: expedition.warehouseId,
+        warehouseName: expedition.warehouseName,
+        providerType: expedition.providerType,
+        providerId: expedition.providerId?.toString(),
+        providerName: expedition.providerName,
+        carrierName: expedition.carrierInfo?.name,
+        carrierPhone: expedition.carrierInfo?.phone,
+        products: transformedProducts,
+        totalProducts: expedition.totalProducts,
+        totalQuantity: expedition.totalQuantity,
+        totalValue: expedition.totalValue,
+        status: expedition.status,
+        approvedBy: expedition.approvedBy?.toString(),
+        approvedAt: expedition.approvedAt,
+        rejectedReason: expedition.rejectedReason,
+        trackingNumber: expedition.trackingNumber,
+        estimatedDelivery: expedition.estimatedDelivery,
+        actualDelivery: expedition.actualDelivery,
+        createdAt: expedition.createdAt,
+        updatedAt: expedition.updatedAt,
+      };
+    });
+
+    const pagination: PaginationData = {
+      page,
+      limit,
+      total,
+      totalPages,
+    };
+
+    return {
+      expeditions: JSON.parse(JSON.stringify(expeditionData)),
+      pagination,
+      success: true,
+      message: 'Provider expeditions fetched successfully',
+    };
+  } catch (error) {
+    return {
+      expeditions: null,
+      pagination: null,
+      success: false,
+      message: 'Failed to fetch provider expeditions',
+    };
+  }
+});
+
+/**
  * Get all sellers for filter options (Admin/Moderator only)
  */
 export const getAllSellersForExpedition = withDbConnection(async (): Promise<SellerOption[]> => {
@@ -265,6 +440,92 @@ export const getCountriesForExpedition = withDbConnection(async (): Promise<stri
 });
 
 /**
+ * Update expedition status for providers
+ */
+export const updateProviderExpeditionStatus = withDbConnection(async (
+  expeditionId: string,
+  status: ExpeditionStatus,
+  trackingNumber?: string,
+  estimatedDelivery?: string,
+  actualDelivery?: string
+): Promise<{
+  success: boolean;
+  message: string;
+}> => {
+  try {
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return { success: false, message: 'Unauthorized' };
+    const user = await User.findById(session?.user?.id) as IUser | null;
+
+    if (!user) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    if (user.role !== UserRole.PROVIDER) {
+      return { success: false, message: 'Only providers can update expedition status' };
+    }
+
+    const expedition = await Expedition.findOne({
+      _id: expeditionId,
+      providerId: user._id,
+      providerType: 'registered'
+    });
+
+    if (!expedition) {
+      return {
+        success: false,
+        message: 'Expedition not found or not assigned to you',
+      };
+    }
+
+    // Providers can only update status if expedition is approved or in transit
+    if (expedition.status !== ExpeditionStatus.APPROVED && expedition.status !== ExpeditionStatus.IN_TRANSIT) {
+      return {
+        success: false,
+        message: 'You can only update status for approved or in-transit expeditions',
+      };
+    }
+
+    const updateData: any = { status };
+
+    // Providers can set tracking number and delivery dates
+    if (trackingNumber) {
+      updateData.trackingNumber = trackingNumber;
+    }
+
+    if (estimatedDelivery) {
+      updateData.estimatedDelivery = new Date(estimatedDelivery);
+    }
+
+    if (actualDelivery && status === ExpeditionStatus.DELIVERED) {
+      updateData.actualDelivery = new Date(actualDelivery);
+    }
+
+    await Expedition.findByIdAndUpdate(expeditionId, updateData);
+
+    // Send notification to seller
+    sendNotification({
+      userId: expedition?.sellerId?.toString(),
+      type: status === ExpeditionStatus.DELIVERED ? NotificationType.SUCCESS : NotificationType.INFO,
+      title: `Expedition Status Updated: ${expedition?.expeditionCode}`,
+      message: `Your expedition status has been updated to ${status} by the provider.`,
+      actionLink: `/dashboard/seller/expeditions/${expeditionId}`,
+    });
+
+    return {
+      success: true,
+      message: `Expedition status updated to ${status}`,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Failed to update expedition status',
+    };
+  }
+});
+
+/**
  * Update expedition status (Admin/Moderator only)
  */
 export const updateExpeditionStatus = withDbConnection(async (
@@ -329,6 +590,55 @@ export const updateExpeditionStatus = withDbConnection(async (
     return {
       success: false,
       message: 'Failed to update expedition status',
+    };
+  }
+});
+
+/**
+ * Get provider expedition by ID (Providers only)
+ */
+export const getProviderExpeditionById = withDbConnection(async (expeditionId: string): Promise<{
+  expedition: ExpeditionTableData | null;
+  success: boolean;
+  message: string;
+}> => {
+  try {
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return { expedition: null, success: false, message: 'Unauthorized' };
+    const user = await User.findById(session?.user?.id) as IUser | null;
+
+    if (!user) {
+      return { expedition: null, success: false, message: 'Unauthorized' };
+    }
+
+    // Only providers can access this function
+    if (user.role !== UserRole.PROVIDER) {
+      return { expedition: null, success: false, message: 'Only providers can access this endpoint' };
+    }
+
+    const query: any = { 
+      _id: expeditionId,
+      providerId: user._id,
+      providerType: 'registered'
+    };
+
+    const expedition = await Expedition.findOne(query).populate("warehouseId").lean() as (IExpedition & { _id: mongoose.Types.ObjectId }) | null;
+
+    if (!expedition) {
+      return { expedition: null, success: false, message: 'Expedition not found' };
+    }
+
+    return {
+      expedition: JSON.parse(JSON.stringify(expedition as any)),
+      success: true,
+      message: 'Provider expedition fetched successfully',
+    };
+  } catch (error) {
+    return {
+      expedition: null,
+      success: false,
+      message: 'Failed to fetch provider expedition',
     };
   }
 });
@@ -447,6 +757,25 @@ export const createExpedition = withDbConnection(async (expeditionData: Expediti
     });
 
     await newExpedition.save();
+
+    if(expeditionData?.providerType === ProviderType.REGISTERED && expeditionData?.providerId){
+            sendNotification({
+              title:`A new expedition is assign to you !`,
+              message:`${user?.name} has assign you a new expedition ${newExpedition?.expeditionCode}`,
+              userId:expeditionData?.providerId,
+              actionLink:`/dashboard/provider/expeditions/${newExpedition?._id}`,
+              icon:NotificationIcon.BELL,
+              type:NotificationType.INFO
+            })
+    }
+
+    sendNotificationToUserType("admin",{
+      title:`A new expedition created`,
+      message:`Seller: ${user?.name} has created a new expedition ${newExpedition?.expeditionCode}`,
+      actionLink:`/dashboard/admin/expeditions/${newExpedition?._id}`,
+      icon:NotificationIcon.BELL,
+      type:NotificationType.INFO
+    })
 
     return {
       success: true,

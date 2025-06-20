@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChatRoom } from '@/types/chat';
 import { ChatRoomItem } from './chat-room-item';
 import { ProvidersList } from './providers-list';
+import { useTranslations } from 'next-intl';
 
 interface ChatSidebarProps {
   userRole: 'seller' | 'provider';
@@ -28,6 +29,7 @@ export function ChatSidebar({
   onChatRoomSelect,
   onRefresh
 }: ChatSidebarProps) {
+  const t = useTranslations('chat');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('chats');
 
@@ -55,7 +57,7 @@ export function ChatSidebar({
       {/* Header */}
       <div className="p-4 border-b">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Messages</h2>
+          <h2 className="text-lg font-semibold">{t('title')}</h2>
           <Button
             variant="ghost"
             size="sm"
@@ -70,7 +72,7 @@ export function ChatSidebar({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search conversations..."
+            placeholder={t('searchConversations')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -83,7 +85,7 @@ export function ChatSidebar({
         <TabsList className="grid w-full grid-cols-2 mt-2 h-10">
           <TabsTrigger value="chats" className="flex items-center justify-center gap-1 text-xs px-2 min-w-0">
             <MessageCircle className="h-3 w-3 flex-shrink-0" />
-            <span className="truncate">Chats</span>
+            <span className="truncate">{t('chats')}</span>
             {getUnreadCount() > 0 && (
               <Badge variant="destructive" className="ml-1 text-xs h-4 min-w-4 px-1">
                 {getUnreadCount()}
@@ -93,7 +95,7 @@ export function ChatSidebar({
           <TabsTrigger value="providers" className="flex items-center justify-center gap-1 text-xs px-2 min-w-0">
             <Users className="h-3 w-3 flex-shrink-0" />
             <span className="truncate">
-              {userRole === 'seller' ? 'Providers' : 'Sellers'}
+              {userRole === 'seller' ? t('providers') : t('sellers')}
             </span>
           </TabsTrigger>
         </TabsList>
@@ -104,10 +106,10 @@ export function ChatSidebar({
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <MessageCircle className="h-12 w-12 text-muted-foreground mb-4" />
                 <p className="text-sm text-muted-foreground mb-2">
-                  {searchQuery ? 'No conversations found' : 'No conversations yet'}
+                  {searchQuery ? t('noConversationsFound') : t('noConversationsYet')}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {searchQuery ? 'Try a different search term' : `Start a conversation with ${userRole === 'seller' ? 'providers' : 'sellers'}`}
+                  {searchQuery ? t('tryDifferentSearch') : t('startConversationWith', { userType: userRole === 'seller' ? t('providers') : t('sellers') })}
                 </p>
               </div>
             ) : (

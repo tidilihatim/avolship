@@ -118,7 +118,7 @@ export async function getUsers(role: UserRole, status: string = 'approved'): Pro
       status,
     }).select('name email businessName role lastActive').lean();
 
-    return { success: true, data: users };
+    return { success: true, data: JSON.parse(JSON.stringify(users))};
   } catch (error) {
     console.error('Error fetching users:', error);
     return { success: false, error: 'Failed to fetch users' };

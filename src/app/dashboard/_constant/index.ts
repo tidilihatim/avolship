@@ -114,11 +114,19 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
   // Provide empty arrays or add real data if needed
   'customer-support': [],
   'delivery': [],
-  'provider': [{
+  'provider': [
+    {
       name: "chat",
       href: "/dashboard/provider/chat",
       icon: MessageCircle,
-    },],
+    },
+    {
+      name:"expeditions",
+      href:"/dashboard/provider/expeditions",
+      icon:PlaneIcon
+    }
+  ]
+
 };
 
 

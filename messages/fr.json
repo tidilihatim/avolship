@@ -2198,5 +2198,66 @@
         "timeWindowRequired": "La fenêtre de temps est requise"
       }
     }
+  },
+  "chat": {
+    "title": "Messages",
+    "searchConversations": "Rechercher des conversations...",
+    "searchUsers": "Rechercher des fournisseurs...",
+    "searchSellers": "Rechercher des vendeurs...",
+    "noConversationsFound": "Aucune conversation trouvée",
+    "noConversationsYet": "Aucune conversation pour le moment",
+    "tryDifferentSearch": "Essayez un terme de recherche différent",
+    "startConversationWith": "Commencer une conversation avec {userType}",
+    "noMatches": "Aucun résultat trouvé",
+    "noUsersAvailable": "Aucun {userType} disponible",
+    "providers": "Fournisseurs",
+    "sellers": "Vendeurs",
+    "chats": "Discussions",
+    "typeMessage": "Tapez un message...",
+    "attachments": {
+      "images": "Images",
+      "documents": "Documents"
+    },
+    "fileValidation": {
+      "invalidFormat": "Certains fichiers ont des formats invalides. Seules les images sont autorisés.",
+      "fileTooLarge": "Certains fichiers sont trop volumineux. La taille maximale est de 10 Mo.",
+      "tooManyFiles": "Vous ne pouvez envoyer que 5 fichiers à la fois."
+    },
+    "typing": {
+      "isTyping": "{name} est en train d'écrire..."
+    },
+    "status": {
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "lastSeen": "Vu pour la dernière fois"
+    },
+    "actions": {
+      "startChat": "Démarrer une Discussion",
+      "chatStarted": "Discussion démarrée avec succès",
+      "failedToStartChat": "Échec du démarrage de la discussion",
+      "failedToRefreshRooms": "Échec de l'actualisation des salles de discussion"
+    },
+    "notifications": {
+      "newMessage": "Nouveau message de {name}",
+      "chatCreated": "Salle de discussion créée",
+      "userOnline": "{name} est maintenant en ligne",
+      "userOffline": "{name} est maintenant hors ligne"
+    },
+    "loading": {
+      "loadingMessages": "Chargement des messages...",
+      "loadingUsers": "Chargement des utilisateurs...",
+      "sendingMessage": "Envoi du message..."
+    },
+    "errors": {
+      "failedToLoadMessages": "Échec du chargement des messages",
+      "failedToSendMessage": "Échec de l'envoi du message",
+      "connectionLost": "Connexion perdue",
+      "reconnecting": "Reconnexion..."
+    },
+    "empty": {
+      "selectConversation": "Sélectionnez une conversation pour commencer à échanger",
+      "noMessages": "Aucun message pour le moment",
+      "startConversation": "Commencez la conversation en envoyant un message"
+    }
   }
 }

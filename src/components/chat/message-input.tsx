@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'sonner';
 import { MessageType } from '@/lib/db/models/chat-message';
+import { useTranslations } from 'next-intl';
 
 interface MessageInputProps {
   onSendMessage: (content: string, messageType?: MessageType, files?: File[]) => Promise<void>;
@@ -21,6 +22,7 @@ export function MessageInput({
   onTypingStop,
   disabled = false
 }: MessageInputProps) {
+  const t = useTranslations('chat');
   const [message, setMessage] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
@@ -65,31 +67,31 @@ export function MessageInput({
     // Validate file types
     const allowedTypes = [
       'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'text/plain'
+      // 'application/pdf',
+      // 'application/msword',
+      // 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      // 'application/vnd.ms-excel',
+      // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      // 'text/plain'
     ];
 
     const invalidFiles = files.filter(file => !allowedTypes.includes(file.type));
     if (invalidFiles.length > 0) {
-      toast.error('Some files have invalid formats. Only images, PDFs, and documents are allowed.');
+      toast.error(t('fileValidation.invalidFormat'));
       return;
     }
 
     // Validate file sizes (10MB max)
     const oversizedFiles = files.filter(file => file.size > 10 * 1024 * 1024);
     if (oversizedFiles.length > 0) {
-      toast.error('Some files are too large. Maximum file size is 10MB.');
+      toast.error(t('fileValidation.fileTooLarge'));
       return;
     }
 
     // Limit to 5 files total
     const totalFiles = selectedFiles.length + files.length;
     if (totalFiles > 5) {
-      toast.error('You can only send up to 5 files at once.');
+      toast.error(t('fileValidation.tooManyFiles'));
       return;
     }
 
@@ -227,16 +229,16 @@ export function MessageInput({
               onClick={() => fileInputRef.current?.click()}
             >
               <Image className="h-4 w-4 mr-2" />
-              Images
+              {t('attachments.images')}
             </Button>
-            <Button
+            {/* <Button
               variant="ghost"
               className="w-full justify-start h-8"
               onClick={() => fileInputRef.current?.click()}
             >
               <FileText className="h-4 w-4 mr-2" />
-              Documents
-            </Button>
+              {t('attachments.documents')}
+            </Button> */}
           </PopoverContent>
         </Popover>
 
@@ -247,7 +249,7 @@ export function MessageInput({
             value={message}
             onChange={handleInputChange}
             onKeyDown={handleKeyPress}
-            placeholder="Type a message..."
+            placeholder={t('typeMessage')}
             disabled={disabled || sending}
             className="min-h-[36px] max-h-32 resize-none"
             rows={1}

@@ -5,6 +5,7 @@ import { ChatMessage, ChatUser } from '@/types/chat';
 import { MessageItem } from './message-item';
 import { TypingIndicator } from './typing-indicator';
 import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface MessagesListProps {
   messages: ChatMessage[];
@@ -33,11 +34,11 @@ export const MessagesList = forwardRef<MessagesListRef, MessagesListProps>(({
   chatRoomId,
   onLoadMore
 }, ref) => {
+  const t = useTranslations('chat');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const prevScrollHeight = useRef<number>(0);
-  const currentChatRoomId = useRef<string | null>(null);
-
+  
   const scrollToBottom = () => {
     console.log('scrollToBottom called', { messagesEndRef: messagesEndRef.current });
     if (messagesEndRef.current) {
@@ -113,7 +114,7 @@ export const MessagesList = forwardRef<MessagesListRef, MessagesListProps>(({
         {loadingMore && (
           <div className="flex items-center justify-center py-4">
             <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            <span className="text-sm text-muted-foreground">Loading older messages...</span>
+            <span className="text-sm text-muted-foreground">{t('loading.loadingMessages')}</span>
           </div>
         )}
         
@@ -122,9 +123,9 @@ export const MessagesList = forwardRef<MessagesListRef, MessagesListProps>(({
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
               <span className="text-2xl">👋</span>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Start the conversation</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('empty.startConversation')}</h3>
             <p className="text-sm text-muted-foreground max-w-sm">
-              Send a message to begin your conversation with {otherUser?.businessName || otherUser?.name}.
+              {t('empty.noMessages')}
             </p>
           </div>
         ) : (
@@ -162,3 +163,5 @@ export const MessagesList = forwardRef<MessagesListRef, MessagesListProps>(({
     </div>
   );
 });
+
+MessagesList.displayName = 'MessagesList';

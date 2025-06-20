@@ -2,12 +2,14 @@
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ChatUser } from '@/types/chat';
+import { useTranslations } from 'next-intl';
 
 interface TypingIndicatorProps {
   user: ChatUser;
 }
 
 export function TypingIndicator({ user }: TypingIndicatorProps) {
+  const t = useTranslations('chat');
   const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
 
   return (
@@ -25,7 +27,7 @@ export function TypingIndicator({ user }: TypingIndicatorProps) {
           </div>
         </div>
         <span className="text-xs text-muted-foreground ml-3">
-          {user.businessName || user.name} is typing...
+          {t('typing.isTyping', { name: user.businessName || user.name })}
         </span>
       </div>
     </div>

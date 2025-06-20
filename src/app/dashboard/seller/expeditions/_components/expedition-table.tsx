@@ -100,6 +100,7 @@ import { ExpeditionStatus, TransportMode, ProviderType } from "@/app/dashboard/_
 import { UserRole } from "@/app/dashboard/_constant/user";
 import { ExpeditionTableData, ExpeditionFilters, WarehouseOption, SellerOption, ProviderOption } from "@/types/expedition";
 import { updateExpeditionStatus } from "@/app/actions/expedition";
+import ProviderExpeditionActions from "../../../provider/expeditions/_components/provider-expedition-actions";
 import { PaginationData } from "@/types/user";
 
 // Constants for filter values
@@ -119,7 +120,7 @@ interface ExpeditionTableProps {
   allCountries?: string[];
   pagination?: PaginationData;
   error?: string;
-  filters: ExpeditionFilters & { 
+  filters: ExpeditionFilters & {
     weightLevel?: string;
     transportMode?: string;
     providerType?: string;
@@ -146,7 +147,7 @@ export default function ExpeditionTable({
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
- 
+
 
   // State for search and filters
   const [search, setSearch] = useState(filters.search || "");
@@ -180,11 +181,14 @@ export default function ExpeditionTable({
   );
   const [itemsPerPage, setItemsPerPage] = useState<number>(filters.limit || 10);
 
- 
+
 
   // Check if user is admin or moderator
   const isAdminOrModerator =
     currentUserRole === UserRole.ADMIN || currentUserRole === UserRole.MODERATOR;
+
+  // Check if user is provider
+  const isProvider = currentUserRole === UserRole.PROVIDER;
 
   // Handle search submit
   const handleSearch = (e: React.FormEvent) => {
@@ -784,12 +788,14 @@ export default function ExpeditionTable({
             </SheetContent>
           </Sheet>
 
-          <Link href={`/dashboard/${currentUserRole}/expeditions/create`} passHref>
-            <Button className="flex gap-2">
-              <PlusCircle className="h-4 w-4" />
-              {t("expeditions.addExpedition")}
-            </Button>
-          </Link>
+          {!isProvider && (
+            <Link href={`/dashboard/${currentUserRole}/expeditions/create`} passHref>
+              <Button className="flex gap-2">
+                <PlusCircle className="h-4 w-4" />
+                {t("expeditions.addExpedition")}
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -798,9 +804,8 @@ export default function ExpeditionTable({
           <CardTitle>{t("expeditions.title")}</CardTitle>
           <CardDescription>
             {pagination?.total
-              ? `${pagination.total} ${
-                  pagination.total === 1 ? "expedition" : "expeditions"
-                } found`
+              ? `${pagination.total} ${pagination.total === 1 ? "expedition" : "expeditions"
+              } found`
               : t("expeditions.noExpeditionsFound")}
           </CardDescription>
         </CardHeader>
@@ -962,150 +967,157 @@ export default function ExpeditionTable({
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>
-                              {t("common.actions")}
-                            </DropdownMenuLabel>
-                            <DropdownMenuItem className="cursor-pointer" asChild>
-                              <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}`}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                {t("common.view")}
-                              </Link>
-                            </DropdownMenuItem>
-                            
-                            {/* Status Actions for Admin/Moderator */}
-                            {isAdminOrModerator && (
-                              <>
-                                <DropdownMenuSeparator />
-                                {expedition.status === ExpeditionStatus.PENDING && (
-                                  <>
+                        <div className="flex items-center gap-2 justify-end">
+                          {/* Provider-specific actions */}
+                          {isProvider && (
+                            <ProviderExpeditionActions expedition={expedition} />
+                          )}
+
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>
+                                {t("common.actions")}
+                              </DropdownMenuLabel>
+                              <DropdownMenuItem className="cursor-pointer" asChild>
+                                <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}`}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  {t("common.view")}
+                                </Link>
+                              </DropdownMenuItem>
+
+                              {/* Status Actions for Admin/Moderator */}
+                              {isAdminOrModerator && (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  {expedition.status === ExpeditionStatus.PENDING && (
+                                    <>
+                                      <DropdownMenuItem
+                                        onClick={() =>
+                                          handleStatusUpdate(
+                                            expedition._id,
+                                            ExpeditionStatus.APPROVED
+                                          )
+                                        }
+                                        className="text-green-600"
+                                      >
+                                        <CheckCircle className="mr-2 h-4 w-4" />
+                                        Approve
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() =>
+                                          handleStatusUpdate(
+                                            expedition._id,
+                                            ExpeditionStatus.REJECTED,
+                                            "Rejected by admin"
+                                          )
+                                        }
+                                        className="text-red-600"
+                                      >
+                                        <XCircle className="mr-2 h-4 w-4" />
+                                        Reject
+                                      </DropdownMenuItem>
+                                    </>
+                                  )}
+                                  {expedition.status === ExpeditionStatus.APPROVED && (
                                     <DropdownMenuItem
                                       onClick={() =>
                                         handleStatusUpdate(
                                           expedition._id,
-                                          ExpeditionStatus.APPROVED
+                                          ExpeditionStatus.IN_TRANSIT
                                         )
                                       }
-                                      className="text-green-600"
+                                      className="text-blue-600"
+                                    >
+                                      <Truck className="mr-2 h-4 w-4" />
+                                      Mark In Transit
+                                    </DropdownMenuItem>
+                                  )}
+                                  {expedition.status === ExpeditionStatus.IN_TRANSIT && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleStatusUpdate(
+                                          expedition._id,
+                                          ExpeditionStatus.DELIVERED
+                                        )
+                                      }
+                                      className="text-emerald-600"
                                     >
                                       <CheckCircle className="mr-2 h-4 w-4" />
-                                      Approve
+                                      Mark Delivered
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      onClick={() =>
-                                        handleStatusUpdate(
-                                          expedition._id,
-                                          ExpeditionStatus.REJECTED,
-                                          "Rejected by admin"
-                                        )
-                                      }
-                                      className="text-red-600"
-                                    >
-                                      <XCircle className="mr-2 h-4 w-4" />
-                                      Reject
-                                    </DropdownMenuItem>
-                                  </>
-                                )}
-                                {expedition.status === ExpeditionStatus.APPROVED && (
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleStatusUpdate(
-                                        expedition._id,
-                                        ExpeditionStatus.IN_TRANSIT
-                                      )
-                                    }
-                                    className="text-blue-600"
-                                  >
-                                    <Truck className="mr-2 h-4 w-4" />
-                                    Mark In Transit
-                                  </DropdownMenuItem>
-                                )}
-                                {expedition.status === ExpeditionStatus.IN_TRANSIT && (
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleStatusUpdate(
-                                        expedition._id,
-                                        ExpeditionStatus.DELIVERED
-                                      )
-                                    }
-                                    className="text-emerald-600"
-                                  >
-                                    <CheckCircle className="mr-2 h-4 w-4" />
-                                    Mark Delivered
-                                  </DropdownMenuItem>
-                                )}
-                              </>
-                            )}
+                                  )}
+                                </>
+                              )}
 
-                            {/* Edit for Admin/Moderator */}
-                            {isAdminOrModerator && (
-                              <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem asChild>
-                                  <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}/edit`}>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    {t("common.edit")}
-                                  </Link>
-                                </DropdownMenuItem>
-                              </>
-                            )}
+                              {/* Edit for Admin/Moderator */}
+                              {isAdminOrModerator && (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem asChild>
+                                    <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}/edit`}>
+                                      <Edit className="mr-2 h-4 w-4" />
+                                      {t("common.edit")}
+                                    </Link>
+                                  </DropdownMenuItem>
+                                </>
+                              )}
 
-                            {/* Edit and Delete for Sellers (only pending expeditions) */}
-                            {currentUserRole === UserRole.SELLER && expedition.status === ExpeditionStatus.PENDING && (
-                              <>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem asChild>
-                                  <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}/edit`}>
-                                    <Edit className="mr-2 h-4 w-4" />
-                                    {t("common.edit")}
-                                  </Link>
-                                </DropdownMenuItem>
-                                <AlertDialog>
-                                  <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem
-                                      className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                                      onSelect={(e) => e.preventDefault()}
-                                    >
-                                      <Trash2 className="mr-2 h-4 w-4" />
-                                      {t("common.delete")}
-                                    </DropdownMenuItem>
-                                  </AlertDialogTrigger>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle>
-                                        {t("expeditions.deleteDialog.title")}
-                                      </AlertDialogTitle>
-                                      <AlertDialogDescription>
-                                        {t("expeditions.deleteDialog.description")}
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel>
-                                        {t("expeditions.deleteDialog.cancelButton")}
-                                      </AlertDialogCancel>
-                                      <AlertDialogAction
-                                        onClick={() => {
-                                          // TODO: Implement delete functionality
-                                          toast("Delete functionality not implemented yet");
-                                        }}
-                                        disabled={isPending}
-                                        className="bg-red-600 text-white hover:bg-red-700"
+                              {/* Edit and Delete for Sellers (only pending expeditions) */}
+                              {currentUserRole === UserRole.SELLER && expedition.status === ExpeditionStatus.PENDING && (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem asChild>
+                                    <Link href={`/dashboard/${currentUserRole}/expeditions/${expedition._id}/edit`}>
+                                      <Edit className="mr-2 h-4 w-4" />
+                                      {t("common.edit")}
+                                    </Link>
+                                  </DropdownMenuItem>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <DropdownMenuItem
+                                        className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                                        onSelect={(e) => e.preventDefault()}
                                       >
-                                        {t("expeditions.deleteDialog.confirmButton")}
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        {t("common.delete")}
+                                      </DropdownMenuItem>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          {t("expeditions.deleteDialog.title")}
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          {t("expeditions.deleteDialog.description")}
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          {t("expeditions.deleteDialog.cancelButton")}
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() => {
+                                            // TODO: Implement delete functionality
+                                            toast("Delete functionality not implemented yet");
+                                          }}
+                                          disabled={isPending}
+                                          className="bg-red-600 text-white hover:bg-red-700"
+                                        >
+                                          {t("expeditions.deleteDialog.confirmButton")}
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -1113,17 +1125,19 @@ export default function ExpeditionTable({
               </Table>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-10 space-y-4">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-50">
-                <Package className="h-8 w-8 text-gray-400" />
+            !isProvider && (
+              <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-50">
+                  <Package className="h-8 w-8 text-gray-400" />
+                </div>
+                <p className="text-muted-foreground text-center">
+                  {t("expeditions.noExpeditionsFound")}
+                </p>
+                <Link href={`/dashboard/${currentUserRole}/expeditions/create`} passHref>
+                  <Button variant="outline">{t("expeditions.addExpedition")}</Button>
+                </Link>
               </div>
-              <p className="text-muted-foreground text-center">
-                {t("expeditions.noExpeditionsFound")}
-              </p>
-              <Link href={`/dashboard/${currentUserRole}/expeditions/create`} passHref>
-                <Button variant="outline">{t("expeditions.addExpedition")}</Button>
-              </Link>
-            </div>
+            )
           )}
         </CardContent>
         {pagination && pagination.totalPages > 0 && (

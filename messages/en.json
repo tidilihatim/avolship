@@ -2212,5 +2212,66 @@
         "timeWindowRequired": "Time window is required"
       }
     }
+  },
+  "chat": {
+    "title": "Messages",
+    "searchConversations": "Search conversations...",
+    "searchUsers": "Search providers...",
+    "searchSellers": "Search sellers...",
+    "noConversationsFound": "No conversations found",
+    "noConversationsYet": "No conversations yet",
+    "tryDifferentSearch": "Try a different search term",
+    "startConversationWith": "Start a conversation with {userType}",
+    "noMatches": "No matches found",
+    "noUsersAvailable": "No {userType} available",
+    "providers": "Providers",
+    "sellers": "Sellers",
+    "chats": "Chats",
+    "typeMessage": "Type a message...",
+    "attachments": {
+      "images": "Images",
+      "documents": "Documents"
+    },
+    "fileValidation": {
+      "invalidFormat": "Some files have invalid formats. Only images are allowed.",
+      "fileTooLarge": "Some files are too large. Maximum file size is 10MB.",
+      "tooManyFiles": "You can only send up to 5 files at once."
+    },
+    "typing": {
+      "isTyping": "{name} is typing..."
+    },
+    "status": {
+      "online": "Online",
+      "offline": "Offline",
+      "lastSeen": "Last seen"
+    },
+    "actions": {
+      "startChat": "Start Chat",
+      "chatStarted": "Chat started successfully",
+      "failedToStartChat": "Failed to start chat",
+      "failedToRefreshRooms": "Failed to refresh chat rooms"
+    },
+    "notifications": {
+      "newMessage": "New message from {name}",
+      "chatCreated": "Chat room created",
+      "userOnline": "{name} is now online",
+      "userOffline": "{name} is now offline"
+    },
+    "loading": {
+      "loadingMessages": "Loading messages...",
+      "loadingUsers": "Loading users...",
+      "sendingMessage": "Sending message..."
+    },
+    "errors": {
+      "failedToLoadMessages": "Failed to load messages",
+      "failedToSendMessage": "Failed to send message",
+      "connectionLost": "Connection lost",
+      "reconnecting": "Reconnecting..."
+    },
+    "empty": {
+      "selectConversation": "Select a conversation to start messaging",
+      "noMessages": "No messages yet",
+      "startConversation": "Start the conversation by sending a message"
+    }
   }
 }

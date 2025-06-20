@@ -11,6 +11,7 @@ import { ChatRoom, ChatUser } from '@/types/chat';
 import { toast } from 'sonner';
 import { getUsers } from '@/app/actions/chat';
 import { UserRole } from '@/lib/db/models/user';
+import { useTranslations } from 'next-intl';
 
 interface ProvidersListProps {
   userRole: 'seller' | 'provider';
@@ -19,6 +20,7 @@ interface ProvidersListProps {
 }
 
 export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListProps) {
+  const t = useTranslations('chat');
   const [searchQuery, setSearchQuery] = useState('');
   const [providers, setProviders] = useState<ChatUser[]>([]);
   const [loading, setLoading] = useState(false);
@@ -40,11 +42,11 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
           role: user.role as 'seller' | 'provider'
         })));
       } else {
-        toast.error(result.error || 'Failed to load providers');
+        toast.error(result.error || t('loading.loadingUsers'));
       }
     } catch (error) {
       console.error('Failed to fetch providers:', error);
-      toast.error('Failed to load providers');
+      toast.error(t('loading.loadingUsers'));
     } finally {
       setLoading(false);
     }
@@ -72,13 +74,13 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
       if (response.ok) {
         const { data: chatRoom } = await response.json();
         onChatStart(chatRoom);
-        toast.success('Chat started successfully');
+        toast.success(t('actions.chatStarted'));
       } else {
         throw new Error('Failed to create chat room');
       }
     } catch (error) {
       console.error('Failed to start chat:', error);
-      toast.error('Failed to start chat');
+      toast.error(t('actions.failedToStartChat'));
     } finally {
       setCreatingChat(null);
     }
@@ -100,7 +102,7 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={`Search ${userRole === 'seller' ? 'providers' : 'sellers'}...`}
+            placeholder={userRole === 'seller' ? t('searchUsers') : t('searchSellers')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -118,10 +120,10 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Building2 className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-sm text-muted-foreground mb-2">
-              {searchQuery ? 'No matches found' : `No ${userRole === 'seller' ? 'providers' : 'sellers'} available`}
+              {searchQuery ? t('noMatches') : t('noUsersAvailable', { userType: userRole === 'seller' ? t('providers') : t('sellers') })}
             </p>
             <p className="text-xs text-muted-foreground">
-              {searchQuery && 'Try a different search term'}
+              {searchQuery && t('tryDifferentSearch')}
             </p>
           </div>
         ) : (
