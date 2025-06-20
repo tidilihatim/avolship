@@ -2117,7 +2117,6 @@
       "editRule": "Modifier la Règle",
       "deleteRule": "Supprimer la Règle",
       "defaultTimeWindow": "Fenêtre de Temps par Défaut",
-      "timeWindowDescription": "Période de temps par défaut pour comparer les commandes quand aucune règle spécifique ne s'applique",
       "ruleName": "Nom de la Règle",
       "ruleNamePlaceholder": "Entrez le nom de la règle",
       "conditions": "Conditions",

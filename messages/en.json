@@ -2131,7 +2131,6 @@
       "editRule": "Edit Rule",
       "deleteRule": "Delete Rule",
       "defaultTimeWindow": "Default Time Window",
-      "timeWindowDescription": "Default time period for comparing orders when no specific rule applies",
       "ruleName": "Rule Name",
       "ruleNamePlaceholder": "Enter rule name",
       "conditions": "Conditions",

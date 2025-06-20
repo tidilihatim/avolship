@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { ChatLayout } from './chat-layout';
-import { ChatRoom } from '@/types/chat';
+import { ChatRoom, ChatMessage } from '@/types/chat';
 import { getUserChatRooms } from '@/app/actions/chat';
+import { useSocket } from '@/lib/socket/use-socket';
 import { toast } from 'sonner';
 
 interface ChatClientProps {
@@ -15,6 +16,7 @@ interface ChatClientProps {
 export function ChatClient({ userRole, userId, initialChatRooms }: ChatClientProps) {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>(initialChatRooms);
   const [loading, setLoading] = useState(false);
+  const { socket, isConnected, on } = useSocket();
 
   const refreshChatRooms = async () => {
     setLoading(true);
@@ -32,6 +34,60 @@ export function ChatClient({ userRole, userId, initialChatRooms }: ChatClientPro
       setLoading(false);
     }
   };
+
+  // Update chat room list when new messages arrive
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewMessage = (message: ChatMessage) => {
+      setChatRooms(prevRooms => {
+        const existingRoom = prevRooms.find(room => room._id === message.chatRoom);
+        
+        if (existingRoom) {
+          // Update existing room
+          return prevRooms.map(room => {
+            if (room._id === message.chatRoom) {
+              return {
+                ...room,
+                lastMessage: message,
+                lastActivity: new Date(message.createdAt)
+              };
+            }
+            return room;
+          }).sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime());
+        } else {
+          // New chat room - refresh the entire list to get the new room
+          refreshChatRooms();
+          return prevRooms;
+        }
+      });
+    };
+
+    const handleSentMessage = (message: ChatMessage) => {
+      setChatRooms(prevRooms => {
+        return prevRooms.map(room => {
+          if (room._id === message.chatRoom) {
+            return {
+              ...room,
+              lastMessage: message,
+              lastActivity: new Date(message.createdAt)
+            };
+          }
+          return room;
+        }).sort((a, b) => new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime());
+      });
+    };
+
+    // Listen for new messages from other users
+    const newMessageCleanup = on('message:new', handleNewMessage);
+    // Listen for messages sent by current user (to update lastMessage)
+    const sentMessageCleanup = on('message:sent', handleSentMessage);
+
+    return () => {
+      newMessageCleanup();
+      sentMessageCleanup();
+    };
+  }, [socket, on]);
 
   const markChatRoomAsRead = (chatRoomId: string) => {
     setChatRooms(prevRooms => 

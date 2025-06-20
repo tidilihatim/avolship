@@ -199,6 +199,15 @@ export function ChatWindow({
     if (message.sender._id !== userId) {
       try {
         const notificationSound = new Audio('/sounds/notification.mp3');
+        notificationSound.play();
+
+        const oldTitle = document.title
+        document.title = "New message"
+
+        setInterval(()=>{
+            document.title = oldTitle
+        },5000)
+
       } catch (e) {
       }
     }
