@@ -4,7 +4,11 @@ import { authOptions } from '@/config/auth';
 import { ChatClient } from '@/components/chat/chat-client';
 import { getUserChatRooms } from '@/app/actions/chat';
 
-export default async function ProviderChatPage() {
+interface ProviderChatPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function ProviderChatPage({ searchParams }: ProviderChatPageProps) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -19,12 +23,17 @@ export default async function ProviderChatPage() {
   const chatRoomsResult = await getUserChatRooms(session.user.id);
   const chatRooms = chatRoomsResult.success ? chatRoomsResult.data || [] : [];
 
+  // Extract seller ID from query parameters  
+  const searchParamsResolved = await searchParams;
+  const sellerId = searchParamsResolved.seller as string | undefined;
+
   return (
     <div className="h-[calc(100vh-12rem)] overflow-hidden">
       <ChatClient
         userRole="provider"
         userId={session.user.id}
         initialChatRooms={chatRooms}
+        autoStartWithProviderId={sellerId}
       />
     </div>
   );

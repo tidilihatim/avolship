@@ -1599,6 +1599,7 @@
       "inventory": "Inventory",
       "payments": "Payments",
       "analytics": "Analytics",
+      "providers": "Providers",
       "chat": "Chat",
       "delivery": "Delivery",
       "queue": "Order Queue",
@@ -1606,6 +1607,7 @@
       "reports": "Reports",
       "settings": "Settings",
       "help": "Help",
+      "profile": "Profile",
       "userRole": {
         "seller": "Seller"
       }
@@ -2271,6 +2273,109 @@
       "selectConversation": "Select a conversation to start messaging",
       "noMessages": "No messages yet",
       "startConversation": "Start the conversation by sending a message"
+    }
+  },
+  "providers": {
+    "title": "Providers",
+    "profile": "Profile",
+    "searchProviders": "Search providers by name, business, service type, or location...",
+    "noProvidersFound": "No providers found",
+    "noProvidersAvailable": "No providers available.",
+    "viewProvider": "View Provider",
+    "providersFound": "providers found",
+    "browseAndConnect": "Browse and connect with available providers",
+    
+    "header": {
+      "startChat": "Start Chat",
+      "businessName": "Business Name",
+      "location": "Location"
+    },
+    
+    "info": {
+      "title": "Basic Information",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "country": "Country",
+      "role": "Role",
+      "accountStatus": "Account Status",
+      "memberSince": "Member Since",
+      "lastActive": "Last Active",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    
+    "business": {
+      "title": "Business Information",
+      "businessName": "Business Name",
+      "serviceType": "Service Type",
+      "businessDescription": "Business Description"
+    },
+    
+    "stats": {
+      "title": "Account Statistics",
+      "accountAge": "Account Age",
+      "status": "Status",
+      "lastActive": "Last Active",
+      "securityLevel": "Security Level",
+      "high": "High",
+      "standard": "Standard",
+      "days": "days",
+      "months": "months",
+      "years": "years",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "days ago",
+      "weeksAgo": "weeks ago",
+      "monthsAgo": "months ago",
+      "never": "Never"
+    },
+    
+    "contact": {
+      "title": "Contact Information",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "location": "Location",
+      "copyToClipboard": "Copy to clipboard",
+      "copiedToClipboard": "has been copied to your clipboard."
+    },
+    
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    
+    "loading": {
+      "loadingProviders": "Loading providers...",
+      "loadingProviderInfo": "Loading provider information..."
+    },
+    
+    "errors": {
+      "providerNotFound": "Provider not found",
+      "userNotProvider": "User is not a provider",
+      "failedToLoad": "Failed to load provider information",
+      "providerInfoNotAvailable": "Provider information not available",
+      "unableToLoad": "Unable to load provider information"
+    },
+    
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} providers",
+      "page": "Page",
+      "previous": "Previous",
+      "next": "Next",
+      "itemsPerPage": "Items per page"
+    },
+    
+    "search": "Search",
+    
+    "actions": {
+      "view": "View",
+      "chat": "Chat",
+      "copyEmail": "Copy email",
+      "copyPhone": "Copy phone number",
+      "copyLocation": "Copy location"
     }
   }
 }

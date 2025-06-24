@@ -1617,6 +1617,7 @@
       "inventory": "Inventaire",
       "payments": "Paiements",
       "analytics": "Analyses",
+      "providers": "Fournisseurs",
       "chat": "Chat",
       "delivery": "Livraison",
       "queue": "File d'Attente",
@@ -1624,6 +1625,7 @@
       "reports": "Rapports",
       "settings": "Paramètres",
       "help": "Aide",
+      "profile": "Profil",
       "userRole": {
         "seller": "Vendeur"
       }
@@ -2257,6 +2259,109 @@
       "selectConversation": "Sélectionnez une conversation pour commencer à échanger",
       "noMessages": "Aucun message pour le moment",
       "startConversation": "Commencez la conversation en envoyant un message"
+    }
+  },
+  "providers": {
+    "title": "Fournisseurs",
+    "profile": "Profil",
+    "searchProviders": "Rechercher des fournisseurs par nom, entreprise, type de service ou localisation...",
+    "noProvidersFound": "Aucun fournisseur trouvé",
+    "noProvidersAvailable": "Aucun fournisseur disponible.",
+    "viewProvider": "Voir le Fournisseur",
+    "providersFound": "fournisseurs trouvés",
+    "browseAndConnect": "Parcourir et se connecter avec les fournisseurs disponibles",
+    
+    "header": {
+      "startChat": "Démarrer une Discussion",
+      "businessName": "Nom de l'Entreprise",
+      "location": "Localisation"
+    },
+    
+    "info": {
+      "title": "Informations de Base",
+      "fullName": "Nom Complet",
+      "emailAddress": "Adresse Email",
+      "phoneNumber": "Numéro de Téléphone",
+      "country": "Pays",
+      "role": "Rôle",
+      "accountStatus": "Statut du Compte",
+      "memberSince": "Membre Depuis",
+      "lastActive": "Dernière Activité",
+      "twoFactorAuth": "Authentification à Deux Facteurs",
+      "enabled": "Activé",
+      "disabled": "Désactivé"
+    },
+    
+    "business": {
+      "title": "Informations Commerciales",
+      "businessName": "Nom de l'Entreprise",
+      "serviceType": "Type de Service",
+      "businessDescription": "Description de l'Entreprise"
+    },
+    
+    "stats": {
+      "title": "Statistiques du Compte",
+      "accountAge": "Âge du Compte",
+      "status": "Statut",
+      "lastActive": "Dernière Activité",
+      "securityLevel": "Niveau de Sécurité",
+      "high": "Élevé",
+      "standard": "Standard",
+      "days": "jours",
+      "months": "mois",
+      "years": "années",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "daysAgo": "il y a jours",
+      "weeksAgo": "il y a semaines",
+      "monthsAgo": "il y a mois",
+      "never": "Jamais"
+    },
+    
+    "contact": {
+      "title": "Informations de Contact",
+      "emailAddress": "Adresse Email",
+      "phoneNumber": "Numéro de Téléphone",
+      "location": "Localisation",
+      "copyToClipboard": "Copier dans le presse-papiers",
+      "copiedToClipboard": "a été copié dans votre presse-papiers."
+    },
+    
+    "status": {
+      "pending": "En Attente",
+      "approved": "Approuvé",
+      "rejected": "Rejeté"
+    },
+    
+    "loading": {
+      "loadingProviders": "Chargement des fournisseurs...",
+      "loadingProviderInfo": "Chargement des informations du fournisseur..."
+    },
+    
+    "errors": {
+      "providerNotFound": "Fournisseur non trouvé",
+      "userNotProvider": "L'utilisateur n'est pas un fournisseur",
+      "failedToLoad": "Échec du chargement des informations du fournisseur",
+      "providerInfoNotAvailable": "Informations du fournisseur non disponibles",
+      "unableToLoad": "Impossible de charger les informations du fournisseur"
+    },
+    
+    "pagination": {
+      "showing": "Affichage de {start} à {end} sur {total} fournisseurs",
+      "page": "Page",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "itemsPerPage": "Éléments par page"
+    },
+    
+    "search": "Rechercher",
+    
+    "actions": {
+      "view": "Voir",
+      "chat": "Discussion",
+      "copyEmail": "Copier l'email",
+      "copyPhone": "Copier le numéro de téléphone",
+      "copyLocation": "Copier la localisation"
     }
   }
 }

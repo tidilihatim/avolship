@@ -11,11 +11,13 @@ interface ChatClientProps {
   userRole: 'seller' | 'provider';
   userId: string;
   initialChatRooms: ChatRoom[];
+  autoStartWithProviderId?: string;
 }
 
-export function ChatClient({ userRole, userId, initialChatRooms }: ChatClientProps) {
+export function ChatClient({ userRole, userId, initialChatRooms, autoStartWithProviderId }: ChatClientProps) {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>(initialChatRooms);
   const [loading, setLoading] = useState(false);
+  const [autoSelectedChatRoom, setAutoSelectedChatRoom] = useState<ChatRoom | null>(null);
   const { socket, isConnected, on } = useSocket();
 
   const refreshChatRooms = async () => {
@@ -34,6 +36,68 @@ export function ChatClient({ userRole, userId, initialChatRooms }: ChatClientPro
       setLoading(false);
     }
   };
+
+  // Auto-start chat with provider if specified in query params
+  useEffect(() => {
+    const autoStartChat = async () => {
+      if (!autoStartWithProviderId || autoSelectedChatRoom) return;
+
+      try {
+        setLoading(true);
+        
+        // First check if a chat room already exists
+        const existingRoom = chatRooms.find(room => 
+          (userRole === 'seller' && room.provider._id === autoStartWithProviderId) ||
+          (userRole === 'provider' && room.seller._id === autoStartWithProviderId)
+        );
+
+        if (existingRoom) {
+          setAutoSelectedChatRoom(existingRoom);
+          return;
+        }
+
+        // Create new chat room
+        const sellerId = userRole === 'seller' ? userId : autoStartWithProviderId;
+        const providerId = userRole === 'seller' ? autoStartWithProviderId : userId;
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SOCKET_URL}/api/chat/room`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sellerId,
+            providerId,
+          }),
+        });
+
+        if (response.ok) {
+          const { data: chatRoom } = await response.json();
+          setAutoSelectedChatRoom(chatRoom);
+          
+          // Add the new chat room to the list if it's not already there
+          setChatRooms(prevRooms => {
+            const roomExists = prevRooms.some(room => room._id === chatRoom._id);
+            if (!roomExists) {
+              return [chatRoom, ...prevRooms];
+            }
+            return prevRooms;
+          });
+          
+          toast.success('Chat started successfully');
+        } else {
+          throw new Error('Failed to create chat room');
+        }
+      } catch (error) {
+        console.error('Failed to auto-start chat:', error);
+        toast.error('Failed to start chat with provider');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    autoStartChat();
+  }, [autoStartWithProviderId, chatRooms, userId, userRole, autoSelectedChatRoom]);
 
   // Update chat room list when new messages arrive
   useEffect(() => {
@@ -114,6 +178,7 @@ export function ChatClient({ userRole, userId, initialChatRooms }: ChatClientPro
       chatRooms={chatRooms}
       onRefresh={refreshChatRooms}
       onMarkAsRead={markChatRoomAsRead}
+      initialSelectedChatRoom={autoSelectedChatRoom}
     />
   );
 }

@@ -111,6 +111,7 @@ const LoginPage: React.FC = () => {
                             type="email"
                             id="email"
                             autoComplete="email"
+                            name='email'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className={cn(
@@ -141,6 +142,7 @@ const LoginPage: React.FC = () => {
                         <Input
                             type="password"
                             id="password"
+                            name="password"
                             autoComplete="current-password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

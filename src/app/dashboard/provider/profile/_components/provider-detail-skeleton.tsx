@@ -1,0 +1,1 @@
+export { ProviderDetailSkeleton } from '@/components/provider/provider-detail-skeleton';

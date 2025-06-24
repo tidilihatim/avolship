@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { ChatSidebar } from './chat-sidebar';
 import { ChatWindow } from './chat-window';
@@ -12,11 +12,19 @@ interface ChatLayoutProps {
   chatRooms: ChatRoom[];
   onRefresh?: () => void;
   onMarkAsRead?: (chatRoomId: string) => void;
+  initialSelectedChatRoom?: ChatRoom | null;
 }
 
-export function ChatLayout({ userRole, userId, chatRooms, onRefresh, onMarkAsRead }: ChatLayoutProps) {
-  const [selectedChatRoom, setSelectedChatRoom] = useState<ChatRoom | null>(null);
+export function ChatLayout({ userRole, userId, chatRooms, onRefresh, onMarkAsRead, initialSelectedChatRoom }: ChatLayoutProps) {
+  const [selectedChatRoom, setSelectedChatRoom] = useState<ChatRoom | null>(initialSelectedChatRoom || null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Update selected chat room when initialSelectedChatRoom changes
+  useEffect(() => {
+    if (initialSelectedChatRoom) {
+      setSelectedChatRoom(initialSelectedChatRoom);
+    }
+  }, [initialSelectedChatRoom]);
 
   return (
     <div className="flex h-full bg-background">
