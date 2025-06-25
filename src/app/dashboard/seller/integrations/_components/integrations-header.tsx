@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Zap } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Zap, Info } from 'lucide-react';
 
 export function IntegrationsHeader() {
   return (
@@ -57,6 +58,14 @@ export function IntegrationsHeader() {
           </div>
         </CardContent>
       </Card>
+
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Warehouse-Specific Integrations:</strong> Each integration is tied to your currently selected warehouse. 
+          You can set up different integrations for different warehouses to manage orders separately.
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }
