@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { IntegrationsHeader } from './integrations-header';
 import { IntegrationsPlatforms } from './integrations-platforms';
-import { ConnectedIntegrations } from './connected-integrations';
 import { YouCanSetupDialog } from './youcan-setup-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle } from 'lucide-react';
@@ -68,17 +67,10 @@ export function IntegrationsContainer({
         </Alert>
       )}
 
-      {/* Connected Integrations */}
-      {userIntegrations.length > 0 && (
-        <ConnectedIntegrations 
-          integrations={userIntegrations} 
-          warehouseId={warehouseId}
-        />
-      )}
-
-      {/* Available Platforms */}
+      {/* All Platforms (Available and Connected) */}
       <IntegrationsPlatforms 
         platforms={platforms}
+        userIntegrations={userIntegrations}
         onPlatformSelect={handlePlatformSelect} 
       />
       

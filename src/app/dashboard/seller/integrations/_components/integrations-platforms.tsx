@@ -16,12 +16,19 @@ interface Platform {
 
 interface IntegrationsPlatformsProps {
   platforms: any;
+  userIntegrations: any[];
   onPlatformSelect: (platform: string) => void;
 }
 
-export function IntegrationsPlatforms({ platforms, onPlatformSelect }: IntegrationsPlatformsProps) {
+export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformSelect }: IntegrationsPlatformsProps) {
   // Handle the platforms data structure
   const platformsData = platforms?.success ? platforms.data : [];
+  
+  // Create a map of connected integrations by platform ID
+  const connectedIntegrations = userIntegrations.reduce((acc, integration) => {
+    acc[integration.platformId] = integration;
+    return acc;
+  }, {} as Record<string, any>);
 
   if (!platformsData || platformsData.length === 0) {
     return (
@@ -42,11 +49,14 @@ export function IntegrationsPlatforms({ platforms, onPlatformSelect }: Integrati
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {platformsData.map((platform: Platform) => {
+          const integration = connectedIntegrations[platform.id];
+          const isConnected = !!integration;
+          
           return (
             <Card 
               key={platform.id}
               className={`relative transition-all hover:shadow-md ${
-                platform.status === 'available' ? 'cursor-pointer' : ''
+                platform.status === 'available' && !isConnected ? 'cursor-pointer' : ''
               }`}
             >
               <CardHeader className="pb-3">
@@ -64,10 +74,21 @@ export function IntegrationsPlatforms({ platforms, onPlatformSelect }: Integrati
                     </div>
                   </div>
                   <Badge 
-                    variant={platform.status === 'available' ? 'default' : 'outline'}
+                    variant={
+                      isConnected 
+                        ? 'default' 
+                        : platform.status === 'available' 
+                          ? 'outline' 
+                          : 'secondary'
+                    }
                     className="text-xs"
                   >
-                    {platform.status === 'available' ? 'Available' : 'Coming Soon'}
+                    {isConnected 
+                      ? 'Connected' 
+                      : platform.status === 'available' 
+                        ? 'Available' 
+                        : 'Coming Soon'
+                    }
                   </Badge>
                 </div>
                 <CardDescription className="text-sm">
@@ -85,21 +106,47 @@ export function IntegrationsPlatforms({ platforms, onPlatformSelect }: Integrati
                   ))}
                 </div>
 
-                <Button 
-                  variant={platform.status === 'available' ? 'default' : 'secondary'}
-                  className="w-full"
-                  disabled={platform.status !== 'available'}
-                  onClick={() => platform.status === 'available' && onPlatformSelect(platform.id)}
-                >
-                  {platform.status === 'available' ? (
-                    <>
-                      Connect {platform.name}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  ) : (
-                    'Coming Soon'
-                  )}
-                </Button>
+                {isConnected ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Connected {new Date(integration.createdAt).toLocaleDateString()}</span>
+                      <span>Orders: {integration.syncStats?.totalOrdersSynced || 0}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        disabled={integration.status !== 'connected'}
+                      >
+                        Pause
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        Disconnect
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button 
+                    variant={platform.status === 'available' ? 'default' : 'secondary'}
+                    className="w-full"
+                    disabled={platform.status !== 'available'}
+                    onClick={() => platform.status === 'available' && onPlatformSelect(platform.id)}
+                  >
+                    {platform.status === 'available' ? (
+                      <>
+                        Connect {platform.name}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    ) : (
+                      'Coming Soon'
+                    )}
+                  </Button>
+                )}
               </CardContent>
             </Card>
           );
