@@ -1,7 +1,8 @@
 import { 
   BarChart3, CreditCard, LayoutDashboard, 
   MessageCircle, Package, PlaneIcon, ShoppingCart, 
-  Truck, User, Warehouse, Phone, Clock, Users, FileText, UserCheck 
+  Truck, User, Warehouse, Clock, Users, FileText, UserCheck,
+  Zap
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'customer-support' | 'delivery' | 'provider' | 'call_center';
@@ -87,6 +88,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "delivery",
       href: "/dashboard/seller/delivery",
       icon: Truck,
+    },
+    {
+      name: "integrations",
+      href: "/dashboard/seller/integrations",
+      icon: Zap
     },
   ],
   'call_center': [

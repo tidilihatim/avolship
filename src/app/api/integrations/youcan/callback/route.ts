@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db/mongoose';
-import { getAccessToken } from '@/app/actions/cookie';
 
 export async function GET(request: NextRequest) {
   try {
@@ -78,7 +77,7 @@ async function exchangeCodeForToken(code: string) {
     const response = await fetch('https://api.youcan.shop/oauth/token', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         grant_type: 'authorization_code',
@@ -118,9 +117,6 @@ async function saveYouCanTokens(userId: string, warehouseId: string, tokenData: 
       accessToken: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresAt: expiresAt,
-      storeId: tokenData.shop?.id?.toString() || 'unknown',
-      storeName: tokenData.shop?.name || 'YouCan Store',
-      storeUrl: tokenData.shop?.domain || '',
       webhookSubscriptions: []
     };
     

@@ -1599,6 +1599,7 @@
       "inventory": "Inventory",
       "payments": "Payments",
       "analytics": "Analytics",
+      "integrations":"Integrations",
       "providers": "Providers",
       "chat": "Chat",
       "delivery": "Delivery",
