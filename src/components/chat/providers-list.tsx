@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { getUsers } from '@/app/actions/chat';
 import { UserRole } from '@/lib/db/models/user';
 import { useTranslations } from 'next-intl';
+import { getAccessToken } from '@/app/actions/cookie';
 
 interface ProvidersListProps {
   userRole: 'seller' | 'provider';
@@ -56,6 +57,11 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
     if (creatingChat === providerId) return;
     
     setCreatingChat(providerId);
+
+     const jwtToken = await getAccessToken();
+        if (!jwtToken) {
+          return toast.error("Configuration Error")
+        }
     try {
       const sellerId = userRole === 'seller' ? userId : providerId;
       const actualProviderId = userRole === 'seller' ? providerId : userId;
@@ -64,6 +70,7 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "authorization": `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({
           sellerId,

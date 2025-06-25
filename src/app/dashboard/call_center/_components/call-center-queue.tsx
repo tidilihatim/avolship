@@ -24,6 +24,7 @@ import EnhancedOrderCard, { OrderStatus, CallAttempt } from './order-card';
 import { toast } from 'sonner';
 import { updateOrderStatus } from '@/app/actions/order';
 import { useSession } from 'next-auth/react';
+import { getAccessToken } from '@/app/actions/cookie';
 
 // Queue Status Indicator
 function QueueStatus({
@@ -131,12 +132,16 @@ export default function EnhancedCallCenterQueue() {
   // Handle call attempt
   const handleMakeCallAttempt = async (orderId: string, attempt: CallAttempt) => {
     try {
+      const jwtToken = await getAccessToken();
+      if (!jwtToken) {
+        return toast.error("Configuration Error")
+      }
       // Call your API to record call attempt
       const response = await fetch(`${process.env.NEXT_PUBLIC_SOCKET_URL}/api/orders/call-attempt`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || 'your-api-key'
+          "authorization": `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({
           orderId,

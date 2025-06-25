@@ -20,6 +20,7 @@ import { revalidatePath } from 'next/cache';
 import { checkDuplicatesForNewOrder } from '@/lib/duplicate-detection/duplicate-checker';
 import DuplicateDetectionSettings from '@/lib/db/models/duplicate-settings';
 import { ApplyDiscountRequest, DiscountResponse } from '@/types/discount';
+import { getAccessToken } from './cookie';
 
 // Add this function to src/app/actions/order.ts
 
@@ -63,7 +64,7 @@ export const getOrderById = withDbConnection(async (orderId: string) => {
         { _id: { $in: order.products.map((p: any) => p.productId) } },
         { name: 1, code: 1 }
       ).lean() as any,
-      order.statusChangedBy 
+      order.statusChangedBy
         ? User.findById(order.statusChangedBy, { name: 1, role: 1 }).lean()
         : null as any,
       // Import OrderStatusHistory model if not already imported
@@ -73,7 +74,7 @@ export const getOrderById = withDbConnection(async (orderId: string) => {
 
     // Create product map
     const productMap = new Map();
-    products.forEach((p:any) => {
+    products.forEach((p: any) => {
       productMap.set(p._id.toString(), p);
     });
 
@@ -175,7 +176,7 @@ export const getAllSellers = withDbConnection(async () => {
     }
 
     const sellers = await User.find(
-      { 
+      {
         role: UserRole.SELLER,
         status: 'approved'
       },
@@ -266,11 +267,11 @@ export const getOrders = withDbConnection(async (
     // Apply date range filter if provided
     if (filters.dateFrom || filters.dateTo) {
       query.orderDate = {};
-      
+
       if (filters.dateFrom) {
         query.orderDate.$gte = new Date(filters.dateFrom);
       }
-      
+
       if (filters.dateTo) {
         const toDate = new Date(filters.dateTo);
         toDate.setHours(23, 59, 59, 999); // End of day
@@ -290,11 +291,11 @@ export const getOrders = withDbConnection(async (
 
     // Calculate pagination
     const skip = (page - 1) * limit;
-    
+
     // For call center agents: show only their assigned orders
-    if(user.role === UserRole.CALL_CENTER){
+    if (user.role === UserRole.CALL_CENTER) {
       query.assignedAgent = user._id
-      
+
       // Clean up expired locks first
       await Order.updateMany(
         { lockExpiry: { $lte: new Date() } },
@@ -307,7 +308,7 @@ export const getOrders = withDbConnection(async (
         }
       );
     }
-    
+
     // Execute query with pagination
     const orders: any[] = await Order.find(query)
       .sort({ createdAt: -1 })
@@ -317,7 +318,7 @@ export const getOrders = withDbConnection(async (
 
     // Count total results for pagination
     const total = await Order.countDocuments(query);
-    
+
     // Get unique warehouseIds, sellerIds, productIds, and assignedAgentIds for populating names
     const warehouseIds = [...new Set(orders.map(o => o.warehouseId))];
     const sellerIds = [...new Set(orders.map(o => o.sellerId))];
@@ -330,7 +331,7 @@ export const getOrders = withDbConnection(async (
       .map(o => o.assignedAgent)
       .filter(Boolean)
       .filter((id, index, arr) => arr.indexOf(id) === index);
-    
+
     // Fetch related data in parallel
     const [warehouses, sellers, products, statusChangedByUsers, assignedAgents] = await Promise.all([
       Warehouse.find({ _id: { $in: warehouseIds } }).lean(),
@@ -339,56 +340,56 @@ export const getOrders = withDbConnection(async (
       User.find({ _id: { $in: statusChangedByIds } }, { name: 1, role: 1 }).lean(),
       User.find({ _id: { $in: assignedAgentIds } }, { name: 1, email: 1 }).lean()
     ]);
-    
+
     // Create lookup maps for efficient access
     const warehouseMap = new Map();
-    warehouses.forEach((w:any) => {
+    warehouses.forEach((w: any) => {
       warehouseMap.set(w._id.toString(), w);
     });
-    
+
     const sellerMap = new Map();
-    sellers.forEach((s:any) => {
+    sellers.forEach((s: any) => {
       sellerMap.set(s._id.toString(), s);
     });
-    
+
     const productMap = new Map();
-    products.forEach((p:any) => {
+    products.forEach((p: any) => {
       productMap.set(p._id.toString(), p);
     });
-    
+
     const statusChangedByMap = new Map();
-    statusChangedByUsers.forEach((u:any) => {
+    statusChangedByUsers.forEach((u: any) => {
       statusChangedByMap.set(u._id.toString(), u);
     });
-    
+
     const assignedAgentMap = new Map();
-    assignedAgents.forEach((agent:any) => {
+    assignedAgents.forEach((agent: any) => {
       assignedAgentMap.set(agent._id.toString(), agent);
     });
-    
+
     // Map orders to include warehouse, seller, and product names
     const ordersWithNames: OrderTableData[] = [];
-    
+
     for (const order of orders) {
       const warehouseId = order.warehouseId.toString();
       const sellerId = order.sellerId.toString();
-      
+
       // Get warehouse data
       const warehouseData = warehouseMap.get(warehouseId);
-      
+
       // Get seller data
       const sellerData = sellerMap.get(sellerId);
-      
+
       // Get status changed by user data
-      const statusChangedByData = order.statusChangedBy 
+      const statusChangedByData = order.statusChangedBy
         ? statusChangedByMap.get(order.statusChangedBy.toString())
         : null;
-      
+
       // Get assigned agent data
-      const assignedAgentData = order.assignedAgent 
+      const assignedAgentData = order.assignedAgent
         ? assignedAgentMap.get(order.assignedAgent.toString())
         : null;
-      
+
       // Map products with names
       const productsWithNames = order.products.map((product: any) => {
         const productData = productMap.get(product.productId.toString());
@@ -400,12 +401,12 @@ export const getOrders = withDbConnection(async (
           unitPrice: product.unitPrice,
         };
       });
-      
+
       // Get last call status
       const lastCallStatus = order.callAttempts && order.callAttempts.length > 0
         ? order.callAttempts[order.callAttempts.length - 1].status
         : undefined;
-      
+
       ordersWithNames.push({
         _id: order._id.toString(),
         orderId: order.orderId,
@@ -447,10 +448,10 @@ export const getOrders = withDbConnection(async (
         updatedAt: order.updatedAt,
       });
     }
-    
+
     // Calculate pagination data
     const totalPages = Math.ceil(total / limit);
-    
+
     return {
       success: true,
       orders: JSON.parse(JSON.stringify(ordersWithNames)),
@@ -483,7 +484,7 @@ export const getWarehousesForOrder = withDbConnection(async () => {
     }
 
     let warehouses;
-    
+
     if (user.role === UserRole.ADMIN) {
       // Admin can see all warehouses
       warehouses = await Warehouse.find({ isActive: true })
@@ -539,7 +540,7 @@ export const getProductsForOrder = withDbConnection(async (warehouseId: string) 
           { assignedSellers: new mongoose.Types.ObjectId(user._id) }
         ]
       });
-      
+
       if (!warehouse) {
         throw new Error("Warehouse not accessible");
       }
@@ -557,7 +558,7 @@ export const getProductsForOrder = withDbConnection(async (warehouseId: string) 
 
     // For each product, get available expeditions with pricing
     const productsWithExpeditions: ProductOption[] = await Promise.all(
-      products.map(async (product:any) => {
+      products.map(async (product: any) => {
         // Get warehouse-specific stock
         const warehouseStock = product.warehouses.find(
           (w: any) => w.warehouseId.toString() === warehouseId
@@ -578,7 +579,7 @@ export const getProductsForOrder = withDbConnection(async (warehouseId: string) 
           const productInExpedition = expedition.products.find(
             (p: any) => p.productId.toString() === product._id?.toString()
           );
-          
+
           return {
             _id: expedition._id.toString(),
             expeditionCode: expedition.expeditionCode,
@@ -633,7 +634,7 @@ export const createOrder = withDbConnection(async (orderData: any) => {
           { assignedSellers: new mongoose.Types.ObjectId(user._id) }
         ]
       });
-      
+
       if (!warehouse) {
         return {
           success: false,
@@ -755,7 +756,11 @@ export const createOrder = withDbConnection(async (orderData: any) => {
     // Create the order with totalPrice included
 
     const REALTIME_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
-    const API_KEY = process.env.SOCKET_SERVER_API_SECRET_KEY || 'your-api-key';
+
+    const jwtToken = await getAccessToken();
+    if (!jwtToken) {
+      throw new Error("Configuration Error")
+    }
 
     const orderPayload = {
       customer: {
@@ -782,8 +787,8 @@ export const createOrder = withDbConnection(async (orderData: any) => {
     const response = await fetch(`${REALTIME_SERVER_URL}/api/orders/add`, {
       method: 'POST',
       headers: {
+        "authorization": `Bearer ${jwtToken}`,
         'Content-Type': 'application/json',
-        'X-API-Key': API_KEY
       },
       body: JSON.stringify(orderPayload)
     });
@@ -794,7 +799,7 @@ export const createOrder = withDbConnection(async (orderData: any) => {
     }
 
     const result = await response.json();
-    
+
     if (!result.success) {
       throw new Error(result.message || 'Real-time server failed to create order');
     }
@@ -805,7 +810,7 @@ export const createOrder = withDbConnection(async (orderData: any) => {
     return {
       success: true,
       message: "Order created successfully",
-      orderId: result?.orderId ,
+      orderId: result?.orderId,
       isDouble: duplicateDetectionResult.isDuplicate,
       doubleOrderCount: duplicateDetectionResult.duplicateOrders.length,
     };
@@ -842,7 +847,7 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
           { assignedSellers: new mongoose.Types.ObjectId(user._id) }
         ]
       });
-      
+
       if (!warehouse) {
         return {
           success: false,
@@ -994,15 +999,21 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
     // Second pass: Make single API call for all valid orders
     if (validOrderPayloads.length > 0) {
       try {
+
+        const jwtToken = await getAccessToken();
+        if (!jwtToken) {
+          throw new Error("Configuration Error")
+        }
+        
         const REALTIME_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
-        const API_KEY = process.env.SOCKET_SERVER_API_SECRET_KEY || 'your-api-key';
+
 
         // Make single bulk API call
         const response = await fetch(`${REALTIME_SERVER_URL}/api/orders/add-bulk`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-API-Key': API_KEY
+            "authorization": `Bearer ${jwtToken}`,
           },
           body: JSON.stringify({ orders: validOrderPayloads })
         });
@@ -1013,7 +1024,7 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
         }
 
         const bulkResult = await response.json();
-        
+
         if (!bulkResult.success) {
           throw new Error(bulkResult.message || 'Real-time server failed to create bulk orders');
         }
@@ -1022,7 +1033,7 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
         if (bulkResult.data && bulkResult.data.orders && Array.isArray(bulkResult.data.orders)) {
           successCount = bulkResult.data.successfulOrders || bulkResult.data.orders.length;
           const failedOrdersFromAPI = bulkResult.data.failedOrders || 0;
-          
+
           // Map successful orders
           bulkResult.data.orders.forEach((createdOrder: any, index: number) => {
             const originalPayload = validOrderPayloads[index];
@@ -1035,7 +1046,7 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
               doubleOrderCount: originalPayload?.duplicateInfo?.duplicateCount || 0,
             });
           });
-          
+
           // Handle any failed orders reported by the API
           if (failedOrdersFromAPI > 0) {
             const failedStartIndex = bulkResult.data.orders.length;
@@ -1051,7 +1062,7 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
               }
             }
           }
-          
+
         } else {
           // Fallback if bulk result doesn't have expected structure
           successCount = validOrderPayloads.length;
@@ -1142,14 +1153,14 @@ export const getOrderByIdAdd = withDbConnection(async (orderId: string) => {
         { _id: { $in: order.products.map((p: any) => p.productId) } },
         { name: 1, code: 1 }
       ).lean() as any,
-      order.statusChangedBy 
+      order.statusChangedBy
         ? User.findById(order.statusChangedBy, { name: 1, role: 1 }).lean()
         : null as any,
     ]);
 
     // Create product map
     const productMap = new Map();
-    products.forEach((p:any) => {
+    products.forEach((p: any) => {
       productMap.set(p._id.toString(), p);
     });
 
@@ -1374,9 +1385,9 @@ export const getDuplicateOrdersDetails = withDbConnection(async (
     const duplicateOrders = await Order.find({
       _id: { $in: orderIds }
     })
-    .populate('products.productId', 'name code')
-    .populate('warehouseId', 'name country currency')
-    .lean();
+      .populate('products.productId', 'name code')
+      .populate('warehouseId', 'name country currency')
+      .lean();
 
     // Fetch duplicate detection settings for the seller
     const duplicateSettings = await DuplicateDetectionSettings.findOne({

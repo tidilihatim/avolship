@@ -5,6 +5,7 @@ import { OrderItem, QueueStats } from '@/types/socket';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { useSocket } from '@/lib/socket/use-socket';
+import { getAccessToken } from '@/app/actions/cookie';
 
 export function useOrderQueue() {
   const [queueStats, setQueueStats] = useState<QueueStats>({
@@ -196,11 +197,16 @@ export function useOrderQueue() {
       // when the agent reconnects or requests fresh data
       // Fetch fresh queue data from the API
       const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+
+       const jwtToken = await getAccessToken();
+        if (!jwtToken) {
+          return toast.error("Configuration Error")
+        }
       const response = await fetch(`${SOCKET_URL}/api/orders/queue/${session.user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'X-API-Key': process.env.NEXT_PUBLIC_API_KEY || 'your-api-key'
+          "authorization": `Bearer ${jwtToken}`,
         }
       });
 

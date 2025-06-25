@@ -1,6 +1,8 @@
 'use client';
 
+import { getAccessToken } from '@/app/actions/cookie';
 import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
 
 interface AgentWorkload {
   agentId: string;
@@ -36,11 +38,17 @@ export function useWorkloadStats() {
 
       // Call your Express server instead of Next.js API
       const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
+
+      const jwtToken = await getAccessToken();
+      if (!jwtToken) {
+        return toast.error("Configuration Error")
+      }
+
       const response = await fetch(`${SOCKET_URL}/api/orders/workload-stats`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': process.env.SOCKET_SERVER_API_SECRET_KEY as string
+          "authorization": `Bearer ${jwtToken}`,
         }
       });
 

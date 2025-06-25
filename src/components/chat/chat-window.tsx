@@ -13,6 +13,8 @@ import { getChatHistory, markChatRoomAsRead } from '@/app/actions/chat';
 import { MessageType } from '@/lib/db/models/chat-message';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
+import { useSession } from 'next-auth/react';
+import { getAccessToken } from '@/app/actions/cookie';
 
 interface ChatWindowProps {
   chatRoom: ChatRoom | null;
@@ -43,6 +45,7 @@ export function ChatWindow({
   const currentChatRoomId = useRef<string | null>(null);
   const shouldScrollToBottom = useRef<boolean>(false);
   const { socket, isConnected, on, emit } = useSocket();
+  
 
   const otherUser = chatRoom && (userRole === 'seller' ? chatRoom.provider : chatRoom.seller);
 
@@ -261,11 +264,18 @@ export function ChatWindow({
 
   const markMessageAsRead = async (messageId: string) => {
     try {
+
+      const jwtToken = await getAccessToken();
+      if(!jwtToken){
+        return
+      }
+
       // Use backend API for real-time message read status
       await fetch(`${process.env.NEXT_PUBLIC_SOCKET_URL}/api/chat/message/${messageId}/read`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": `Bearer ${jwtToken}`
         },
         body: JSON.stringify({ userId }),
       });
@@ -276,16 +286,23 @@ export function ChatWindow({
   const sendMessage = async (content: string, messageType: MessageType = MessageType.TEXT, files?: File[]) => {
     if (!chatRoom) return;
 
+    const jwtToken = await getAccessToken();
+      if(!jwtToken){
+        return
+      }
+
     try {
       if (files && files.length > 0) {
         // Handle file upload
         const formData = new FormData();
-        formData.append('senderId', userId);
         formData.append('messageType', messageType);
         files.forEach(file => formData.append('files', file));
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_SOCKET_URL}/api/chat/${chatRoom._id}/message-with-file`, {
           method: 'POST',
+          headers: {
+            "Authorization": `Bearer ${jwtToken}`
+          },
           body: formData,
         });
 
@@ -298,9 +315,9 @@ export function ChatWindow({
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            "Authorization": `Bearer ${jwtToken}`
           },
           body: JSON.stringify({
-            senderId: userId,
             messageType,
             content,
           }),

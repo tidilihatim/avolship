@@ -6,6 +6,7 @@ import { ChatRoom, ChatMessage } from '@/types/chat';
 import { getUserChatRooms } from '@/app/actions/chat';
 import { useSocket } from '@/lib/socket/use-socket';
 import { toast } from 'sonner';
+import { getAccessToken } from '@/app/actions/cookie';
 
 interface ChatClientProps {
   userRole: 'seller' | 'provider';
@@ -60,10 +61,16 @@ export function ChatClient({ userRole, userId, initialChatRooms, autoStartWithPr
         const sellerId = userRole === 'seller' ? userId : autoStartWithProviderId;
         const providerId = userRole === 'seller' ? autoStartWithProviderId : userId;
 
+        const jwtToken = await getAccessToken();
+        if (!jwtToken) {
+          return toast.error("Configuration Error")
+        }
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_SOCKET_URL}/api/chat/room`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            "authorization": `Bearer ${jwtToken}`,
           },
           body: JSON.stringify({
             sellerId,
