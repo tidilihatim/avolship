@@ -365,7 +365,7 @@ export const updateUserStatus = withDbConnection(async (userId: string, status: 
     await User.findByIdAndUpdate(userId, { status });
 
     // send in app notification to user -- Email to be implemented in future
-     sendNotification({
+    await sendNotification({
       userId,
       title: status === UserStatus.APPROVED ? "Account Approved" : status === UserStatus.REJECTED ? "Account Rejected" : "Account Pending",
       message: status === UserStatus.APPROVED ? "Your account has been approved and is now active for business operations and shipping services Thank you for choosing AvolShip" : status === UserStatus.REJECTED ? "Your account has been rejected and cannot be used for business operations and shipping services we are sorry for the inconvenience" : "Your account is pending approval and is currently under review. We'll notify you once it's approved",
