@@ -67,12 +67,12 @@ export function MessageInput({
     // Validate file types
     const allowedTypes = [
       'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-      // 'application/pdf',
-      // 'application/msword',
-      // 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      // 'application/vnd.ms-excel',
-      // 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      // 'text/plain'
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/plain'
     ];
 
     const invalidFiles = files.filter(file => !allowedTypes.includes(file.type));
@@ -231,14 +231,14 @@ export function MessageInput({
               <Image className="h-4 w-4 mr-2" />
               {t('attachments.images')}
             </Button>
-            {/* <Button
+            <Button
               variant="ghost"
               className="w-full justify-start h-8"
               onClick={() => fileInputRef.current?.click()}
             >
               <FileText className="h-4 w-4 mr-2" />
               {t('attachments.documents')}
-            </Button> */}
+            </Button>
           </PopoverContent>
         </Popover>
 
