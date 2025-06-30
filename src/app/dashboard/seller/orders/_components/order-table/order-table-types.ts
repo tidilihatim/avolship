@@ -56,6 +56,7 @@ export interface OrderTableData {
   warehouseId: string;
   warehouseName: string;
   warehouseCountry: string;
+  warehouseCurrency: string;
   sellerId: string;
   sellerName: string;
   products: OrderProduct[];

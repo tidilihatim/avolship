@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Percent, DollarSign, Calculator } from "lucide-react";
+import { Percent, Calculator } from "lucide-react";
 
 import {
   Dialog,
@@ -29,6 +29,7 @@ import { Separator } from "@/components/ui/separator";
 import { OrderStatus } from "@/lib/db/models/order";
 import { updateOrderStatus } from "@/app/actions/order";
 import { DiscountApplication, DiscountReason, DISCOUNT_REASON_LABELS } from "@/types/discount";
+import { formatPrice } from "@/lib/utils";
 
 interface StatusUpdateDialogProps {
   isOpen: boolean;
@@ -48,6 +49,7 @@ interface StatusUpdateDialogProps {
     priceAdjustments?: Array<any>;
     finalTotalPrice?: number;
     totalDiscountAmount?: number;
+    warehouseCurrency: string;
   };
   onStatusUpdated?: () => void;
 }
@@ -262,15 +264,15 @@ export default function StatusUpdateDialog({
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">Original Total</p>
-                      <p className="font-medium">${getOriginalTotal().toFixed(2)}</p>
+                      <p className="font-medium">{formatPrice(getOriginalTotal(), order.warehouseCurrency)}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Total Discount</p>
-                      <p className="font-medium text-destructive">-${getTotalDiscount().toFixed(2)}</p>
+                      <p className="font-medium text-destructive">-{formatPrice(getTotalDiscount(), order.warehouseCurrency)}</p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Final Total</p>
-                      <p className="font-bold text-primary">${getFinalTotal().toFixed(2)}</p>
+                      <p className="font-bold text-primary">{formatPrice(getFinalTotal(), order.warehouseCurrency)}</p>
                     </div>
                   </div>
                 </div>
@@ -292,7 +294,7 @@ export default function StatusUpdateDialog({
                           </div>
                           <div className="text-right">
                             <p className="text-xs text-muted-foreground">Original</p>
-                            <p className="font-medium text-sm">${product.unitPrice.toFixed(2)}</p>
+                            <p className="font-medium text-sm">{formatPrice(product.unitPrice, order.warehouseCurrency)}</p>
                           </div>
                         </div>
 
@@ -300,7 +302,6 @@ export default function StatusUpdateDialog({
                           <div>
                             <Label htmlFor={`price-${product.productId}`} className="text-xs">New Price</Label>
                             <div className="relative">
-                              <DollarSign className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-muted-foreground" />
                               <Input
                                 id={`price-${product.productId}`}
                                 type="number"
@@ -308,7 +309,7 @@ export default function StatusUpdateDialog({
                                 min="0"
                                 max={product.unitPrice - 0.01}
                                 placeholder={product.unitPrice.toFixed(2)}
-                                className="pl-7 text-sm h-8"
+                                className="text-sm h-8"
                                 value={discount.newPrice || ''}
                                 onChange={(e) => {
                                   const newPrice = parseFloat(e.target.value) || 0;
@@ -358,7 +359,7 @@ export default function StatusUpdateDialog({
                             <div className="flex justify-between">
                               <span>Discount:</span>
                               <Badge variant="secondary" className="text-xs">
-                                -${discount.discountAmount?.toFixed(2)} 
+                                -{formatPrice(discount.discountAmount || 0, order.warehouseCurrency)} 
                                 ({(((discount.discountAmount || 0) / product.unitPrice) * 100).toFixed(1)}%)
                               </Badge>
                             </div>
@@ -379,7 +380,7 @@ export default function StatusUpdateDialog({
                     <div className="text-xs space-y-1">
                       <div className="flex justify-between">
                         <span>Total Savings:</span>
-                        <span className="font-medium text-green-600">${getTotalDiscount().toFixed(2)}</span>
+                        <span className="font-medium text-green-600">{formatPrice(getTotalDiscount(), order.warehouseCurrency)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Percentage Off:</span>

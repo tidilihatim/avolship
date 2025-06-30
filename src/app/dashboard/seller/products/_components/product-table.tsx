@@ -452,25 +452,7 @@ export default function ProductTable({
       }
     );
   };
-
-  // Format price with currency
-  const formatPrice = (price?: number) => {
-    if (price === undefined || price === null) return "-";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD", // Default to USD, can be customized based on user preference
-    }).format(price);
-  };
-
-  // Format date
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(new Date(date));
-  };
-
+  
   if (error) {
     return (
       <Card>
