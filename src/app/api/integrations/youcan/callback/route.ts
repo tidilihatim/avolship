@@ -168,7 +168,7 @@ async function saveYouCanTokens(userId: string, warehouseId: string, tokenData: 
 
 async function subscribeToWebhooks(accessToken: string, userId: string, warehouseId: string, integrationId: string) {
   try {
-    const webhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/youcan?integrationId=${integrationId}`;
+    const webhookUrl = `${process.env.NEXT_PUBLIC_SOCKET_URL}/api/webhooks/youcan?integrationId=${integrationId}`;
     
     console.log('Subscribing to order.create webhook...');
     
