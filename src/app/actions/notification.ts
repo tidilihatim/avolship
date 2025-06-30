@@ -5,6 +5,7 @@ import { withDbConnection } from '@/lib/db/db-connect';
 import Notification, { NotificationType } from '@/lib/db/models/notification';
 import { authOptions } from '@/config/auth';
 import { getServerSession } from 'next-auth';
+import { getAccessToken } from './cookie';
 
 /**
  * Interface for sending a notification
@@ -26,22 +27,28 @@ interface SendNotificationParams {
  */
 export async function sendNotification(params: SendNotificationParams) {
   try {
+
+    const jwtToken = await getAccessToken();
+    if (!jwtToken) {
+      throw new Error("Configuration Error")
+    }
+
     const API_URL = process.env.API_URL || 'http://localhost:4000';
-    
+
     const response = await fetch(`${API_URL}/api/notifications/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': `${process.env.SOCKET_SERVER_API_SECRET_KEY}` // For server-to-server authentication
+        'authorization': `Bearer ${jwtToken}` // For server-to-server authentication
       },
       body: JSON.stringify(params),
       cache: 'no-store'
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to send notification: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
     return data.notification;
   } catch (error) {
@@ -57,22 +64,28 @@ export async function sendNotification(params: SendNotificationParams) {
 
 export async function sendNotificationToUserType(role: string, params: Omit<SendNotificationParams, 'userId'>) {
   try {
+
+    const jwtToken = await getAccessToken();
+    if (!jwtToken) {
+      throw new Error("Configuration Error")
+    }
+
     const API_URL = process.env.API_URL || 'http://localhost:4000';
-    
+
     const response = await fetch(`${API_URL}/api/notifications/send/types/${role}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': `${process.env.SOCKET_SERVER_API_SECRET_KEY}` // For server-to-server authentication
+        'authorization': `Bearer ${jwtToken}`
       },
       body: JSON.stringify(params),
       cache: 'no-store'
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to send notification: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
     return data.notification;
   } catch (error) {
@@ -125,11 +138,11 @@ export const markNotificationAsRead = withDbConnection(async (notificationId: st
     }
 
     const notification = await Notification.findOneAndUpdate(
-      { 
-        _id: notificationId, 
-        userId: session.user.id 
+      {
+        _id: notificationId,
+        userId: session.user.id
       },
-      { 
+      {
         read: true,
         readAt: new Date()
       },
@@ -168,11 +181,11 @@ export const markAllNotificationsAsRead = withDbConnection(async () => {
     }
 
     const result = await Notification.updateMany(
-      { 
+      {
         userId: session.user.id,
         read: false
       },
-      { 
+      {
         read: true,
         readAt: new Date()
       }
@@ -202,7 +215,7 @@ export const getUnreadNotificationCount = withDbConnection(async () => {
       throw new Error('User not found');
     }
 
-    const count = await Notification.countDocuments({ 
+    const count = await Notification.countDocuments({
       userId: session.user.id,
       read: false
     });
