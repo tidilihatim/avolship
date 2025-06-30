@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { PlusCircle, Upload, Users, Package } from "lucide-react";
+import { useSocket } from "@/lib/socket/use-socket";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -114,6 +115,9 @@ export default function OrderTable({
   // Column visibility management
   const { columnVisibility, setColumnVisibility } = useColumnVisibility();
 
+  // Socket connection for real-time updates
+  const { on } = useSocket();
+
   // Fetch current user role and call center agents on component mount
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -135,6 +139,19 @@ export default function OrderTable({
 
     fetchUserRole();
   }, []);
+
+  // Listen for new seller orders via socket
+  useEffect(() => {
+    if (!on) return;
+
+    const unsubscribe = on('order:new-seller', () => {
+      // Refresh the page to fetch new orders
+      router.refresh();
+      toast.success("New order received!");
+    });
+
+    return unsubscribe;
+  }, [on, router]);
 
   // Check if user is admin or moderator
   const isAdminOrModerator =

@@ -26,6 +26,10 @@ export function IntegrationsContainer({
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
   const router = useRouter();
 
+  const handleIntegrationUpdate = () => {
+    router.refresh();
+  };
+
   const handlePlatformSelect = (platform: string) => {
     setSelectedPlatform(platform);
   };
@@ -71,7 +75,8 @@ export function IntegrationsContainer({
       <IntegrationsPlatforms 
         platforms={platforms}
         userIntegrations={userIntegrations}
-        onPlatformSelect={handlePlatformSelect} 
+        onPlatformSelect={handlePlatformSelect}
+        onIntegrationUpdate={handleIntegrationUpdate}
       />
       
       <YouCanSetupDialog 

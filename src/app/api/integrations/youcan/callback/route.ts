@@ -32,10 +32,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Save tokens to database
-    await saveYouCanTokens(userId, warehouseId, tokenData);
+    const integration = await saveYouCanTokens(userId, warehouseId, tokenData);
 
     // Subscribe to webhooks
-    await subscribeToWebhooks(tokenData.access_token, userId, warehouseId);
+    await subscribeToWebhooks(tokenData.access_token, userId, warehouseId, integration._id.toString());
 
     return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?success=youcan_connected`);
     
@@ -129,17 +129,19 @@ async function saveYouCanTokens(userId: string, warehouseId: string, tokenData: 
       isActive: true
     });
     
+    let integration;
+    
     if (existingIntegration) {
       // Update existing integration
       existingIntegration.connectionData = connectionData;
       existingIntegration.status = IntegrationStatus.CONNECTED;
       existingIntegration.lastSyncAt = new Date();
-      await existingIntegration.save();
+      integration = await existingIntegration.save();
       
       console.log('Updated existing YouCan integration for user:', userId);
     } else {
       // Create new integration
-      const integration = new UserIntegration({
+      integration = new UserIntegration({
         userId,
         warehouseId,
         platformId: 'youcan',
@@ -152,9 +154,11 @@ async function saveYouCanTokens(userId: string, warehouseId: string, tokenData: 
         }
       });
       
-      await integration.save();
+      integration = await integration.save();
       console.log('Created new YouCan integration for user:', userId);
     }
+    
+    return integration;
     
   } catch (error) {
     console.error('Error saving YouCan tokens:', error);
@@ -162,9 +166,9 @@ async function saveYouCanTokens(userId: string, warehouseId: string, tokenData: 
   }
 }
 
-async function subscribeToWebhooks(accessToken: string, userId: string, warehouseId: string) {
+async function subscribeToWebhooks(accessToken: string, userId: string, warehouseId: string, integrationId: string) {
   try {
-    const webhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/youcan`;
+    const webhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/youcan?integrationId=${integrationId}`;
     
     console.log('Subscribing to order.create webhook...');
     

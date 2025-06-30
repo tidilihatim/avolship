@@ -197,29 +197,14 @@ export async function getUserIntegrations(userId: string, warehouseId: string) {
     const integrations = await UserIntegration.find({
       userId,
       warehouseId,
-      isActive: true
+      $or: [
+        { isActive: true },
+        { status: 'paused' }
+      ]
     }).sort({ createdAt: -1 }).lean();
     
-    // Convert to plain objects and serialize dates
-    return integrations.map(integration => ({
-      ...integration,
-      _id: (integration?._id as any)?.toString(),
-      createdAt: integration.createdAt.toISOString(),
-      updatedAt: integration.updatedAt.toISOString(),
-      lastSyncAt: integration.lastSyncAt?.toISOString() || null,
-      connectionData: {
-        ...integration.connectionData,
-        expiresAt: integration.connectionData?.expiresAt?.toISOString() || null,
-        webhookSubscriptions: integration.connectionData?.webhookSubscriptions?.map((ws:any) => ({
-          ...ws,
-          createdAt: ws.createdAt.toISOString()
-        })) || []
-      },
-      syncStats: {
-        ...integration.syncStats,
-        lastOrderSyncedAt: integration.syncStats?.lastOrderSyncedAt?.toISOString() || null
-      }
-    }));
+    // Convert to plain objects using JSON serialization
+    return JSON.parse(JSON.stringify(integrations));
   } catch (error) {
     console.error('Error fetching user integrations:', error);
     return [];
@@ -368,6 +353,107 @@ export async function updatePlatformSettings(
   }
 }
 
+// Pause user integration
+export async function pauseIntegration(integrationId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        error: 'Unauthorized'
+      };
+    }
+    
+    await connectToDatabase();
+    
+    const integration = await UserIntegration.findOne({
+      _id: integrationId,
+      userId: session.user.id,
+      isActive: true
+    });
+    
+    if (!integration) {
+      return {
+        success: false,
+        error: 'Integration not found'
+      };
+    }
+    
+    if (integration.status !== IntegrationStatus.CONNECTED) {
+      return {
+        success: false,
+        error: 'Integration must be connected to pause'
+      };
+    }
+    
+    // Update integration status to paused and set isActive to false
+    integration.status = IntegrationStatus.PAUSED;
+    integration.isActive = false;
+    await integration.save();
+    
+    return {
+      success: true,
+      message: 'Integration paused successfully'
+    };
+  } catch (error) {
+    console.error('Error pausing integration:', error);
+    return {
+      success: false,
+      error: 'Failed to pause integration'
+    };
+  }
+}
+
+// Resume user integration
+export async function resumeIntegration(integrationId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        error: 'Unauthorized'
+      };
+    }
+    
+    await connectToDatabase();
+    
+    const integration = await UserIntegration.findOne({
+      _id: integrationId,
+      userId: session.user.id
+    });
+    
+    if (!integration) {
+      return {
+        success: false,
+        error: 'Integration not found'
+      };
+    }
+    
+    if (integration.status !== IntegrationStatus.PAUSED) {
+      return {
+        success: false,
+        error: 'Integration must be paused to resume'
+      };
+    }
+    
+    // Update integration status to connected and set isActive to true
+    integration.status = IntegrationStatus.CONNECTED;
+    integration.isActive = true;
+    await integration.save();
+    
+    return {
+      success: true,
+      message: 'Integration resumed successfully'
+    };
+  } catch (error) {
+    console.error('Error resuming integration:', error);
+    return {
+      success: false,
+      error: 'Failed to resume integration'
+    };
+  }
+}
+
 // Disconnect user integration
 export async function disconnectIntegration(integrationId: string) {
   try {
@@ -416,14 +502,12 @@ export async function disconnectIntegration(integrationId: string) {
       }
     }
     
-    // Mark integration as inactive
-    integration.isActive = false;
-    integration.status = IntegrationStatus.DISCONNECTED;
-    await integration.save();
+    // Delete the integration document completely
+    await UserIntegration.findByIdAndDelete(integrationId);
     
     return {
       success: true,
-      message: 'Integration disconnected successfully'
+      message: 'Integration disconnected and removed successfully'
     };
   } catch (error) {
     console.error('Error disconnecting integration:', error);

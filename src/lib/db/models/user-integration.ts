@@ -7,6 +7,7 @@ export enum IntegrationMethod {
 
 export enum IntegrationStatus {
   CONNECTED = 'connected',
+  PAUSED = 'paused',
   DISCONNECTED = 'disconnected',
   ERROR = 'error',
   PENDING = 'pending'

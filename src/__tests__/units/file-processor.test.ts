@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { processFile } from './file-processor';
 import { getProductsForOrder } from '@/app/actions/order';
+import { processFile } from '@/app/dashboard/seller/orders/import/_components/file-processor';
 
 // Mock the dependencies
 vi.mock('@/app/actions/order', () => ({
