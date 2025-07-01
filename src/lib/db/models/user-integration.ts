@@ -20,13 +20,19 @@ export interface IUserIntegration extends Document {
   integrationMethod: IntegrationMethod;
   status: IntegrationStatus;
   connectionData: {
-    // For direct integration
+    // For OAuth-based integrations (YouCan)
     accessToken?: string;
     refreshToken?: string;
     expiresAt?: Date;
     storeId?: string;
     storeName?: string;
     storeUrl?: string;
+    
+    // For WooCommerce integration
+    consumerKey?: string;
+    consumerSecret?: string;
+    keyPermissions?: string;
+    keyId?: number;
     
     // For Google Sheets integration
     sheetId?: string;
@@ -36,8 +42,11 @@ export interface IUserIntegration extends Document {
     // Common
     lastError?: string;
     webhookSubscriptions?: {
-      topic: string;
+      topic?: string;
+      event?: string;
       id: string;
+      target_url?: string;
+      delivery_url?: string;
       createdAt: Date;
     }[];
   };
@@ -81,13 +90,19 @@ const UserIntegrationSchema = new Schema<IUserIntegration>({
     default: IntegrationStatus.PENDING
   },
   connectionData: {
-    // Direct integration fields
+    // OAuth-based integration fields (YouCan)
     accessToken: String,
     refreshToken: String,
     expiresAt: Date,
     storeId: String,
     storeName: String,
     storeUrl: String,
+    
+    // WooCommerce integration fields
+    consumerKey: String,
+    consumerSecret: String,
+    keyPermissions: String,
+    keyId: Number,
     
     // Google Sheets fields
     sheetId: String,
@@ -98,7 +113,10 @@ const UserIntegrationSchema = new Schema<IUserIntegration>({
     lastError: String,
     webhookSubscriptions: [{
       topic: String,
+      event: String,
       id: String,
+      target_url: String,
+      delivery_url: String,
       createdAt: Date
     }]
   },

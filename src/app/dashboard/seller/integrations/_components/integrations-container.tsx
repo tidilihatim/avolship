@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IntegrationsHeader } from './integrations-header';
 import { IntegrationsPlatforms } from './integrations-platforms';
 import { YouCanSetupDialog } from './youcan-setup-dialog';
+import { WooCommerceSetupDialog } from './woocommerce-setup-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 
@@ -21,7 +22,7 @@ export function IntegrationsContainer({
   userIntegrations, 
   warehouseId, 
   error, 
-  success 
+  success
 }: IntegrationsContainerProps) {
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
   const router = useRouter();
@@ -63,7 +64,7 @@ export function IntegrationsContainer({
       )}
 
       {success && (
-        <Alert className="border-green-200 bg-green-50 text-green-800">
+        <Alert className="border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400">
           <CheckCircle className="h-4 w-4" />
           <AlertDescription>
             {getSuccessMessage(success)}
@@ -81,6 +82,11 @@ export function IntegrationsContainer({
       
       <YouCanSetupDialog 
         open={selectedPlatform === 'youcan'}
+        onClose={handleDialogClose}
+      />
+      
+      <WooCommerceSetupDialog 
+        open={selectedPlatform === 'woocommerce'}
         onClose={handleDialogClose}
       />
     </div>
@@ -108,6 +114,8 @@ function getSuccessMessage(success: string): string {
   switch (success) {
     case 'youcan_connected':
       return 'YouCan integration connected successfully! Orders will now sync automatically.';
+    case 'woocommerce_connected':
+      return 'WooCommerce integration connected successfully! Orders will now sync automatically.';
     default:
       return 'Integration connected successfully!';
   }

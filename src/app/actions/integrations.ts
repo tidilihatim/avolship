@@ -469,8 +469,7 @@ export async function disconnectIntegration(integrationId: string) {
     
     const integration = await UserIntegration.findOne({
       _id: integrationId,
-      userId: session.user.id,
-      isActive: true
+      userId: session.user.id
     });
     
     if (!integration) {
@@ -480,7 +479,7 @@ export async function disconnectIntegration(integrationId: string) {
       };
     }
     
-    // If it's a YouCan integration, delete webhooks
+    // Delete platform-specific webhooks
     if (integration.platformId === 'youcan' && integration.connectionData?.webhookSubscriptions) {
       const accessToken = integration.connectionData.accessToken;
       
@@ -494,9 +493,33 @@ export async function disconnectIntegration(integrationId: string) {
                 'Content-Type': 'application/json',
               }
             });
-            console.log(`Deleted webhook subscription: ${subscription.id}`);
+            console.log(`Deleted YouCan webhook subscription: ${subscription.id}`);
           } catch (error) {
-            console.error(`Failed to delete webhook ${subscription.id}:`, error);
+            console.error(`Failed to delete YouCan webhook ${subscription.id}:`, error);
+          }
+        }
+      }
+    }
+
+    // If it's a WooCommerce integration, delete webhooks
+    if (integration.platformId === 'woocommerce' && integration.connectionData?.webhookSubscriptions) {
+      const consumerKey = integration.connectionData.consumerKey;
+      const consumerSecret = integration.connectionData.consumerSecret;
+      const storeUrl = integration.connectionData.storeUrl;
+      
+      if (consumerKey && consumerSecret && storeUrl) {
+        for (const subscription of integration.connectionData.webhookSubscriptions) {
+          try {
+            await fetch(`https://${storeUrl}/wp-json/wc/v3/webhooks/${subscription.id}?force=true`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': 'Basic ' + Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64'),
+                'Content-Type': 'application/json',
+              }
+            });
+            console.log(`Deleted WooCommerce webhook: ${subscription.id}`);
+          } catch (error) {
+            console.error(`Failed to delete WooCommerce webhook ${subscription.id}:`, error);
           }
         }
       }
@@ -515,5 +538,108 @@ export async function disconnectIntegration(integrationId: string) {
       success: false,
       error: 'Failed to disconnect integration'
     };
+  }
+}
+
+// Save WooCommerce API keys
+export async function saveWooCommerceAPIKeys(
+  integrationId: string,
+  consumerKey: string,
+  consumerSecret: string,
+  storeUrl: string
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        error: 'Unauthorized'
+      };
+    }
+
+    await connectToDatabase();
+
+    const integration = await UserIntegration.findOne({
+      _id: integrationId,
+      userId: session.user.id,
+      platformId: 'woocommerce'
+    });
+
+    if (!integration) {
+      return {
+        success: false,
+        error: 'Integration not found'
+      };
+    }
+
+    // Update integration with API keys
+    integration.connectionData = {
+      ...integration.connectionData,
+      consumerKey,
+      consumerSecret,
+      storeUrl,
+      authorizationCompleted: true,
+      needsAPIKeys: false
+    };
+    integration.status = 'connected';
+    integration.isActive = true;
+
+    await integration.save();
+
+    // Create webhooks using the API keys
+    await createWooCommerceWebhooksServerAction(storeUrl, consumerKey, consumerSecret, integrationId);
+
+    return {
+      success: true,
+      message: 'WooCommerce integration completed successfully'
+    };
+  } catch (error) {
+    console.error('Error saving WooCommerce API keys:', error);
+    return {
+      success: false,
+      error: 'Failed to save API keys'
+    };
+  }
+}
+
+async function createWooCommerceWebhooksServerAction(storeUrl: string, consumerKey: string, consumerSecret: string, integrationId: string) {
+  try {
+    const webhookUrl = `${process.env.NEXT_PUBLIC_SOCKET_URL}/api/webhooks/woocommerce?integrationId=${integrationId}`;
+    
+    // Create webhook for order.created event
+    const response = await fetch(`https://${storeUrl}/wp-json/wc/v3/webhooks`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64')
+      },
+      body: JSON.stringify({
+        name: 'Avolship Order Webhook',
+        topic: 'order.created',
+        delivery_url: webhookUrl,
+        status: 'active'
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Failed to create webhook:', response.status);
+      return;
+    }
+
+    const webhookData = await response.json();
+    
+    // Update integration with webhook subscription
+    await UserIntegration.findByIdAndUpdate(integrationId, {
+      'connectionData.webhookSubscriptions': [{
+        event: 'order.created',
+        id: webhookData.id,
+        delivery_url: webhookUrl,
+        createdAt: new Date()
+      }]
+    });
+
+    console.log('Successfully created WooCommerce webhook');
+  } catch (error) {
+    console.error('Failed to create WooCommerce webhooks:', error);
   }
 }
