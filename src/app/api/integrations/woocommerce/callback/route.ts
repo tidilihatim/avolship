@@ -2,13 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/db/mongoose';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/config/auth';
-import crypto from 'crypto';
-
-// Utility function to generate deterministic webhook secret
-export function generateWooCommerceWebhookSecret(userId: string): string {
-  const secretData = `avolship_woocommerce_${userId}_secret_salt`;
-  return crypto.createHash('sha256').update(secretData).digest('hex');
-}
+import { generateWooCommerceWebhookSecret } from '@/lib/utils/woocommerce';
 
 // Handle both GET and POST requests from WooCommerce
 export async function GET(request: NextRequest) {
