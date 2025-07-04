@@ -16,13 +16,46 @@ export function useOrderQueue() {
   const [isLoading, setIsLoading] = useState(true);
   const [availableOrders, setAvailableOrders] = useState<OrderItem[]>([]);
   const [isAvailable, setIsAvailable] = useState(true);
+  const [loadingTimeout, setLoadingTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const { socket, isConnected, on, emit } = useSocket();
   const { data: session } = useSession();
 
+  // Add loading timeout - automatically stop loading after 5 seconds
+  useEffect(() => {
+    if (isLoading) {
+      const timeout = setTimeout(() => {
+        console.log('Loading timeout reached, setting loading to false');
+        setIsLoading(false);
+        // Optionally fetch data directly from API as fallback
+        if (session?.user?.id) {
+          refreshQueue();
+        }
+      }, 5000); // 5 second timeout
+
+      setLoadingTimeout(timeout);
+
+      return () => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+      };
+    }
+  }, [isLoading, session?.user?.id]);
+
   // Set up socket event listeners
   useEffect(() => {
-    if (!isConnected || !socket) return;
+    if (!isConnected || !socket) {
+      // If not connected, try to fallback to API after a short delay
+      const fallbackTimeout = setTimeout(() => {
+        if (isLoading && session?.user?.id) {
+          console.log('Socket not connected, falling back to API');
+          refreshQueue();
+        }
+      }, 3000);
+
+      return () => clearTimeout(fallbackTimeout);
+    }
 
     console.log('Setting up order queue socket listeners');
 

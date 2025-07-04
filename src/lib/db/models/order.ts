@@ -35,6 +35,21 @@ export interface OrderProduct {
 }
 
 /**
+ * Call recording interface for AWS S3 stored recordings
+ */
+export interface CallRecording {
+  recordingId: string;
+  s3Bucket: string;
+  s3Key: string;
+  s3Url: string;
+  duration: number; // in seconds
+  fileSize: number; // in bytes
+  mimeType: string;
+  recordedAt: Date;
+  uploadedAt: Date;
+}
+
+/**
  * Call attempt interface for tracking customer contact attempts
  */
 export interface CallAttempt {
@@ -44,6 +59,7 @@ export interface CallAttempt {
   status: 'answered' | 'unreached' | 'busy' | 'invalid';
   notes?: string;
   callCenterAgent?: mongoose.Types.ObjectId; // Reference to call center user
+  recording?: CallRecording; // Optional call recording stored in S3
 }
 
 /**
@@ -235,6 +251,42 @@ const OrderSchema = new Schema<IOrder>(
       callCenterAgent: {
         type: Schema.Types.ObjectId,
         ref: 'User',
+      },
+      recording: {
+        recordingId: {
+          type: String,
+          trim: true,
+        },
+        s3Bucket: {
+          type: String,
+          trim: true,
+        },
+        s3Key: {
+          type: String,
+          trim: true,
+        },
+        s3Url: {
+          type: String,
+          trim: true,
+        },
+        duration: {
+          type: Number,
+          min: [0, 'Duration cannot be negative'],
+        },
+        fileSize: {
+          type: Number,
+          min: [0, 'File size cannot be negative'],
+        },
+        mimeType: {
+          type: String,
+          trim: true,
+        },
+        recordedAt: {
+          type: Date,
+        },
+        uploadedAt: {
+          type: Date,
+        },
       },
     }],
     totalCallAttempts: {

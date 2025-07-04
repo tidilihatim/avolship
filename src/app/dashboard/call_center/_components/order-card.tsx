@@ -52,6 +52,7 @@ import {
 import { OrderItem } from '@/types/socket';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { MakeCallButton } from '@/components/call-center/make-call-button';
 
 // Order Status enum
 export enum OrderStatus {
@@ -100,11 +101,7 @@ function EnhancedOrderCard({
   currentAgentId?: string;
   t: any;
 }) {
-  const [isCallDialogOpen, setIsCallDialogOpen] = useState(false);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
-  const [selectedPhone, setSelectedPhone] = useState('');
-  const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.ANSWERED);
-  const [callNotes, setCallNotes] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(OrderStatus.CONFIRMED);
   const [statusComment, setStatusComment] = useState('');
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -168,29 +165,6 @@ function EnhancedOrderCard({
     }
   };
 
-  const handleCallAttempt = () => {
-    if (!selectedPhone || !onMakeCallAttempt) return;
-
-    const attempt: CallAttempt = {
-      phoneNumber: selectedPhone,
-      status: callStatus,
-      notes: callNotes.trim() || undefined,
-      attemptDate: new Date()
-    };
-
-    onMakeCallAttempt(order.orderId, attempt);
-    
-    // Reset form
-    setCallNotes('');
-    setIsCallDialogOpen(false);
-    
-    // Auto-update order status based on call result
-    if (callStatus === CallStatus.ANSWERED && onUpdateOrderStatus) {
-      onUpdateOrderStatus(order.orderId, OrderStatus.CONFIRMED, 'Customer confirmed via call');
-    } else if (callStatus === CallStatus.INVALID && onUpdateOrderStatus) {
-      onUpdateOrderStatus(order.orderId, OrderStatus.WRONG_NUMBER, 'Invalid phone number');
-    }
-  };
 
   const handleStatusUpdate = () => {
     if (!onUpdateOrderStatus) return;
@@ -245,14 +219,33 @@ function EnhancedOrderCard({
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   
-                  <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
-                    <DialogTrigger asChild>
-                      <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        <PhoneCall className="w-4 h-4 mr-2" />
-                        Make Call
-                      </DropdownMenuItem>
-                    </DialogTrigger>
-                  </Dialog>
+                  <div className="px-2 py-1.5">
+                    <MakeCallButton
+                      orderId={order.orderId}
+                      customerName={order.customer.name}
+                      phoneNumbers={order.customer.phoneNumbers}
+                      onCallComplete={(callData) => {
+                        if (onMakeCallAttempt) {
+                          const attempt: CallAttempt = {
+                            phoneNumber: callData.phoneNumber,
+                            status: callData.status as CallStatus,
+                            notes: callData.notes,
+                            attemptDate: new Date()
+                          };
+                          onMakeCallAttempt(order.orderId, attempt);
+                        }
+                        
+                        // Auto-update order status based on call result
+                        if (callData.status === 'answered' && onUpdateOrderStatus) {
+                          onUpdateOrderStatus(order.orderId, OrderStatus.CONFIRMED, 'Customer confirmed via call');
+                        } else if (callData.status === 'invalid' && onUpdateOrderStatus) {
+                          onUpdateOrderStatus(order.orderId, OrderStatus.WRONG_NUMBER, 'Invalid phone number');
+                        }
+                      }}
+                      size="sm"
+                      className="w-full"
+                    />
+                  </div>
                   
                   <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
                     <DialogTrigger asChild>
@@ -311,11 +304,7 @@ function EnhancedOrderCard({
                 <Badge 
                   key={index} 
                   variant="outline" 
-                  className="text-xs cursor-pointer hover:bg-blue-50"
-                  onClick={() => {
-                    setSelectedPhone(phone);
-                    setIsCallDialogOpen(true);
-                  }}
+                  className="text-xs"
                 >
                   {phone}
                 </Badge>
@@ -383,17 +372,32 @@ function EnhancedOrderCard({
           
           {type === 'assigned' && (
             <>
-              <Button
-                onClick={() => {
-                  setSelectedPhone(order.customer.phoneNumbers[0] || '');
-                  setIsCallDialogOpen(true);
+              <MakeCallButton
+                orderId={order.orderId}
+                customerName={order.customer.name}
+                phoneNumbers={order.customer.phoneNumbers}
+                onCallComplete={(callData) => {
+                  // Handle call completion - refresh queue and auto-update status if needed
+                  if (onMakeCallAttempt) {
+                    const attempt: CallAttempt = {
+                      phoneNumber: callData.phoneNumber,
+                      status: callData.status as CallStatus,
+                      notes: callData.notes,
+                      attemptDate: new Date()
+                    };
+                    onMakeCallAttempt(order.orderId, attempt);
+                  }
+                  
+                  // Auto-update order status based on call result
+                  if (callData.status === 'answered' && onUpdateOrderStatus) {
+                    onUpdateOrderStatus(order.orderId, OrderStatus.CONFIRMED, 'Customer confirmed via call');
+                  } else if (callData.status === 'invalid' && onUpdateOrderStatus) {
+                    onUpdateOrderStatus(order.orderId, OrderStatus.WRONG_NUMBER, 'Invalid phone number');
+                  }
                 }}
                 className="flex-1"
                 size="sm"
-              >
-                <PhoneCall className="w-4 h-4 mr-2" />
-                Call Customer
-              </Button>
+              />
               
               <Button
                 onClick={() => setIsStatusDialogOpen(true)}
@@ -408,68 +412,6 @@ function EnhancedOrderCard({
         </div>
       </CardContent>
 
-      {/* Call Dialog */}
-      <Dialog open={isCallDialogOpen} onOpenChange={setIsCallDialogOpen}>
-        <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Make Call Attempt</DialogTitle>
-          <DialogDescription>
-            Record the result of your call to {order.customer.name}
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="phone">Phone Number</Label>
-            <Select value={selectedPhone} onValueChange={setSelectedPhone}>
-              <SelectTrigger className="w-full mt-1">
-                <SelectValue placeholder="Select phone number" />
-              </SelectTrigger>
-              <SelectContent>
-                {order.customer.phoneNumbers.map((phone, index) => (
-                  <SelectItem key={index} value={phone}>{phone}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div>
-            <Label htmlFor="callStatus">Call Result</Label>
-            <Select value={callStatus} onValueChange={(value) => setCallStatus(value as CallStatus)}>
-              <SelectTrigger className="w-full mt-1">
-                <SelectValue placeholder="Select call result" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={CallStatus.ANSWERED}>Answered</SelectItem>
-                <SelectItem value={CallStatus.UNREACHED}>Unreached</SelectItem>
-                <SelectItem value={CallStatus.BUSY}>Busy</SelectItem>
-                <SelectItem value={CallStatus.INVALID}>Invalid Number</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div>
-            <Label htmlFor="callNotes">Notes (Optional)</Label>
-            <Textarea
-              id="callNotes"
-              placeholder="Add any notes about the call..."
-              value={callNotes}
-              onChange={(e) => setCallNotes(e.target.value)}
-              className="mt-1"
-            />
-          </div>
-        </div>
-        
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setIsCallDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleCallAttempt}>
-            Record Call
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-      </Dialog>
 
       {/* Status Update Dialog */}
       <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>

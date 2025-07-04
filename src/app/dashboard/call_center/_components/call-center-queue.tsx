@@ -129,43 +129,12 @@ export default function EnhancedCallCenterQueue() {
     }
   };
 
-  // Handle call attempt
+  // Handle call attempt (now handled by MakeCallButton component)
   const handleMakeCallAttempt = async (orderId: string, attempt: CallAttempt) => {
-    try {
-      const jwtToken = await getAccessToken();
-      if (!jwtToken) {
-        return toast.error("Configuration Error")
-      }
-      // Call your API to record call attempt
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SOCKET_URL}/api/orders/call-attempt`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          "authorization": `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({
-          orderId,
-          attempt,
-          // Add agent ID from session
-        })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          toast.success(`Call attempt recorded: ${attempt.status}`);
-          // Refresh queue to get updated data
-          refreshQueue();
-        } else {
-          toast.error(result.message || 'Failed to record call attempt');
-        }
-      } else {
-        toast.error('Failed to record call attempt');
-      }
-    } catch (error) {
-      console.error('Error recording call attempt:', error);
-      toast.error('Error recording call attempt');
-    }
+    // This function is kept for compatibility but the actual call recording
+    // is now handled by the MakeCallButton component with full recording functionality
+    toast.success(`Call completed: ${attempt.status}`);
+    refreshQueue();
   };
 
   if (isLoading) {

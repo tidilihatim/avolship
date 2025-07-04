@@ -14,32 +14,38 @@ export async function GET(request: NextRequest) {
     // Handle OAuth errors
     if (error) {
       const errorParam = encodeURIComponent(error === 'access_denied' ? 'access_denied' : 'authorization_failed');
-      return redirect(`/auth/connect-store?error=${errorParam}`);
+      return redirect(`/dashboard/seller/integrations?error=${errorParam}`);
     }
 
     if (!code || !state || !shop) {
-      return redirect('/auth/connect-store?error=missing_parameters');
+      return redirect('/dashboard/seller/integrations?error=missing_parameters');
     }
 
     // Decode state parameter
     let decodedState;
-    let isInstallFlow = false;
-    
     try {
       const stateString = Buffer.from(state, 'base64').toString('utf-8');
       const parts = stateString.split(':');
       
-      if (parts[0] === 'install') {
-        // This is an install flow
-        isInstallFlow = true;
-        decodedState = { shop: parts[1] };
-      } else {
-        // This is a regular user flow
-        const [userId, warehouseId, storeUrl] = parts;
-        decodedState = { userId, warehouseId, storeUrl };
+      if (parts[0] !== 'user' || parts.length < 6) {
+        throw new Error('Invalid state format');
       }
+      
+      decodedState = {
+        userId: parts[1],
+        warehouseId: parts[2],
+        shop: parts[3],
+        timestamp: parts[4],
+        random: parts[5]
+      };
     } catch (err) {
-      return redirect('/auth/connect-store?error=invalid_state');
+      console.error('State decode error:', err);
+      return redirect('/dashboard/seller/integrations?error=invalid_state');
+    }
+
+    // Verify the shop matches
+    if (decodedState.shop !== shop) {
+      return redirect('/dashboard/seller/integrations?error=shop_mismatch');
     }
 
     // Exchange authorization code for access token
@@ -53,11 +59,13 @@ export async function GET(request: NextRequest) {
         client_secret: process.env.SHOPIFY_CLIENT_SECRET,
         code,
       }),
+      signal: AbortSignal.timeout(15000) // 15 second timeout
     });
 
     if (!tokenResponse.ok) {
-      console.error('Token exchange failed:', tokenResponse.status);
-      return redirect('/auth/connect-store?error=token_exchange_failed');
+      const errorText = await tokenResponse.text();
+      console.error('Token exchange failed:', tokenResponse.status, errorText);
+      return redirect('/dashboard/seller/integrations?error=token_exchange_failed');
     }
 
     const tokenData = await tokenResponse.json();
@@ -69,23 +77,19 @@ export async function GET(request: NextRequest) {
         'X-Shopify-Access-Token': accessToken,
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(15000) // 15 second timeout
     });
 
     if (!storeResponse.ok) {
       console.error('Failed to get store info:', storeResponse.status);
-      return redirect('/auth/connect-store?error=store_info_failed');
+      return redirect('/dashboard/seller/integrations?error=store_info_failed');
     }
 
     const storeData = await storeResponse.json();
     const storeInfo = storeData.shop;
 
-    if (isInstallFlow) {
-      // Handle install flow - create a pending integration
-      await handleInstallFlow(shop, accessToken, scope, storeInfo);
-      return redirect(`/auth/connect-store?shop=${shop}&installed=true`);
-    } else {
-      // Handle regular user flow - your existing logic
-      await connectToDatabase();
+    // Connect to database
+    await connectToDatabase();
 
     // Check if integration already exists
     const existingIntegration = await UserIntegration.findOne({
@@ -96,16 +100,16 @@ export async function GET(request: NextRequest) {
     });
 
     let integration;
-    let isNewIntegration = false;
 
     if (existingIntegration) {
-      integration = existingIntegration;
       // Update existing integration
+      integration = existingIntegration;
       integration.connectionData.accessToken = accessToken;
       integration.connectionData.scope = scope;
       integration.connectionData.storeInfo = storeInfo;
       integration.status = IntegrationStatus.CONNECTED;
       integration.lastSyncAt = new Date();
+      integration.updatedAt = new Date();
     } else {
       // Create new integration
       integration = new UserIntegration({
@@ -126,41 +130,33 @@ export async function GET(request: NextRequest) {
           totalOrdersSynced: 0,
           syncErrors: 0
         },
-        isActive: true
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
-      isNewIntegration = true;
     }
 
-    // Create webhooks before saving to database
+    // Create webhooks
     const webhookSuccess = await createShopifyWebhooks(shop, accessToken, integration._id?.toString() || 'temp');
     
     if (!webhookSuccess) {
-      console.error('Failed to create Shopify webhooks - aborting integration');
-      return redirect('/dashboard/seller/integrations?error=webhook_creation_failed');
+      console.error('Failed to create Shopify webhooks');
+      // Don't fail the integration, just log the error
+      // Webhooks can be created later if needed
     }
 
-    // Only save to database if webhooks were created successfully
+    // Save integration to database
     await integration.save();
 
-    // Redirect to app UI immediately after authentication
-    return redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?success=shopify_connected`);
-      return redirect(`/dashboard/seller/integrations?success=shopify_connected`);
-    }
+    // Redirect to success page
+    return redirect('/dashboard/seller/integrations?success=shopify_connected');
 
   } catch (error) {
     console.error('Shopify callback error:', error);
-    return redirect('/auth/connect-store?error=internal_error');
+    return redirect('/dashboard/seller/integrations?error=internal_error');
   }
 }
 
-async function handleInstallFlow(shop: string, accessToken: string, scope: string, storeInfo: any) {
-  // Create webhooks for compliance
-  await createShopifyWebhooks(shop, accessToken, 'pending');
-  
-  // Store install information for when user actually connects
-  // You might want to store this in a separate table or cache
-  console.log('App installed for shop:', shop);
-}
 async function createShopifyWebhooks(shop: string, accessToken: string, integrationId: string): Promise<boolean> {
   try {
     const baseWebhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/shopify`;
@@ -175,58 +171,76 @@ async function createShopifyWebhooks(shop: string, accessToken: string, integrat
 
     // Optional business webhooks
     const businessWebhooks = [
-      'orders/create'
+      'orders/create',
+      'orders/updated',
+      'orders/paid',
+      'orders/cancelled'
     ];
 
     let allWebhooksCreated = true;
 
     // Create mandatory compliance webhooks first
     for (const topic of mandatoryWebhooks) {
-      const webhookResponse = await fetch(`https://${shop}/admin/api/2023-10/webhooks.json`, {
-        method: 'POST',
-        headers: {
-          'X-Shopify-Access-Token': accessToken,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          webhook: {
-            topic,
-            address: `${baseWebhookUrl}?integrationId=${integrationId}&topic=${topic}`,
-            format: 'json'
-          }
-        })
-      });
+      try {
+        const webhookResponse = await fetch(`https://${shop}/admin/api/2023-10/webhooks.json`, {
+          method: 'POST',
+          headers: {
+            'X-Shopify-Access-Token': accessToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            webhook: {
+              topic,
+              address: `${baseWebhookUrl}?integrationId=${integrationId}&topic=${topic}`,
+              format: 'json'
+            }
+          }),
+          signal: AbortSignal.timeout(10000) // 10 second timeout
+        });
 
-      if (!webhookResponse.ok) {
-        console.error(`Failed to create mandatory webhook ${topic}:`, webhookResponse.status);
+        if (!webhookResponse.ok) {
+          const errorText = await webhookResponse.text();
+          console.error(`Failed to create mandatory webhook ${topic}:`, webhookResponse.status, errorText);
+          allWebhooksCreated = false;
+        } else {
+          console.log(`Successfully created mandatory webhook: ${topic}`);
+        }
+      } catch (error) {
+        console.error(`Error creating mandatory webhook ${topic}:`, error);
         allWebhooksCreated = false;
       }
     }
 
     // Create business webhooks (optional - don't fail if these don't work)
     for (const topic of businessWebhooks) {
-      const webhookResponse = await fetch(`https://${shop}/admin/api/2023-10/webhooks.json`, {
-        method: 'POST',
-        headers: {
-          'X-Shopify-Access-Token': accessToken,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          webhook: {
-            topic,
-            address: `${baseWebhookUrl}?integrationId=${integrationId}&topic=${topic}`,
-            format: 'json'
-          }
-        })
-      });
+      try {
+        const webhookResponse = await fetch(`https://${shop}/admin/api/2023-10/webhooks.json`, {
+          method: 'POST',
+          headers: {
+            'X-Shopify-Access-Token': accessToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            webhook: {
+              topic,
+              address: `${baseWebhookUrl}?integrationId=${integrationId}&topic=${topic}`,
+              format: 'json'
+            }
+          }),
+          signal: AbortSignal.timeout(10000) // 10 second timeout
+        });
 
-      if (!webhookResponse.ok) {
-        console.warn(`Failed to create business webhook ${topic}:`, webhookResponse.status);
-        // Don't fail for business webhooks
+        if (!webhookResponse.ok) {
+          const errorText = await webhookResponse.text();
+          console.warn(`Failed to create business webhook ${topic}:`, webhookResponse.status, errorText);
+        } else {
+          console.log(`Successfully created business webhook: ${topic}`);
+        }
+      } catch (error) {
+        console.warn(`Error creating business webhook ${topic}:`, error);
       }
     }
 
-    console.log('Successfully created Shopify webhooks');
     return allWebhooksCreated;
   } catch (error) {
     console.error('Failed to create Shopify webhooks:', error);

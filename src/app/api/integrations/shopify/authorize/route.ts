@@ -1,24 +1,35 @@
-// app/api/integrations/shopify/auth/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/config/auth';
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const { searchParams } = request.nextUrl;
-    const shop = searchParams.get('shop');
+    const body = await request.json();
+    const { storeUrl, warehouseId } = body;
     
-    if (!shop) {
-      return NextResponse.json({ error: 'Shop parameter is required' }, { status: 400 });
+    if (!storeUrl) {
+      return NextResponse.json({ error: 'Store URL is required' }, { status: 400 });
+    }
+
+    // Get the current user session
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
     }
 
     // Clean shop domain
-    const cleanShop = shop.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    let cleanShop = storeUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
     
+    // If it's not a .myshopify.com domain, convert it
     if (!cleanShop.endsWith('.myshopify.com')) {
-      return NextResponse.json({ error: 'Invalid shop domain' }, { status: 400 });
+      // Extract the store name from custom domain
+      const storeName = cleanShop.split('.')[0];
+      cleanShop = `${storeName}.myshopify.com`;
     }
 
-    // For install flow, we'll use a temporary state since we don't have user session yet
-    const state = generateInstallState(cleanShop);
+    // Generate state with actual user ID
+    const state = generateUserState(session.user.id, warehouseId || '', cleanShop);
     
     const redirectUri = `${process.env.NEXTAUTH_URL}/api/integrations/shopify/callback`;
     
@@ -39,8 +50,8 @@ export async function GET(request: NextRequest) {
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
       `&state=${encodeURIComponent(state)}`;
 
-    // Redirect to Shopify OAuth
-    return Response.redirect(authUrl);
+    // Return the auth URL for frontend to redirect
+    return NextResponse.json({ authUrl });
     
   } catch (error) {
     console.error('Shopify auth error:', error);
@@ -48,8 +59,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function generateInstallState(shop: string): string {
+function generateUserState(userId: string, warehouseId: string, shop: string): string {
   const timestamp = Date.now().toString();
   const random = Math.random().toString(36).substring(7);
-  return Buffer.from(`install:${shop}:${timestamp}:${random}`).toString('base64');
+  return Buffer.from(`user:${userId}:${warehouseId}:${shop}:${timestamp}:${random}`).toString('base64');
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ChevronDown,
   Globe,
@@ -46,6 +47,7 @@ import { OrderStatus } from "@/lib/db/models/order";
 import { UserRole } from "@/lib/db/models/user";
 import { OrderTableData, WarehouseOption } from "./order-table-types";
 import { ColumnVisibility } from "./column-toggle";
+import { MakeCallButton } from "@/components/call-center/make-call-button";
 
 interface OrderTableRowProps {
   order: OrderTableData;
@@ -67,6 +69,16 @@ export default function OrderTableRow({
   columnVisibility,
 }: OrderTableRowProps) {
   const t = useTranslations();
+  const router = useRouter();
+
+  const handleCallComplete = (callData: {
+    phoneNumber: string
+    status: 'answered' | 'unreached' | 'busy' | 'invalid'
+    notes?: string
+  }) => {
+    toast.success(`Call completed - Status: ${callData.status}`)
+    router.refresh()
+  };
   
   // Get status badge styling
   const getStatusBadge = (status: OrderStatus) => {
@@ -669,10 +681,16 @@ export default function OrderTableRow({
             {/* Call Center Actions */}
             {(userRole === UserRole.CALL_CENTER || isAdminOrModerator) && (
               <>
-                <DropdownMenuItem className="cursor-pointer">
-                  <PhoneCall className="mr-2 h-4 w-4" />
-                  Make Call
-                </DropdownMenuItem>
+                <div className="px-2 py-1.5">
+                  <MakeCallButton
+                    orderId={order._id}
+                    customerName={order.customer.name}
+                    phoneNumbers={order.customer.phoneNumbers}
+                    onCallComplete={handleCallComplete}
+                    size="sm"
+                    className="w-full"
+                  />
+                </div>
 
                 <DropdownMenuItem className="cursor-pointer">
                   <Phone className="mr-2 h-4 w-4" />
