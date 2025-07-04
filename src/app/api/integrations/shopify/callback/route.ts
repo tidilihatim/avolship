@@ -161,89 +161,33 @@ async function createShopifyWebhooks(shop: string, accessToken: string, integrat
   try {
     const baseWebhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/shopify`;
     
-    // Mandatory compliance webhooks
-    const mandatoryWebhooks = [
-      'app/uninstalled',
-      'customers/data_request',
-      'customers/redact',
-      'shop/redact'
-    ];
-
-    // Optional business webhooks
-    const businessWebhooks = [
-      'orders/create',
-      'orders/updated',
-      'orders/paid',
-      'orders/cancelled'
-    ];
-
-    let allWebhooksCreated = true;
-
-    // Create mandatory compliance webhooks first
-    for (const topic of mandatoryWebhooks) {
-      try {
-        const webhookResponse = await fetch(`https://${shop}/admin/api/2023-10/webhooks.json`, {
-          method: 'POST',
-          headers: {
-            'X-Shopify-Access-Token': accessToken,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            webhook: {
-              topic,
-              address: `${baseWebhookUrl}?integrationId=${integrationId}&topic=${topic}`,
-              format: 'json'
-            }
-          }),
-          signal: AbortSignal.timeout(10000) // 10 second timeout
-        });
-
-        if (!webhookResponse.ok) {
-          const errorText = await webhookResponse.text();
-          console.error(`Failed to create mandatory webhook ${topic}:`, webhookResponse.status, errorText);
-          allWebhooksCreated = false;
-        } else {
-          console.log(`Successfully created mandatory webhook: ${topic}`);
+    // Create only orders/create webhook
+    const webhookResponse = await fetch(`https://${shop}/admin/api/2023-10/webhooks.json`, {
+      method: 'POST',
+      headers: {
+        'X-Shopify-Access-Token': accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        webhook: {
+          topic: 'orders/create',
+          address: `${baseWebhookUrl}?integrationId=${integrationId}&topic=orders/create`,
+          format: 'json'
         }
-      } catch (error) {
-        console.error(`Error creating mandatory webhook ${topic}:`, error);
-        allWebhooksCreated = false;
-      }
+      }),
+      signal: AbortSignal.timeout(10000) // 10 second timeout
+    });
+
+    if (!webhookResponse.ok) {
+      const errorText = await webhookResponse.text();
+      console.error('Failed to create orders/create webhook:', webhookResponse.status, errorText);
+      return false;
     }
 
-    // Create business webhooks (optional - don't fail if these don't work)
-    for (const topic of businessWebhooks) {
-      try {
-        const webhookResponse = await fetch(`https://${shop}/admin/api/2023-10/webhooks.json`, {
-          method: 'POST',
-          headers: {
-            'X-Shopify-Access-Token': accessToken,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            webhook: {
-              topic,
-              address: `${baseWebhookUrl}?integrationId=${integrationId}&topic=${topic}`,
-              format: 'json'
-            }
-          }),
-          signal: AbortSignal.timeout(10000) // 10 second timeout
-        });
-
-        if (!webhookResponse.ok) {
-          const errorText = await webhookResponse.text();
-          console.warn(`Failed to create business webhook ${topic}:`, webhookResponse.status, errorText);
-        } else {
-          console.log(`Successfully created business webhook: ${topic}`);
-        }
-      } catch (error) {
-        console.warn(`Error creating business webhook ${topic}:`, error);
-      }
-    }
-
-    return allWebhooksCreated;
+    console.log('Successfully created orders/create webhook');
+    return true;
   } catch (error) {
-    console.error('Failed to create Shopify webhooks:', error);
+    console.error('Failed to create Shopify webhook:', error);
     return false;
   }
 }
