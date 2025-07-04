@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/config/auth';
+import { cookies } from 'next/headers';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { storeUrl, warehouseId } = body;
+    const { storeUrl } = body;
     
     if (!storeUrl) {
       return NextResponse.json({ error: 'Store URL is required' }, { status: 400 });
@@ -16,6 +17,14 @@ export async function POST(request: NextRequest) {
     
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
+    }
+
+    // Get warehouseId from cookies
+    const cookieStore = await cookies();
+    const warehouseId = cookieStore.get('selectedWarehouse')?.value || '';
+    
+    if (!warehouseId) {
+      return NextResponse.json({ error: 'No warehouse selected' }, { status: 400 });
     }
 
     // Clean shop domain
