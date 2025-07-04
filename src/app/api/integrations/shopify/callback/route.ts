@@ -184,7 +184,8 @@ async function createShopifyWebhooks(shop: string, accessToken: string, integrat
       return false;
     }
 
-    console.log('Successfully created orders/create webhook');
+    const webhookData = await webhookResponse.json();
+    console.log('Successfully created orders/create webhook:', webhookData);
     return true;
   } catch (error) {
     console.error('Failed to create Shopify webhook:', error);
