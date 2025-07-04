@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { redirect } from 'next/navigation';
 import { connectToDatabase } from '@/lib/db/mongoose';
 import UserIntegration, { IntegrationMethod, IntegrationStatus } from '@/lib/db/models/user-integration';
 
@@ -14,11 +13,11 @@ export async function GET(request: NextRequest) {
     // Handle OAuth errors
     if (error) {
       const errorParam = encodeURIComponent(error === 'access_denied' ? 'access_denied' : 'authorization_failed');
-      return redirect(`/dashboard/seller/integrations?error=${errorParam}`);
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=${errorParam}`);
     }
 
     if (!code || !state || !shop) {
-      return redirect('/dashboard/seller/integrations?error=missing_parameters');
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=missing_parameters`);
     }
 
     // Decode state parameter
@@ -40,12 +39,12 @@ export async function GET(request: NextRequest) {
       };
     } catch (err) {
       console.error('State decode error:', err);
-      return redirect('/dashboard/seller/integrations?error=invalid_state');
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=invalid_state`);
     }
 
     // Verify the shop matches
     if (decodedState.shop !== shop) {
-      return redirect('/dashboard/seller/integrations?error=shop_mismatch');
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=shop_mismatch`);
     }
 
     // Exchange authorization code for access token
@@ -65,7 +64,7 @@ export async function GET(request: NextRequest) {
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
       console.error('Token exchange failed:', tokenResponse.status, errorText);
-      return redirect('/dashboard/seller/integrations?error=token_exchange_failed');
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=token_exchange_failed`);
     }
 
     const tokenData = await tokenResponse.json();
@@ -82,7 +81,7 @@ export async function GET(request: NextRequest) {
 
     if (!storeResponse.ok) {
       console.error('Failed to get store info:', storeResponse.status);
-      return redirect('/dashboard/seller/integrations?error=store_info_failed');
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=store_info_failed`);
     }
 
     const storeData = await storeResponse.json();
@@ -136,28 +135,35 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Create webhooks
-    const webhookSuccess = await createShopifyWebhooks(shop, accessToken, integration._id?.toString() || 'temp');
+    // Create webhooks and get webhook data
+    const webhookData = await createShopifyWebhooks(shop, accessToken, integration._id?.toString() || 'temp');
     
-    if (!webhookSuccess) {
-      console.error('Failed to create Shopify webhooks');
-      // Don't fail the integration, just log the error
-      // Webhooks can be created later if needed
+    if (!webhookData) {
+      console.error('Failed to create Shopify webhooks - aborting integration');
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=webhook_creation_failed`);
     }
+
+    // Store webhook subscription info in integration
+    integration.connectionData.webhookSubscriptions = [{
+      topic: 'orders/create',
+      id: webhookData.id,
+      target_url: webhookData.address,
+      createdAt: new Date()
+    }];
 
     // Save integration to database
     await integration.save();
 
     // Redirect to success page
-    return redirect('/dashboard/seller/integrations?success=shopify_connected');
+    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?success=shopify_connected`);
 
   } catch (error) {
     console.error('Shopify callback error:', error);
-    return redirect('/dashboard/seller/integrations?error=internal_error');
+    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=internal_error`);
   }
 }
 
-async function createShopifyWebhooks(shop: string, accessToken: string, integrationId: string): Promise<boolean> {
+async function createShopifyWebhooks(shop: string, accessToken: string, integrationId: string): Promise<any | null> {
   try {
     const baseWebhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/shopify`;
     
@@ -181,14 +187,14 @@ async function createShopifyWebhooks(shop: string, accessToken: string, integrat
     if (!webhookResponse.ok) {
       const errorText = await webhookResponse.text();
       console.error('Failed to create orders/create webhook:', webhookResponse.status, errorText);
-      return false;
+      return null;
     }
 
     const webhookData = await webhookResponse.json();
     console.log('Successfully created orders/create webhook:', webhookData);
-    return true;
+    return webhookData.webhook;
   } catch (error) {
     console.error('Failed to create Shopify webhook:', error);
-    return false;
+    return null;
   }
 }
