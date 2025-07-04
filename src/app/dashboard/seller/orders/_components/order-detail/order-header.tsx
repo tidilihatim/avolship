@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { OrderStatus } from '@/lib/db/models/order';
 import { UserRole } from '@/lib/db/models/user';
+import { MakeCallButton } from '@/components/call-center/make-call-button';
 
 interface OrderHeaderProps {
   order: any;
@@ -61,9 +62,14 @@ export default function OrderHeader({
           {/* Action Buttons - Mobile */}
           <div className="flex items-center gap-2 sm:hidden">
             {(isCallCenter || isAdminOrModerator) && (
-              <Button variant="default" size="sm">
-                <PhoneCall className="h-4 w-4" />
-              </Button>
+              <MakeCallButton
+                orderId={order._id}
+                customerName={order.customer?.name || 'Unknown Customer'}
+                phoneNumbers={[order.customer?.phone, order.customer?.altPhone].filter(Boolean)}
+                variant="default"
+                size="sm"
+                className="p-2"
+              />
             )}
             <Button variant="outline" size="sm" asChild>
               <Link href={`/dashboard/${userRole}/orders/${order._id}#history`}>
@@ -110,10 +116,13 @@ export default function OrderHeader({
           <div className="hidden sm:flex items-center gap-3">
             {(isCallCenter || isAdminOrModerator) && (
               <>
-                <Button variant="default" className="h-11 px-6">
-                  <PhoneCall className="h-4 w-4 mr-2" />
-                  {t('actions.makeCall')}
-                </Button>
+                <MakeCallButton
+                  orderId={order._id}
+                  customerName={order.customer?.name || 'Unknown Customer'}
+                  phoneNumbers={order?.customer?.phoneNumbers}
+                  variant="default"
+                  className="h-11 px-6"
+                />
                 <Button variant="outline" className="h-11 px-6">
                   {t('actions.updateStatus')}
                 </Button>

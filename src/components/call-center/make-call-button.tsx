@@ -12,6 +12,7 @@ import { Phone, PhoneCall, Square, Mic, MicOff, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { getAccessToken } from '@/app/actions/cookie'
+import { useRouter } from 'next/navigation';
 
 interface CallRecordingData {
   recordingId: string
@@ -56,6 +57,7 @@ export function MakeCallButton({
   const [isRecording, setIsRecording] = useState(false)
   const [isCallInProgress, setIsCallInProgress] = useState(false)
   const [callStatus, setCallStatus] = useState<'answered' | 'unreached' | 'busy' | 'invalid' | ''>('')
+  const router = useRouter()
   const [callNotes, setCallNotes] = useState('')
   const [recordingTime, setRecordingTime] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -105,11 +107,7 @@ export function MakeCallButton({
         }
       }
 
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm;codecs=opus' })
-        setRecordingBlob(blob)
-        stream.getTracks().forEach(track => track.stop())
-      }
+      // onstop handler will be set in stopRecording function
 
       mediaRecorder.start(1000)
       setIsRecording(true)
@@ -128,14 +126,25 @@ export function MakeCallButton({
     }
   }
 
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop()
-    }
-    setIsRecording(false)
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-    }
+  const stopRecording = (): Promise<Blob | null> => {
+    return new Promise((resolve) => {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.onstop = () => {
+          const blob = new Blob(audioChunksRef.current, { type: 'audio/webm;codecs=opus' })
+          setRecordingBlob(blob)
+          mediaRecorderRef.current?.stream.getTracks().forEach(track => track.stop())
+          resolve(blob)
+        }
+        mediaRecorderRef.current.stop()
+      } else {
+        resolve(null)
+      }
+      
+      setIsRecording(false)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    })
   }
 
   const handleMakeCall = async () => {
@@ -158,7 +167,7 @@ export function MakeCallButton({
     }
 
     setIsProcessing(true)
-    stopRecording()
+    const recordingBlob = await stopRecording()
 
     try {
       let recordingData: CallRecordingData | undefined
@@ -229,6 +238,8 @@ export function MakeCallButton({
           notes: callNotes.trim() || undefined,
           recording: recordingData,
         })
+
+        router.refresh()
         handleDialogClose()
       } else {
         const errorText = await response.text()

@@ -209,6 +209,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
             <CallHistoryCard
               formatDate={formatDate}
               order={order}
+              userRole={userRole as UserRole}
             />
 
             {/* Warehouse Information */}
