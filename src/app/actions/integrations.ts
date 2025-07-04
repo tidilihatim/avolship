@@ -36,17 +36,20 @@ async function createDefaultPlatforms() {
       name: 'Shopify',
       description: 'Global e-commerce platform',
       iconPath: '/icons/shopify.svg',
-      isActive: false, // Coming soon
+      isActive: true,
       directIntegrationEnabled: true,
       googleSheetsEnabled: true,
       isRecommended: false,
       sortOrder: 2,
       settings: {
+        oauthClientId: process.env.SHOPIFY_CLIENT_ID || '',
+        oauthClientSecret: process.env.SHOPIFY_CLIENT_SECRET || '',
         apiEndpoint: 'https://admin.shopify.com',
         supportedFeatures: [
-          'Order management',
-          'Product sync', 
-          'Customer data'
+          'Real-time orders',
+          'Auto fulfillment',
+          'Product sync',
+          'Inventory management'
         ]
       }
     },
@@ -496,6 +499,29 @@ export async function disconnectIntegration(integrationId: string) {
             console.log(`Deleted YouCan webhook subscription: ${subscription.id}`);
           } catch (error) {
             console.error(`Failed to delete YouCan webhook ${subscription.id}:`, error);
+          }
+        }
+      }
+    }
+
+    // If it's a Shopify integration, delete webhooks
+    if (integration.platformId === 'shopify' && integration.connectionData?.webhookSubscriptions) {
+      const accessToken = integration.connectionData.accessToken;
+      const shop = integration.connectionData.shop;
+      
+      if (accessToken && shop) {
+        for (const subscription of integration.connectionData.webhookSubscriptions) {
+          try {
+            await fetch(`https://${shop}/admin/api/2023-10/webhooks/${subscription.id}.json`, {
+              method: 'DELETE',
+              headers: {
+                'X-Shopify-Access-Token': accessToken,
+                'Content-Type': 'application/json',
+              }
+            });
+            console.log(`Deleted Shopify webhook: ${subscription.id}`);
+          } catch (error) {
+            console.error(`Failed to delete Shopify webhook ${subscription.id}:`, error);
           }
         }
       }

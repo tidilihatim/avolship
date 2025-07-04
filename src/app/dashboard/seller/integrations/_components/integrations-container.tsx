@@ -6,6 +6,7 @@ import { IntegrationsHeader } from './integrations-header';
 import { IntegrationsPlatforms } from './integrations-platforms';
 import { YouCanSetupDialog } from './youcan-setup-dialog';
 import { WooCommerceSetupDialog } from './woocommerce-setup-dialog';
+import { ShopifySetupDialog } from './shopify-setup-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 
@@ -89,6 +90,11 @@ export function IntegrationsContainer({
         open={selectedPlatform === 'woocommerce'}
         onClose={handleDialogClose}
       />
+      
+      <ShopifySetupDialog 
+        open={selectedPlatform === 'shopify'}
+        onClose={handleDialogClose}
+      />
     </div>
   );
 }
@@ -116,6 +122,8 @@ function getSuccessMessage(success: string): string {
       return 'YouCan integration connected successfully! Orders will now sync automatically.';
     case 'woocommerce_connected':
       return 'WooCommerce integration connected successfully! Orders will now sync automatically.';
+    case 'shopify_connected':
+      return 'Shopify integration connected successfully! Orders will now sync automatically.';
     default:
       return 'Integration connected successfully!';
   }
