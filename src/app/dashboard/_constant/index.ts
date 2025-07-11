@@ -72,7 +72,7 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
     },
     {
       name:"Invoices",
-      href:"/dashboard/admin/invoices",
+      href:"/dashboard/seller/invoices",
       icon: DollarSign
     },
     {
