@@ -2,7 +2,7 @@
 
 import React, { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
-import { PlusCircle, Search, FilterX, Filter, MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react';
+import { PlusCircle, Search, FilterX, Filter, MoreHorizontal, Edit, Trash2, Eye, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { toast } from "sonner";
@@ -608,6 +608,17 @@ export default function UserList({ users, allCountries = [], pagination, error, 
                                 {t('common.edit')}
                               </Link>
                             </DropdownMenuItem>
+                            
+                            {/* Generate Invoice for Sellers */}
+                            {user.role === UserRole.SELLER && user.status === UserStatus.APPROVED && (
+                              <DropdownMenuItem asChild>
+                                <Link href={`/dashboard/admin/users/${user._id}/invoice/generate`}>
+                                  <FileText className="mr-2 h-4 w-4" />
+                                  Generate Invoice
+                                </Link>
+                              </DropdownMenuItem>
+                            )}
+                            
                             <DropdownMenuSeparator />
                             
                             {/* Status Actions */}

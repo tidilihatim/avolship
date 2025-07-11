@@ -93,6 +93,21 @@ export default function OrderTableRow({
         className:
           "bg-green-50 text-green-700 hover:bg-green-50 border-green-200",
       },
+      [OrderStatus.SHIPPED]: {
+        label: t("orders.statuses.shipped"),
+        className:
+          "bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200",
+      },
+      [OrderStatus.DELIVERED]: {
+        label: t("orders.statuses.delivered"),
+        className:
+          "bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200",
+      },
+      [OrderStatus.REFUNDED]: {
+        label: t("orders.statuses.refunded"),
+        className:
+          "bg-amber-50 text-amber-700 hover:bg-amber-50 border-amber-200",
+      },
       [OrderStatus.CANCELLED]: {
         label: t("orders.statuses.cancelled"),
         className: "bg-red-50 text-red-700 hover:bg-red-50 border-red-200",

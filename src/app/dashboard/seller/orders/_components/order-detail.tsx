@@ -59,6 +59,24 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
         className: 'border-primary bg-primary/10',
         icon: CheckCircle
       },
+      [OrderStatus.SHIPPED]: { 
+        label: t('statuses.shipped'), 
+        description: t('statusDescriptions.shipped'),
+        className: 'border-blue-500 bg-blue-500/10',
+        icon: CheckCircle
+      },
+      [OrderStatus.DELIVERED]: { 
+        label: t('statuses.delivered'), 
+        description: t('statusDescriptions.delivered'),
+        className: 'border-green-500 bg-green-500/10',
+        icon: CheckCircle
+      },
+      [OrderStatus.REFUNDED]: { 
+        label: t('statuses.refunded'), 
+        description: t('statusDescriptions.refunded'),
+        className: 'border-yellow-500 bg-yellow-500/10',
+        icon: AlertTriangle
+      },
       [OrderStatus.CANCELLED]: { 
         label: t('statuses.cancelled'), 
         description: t('statusDescriptions.cancelled'),
@@ -100,7 +118,7 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
 
 
   // Format price with currency based on warehouse
-  const formatPrice = (price: number, warehouseId?: string) => {
+  const formatPrice = (price: number) => {
     // Get currency from order's warehouse data
     const currency = order.warehouseCurrency || 'USD';
     return new Intl.NumberFormat('en-US', {

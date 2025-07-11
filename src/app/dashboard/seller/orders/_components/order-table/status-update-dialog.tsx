@@ -175,6 +175,18 @@ export default function StatusUpdateDialog({
         label: t("statuses.confirmed"),
         className: "bg-green-50 text-green-700 border-green-200",
       },
+      [OrderStatus.SHIPPED]: {
+        label: t("statuses.shipped"),
+        className: "bg-blue-50 text-blue-700 border-blue-200",
+      },
+      [OrderStatus.DELIVERED]: {
+        label: t("statuses.delivered"),
+        className: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      },
+      [OrderStatus.REFUNDED]: {
+        label: t("statuses.refunded"),
+        className: "bg-indigo-50 text-indigo-700 border-indigo-200",
+      },
       [OrderStatus.CANCELLED]: {
         label: t("statuses.cancelled"),
         className: "bg-red-50 text-red-700 border-red-200",

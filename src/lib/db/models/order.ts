@@ -7,6 +7,9 @@ import mongoose, { Document, Schema } from 'mongoose';
 export enum OrderStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
+  SHIPPED = 'shipped',
+  DELIVERED = 'delivered',
+  REFUNDED = 'refunded',
   CANCELLED = 'cancelled',
   WRONG_NUMBER = 'wrong_number',
   DOUBLE = 'double',

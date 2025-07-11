@@ -60,6 +60,14 @@ export interface IExpedition extends Document {
   estimatedDelivery?: Date;
   actualDelivery?: Date;
   
+  // Payment Tracking
+  isPaid: boolean;
+  paidAt?: Date;
+  paidBy?: mongoose.Types.ObjectId;
+  paymentAmount?: number;
+  paymentCurrency?: string;
+  paymentReference?: string;
+  
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
@@ -222,6 +230,32 @@ const ExpeditionSchema = new Schema<IExpedition>(
     },
     actualDelivery: {
       type: Date,
+    },
+    
+    // Payment Tracking
+    isPaid: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    paidAt: {
+      type: Date,
+    },
+    paidBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    paymentAmount: {
+      type: Number,
+      min: [0, 'Payment amount cannot be negative'],
+    },
+    paymentCurrency: {
+      type: String,
+      trim: true,
+    },
+    paymentReference: {
+      type: String,
+      trim: true,
     },
   },
   {

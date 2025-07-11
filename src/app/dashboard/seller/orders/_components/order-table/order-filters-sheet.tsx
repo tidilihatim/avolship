@@ -87,6 +87,15 @@ export default function OrderFiltersSheet({
       [OrderStatus.CONFIRMED]: {
         label: t("orders.statuses.confirmed"),
       },
+      [OrderStatus.SHIPPED]: {
+        label: t("orders.statuses.shipped"),
+      },
+      [OrderStatus.DELIVERED]: {
+        label: t("orders.statuses.delivered"),
+      },
+      [OrderStatus.REFUNDED]: {
+        label: t("orders.statuses.refunded"),
+      },
       [OrderStatus.CANCELLED]: {
         label: t("orders.statuses.cancelled"),
       },

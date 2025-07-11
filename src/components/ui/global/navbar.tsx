@@ -165,7 +165,7 @@ export default function Navbar({ currentLocale }: NavbarProps) {
 
                 {/* Get Started Button */}
                 <Link
-                  href="/auth/register"
+                  href="/dashboard"
                   className="inline-flex items-center justify-center px-5 py-2.5 bg-[#f37922] hover:bg-[#f37922]/90 text-white text-sm font-medium rounded-lg transition-colors shadow-sm hover:shadow-md"
                 >
                   {t('getStarted')}
