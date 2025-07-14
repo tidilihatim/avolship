@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { signOut } from "next-auth/react";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 /**
  * Content to display when user's account is pending approval
@@ -222,12 +223,11 @@ export default function StatusPending() {
           </CardContent>
 
           <CardFooter className="border-t bg-card flex flex-wrap gap-2 sm:gap-0 sm:flex-nowrap sm:justify-between">
-            <Button
-              variant="outline"
-              onClick={() => signOut()}
-            >
-              {t("pending.signOut")}
-            </Button>
+            <LogoutButton>
+              <Button variant="outline">
+                {t("pending.signOut")}
+              </Button>
+            </LogoutButton>
             <Button
               variant="outline"
               className="gap-2"

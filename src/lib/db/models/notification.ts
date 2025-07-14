@@ -99,6 +99,9 @@ const NotificationSchema = new Schema<INotification>(
 NotificationSchema.index({ userId: 1, read: 1 });
 NotificationSchema.index({ createdAt: 1 });
 NotificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // TTL index for auto-deletion
+NotificationSchema.index({ userId: 1, createdAt: -1 }); // For user notification lists
+NotificationSchema.index({ userId: 1, type: 1, read: 1 }); // For filtered queries
+NotificationSchema.index({ type: 1, createdAt: -1 }); // For admin monitoring
 
 // Create the model only if it doesn't already exist
 const Notification = mongoose.models?.Notification || 

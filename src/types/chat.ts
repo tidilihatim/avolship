@@ -21,6 +21,12 @@ export interface ChatRoom {
   updatedAt: Date;
 }
 
+export interface MessageReaction {
+  emoji: string;
+  userId: string;
+  createdAt: Date;
+}
+
 export interface ChatMessage {
   _id: string;
   chatRoom: string;
@@ -33,10 +39,39 @@ export interface ChatMessage {
   messageType: MessageType;
   content?: string;
   attachments?: MessageAttachment[];
+  
+  // Modern features
+  replyTo?: string | { // Message ID being replied to or full message object
+    _id: string;
+    content?: string;
+    sender: {
+      _id: string;
+      name: string;
+    };
+    messageType: MessageType | string;
+  };
+  isPinned: boolean;
+  isEdited: boolean;
+  editedAt?: Date;
+  editHistory?: Array<{
+    content: string;
+    editedAt: Date;
+    editedBy: string;
+  }>;
+  reactions: MessageReaction[];
+  status: 'sent' | 'delivered' | 'read';
+  readBy: Array<{
+    userId: string;
+    readAt: Date;
+  }>;
+  
+  // Legacy compatibility
   isRead: boolean;
   readAt?: Date;
+  
   createdAt: Date;
   updatedAt: Date;
+  deletedAt?: Date;
 }
 
 export interface MessageAttachment {

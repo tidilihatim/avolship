@@ -255,25 +255,24 @@ export const updateUser = withDbConnection(async (userId: string, formData: User
     }
 
     // Update user data
-    const updateData: any = {
-      name: sanitizedData.name,
-      email: sanitizedData.email,
-      role: sanitizedData.role,
-      status: sanitizedData.status,
-      phone: sanitizedData.phone,
-      businessName: sanitizedData.businessName,
-      businessInfo: sanitizedData.businessInfo,
-      serviceType: sanitizedData.serviceType,
-      country: sanitizedData.country,
-      twoFactorEnabled: sanitizedData.twoFactorEnabled
-    };
+    existingUser.name = sanitizedData.name;
+    existingUser.email = sanitizedData.email;
+    existingUser.role = sanitizedData.role;
+    existingUser.status = sanitizedData.status;
+    existingUser.phone = sanitizedData.phone;
+    existingUser.businessName = sanitizedData.businessName;
+    existingUser.businessInfo = sanitizedData.businessInfo;
+    existingUser.serviceType = sanitizedData.serviceType;
+    existingUser.country = sanitizedData.country;
+    existingUser.twoFactorEnabled = sanitizedData.twoFactorEnabled;
 
     // Only update password if provided
     if (sanitizedData.password && sanitizedData.password.trim().length > 0) {
-      updateData.password = sanitizedData.password;
+      existingUser.password = sanitizedData.password;
     }
 
-    await User.findByIdAndUpdate(userId, updateData);
+    // Save will trigger the pre-save middleware to hash the password
+    await existingUser.save();
 
     // Revalidate the users page
     revalidatePath('/dashboard/admin/users');

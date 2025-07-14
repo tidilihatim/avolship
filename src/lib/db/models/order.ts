@@ -419,11 +419,30 @@ const OrderSchema = new Schema<IOrder>(
 );
 
 // Indexes for better performance
+// Basic indexes
 OrderSchema.index({ sellerId: 1, createdAt: -1 });
 OrderSchema.index({ warehouseId: 1 });
 OrderSchema.index({ status: 1 });
 OrderSchema.index({ 'customer.name': 1, 'customer.phoneNumbers': 1, orderDate: 1 }); // For double order detection
 OrderSchema.index({ orderDate: 1, sellerId: 1 });
+
+// Additional compound indexes for common query patterns
+OrderSchema.index({ sellerId: 1, status: 1, createdAt: -1 }); // For seller dashboard filtering
+OrderSchema.index({ assignedAgent: 1, status: 1, lockExpiry: 1 }); // For call center queries
+OrderSchema.index({ isDouble: 1, sellerId: 1, createdAt: -1 }); // For duplicate order queries
+OrderSchema.index({ 'customer.phoneNumbers': 1 }); // For duplicate detection
+OrderSchema.index({ finalTotalPrice: 1 }); // For financial queries
+OrderSchema.index({ lockedBy: 1, lockExpiry: 1 }); // For lock cleanup
+OrderSchema.index({ assignedAgent: 1, lockExpiry: 1 }); // For agent workload
+OrderSchema.index({ warehouseId: 1, status: 1, createdAt: -1 }); // For warehouse filtering
+
+// Text index for search functionality
+OrderSchema.index({ 
+  'customer.name': 'text', 
+  orderId: 'text',
+  'customer.city': 'text',
+  'products.name': 'text'
+});
 
 // Pre-save middleware to auto-generate order ID
 OrderSchema.pre('save', async function (next) {

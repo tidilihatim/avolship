@@ -8,6 +8,7 @@ import {
   Settings,
   HelpCircle,
   X,
+  Bug,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -30,7 +31,7 @@ interface SidebarProps {
   onToggle: () => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
-  userType: "seller" | "admin" | "customer-support" | "delivery" | "provider";
+  userType: "seller" | "admin" | "support" | "call_center" | "delivery" | "provider";
 }
 
 interface NavItemProps {
@@ -108,6 +109,11 @@ export default function Sidebar({
   
   const bottomNavigation = [
     {
+      name: "test-logs",
+      href: `/dashboard/test-logs`,
+      icon: Bug,
+    },
+    {
       name: "settings",
       href: `/dashboard/${userType}/settings`,
       icon: Settings,
@@ -176,7 +182,7 @@ export default function Sidebar({
             <Avatar className="h-12 w-12">
               {status === "authenticated" ? (
                 <>
-                  <AvatarImage src="/avatars/user.jpg" alt="User" />
+                  <AvatarImage src={session?.user?.image || ""} alt="User" />
                   <AvatarFallback className="bg-primary text-primary-foreground font-bold">
                     {session?.user?.name?.charAt(0)?.toUpperCase() +
                       session?.user?.name?.slice(1)?.charAt(0)?.toUpperCase()}
@@ -206,7 +212,7 @@ export default function Sidebar({
             <Avatar className="h-12 w-12">
               {status === "authenticated" ? (
                 <>
-                  <AvatarImage src="/avatars/user.jpg" alt="User" />
+                  <AvatarImage src={session?.user?.image || ""} alt="User" />
                   <AvatarFallback className="bg-primary text-primary-foreground font-bold">
                     {session?.user?.name?.charAt(0)?.toUpperCase() +
                       session?.user?.name?.slice(1)?.charAt(0)?.toUpperCase()}
@@ -293,7 +299,7 @@ export default function Sidebar({
             <Avatar className="h-12 w-12">
               {status === "authenticated" ? (
                 <>
-                  <AvatarImage src="/avatars/user.jpg" alt="User" />
+                  <AvatarImage src={session?.user?.image || ""} alt="User" />
                   <AvatarFallback className="bg-primary text-primary-foreground font-bold">
                     {session?.user?.name?.charAt(0)?.toUpperCase() +
                       session?.user?.name?.slice(1)?.charAt(0)?.toUpperCase()}

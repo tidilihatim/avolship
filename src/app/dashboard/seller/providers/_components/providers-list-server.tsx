@@ -2,17 +2,21 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Eye, MessageCircle, Building2, MapPin } from 'lucide-react';
+import { Eye, MessageCircle, Building2, MapPin, Megaphone } from 'lucide-react';
 import { IUser, UserStatus, UserRole } from '@/lib/db/models/user';
 import { getUsers } from '@/app/actions/user';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslations } from 'next-intl';
 import { ProviderSearch } from '@/components/provider/provider-search';
 import { ProviderPagination } from '@/components/provider/provider-pagination';
+import FeaturedProviderCard from '@/components/ads/featured-provider-card';
+import { AdPlacement } from '@/types/featured-provider-ad';
+import { Separator } from '@/components/ui/separator';
 
 interface ProvidersData {
   users: IUser[];
@@ -28,10 +32,27 @@ interface ProvidersData {
 
 const ITEMS_PER_PAGE = 12;
 
+interface FeaturedAd {
+  _id: string;
+  title: string;
+  description: string;
+  ctaText: string;
+  ctaLink?: string;
+  provider: {
+    _id: string;
+    businessName: string;
+    businessInfo?: string;
+    serviceType?: string;
+    profileImage?: string;
+    country?: string;
+  };
+}
+
 export function ProvidersListServer() {
   const [data, setData] = useState<ProvidersData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [featuredAds, setFeaturedAds] = useState<FeaturedAd[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('providers');
@@ -56,6 +77,18 @@ export function ProvidersListServer() {
     
     router.push(url);
   }, [router]);
+
+  const fetchFeaturedAds = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/featured-ads?placement=${AdPlacement.SEARCH_RESULTS}&limit=3`);
+      if (response.ok) {
+        const data = await response.json();
+        setFeaturedAds(data.ads || []);
+      }
+    } catch (err) {
+      console.error('Error fetching featured ads:', err);
+    }
+  }, []);
 
   const fetchProviders = useCallback(async (page: number, search: string) => {
     try {
@@ -83,6 +116,10 @@ export function ProvidersListServer() {
   useEffect(() => {
     fetchProviders(currentPage, searchTerm);
   }, [fetchProviders, currentPage, searchTerm]);
+
+  useEffect(() => {
+    fetchFeaturedAds();
+  }, [fetchFeaturedAds]);
 
   const handlePageChange = (page: number) => {
     updateUrl(page, searchTerm);
@@ -170,11 +207,20 @@ export function ProvidersListServer() {
             {t('browseAndConnect')}
           </p>
         </div>
-        {data && (
-          <Badge variant="outline" className="text-sm">
-            {data.pagination.total} {t('providersFound')}
-          </Badge>
-        )}
+        <div className="flex items-center gap-4">
+          {data && (
+            <Badge variant="outline" className="text-sm">
+              {data.pagination.total} {t('providersFound')}
+            </Badge>
+          )}
+          <Link 
+            href="/dashboard/seller/featured-promotions"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+          >
+            <Megaphone className="mr-2 h-4 w-4" />
+            View All Promotions
+          </Link>
+        </div>
       </div>
 
       <ProviderSearch 
@@ -192,6 +238,27 @@ export function ProvidersListServer() {
         </Card>
       ) : (
         <div className="space-y-6" data-testid="providers-list">
+          {/* Featured Provider Ads */}
+          {featuredAds.length > 0 && (
+            <>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {featuredAds.map((ad) => (
+                  <FeaturedProviderCard
+                    key={ad._id}
+                    provider={ad.provider}
+                    ad={ad}
+                  />
+                ))}
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <Separator className="flex-1" />
+                <span className="text-sm text-muted-foreground px-2">All Providers</span>
+                <Separator className="flex-1" />
+              </div>
+            </>
+          )}
+
           <div className="grid gap-4">
             {data?.users.map((provider: any) => (
               <Card key={provider._id} className="hover:shadow-md transition-shadow" data-testid="provider-card">

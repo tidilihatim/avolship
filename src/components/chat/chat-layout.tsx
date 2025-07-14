@@ -7,7 +7,7 @@ import { ChatWindow } from './chat-window';
 import { ChatRoom } from '@/types/chat';
 
 interface ChatLayoutProps {
-  userRole: 'seller' | 'provider';
+  userRole: 'seller' | 'provider' | 'support';
   userId: string;
   chatRooms: ChatRoom[];
   onRefresh?: () => void;
@@ -27,10 +27,10 @@ export function ChatLayout({ userRole, userId, chatRooms, onRefresh, onMarkAsRea
   }, [initialSelectedChatRoom]);
 
   return (
-    <div className="flex h-full bg-background">
+    <div className="flex h-full overflow-hidden">
       {/* Sidebar */}
       <div className={cn(
-        "transition-all duration-300 ease-in-out border-r h-full",
+        "transition-all duration-300 ease-in-out border-r flex-shrink-0",
         isSidebarOpen ? "w-80" : "w-0 overflow-hidden"
       )}>
         <ChatSidebar
@@ -44,7 +44,7 @@ export function ChatLayout({ userRole, userId, chatRooms, onRefresh, onMarkAsRea
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col h-full min-h-0">
+      <div className="flex-1 min-w-0">
         <ChatWindow
           chatRoom={selectedChatRoom}
           userId={userId}

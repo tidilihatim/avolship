@@ -19,10 +19,14 @@ export default function CountUp({
   trigger = true,
 }: CountUpProps): JSX.Element {
   // Set state to hold the current count value
+  // Always start with 'start' value for consistent SSR
   const [count, setCount] = useState<number>(start);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    if (!trigger) return;
+    if (!trigger || hasAnimated) return;
+    
+    setHasAnimated(true);
 
     let startTime: number | undefined;
     let animationFrame: number;
@@ -53,7 +57,12 @@ export default function CountUp({
     return () => {
       cancelAnimationFrame(animationFrame);
     };
-  }, [start, end, duration, trigger, decimals]);
+  }, [start, end, duration, trigger, decimals, hasAnimated]);
 
-  return <>{count.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</>;
+  // Use a consistent number format to avoid hydration mismatches
+  const formattedCount = decimals > 0 
+    ? count.toFixed(decimals)
+    : Math.floor(count).toString();
+    
+  return <>{formattedCount}</>;
 }

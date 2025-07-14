@@ -9,10 +9,14 @@ const layout = async ({children}: {children: React.ReactNode}) => {
   const currentLoginUserRole = await getLoginUserRole();
   const currentLoginUserStatus = await getLoginUserStatus();
 
-  if(!currentLoginUserRole) return notFound();
+  // If no user role, redirect to login
+  if(!currentLoginUserRole) return redirect('/auth/login');
 
-  if(currentLoginUserRole!== UserRole.PROVIDER) return redirect(`/dashboard/${currentLoginUserRole}`);
-  if(currentLoginUserStatus !== UserStatus.APPROVED) redirect(`/dashboard/status`)
+  // If user is not a provider, redirect to their appropriate dashboard
+  if(currentLoginUserRole !== UserRole.PROVIDER) return redirect(`/dashboard/${currentLoginUserRole}`);
+  
+  // If user is not approved, redirect to status page
+  if(currentLoginUserStatus !== UserStatus.APPROVED) return redirect(`/dashboard/status`)
 
   return children
 }

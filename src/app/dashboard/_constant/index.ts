@@ -2,10 +2,10 @@ import {
   BarChart3, CreditCard, LayoutDashboard, 
   MessageCircle, Package, PlaneIcon, ShoppingCart, 
   Truck, User, Warehouse, Clock, Users, FileText, UserCheck,
-  Zap
+  Zap, Megaphone, ScrollText, Bug, Handshake, Trophy, Star, HelpCircle, Settings
 } from "lucide-react";
 
-type UserType = 'admin' | 'seller' | 'customer-support' | 'delivery' | 'provider' | 'call_center';
+type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center';
 
 // Define the structure of a navigation item
 interface NavigationItem {
@@ -36,6 +36,36 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name:"expeditions",
       href: "/dashboard/admin/expeditions",
       icon: PlaneIcon
+    },
+    {
+      name: "featured-ads",
+      href: "/dashboard/admin/featured-ads",
+      icon: Megaphone
+    },
+    {
+      name: "logs",
+      href: "/dashboard/admin/logs",
+      icon: ScrollText
+    },
+    {
+      name: "sourcing",
+      href: "/dashboard/admin/sourcing",
+      icon: Handshake
+    },
+    {
+      name: "leaderboard",
+      href: "/dashboard/admin/leaderboard",
+      icon: Trophy
+    },
+    {
+      name: "agent-ratings",
+      href: "/dashboard/admin/agent-ratings",
+      icon: Star
+    },
+    {
+      name: "support",
+      href: "/dashboard/admin/support",
+      icon: HelpCircle
     }
   ],
   seller: [
@@ -94,6 +124,21 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       href: "/dashboard/seller/integrations",
       icon: Zap
     },
+    {
+      name: "sourcing",
+      href: "/dashboard/seller/sourcing",
+      icon: Handshake
+    },
+    {
+      name: "leaderboard",
+      href: "/dashboard/seller/leaderboard",
+      icon: Trophy
+    },
+    {
+      name: "support",
+      href: "/dashboard/seller/support",
+      icon: HelpCircle
+    },
   ],
   'call_center': [
     {
@@ -121,15 +166,50 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       href: "/dashboard/call_center/reports",
       icon: FileText,
     },
+    {
+      name: "leaderboard",
+      href: "/dashboard/call_center/leaderboard",
+      icon: Trophy,
+    },
   ],
-  // Provide empty arrays or add real data if needed
-  'customer-support': [],
+  'support': [
+    {
+      name: "overview",
+      href: "/dashboard/support",
+      icon: LayoutDashboard,
+    },
+    {
+      name: "tickets",
+      href: "/dashboard/support/tickets",
+      icon: Bug,
+    },
+    {
+      name: "chat",
+      href: "/dashboard/support/chat",
+      icon: MessageCircle,
+    },
+    {
+      name: "analytics",
+      href: "/dashboard/support/analytics",
+      icon: BarChart3,
+    },
+    {
+      name: "settings",
+      href: "/dashboard/support/settings",
+      icon: Settings,
+    }
+  ],
   'delivery': [],
   'provider': [
     {
       name: "profile",
       href: "/dashboard/provider/profile",
       icon: User,
+    },
+    {
+      name: "featured-ads",
+      href: "/dashboard/provider/featured-ads",
+      icon: Megaphone,
     },
     {
       name: "chat",
@@ -140,6 +220,21 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name:"expeditions",
       href:"/dashboard/provider/expeditions",
       icon:PlaneIcon
+    },
+    {
+      name: "sourcing",
+      href: "/dashboard/provider/sourcing",
+      icon: Handshake
+    },
+    {
+      name: "leaderboard",
+      href: "/dashboard/provider/leaderboard",
+      icon: Trophy
+    },
+    {
+      name: "support",
+      href: "/dashboard/provider/support",
+      icon: HelpCircle
     }
   ]
 

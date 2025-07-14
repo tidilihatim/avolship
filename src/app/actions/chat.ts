@@ -16,20 +16,51 @@ export async function getUserChatRooms(userId: string): Promise<{ success: boole
       return { success: false, error: 'User not found' };
     }
 
-    let query = {};
+    let chatRooms;
+    
     if (user.role === UserRole.SELLER) {
-      query = { seller: userId };
+      chatRooms = await ChatRoom.find({ seller: userId })
+        .populate('seller provider', 'name email businessName')
+        .populate('lastMessage')
+        .sort({ lastActivity: -1 })
+        .lean();
     } else if (user.role === UserRole.PROVIDER) {
-      query = { provider: userId };
+      chatRooms = await ChatRoom.find({ provider: userId })
+        .populate('seller provider', 'name email businessName')
+        .populate('lastMessage')
+        .sort({ lastActivity: -1 })
+        .lean();
+    } else if (user.role === 'support' || user.role === 'admin') {
+      // For support/admin, we need to fetch from SupportChatRoom model
+      const SupportChatRoom = require('@/lib/db/models/support-chat-room').default;
+      const supportRooms = await SupportChatRoom.find({
+        $or: [
+          { assignedAgentId: userId },
+          { status: 'waiting' }
+        ],
+        status: { $ne: 'closed' }
+      })
+      .populate('customerId', 'name email businessName role')
+      .populate('lastMessage')
+      .sort({ lastMessageAt: -1 })
+      .lean();
+      
+      // Transform support chat rooms to match regular chat room format
+      chatRooms = supportRooms.map((room: any) => ({
+        _id: room._id,
+        seller: room.customerInfo.userType === 'seller' ? room.customerId : null,
+        provider: room.customerInfo.userType === 'provider' ? room.customerId : null,
+        isActive: room.status === 'active',
+        lastMessage: room.lastMessage,
+        lastActivity: room.lastMessageAt,
+        createdAt: room.createdAt,
+        updatedAt: room.updatedAt,
+        // Include the customer data
+        [room.customerInfo.userType]: room.customerId
+      }));
     } else {
       return { success: false, error: 'Invalid user role for chat' };
     }
-
-    const chatRooms = await ChatRoom.find(query)
-      .populate('seller provider', 'name email businessName')
-      .populate('lastMessage')
-      .sort({ lastActivity: -1 })
-      .lean();
 
     return { success: true, data: JSON.parse(JSON.stringify(chatRooms)) as ChatRoomType[] };
   } catch (error) {
@@ -97,6 +128,14 @@ export async function getChatHistory(chatRoomId: string, userId: string, page: n
     const skip = (page - 1) * limit;
     const messages = await ChatMessage.find({ chatRoom: chatRoomId })
       .populate('sender', 'name email businessName')
+      .populate({
+        path: 'replyTo',
+        select: 'content sender messageType',
+        populate: {
+          path: 'sender',
+          select: 'name'
+        }
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)

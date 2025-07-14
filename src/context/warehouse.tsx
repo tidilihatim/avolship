@@ -61,14 +61,14 @@ export const WarehouseProvider: React.FC<WarehouseProviderProps> = ({
           setWarehouses(initialWarehouses);
         } else {
           // Otherwise fetch warehouses - for client-side fallback
-          const response = await fetch("/api/warehouses/active");
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch warehouses");
+          const { getActiveWarehouses } = await import('@/app/actions/warehouse');
+          const result = await getActiveWarehouses();
+          
+          if (result.error) {
+            throw new Error(result.error);
           }
-
-          const data = await response.json();
-          setWarehouses(data.warehouses || []);
+          
+          setWarehouses(result.warehouses || []);
         }
 
         // Get selected warehouse from cookie

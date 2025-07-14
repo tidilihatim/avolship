@@ -12,10 +12,9 @@ import { toast } from 'sonner';
 import { getUsers } from '@/app/actions/chat';
 import { UserRole } from '@/lib/db/models/user';
 import { useTranslations } from 'next-intl';
-import { getAccessToken } from '@/app/actions/cookie';
 
 interface ProvidersListProps {
-  userRole: 'seller' | 'provider';
+  userRole: 'seller' | 'provider' | 'support';
   userId: string;
   onChatStart: (chatRoom: ChatRoom) => void;
 }
@@ -34,20 +33,52 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
   const fetchProviders = async () => {
     setLoading(true);
     try {
-      const targetRole = userRole === 'seller' ? UserRole.PROVIDER : UserRole.SELLER;
-      const result = await getUsers(targetRole, 'approved');
-      
-      if (result.success && result.data) {
-        setProviders(result.data.map(user => ({
-          ...user,
-          role: user.role as 'seller' | 'provider'
-        })));
+      if (userRole === 'support') {
+        // For support, fetch both sellers and providers
+        const [sellersResult, providersResult] = await Promise.all([
+          getUsers(UserRole.SELLER, 'approved'),
+          getUsers(UserRole.PROVIDER, 'approved')
+        ]);
+        
+        console.log('getUsers results:', { sellersResult, providersResult });
+        
+        const allUsers: ChatUser[] = [];
+        
+        if (sellersResult && sellersResult.success && sellersResult.data) {
+          allUsers.push(...sellersResult.data.map(user => ({
+            ...user,
+            role: 'seller' as const
+          })));
+        }
+        
+        if (providersResult && providersResult.success && providersResult.data) {
+          allUsers.push(...providersResult.data.map(user => ({
+            ...user,
+            role: 'provider' as const
+          })));
+        }
+        
+        setProviders(allUsers);
       } else {
-        toast.error(result.error || t('loading.loadingUsers'));
+        // For sellers/providers, fetch the opposite role
+        const targetRole = userRole === 'seller' ? UserRole.PROVIDER : UserRole.SELLER;
+        const result = await getUsers(targetRole, 'approved');
+        
+        console.log('getUsers result:', result);
+        
+        if (result && result.success && result.data) {
+          setProviders(result.data.map(user => ({
+            ...user,
+            role: user.role as 'seller' | 'provider'
+          })));
+        } else {
+          console.error('getUsers failed:', result);
+          toast.error(result?.error || 'Failed to fetch users');
+        }
       }
     } catch (error) {
       console.error('Failed to fetch providers:', error);
-      toast.error(t('loading.loadingUsers'));
+      toast.error('Failed to fetch users');
     } finally {
       setLoading(false);
     }
@@ -57,25 +88,50 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
     if (creatingChat === providerId) return;
     
     setCreatingChat(providerId);
-
-     const jwtToken = await getAccessToken();
-        if (!jwtToken) {
-          return toast.error("Configuration Error")
-        }
+    
     try {
-      const sellerId = userRole === 'seller' ? userId : providerId;
-      const actualProviderId = userRole === 'seller' ? providerId : userId;
+      console.log('Starting chat with userRole:', userRole, 'userId:', userId, 'providerId:', providerId);
+      
+      let endpoint, requestBody;
+      
+      // Normalize the role to lowercase for comparison
+      const normalizedRole = userRole?.toLowerCase();
+      
+      if (normalizedRole === 'support') {
+        // For support, use dedicated support chat endpoint
+        endpoint = '/api/support/chat/room';
+        requestBody = { customerId: providerId };
+        console.log('Support creating chat with user:', providerId);
+      } else if (normalizedRole === 'seller' || normalizedRole === 'provider') {
+        // For seller/provider, use regular chat endpoint
+        endpoint = '/api/chat/room';
+        
+        let sellerId, actualProviderId;
+        if (normalizedRole === 'seller') {
+          sellerId = userId;
+          actualProviderId = providerId;
+        } else {
+          sellerId = providerId;
+          actualProviderId = userId;
+        }
+        
+        if (!sellerId || !actualProviderId) {
+          throw new Error('Unable to determine seller and provider IDs');
+        }
+        
+        requestBody = { sellerId, providerId: actualProviderId };
+      } else {
+        throw new Error(`Invalid user role: ${userRole} (normalized: ${normalizedRole})`);
+      }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SOCKET_URL}/api/chat/room`, {
+      console.log('Creating chat room:', requestBody);
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          "authorization": `Bearer ${jwtToken}`,
         },
-        body: JSON.stringify({
-          sellerId,
-          providerId: actualProviderId,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
@@ -83,7 +139,9 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
         onChatStart(chatRoom);
         toast.success(t('actions.chatStarted'));
       } else {
-        throw new Error('Failed to create chat room');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Failed to create chat room:', errorData);
+        throw new Error(errorData.error || 'Failed to create chat room');
       }
     } catch (error) {
       console.error('Failed to start chat:', error);
@@ -109,7 +167,11 @@ export function ProvidersList({ userRole, userId, onChatStart }: ProvidersListPr
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={userRole === 'seller' ? t('searchUsers') : t('searchSellers')}
+            placeholder={
+              userRole === 'seller' ? t('searchUsers') : 
+              userRole === 'provider' ? t('searchSellers') :
+              'Search users...'
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"

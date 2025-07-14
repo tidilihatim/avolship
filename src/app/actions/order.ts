@@ -18,6 +18,7 @@ import Expedition from '@/lib/db/models/expedition';
 import { ExpeditionStatus } from '../dashboard/_constant/expedition';
 import { revalidatePath } from 'next/cache';
 import { checkDuplicatesForNewOrder } from '@/lib/duplicate-detection/duplicate-checker';
+import { cache, cacheKeys } from '@/lib/redis';
 import DuplicateDetectionSettings from '@/lib/db/models/duplicate-settings';
 import { ApplyDiscountRequest, DiscountResponse } from '@/types/discount';
 import { getAccessToken } from './cookie';
@@ -36,6 +37,15 @@ export const getOrderById = withDbConnection(async (orderId: string) => {
         success: false,
         message: 'Unauthorized',
       };
+    }
+
+    // Try to get from cache first
+    const cacheKey = cacheKeys.order(orderId);
+    const cachedOrder = await cache.get(cacheKey);
+    
+    if (cachedOrder && user.role !== UserRole.SELLER) {
+      // For non-sellers, we can use cached data
+      return cachedOrder;
     }
 
     // Build query based on user role
@@ -111,10 +121,15 @@ export const getOrderById = withDbConnection(async (orderId: string) => {
       statusHistory: statusHistory || [], // Add status history to the response
     };
 
-    return {
+    const result = {
       success: true,
       order: JSON.parse(JSON.stringify(enhancedOrder)),
     };
+    
+    // Cache the result for 5 minutes (300 seconds)
+    await cache.set(cacheKey, result, 300);
+    
+    return result;
   } catch (error: any) {
     console.error('Error fetching order:', error);
     return {

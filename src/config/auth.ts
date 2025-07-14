@@ -7,7 +7,16 @@ import { NextAuthOptions } from 'next-auth';
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: 'jwt', // ✅ Use JWT session strategy
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+  
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  
+  // Add these to prevent session fetch errors
+  useSecureCookies: process.env.NODE_ENV === 'production',
+  trustHost: true,
 
   providers: [
     CredentialsProvider({
@@ -70,10 +79,35 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  
+  events: {
+    async signOut() {
+      // This will be called when signOut is triggered
+      console.log('User signed out');
+    },
+  },
 
   pages: {
     signIn: '/auth/login', // Your custom login page
+    signOut: '/auth/login?logout=true', // Redirect here after logout with logout param
+    error: '/auth/error', // Error page
   },
 
   debug: process.env.NODE_ENV === 'development',
+  
+  // Add a secret for production
+  secret: process.env.NEXTAUTH_SECRET || 'your-super-secret-key-change-this-in-production',
+  
+  // Cookie settings
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
+  },
 };

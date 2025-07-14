@@ -28,6 +28,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { signOut } from "next-auth/react";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 /**
  * Content to display when user's account is rejected
@@ -215,9 +216,11 @@ export default function StatusRejected() {
           </CardContent>
 
           <CardFooter className="border-t bg-card flex flex-wrap gap-2 sm:gap-0 sm:flex-nowrap sm:justify-between">
-            <Button variant="outline" onClick={() => signOut()}>
-              {t("rejected.signOut")}
-            </Button>
+            <LogoutButton>
+              <Button variant="outline">
+                {t("rejected.signOut")}
+              </Button>
+            </LogoutButton>
             <Button className="gap-2" onClick={handleContactSupport}>
               {t("rejected.contact")}
               <ArrowRight className="h-4 w-4" />

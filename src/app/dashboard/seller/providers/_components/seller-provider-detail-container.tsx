@@ -12,6 +12,7 @@ import { AlertCircle } from 'lucide-react';
 import { IUser, UserRole } from '@/lib/db/models/user';
 import { getUserById } from '@/app/actions/user';
 import { useTranslations } from 'next-intl';
+import { ProviderFeaturedAdsSection } from './provider-featured-ads-section';
 
 interface SellerProviderDetailContainerProps {
   providerId: string;
@@ -183,6 +184,9 @@ export function SellerProviderDetailContainer({ providerId }: SellerProviderDeta
         <div className="lg:col-span-2 space-y-6">
           <ProviderInfoCard provider={provider} hidePrivateInfo={true} />
           <ProviderBusinessCard provider={provider} />
+          
+          {/* Featured Ads Section */}
+          <ProviderFeaturedAdsSection providerId={providerId} />
         </div>
         
         <div className="space-y-6">

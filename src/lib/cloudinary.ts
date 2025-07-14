@@ -3,10 +3,14 @@
 /**
  * Cloudinary configuration
  */
-const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'your-cloud-name';
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'avolship';
-const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY || 'your-api-key';
-const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || 'your-api-secret';
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+
+if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+  console.warn('Cloudinary environment variables not properly configured');
+}
 
 /**
  * Upload a file to Cloudinary

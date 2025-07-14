@@ -10,7 +10,8 @@ import {
   Store, 
   CreditCard,
   Copy,
-  Package
+  Package,
+  Megaphone
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 
 // Import setting components
 import DuplicateDetectionSettings from './duplicate-detection-settings';
+import AdsPreferences from './ads-preferences';
 
 // Placeholder component for other settings
 function PlaceholderSettings({ title }: { title: string }) {
@@ -83,6 +85,13 @@ export default function SettingsLayout() {
       description: t('sections.notifications.description'),
       icon: <Bell className="w-5 h-5" />,
       component: <PlaceholderSettings title={t('sections.notifications.title')} />
+    },
+    {
+      id: 'ads',
+      title: 'Advertisement Preferences',
+      description: 'Control how featured ads appear on your dashboard',
+      icon: <Megaphone className="w-5 h-5" />,
+      component: <AdsPreferences />
     },
     {
       id: 'security',

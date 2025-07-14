@@ -45,6 +45,11 @@ export async function connectToDatabase(): Promise<mongoose.Connection> {
   if (!global.mongoose.promise) {
     const opts = {
       bufferCommands: true,
+      // Additional options for better stability
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10,
+      minPoolSize: 2,
     };
 
     // Create a new connection - storing the connection directly

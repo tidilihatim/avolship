@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { PlusCircle, Upload, Users, Package } from "lucide-react";
 import { useSocket } from "@/lib/socket/use-socket";
 import Link from "next/link";
+import { useDebouncedValue } from "@/lib/performance/react-optimizations";
 
 import { Button } from "@/components/ui/button";
 import { Table, TableBody } from "@/components/ui/table";
@@ -46,7 +47,7 @@ import {
 } from "./order-table/order-table-types";
 import { OrderStatus } from "@/lib/db/models/order";
 
-export default function OrderTable({
+const OrderTable = memo(function OrderTable({
   orders,
   allWarehouses = [],
   allSellers = [],
@@ -158,7 +159,7 @@ export default function OrderTable({
     userRole === UserRole.ADMIN || userRole === UserRole.MODERATOR;
 
   // Handle search submit
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     navigateWithFilters({
       search: search || undefined,
@@ -180,7 +181,7 @@ export default function OrderTable({
       page: 1,
       limit: itemsPerPage,
     });
-  };
+  }, [search, statusFilter, warehouseFilter, sellerFilter, callStatusFilter, dateFromFilter, dateToFilter, showDoubleOnly, itemsPerPage, isAdminOrModerator, navigateWithFilters]);
 
   // Apply filters
   const applyFilters = () => {
@@ -509,4 +510,6 @@ export default function OrderTable({
       />
     </div>
   );
-}
+});
+
+export default OrderTable;

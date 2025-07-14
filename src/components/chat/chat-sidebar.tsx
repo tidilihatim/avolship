@@ -13,7 +13,7 @@ import { ProvidersList } from './providers-list';
 import { useTranslations } from 'next-intl';
 
 interface ChatSidebarProps {
-  userRole: 'seller' | 'provider';
+  userRole: 'seller' | 'provider' | 'support';
   userId: string;
   chatRooms: ChatRoom[];
   selectedChatRoom: ChatRoom | null;
@@ -34,6 +34,7 @@ export function ChatSidebar({
   const [activeTab, setActiveTab] = useState('chats');
 
   const getUnreadCount = () => {
+    if (!chatRooms || !Array.isArray(chatRooms)) return 0;
     return chatRooms.filter(room => {
       // Check if there's a last message that's unread and not from the current user
       if (!room.lastMessage) return false;
@@ -42,8 +43,11 @@ export function ChatSidebar({
     }).length;
   };
 
-  const filteredChatRooms = chatRooms.filter(room => {
-    const otherUser = userRole === 'seller' ? room.provider : room.seller;
+  const filteredChatRooms = !chatRooms || !Array.isArray(chatRooms) ? [] : chatRooms.filter(room => {
+    const otherUser = userRole === 'seller' ? room.provider : 
+                     userRole === 'provider' ? room.seller :
+                     // For support, show the non-support user (could be either seller or provider)
+                     room.seller || room.provider;
     const searchTerm = searchQuery.toLowerCase();
     return (
       otherUser.name.toLowerCase().includes(searchTerm) ||
@@ -95,7 +99,9 @@ export function ChatSidebar({
           <TabsTrigger value="providers" className="flex items-center justify-center gap-1 text-xs px-2 min-w-0">
             <Users className="h-3 w-3 flex-shrink-0" />
             <span className="truncate">
-              {userRole === 'seller' ? t('providers') : t('sellers')}
+              {userRole === 'seller' ? t('providers') : 
+               userRole === 'provider' ? t('sellers') :
+               'Users'}
             </span>
           </TabsTrigger>
         </TabsList>
@@ -109,7 +115,7 @@ export function ChatSidebar({
                   {searchQuery ? t('noConversationsFound') : t('noConversationsYet')}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {searchQuery ? t('tryDifferentSearch') : t('startConversationWith', { userType: userRole === 'seller' ? t('providers') : t('sellers') })}
+                  {searchQuery ? t('tryDifferentSearch') : t('startConversationWith', { userType: userRole === 'seller' ? t('providers') : userRole === 'provider' ? t('sellers') : 'users' })}
                 </p>
               </div>
             ) : (

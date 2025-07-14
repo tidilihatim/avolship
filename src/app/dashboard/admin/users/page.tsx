@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { UserFilters } from "@/types/user";
-import { UserRole, UserStatus } from "@/lib/db/models/user";
+import { UserRole, UserStatus } from "@/app/dashboard/_constant/user";
 import { getUsers } from "@/app/actions/user";
 import UserTable from "./_components/user-table";
 

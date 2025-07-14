@@ -6,6 +6,7 @@ import { Phone, Clock, CheckCircle, AlertCircle, TrendingUp, Users, PhoneCall } 
 import { getCallCenterStats, getHourlyCallData, getCallOutcomeData, getWeeklyPerformanceData, getPriorityQueue, getRecentActivity } from '@/app/actions/call-center'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
+import AgentLeaderboard from './_components/agent-leaderboard'
 
 const CallCenterDashboard = async () => {
   const t = await getTranslations('callCenter')
@@ -194,6 +195,9 @@ const CallCenterDashboard = async () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Agent Leaderboard */}
+      <AgentLeaderboard />
 
       {/* Quick Actions */}
       <Card>

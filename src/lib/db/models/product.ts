@@ -125,6 +125,13 @@ const ProductSchema = new Schema<IProduct>(
 // Create unique compound index for product code and seller
 ProductSchema.index({ code: 1, sellerId: 1 }, { unique: true });
 
+// Additional performance indexes
+ProductSchema.index({ sellerId: 1, status: 1 }); // Common query pattern
+ProductSchema.index({ 'warehouses.warehouseId': 1 }); // For warehouse queries
+ProductSchema.index({ status: 1, totalStock: 1 }); // For inventory queries
+ProductSchema.index({ sellerId: 1, createdAt: -1 }); // For seller product lists
+ProductSchema.index({ name: 'text', description: 'text', code: 'text' }); // Text search index
+
 // Pre-save middleware to calculate total stock from warehouses
 ProductSchema.pre('save', function (next) {
   // Calculate total stock across all warehouses

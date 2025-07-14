@@ -1600,12 +1600,22 @@
       "payments": "Payments",
       "analytics": "Analytics",
       "integrations":"Integrations",
+      "tickets": "Tickets",
+      "chat": "Chat",
+      "settings": "Settings",
       "providers": "Providers",
       "chat": "Chat",
       "delivery": "Delivery",
       "queue": "Order Queue",
       "customers": "Customers",
       "reports": "Reports",
+      "featured-ads": "Featured Ads",
+      "logs": "System Logs",
+      "test-logs": "Test Logs",
+      "sourcing": "Sourcing",
+      "leaderboard": "Leaderboard",
+      "agent-ratings": "Agent Ratings",
+      "support": "Support",
       "settings": "Settings",
       "help": "Help",
       "profile": "Profile",
@@ -2259,11 +2269,14 @@
       "userOnline": "{name} is now online",
       "userOffline": "{name} is now offline"
     },
-    "loading": {
-      "loadingMessages": "Loading messages...",
-      "loadingUsers": "Loading users...",
-      "sendingMessage": "Sending message..."
+    "loadMore": "Load more",
+    "placeholder": "Type a message...",
+    "attachments": {
+      "image": "Image",
+      "document": "Document"
     },
+    "loading": "Loading...",
+    "loadingMore": "Loading more...",
     "errors": {
       "failedToLoadMessages": "Failed to load messages",
       "failedToSendMessage": "Failed to send message",

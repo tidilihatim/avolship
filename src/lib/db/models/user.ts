@@ -51,8 +51,8 @@ export interface IUser extends Document {
   // Authentication methods
   comparePassword: (password: string) => Promise<boolean>;
   generatePasswordResetToken: () => { token: string; hashedToken: string; expires: Date };
-  generateTwoFactorSecret: () => string;
-  verifyTwoFactorToken: (token: string) => boolean;
+  generateTwoFactorSecret: () => Promise<{ secret: string; qrCodeUrl: string; manualEntryKey: string }>;
+  verifyTwoFactorToken: (token: string) => Promise<boolean>;
 }
 
 /**
@@ -186,17 +186,42 @@ UserSchema.methods.generatePasswordResetToken = function (): { token: string; ha
 
 /**
  * Generate a secret for two-factor authentication
- * @returns A secret key for TOTP (Time-based One-Time Password)
+ * @returns An object containing the secret and QR code URL
  */
-UserSchema.methods.generateTwoFactorSecret = function (): string {
-  // In a real implementation, you would use a library like 'speakeasy'
-  // to generate a proper secret for TOTP
-  const secret = `secret_${this.email}_${crypto.randomBytes(10).toString('hex')}`;
+UserSchema.methods.generateTwoFactorSecret = async function (): Promise<{ 
+  secret: string; 
+  qrCodeUrl: string;
+  manualEntryKey: string;
+}> {
+  // Dynamically import speakeasy and qrcode
+  const speakeasy = await import('speakeasy');
+  const QRCode = await import('qrcode');
   
-  // Store the secret in the user document
-  this.twoFactorSecret = secret;
+  // Generate a secret
+  const secret = speakeasy.generateSecret({
+    name: `Avolship (${this.email})`,
+    issuer: 'Avolship',
+    length: 32
+  });
   
-  return secret;
+  // Store the base32 secret in the user document
+  this.twoFactorSecret = secret.base32;
+  
+  // Generate QR code data URL
+  const otpauthUrl = speakeasy.otpauthURL({
+    secret: secret.base32,
+    label: `Avolship:${this.email}`,
+    issuer: 'Avolship',
+    encoding: 'base32'
+  });
+  
+  const qrCodeUrl = await QRCode.toDataURL(otpauthUrl);
+  
+  return {
+    secret: secret.base32,
+    qrCodeUrl,
+    manualEntryKey: secret.base32 // For manual entry if QR code fails
+  };
 };
 
 /**
@@ -204,13 +229,31 @@ UserSchema.methods.generateTwoFactorSecret = function (): string {
  * @param token - The token provided by the user
  * @returns Whether the token is valid
  */
-UserSchema.methods.verifyTwoFactorToken = function (token: string): boolean {
-  // This is a placeholder - in a real implementation, you would use a library like 'speakeasy'
-  // to verify the TOTP token against this.twoFactorSecret
+UserSchema.methods.verifyTwoFactorToken = async function (token: string): Promise<boolean> {
+  if (!this.twoFactorEnabled || !this.twoFactorSecret) {
+    return false;
+  }
   
-  // For demonstration purposes only:
-  return token === '123456'; // Obviously, this is not secure and needs real implementation
+  // Dynamically import speakeasy to avoid server-side issues
+  const speakeasy = await import('speakeasy');
+  
+  // Verify the token
+  const verified = speakeasy.totp.verify({
+    secret: this.twoFactorSecret,
+    encoding: 'base32',
+    token: token,
+    window: 2 // Allow 2 time steps in either direction (±30 seconds)
+  });
+  
+  return verified;
 };
+
+// Add indexes for performance
+// Email index is already created by unique: true in the schema definition
+UserSchema.index({ role: 1, status: 1 }); // For user listing by role
+UserSchema.index({ passwordResetToken: 1, passwordResetExpires: 1 }); // For password reset
+UserSchema.index({ twoFactorEnabled: 1 }); // For 2FA queries
+UserSchema.index({ businessName: 'text', name: 'text' }); // Text search
 
 // Create the model only if it doesn't already exist
 const User = mongoose.models?.User || mongoose.model<IUser>('User', UserSchema);

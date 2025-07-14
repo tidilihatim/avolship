@@ -12,7 +12,8 @@ const LoginPage: React.FC = async ({searchParams}:any) => {
   
   const session = await getServerSession(authOptions);
 
-  if (session?.user?.id) {
+  // Only redirect if there's a valid session and not coming from logout
+  if (session?.user?.id && !searchParams?.logout) {
     // redirect to dashboard in future
     redirect("/dashboard");
   }

@@ -9,13 +9,13 @@ import { toast } from 'sonner';
 import { getAccessToken } from '@/app/actions/cookie';
 
 interface ChatClientProps {
-  userRole: 'seller' | 'provider';
+  userRole: 'seller' | 'provider' | 'support';
   userId: string;
-  initialChatRooms: ChatRoom[];
+  initialChatRooms?: ChatRoom[];
   autoStartWithProviderId?: string;
 }
 
-export function ChatClient({ userRole, userId, initialChatRooms, autoStartWithProviderId }: ChatClientProps) {
+export function ChatClient({ userRole, userId, initialChatRooms = [], autoStartWithProviderId }: ChatClientProps) {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>(initialChatRooms);
   const [loading, setLoading] = useState(false);
   const [autoSelectedChatRoom, setAutoSelectedChatRoom] = useState<ChatRoom | null>(null);

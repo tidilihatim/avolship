@@ -1,4 +1,5 @@
 import React from 'react'
+import DashboardContent from './_components/dashboard-content'
 
 type Props = {}
 
@@ -7,9 +8,7 @@ export const metadata = {
 }
 
 const page = async (props: Props) => {
-  return (
-    <div>page</div>
-  )
+  return <DashboardContent />
 }
 
 export default page

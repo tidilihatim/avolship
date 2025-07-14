@@ -117,6 +117,50 @@ export interface ServerToClientEvents {
     location?: { lat: number; lng: number }; 
     timestamp: Date 
   }) => void;
+
+  // Featured Ad events
+  'ad:approved': (data: {
+    adId: string;
+    title: string;
+    approvedPrice?: number;
+    message: string;
+  }) => void;
+
+  'ad:rejected': (data: {
+    adId: string;
+    title: string;
+    reason: string;
+    message: string;
+  }) => void;
+
+  'ad:expiring': (data: {
+    adId: string;
+    title: string;
+    daysLeft: number;
+    message: string;
+  }) => void;
+
+  'ad:milestone': (data: {
+    adId: string;
+    title: string;
+    milestone: string;
+    impressions: number;
+    clicks: number;
+    message: string;
+  }) => void;
+
+  'ad:new-pending': (data: {
+    adId: string;
+    title: string;
+    providerName: string;
+    proposedPrice: number;
+    message: string;
+  }) => void;
+
+  // User online/offline status
+  'user:online': (data: { userId: string }) => void;
+  'user:offline': (data: { userId: string }) => void;
+  'user:online-status': (data: { userId: string; isOnline: boolean }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -124,7 +168,18 @@ export interface ClientToServerEvents {
   authenticate: (userData: { userId: string}) => void;
   'order:request-assignment': (data: { orderId: string }) => void;
   'order:complete': (data: { orderId: string }) => void;
-   'agent:status': (data: { available: boolean }) => void;
+  'agent:status': (data: { available: boolean }) => void;
+  
+  // User online check
+  'user:check-online': (data: { userId: string }) => void;
+  
+  // Chat room events
+  'chat:join': (data: { chatRoomId: string }) => void;
+  'chat:leave': (data: { chatRoomId: string }) => void;
+  'chat:typing': (data: { chatRoomId: string; isTyping: boolean }) => void;
+  
+  // Ping/pong for connection health
+  'ping': () => void;
   
   // Chat events
   sendMessage: (data: { 

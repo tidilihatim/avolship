@@ -49,16 +49,18 @@ export function SocketProvider({ children }: SocketProviderProps) {
     // Create the socket instance if it doesn't exist
     if (!socket) {
       console.log('Creating new socket instance');
-      const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4000';
+      const socketURL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001';
       console.log(`Connecting to socket server at: ${socketURL}`);
       
       const socketInstance = io(socketURL, {
         autoConnect: false,
         reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-        timeout: 10000,
-        withCredentials: true
+        reconnectionAttempts: 10,
+        reconnectionDelay: 2000,
+        reconnectionDelayMax: 10000,
+        timeout: 20000,
+        withCredentials: true,
+        transports: ['polling', 'websocket'] // Try polling first, then upgrade
       });
       
       setSocket(socketInstance);

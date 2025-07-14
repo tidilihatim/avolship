@@ -4,6 +4,7 @@ import { authOptions } from '@/config/auth';
 import { withDbConnection } from '@/lib/db/db-connect';
 import User, { UserStatus, UserRole } from '@/lib/db/models/user';
 import { getServerSession } from 'next-auth';
+import { unstable_noStore as noStore } from 'next/cache';
 
 // Type definitions for form data
 type SellerFormData = {
@@ -137,28 +138,34 @@ export const registerProvider = withDbConnection(async (formData: ProviderFormDa
 
 export const getLoginUserRole = withDbConnection(async () => {
   try {
+    noStore(); // Prevent caching of this server action
     const session = await getServerSession(authOptions);
 
     const userId = session?.user?.id;
-    if (!userId) throw new Error('User not found');
+    if (!userId) return null;
+    
     const user = await User.findById(userId).select('role');
-    return user?.role;
+    return user?.role || null;
   } catch (error: any) {
-    throw new Error(error.message)
+    console.error('Error getting user role:', error);
+    return null;
   }
 }); 
 
 
 export const getLoginUserStatus = withDbConnection(async () => {
   try {
+    noStore(); // Prevent caching of this server action
     const session = await getServerSession(authOptions);
 
     const userId = session?.user?.id;
-    if (!userId) throw new Error('User not found');
+    if (!userId) return null;
+    
     const user = await User.findById(userId).select('status');
-    return user?.status;
+    return user?.status || null;
   } catch (error: any) {
-    throw new Error(error.message)
+    console.error('Error getting user status:', error);
+    return null;
   }
 });
 

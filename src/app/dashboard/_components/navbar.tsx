@@ -48,6 +48,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Theme from "./theme";
 import WarehouseSelector from "./warehouse-selector";
 import { NotificationPopover } from "./notification-popover";
+import { useRouter } from "next/navigation";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 interface NavbarProps {
   onMobileMenuClick: () => void;
@@ -73,6 +75,7 @@ export default function Navbar({
   userType,
 }: NavbarProps) {
   const t = useTranslations();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [currentLocale, setCurrentLocale] = useState("en");
@@ -261,7 +264,7 @@ export default function Navbar({
                 <Avatar className="h-10 w-10">
                   {status === "authenticated" ? (
                     <>
-                      <AvatarImage src="/avatars/user.jpg" alt="User" />
+                      <AvatarImage src={session?.user?.image || ""} alt="User" />
                       <AvatarFallback className="bg-primary text-primary-foreground font-bold">
                         {session?.user?.name?.charAt(0)?.toUpperCase() +
                           session?.user?.name
@@ -313,13 +316,14 @@ export default function Navbar({
                 <span>{t("dashboard.navbar.user.notifications")}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => signOut()}
-                className="cursor-pointer text-destructive focus:text-destructive hover:bg-destructive/10"
-              >
-                <LogOut className="mr-3 h-4 w-4" />
-                <span>{t("dashboard.navbar.user.logout")}</span>
-              </DropdownMenuItem>
+              <LogoutButton>
+                <DropdownMenuItem
+                  className="cursor-pointer text-destructive focus:text-destructive hover:bg-destructive/10"
+                >
+                  <LogOut className="mr-3 h-4 w-4" />
+                  <span>{t("dashboard.navbar.user.logout")}</span>
+                </DropdownMenuItem>
+              </LogoutButton>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
