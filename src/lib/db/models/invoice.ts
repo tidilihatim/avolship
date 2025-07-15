@@ -11,6 +11,7 @@ export interface InvoiceFees {
   warehouseFee: number;
   shippingFee: number;
   processingFee: number;
+  expeditionFee: number;
   totalFees: number;
 }
 
@@ -168,6 +169,11 @@ const InvoiceSchema = new Schema<IInvoice>(
         default: 0,
         min: [0, 'Processing fee cannot be negative'],
       },
+      expeditionFee: {
+        type: Number,
+        default: 0,
+        min: [0, 'Expedition fee cannot be negative'],
+      },
       totalFees: {
         type: Number,
         default: 0,
@@ -315,10 +321,12 @@ InvoiceSchema.pre('save', function (next) {
     this.fees.serviceFee +
     this.fees.warehouseFee +
     this.fees.shippingFee +
-    this.fees.processingFee;
+    this.fees.processingFee +
+    this.fees.expeditionFee;
   
   this.summary.totalFees = this.fees.totalFees;
-  this.summary.netAmount = this.summary.totalSales + this.summary.unpaidAmount + this.summary.totalFees;
+  // Fix calculation: fees should be subtracted from seller payment
+  this.summary.netAmount = this.summary.totalSales - this.summary.totalFees;
   this.summary.finalAmount = this.summary.netAmount + this.summary.totalTax;
   
   next();

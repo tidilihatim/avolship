@@ -71,19 +71,24 @@ const ALL_ROLES = "all_roles";
 const ALL_STATUSES = "all_statuses";
 const ALL_COUNTRIES = "all_countries";
 
-interface UserListProps {
+interface UserTableProps {
   users: UserTableData[];
   allCountries?: string[];
+  callCenterAgents?: Array<{
+    _id: string;
+    name: string;
+    email: string;
+  }>;
   pagination?: PaginationData;
   error?: string;
   filters: UserFilters;
 }
 
 /**
- * UserList Component
+ * UserTable Component
  * Displays a list of users with filtering, search, pagination and action capabilities
  */
-export default function UserList({ users, allCountries = [], pagination, error, filters }: UserListProps) {
+export default function UserTable({ users, allCountries = [], callCenterAgents = [], pagination, error, filters }: UserTableProps) {
   const t = useTranslations();
   const router = useRouter();
   const pathname = usePathname();
@@ -97,14 +102,8 @@ export default function UserList({ users, allCountries = [], pagination, error, 
   const [countryFilter, setCountryFilter] = useState(filters.country || ALL_COUNTRIES);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
   
-  // Extract call center agents from users data
-  const callCenterAgents = users
-    .filter(user => user.role === UserRole.CALL_CENTER)
-    .map(agent => ({
-      _id: agent._id,
-      name: agent.name,
-      email: agent.email
-    }));
+  // Use the passed call center agents (available on all pages)
+  // This ensures assignment dropdown works correctly on all pages
   
   // Use countries provided from the database, or fallback to extracting from current users
   const countries = allCountries.length > 0 

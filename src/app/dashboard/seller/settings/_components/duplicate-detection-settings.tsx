@@ -45,7 +45,6 @@ export default function DuplicateDetectionSettings() {
       
       if (response.success) {
         setSettings(response.data);
-        toast.success(t('messages.settingsLoaded'));
       } else {
         toast.error(response.message || t('messages.errorLoading'));
       }

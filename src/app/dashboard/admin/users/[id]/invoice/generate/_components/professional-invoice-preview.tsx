@@ -67,6 +67,7 @@ interface InvoiceConfiguration {
     warehouseFee: number;
     shippingFee: number;
     processingFee: number;
+    expeditionFee: number;
   };
   notes: string;
   terms: string;
@@ -107,11 +108,11 @@ export default function ProfessionalInvoicePreview({
   };
 
   const calculateSubtotal = () => {
-    return preview.totalSales + preview.unpaidAmount;
+    return preview.totalSales;
   };
 
   const calculateNetAmount = () => {
-    return calculateSubtotal() + calculateTotalFees();
+    return calculateSubtotal() - calculateTotalFees();
   };
 
   // Generate mock invoice number for preview
@@ -283,23 +284,6 @@ export default function ProfessionalInvoicePreview({
                   <td className="p-4 text-right font-medium text-foreground">{formatCurrency(preview.totalSales)}</td>
                 </tr>
                 
-                {preview.unpaidAmount > 0 && (
-                  <tr className="border-b border-border">
-                    <td className="p-4">
-                      <div>
-                        <p className="font-medium text-foreground">Unpaid Expeditions</p>
-                        <p className="text-sm text-muted-foreground">
-                          Outstanding payments for {preview.unpaidExpeditions} expeditions
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          These amounts are added to your invoice for collection
-                        </p>
-                      </div>
-                    </td>
-                    <td className="p-4 text-center text-foreground">{preview.unpaidExpeditions}</td>
-                    <td className="p-4 text-right font-medium text-foreground">{formatCurrency(preview.unpaidAmount)}</td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
@@ -451,6 +435,12 @@ export default function ProfessionalInvoicePreview({
                         <td className="p-4 text-right text-foreground">{formatCurrency(configuration.fees.processingFee)}</td>
                       </tr>
                     )}
+                    {configuration.fees.expeditionFee > 0 && (
+                      <tr className="border-b border-border">
+                        <td className="p-4 text-foreground">Expedition Management Fee</td>
+                        <td className="p-4 text-right text-foreground">{formatCurrency(configuration.fees.expeditionFee)}</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -466,14 +456,14 @@ export default function ProfessionalInvoicePreview({
             <div className="w-full max-w-md space-y-3">
               <div className="space-y-2">
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-muted-foreground">Subtotal:</span>
+                  <span className="text-muted-foreground">Gross Amount:</span>
                   <span className="font-medium text-foreground">{formatCurrency(calculateSubtotal())}</span>
                 </div>
                 
                 {calculateTotalFees() > 0 && (
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-muted-foreground">Add: Service Fees</span>
-                    <span className="font-medium text-foreground">+{formatCurrency(calculateTotalFees())}</span>
+                    <span className="text-muted-foreground">Less: Service Fees</span>
+                    <span className="font-medium text-foreground">-{formatCurrency(calculateTotalFees())}</span>
                   </div>
                 )}
               </div>
@@ -481,7 +471,7 @@ export default function ProfessionalInvoicePreview({
               <Separator />
               
               <div className="flex justify-between items-center py-3 text-xl font-bold">
-                <span className="text-foreground">Amount Due:</span>
+                <span className="text-foreground">Net Amount Payable:</span>
                 <span className="text-foreground">{formatCurrency(calculateNetAmount())}</span>
               </div>
             </div>

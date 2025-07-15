@@ -10,7 +10,8 @@ import {
   Store, 
   CreditCard,
   Copy,
-  Package
+  Package,
+  Percent
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 
 // Import setting components
 import DuplicateDetectionSettings from './duplicate-detection-settings';
+import DiscountSettings from './discount-settings';
 
 // Placeholder component for other settings
 function PlaceholderSettings({ title }: { title: string }) {
@@ -45,7 +47,7 @@ interface SettingSection {
 
 export default function SettingsLayout() {
   const t = useTranslations('settings');
-  const [activeTab, setActiveTab] = useState('duplicates');
+  const [activeTab, setActiveTab] = useState('discount');
 
   const settingSections: SettingSection[] = [
     {
@@ -68,6 +70,13 @@ export default function SettingsLayout() {
       description: t('sections.products.description'),
       icon: <Package className="w-5 h-5" />,
       component: <PlaceholderSettings title={t('sections.products.title')} />
+    },
+    {
+      id: 'discount',
+      title: 'Discount Settings',
+      description: 'Configure maximum discount limits for call center agents',
+      icon: <Percent className="w-5 h-5" />,
+      component: <DiscountSettings />
     },
     {
       id: 'duplicates',

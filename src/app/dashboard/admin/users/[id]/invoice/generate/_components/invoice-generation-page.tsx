@@ -65,6 +65,7 @@ interface InvoiceConfiguration {
     warehouseFee: number;
     shippingFee: number;
     processingFee: number;
+    expeditionFee: number;
   };
   notes: string;
   terms: string;
@@ -93,6 +94,7 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
       warehouseFee: 0,
       shippingFee: 0,
       processingFee: 0,
+      expeditionFee: 0,
     },
     notes: '',
     terms: 'Payment is due within 30 days of invoice date. Late payments may incur additional charges.',

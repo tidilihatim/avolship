@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { UserFilters } from "@/types/user";
 import { UserRole, UserStatus } from "@/lib/db/models/user";
-import { getUsers } from "@/app/actions/user";
+import { getUsers, getCallCenterAgents } from "@/app/actions/user";
 import UserTable from "./_components/user-table";
 
 
@@ -119,6 +119,9 @@ export default async function UsersPage({
 
   // Fetch all available countries for the filter
   const { countries = [] } = await getAllCountries();
+  
+  // Fetch all call center agents for assignment
+  const { agents: callCenterAgents = [] } = await getCallCenterAgents();
 
   // For client-side component, we need to pass the original searchParamsPlain values
   const clientFilters: UserFilters = {
@@ -145,6 +148,7 @@ export default async function UsersPage({
       <UserTable
         users={users || []}
         allCountries={countries}
+        callCenterAgents={callCenterAgents}
         pagination={pagination || { page: 1, limit: 10, total: 0, totalPages: 0 }}
         error={success ? undefined : message}
         filters={clientFilters}

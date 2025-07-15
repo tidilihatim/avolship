@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { DatePicker } from '@/components/ui/date-picker';
 
 interface Warehouse {
   _id: string;
@@ -33,6 +34,7 @@ interface InvoiceConfiguration {
     warehouseFee: number;
     shippingFee: number;
     processingFee: number;
+    expeditionFee: number;
   };
   notes: string;
   terms: string;
@@ -88,23 +90,23 @@ export default function InvoiceConfigurationForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="start-date">Start Date *</Label>
-            <Input
+            <DatePicker
               id="start-date"
-              type="date"
-              value={configuration.startDate}
-              onChange={(e) => updateConfiguration({ startDate: e.target.value })}
-              max={new Date().toISOString().split('T')[0]}
+              date={configuration.startDate ? new Date(configuration.startDate) : undefined}
+              onDateChange={(date) => updateConfiguration({ startDate: date ? date.toISOString().split('T')[0] : '' })}
+              placeholder="Select start date"
+              maxDate={new Date()}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="end-date">End Date *</Label>
-            <Input
+            <DatePicker
               id="end-date"
-              type="date"
-              value={configuration.endDate}
-              onChange={(e) => updateConfiguration({ endDate: e.target.value })}
-              min={configuration.startDate}
-              max={new Date().toISOString().split('T')[0]}
+              date={configuration.endDate ? new Date(configuration.endDate) : undefined}
+              onDateChange={(date) => updateConfiguration({ endDate: date ? date.toISOString().split('T')[0] : '' })}
+              placeholder="Select end date"
+              minDate={configuration.startDate ? new Date(configuration.startDate) : undefined}
+              maxDate={new Date()}
             />
           </div>
         </div>
@@ -137,11 +139,11 @@ export default function InvoiceConfigurationForm({
         <div>
           <Label className="text-base font-medium">Fee Configuration</Label>
           <p className="text-sm text-muted-foreground">
-            Configure the fees to be added to the seller's invoice
+            Configure the fees to be deducted from the seller's payment
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="confirmation-fee">Confirmation Fee</Label>
             <Input
@@ -195,6 +197,17 @@ export default function InvoiceConfigurationForm({
               step="0.01"
               value={configuration.fees.processingFee}
               onChange={(e) => updateFees({ processingFee: parseFloat(e.target.value) || 0 })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="expedition-fee">Expedition Fee</Label>
+            <Input
+              id="expedition-fee"
+              type="number"
+              min="0"
+              step="0.01"
+              value={configuration.fees.expeditionFee}
+              onChange={(e) => updateFees({ expeditionFee: parseFloat(e.target.value) || 0 })}
             />
           </div>
           <div className="space-y-2">

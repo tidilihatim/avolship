@@ -50,6 +50,7 @@ interface InvoiceData {
     warehouseFee: number;
     shippingFee: number;
     processingFee: number;
+    expeditionFee: number;
     totalFees: number;
   };
   sellerId: {
@@ -276,6 +277,7 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
       warehouseFee: invoice.fees.warehouseFee,
       shippingFee: invoice.fees.shippingFee,
       processingFee: invoice.fees.processingFee,
+      expeditionFee: invoice.fees.expeditionFee,
     },
     notes: invoice.notes || '',
     terms: invoice.terms || '',

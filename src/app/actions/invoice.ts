@@ -30,6 +30,7 @@ interface InvoiceGenerationData extends InvoicePreviewData {
     warehouseFee: number;
     shippingFee: number;
     processingFee: number;
+    expeditionFee: number;
   };
   notes?: string;
   terms?: string;
@@ -164,7 +165,7 @@ export const generateInvoicePreview = withDbConnection(async (data: InvoicePrevi
     // Count unique products
     totalProducts = uniqueProductIds.size;
 
-    // Calculate unpaid expeditions
+    // Calculate unpaid expeditions for reference only (not added to invoice total)
     const unpaidExpeditions = expeditions.filter(exp => !exp.isPaid);
     const unpaidAmount = unpaidExpeditions.reduce((sum, exp) => sum + (exp.totalValue || 0), 0);
 
@@ -273,9 +274,9 @@ export const generateInvoice = withDbConnection(async (data: InvoiceGenerationDa
     //   return { success: false, message: 'Invoice already exists for this period' };
     // }
 
-    // Calculate totals
+    // Calculate totals - fees are deducted from seller payment
     const totalFees = Object.values(fees).reduce((sum, fee) => sum + fee, 0);
-    const netAmount = preview.totalSales + preview.unpaidAmount + totalFees;
+    const netAmount = preview.totalSales - totalFees;
 
     // Create the invoice
     const invoice = new Invoice({
