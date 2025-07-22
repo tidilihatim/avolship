@@ -8,7 +8,7 @@ import { Loader2, Users, UserCheck, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
+import GoogleMapsAddressInput from "@/components/ui/google-maps-address-input";
 import {
   Select,
   SelectContent,
@@ -29,9 +29,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-import { Warehouse, commonCurrencies, SellerInfo } from "@/types/warehouse";
+import { Warehouse, commonCurrencies, SellerInfo, WarehouseLocation } from "@/types/warehouse";
 import { createWarehouse, updateWarehouse, getApprovedSellers } from "@/app/actions/warehouse";
-import { africanCountries } from "@/app/dashboard/_constant";
+import { getCountryNames } from "@/constants/countries";
 
 interface WarehouseFormProps {
   warehouse?: Warehouse;
@@ -62,6 +62,7 @@ export default function WarehouseForm({
     city: "",
     currency: "USD",
     address: "",
+    location: undefined as WarehouseLocation | undefined,
     capacity: undefined as number | undefined,
     capacityUnit: "items",
     isActive: true,
@@ -87,6 +88,7 @@ export default function WarehouseForm({
         city: warehouse.city || "",
         currency: warehouse.currency,
         address: warehouse.address || "",
+        location: warehouse.location,
         capacity: warehouse.capacity,
         capacityUnit: warehouse.capacityUnit || "items",
         isActive: warehouse.isActive,
@@ -167,6 +169,15 @@ export default function WarehouseForm({
     }
   };
 
+  // Handle location change from Google Maps
+  const handleLocationChange = (location: WarehouseLocation) => {
+    setFormData(prev => ({
+      ...prev,
+      location,
+      address: location.address // Update address field as well
+    }));
+  };
+
   // Handle seller selection
   const handleSellerToggle = (sellerId: string) => {
     setFormData(prev => ({
@@ -230,6 +241,10 @@ export default function WarehouseForm({
 
     if (!formData.currency) {
       newErrors.currency = "Currency is required";
+    }
+
+    if (!formData.location || !formData.location.address.trim()) {
+      newErrors.address = "Address with location coordinates is required";
     }
 
     // Validation for conversion settings when enabled
@@ -358,7 +373,7 @@ export default function WarehouseForm({
                     <SelectValue placeholder="Select a country" />
                   </SelectTrigger>
                   <SelectContent>
-                    {africanCountries.map((country) => (
+                    {getCountryNames().sort().map((country) => (
                       <SelectItem key={country} value={country}>
                         {country}
                       </SelectItem>
@@ -395,25 +410,18 @@ export default function WarehouseForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address" className="text-sm font-medium">
-                {t("address")}
-              </Label>
-              <Textarea
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
+              <GoogleMapsAddressInput
+                label={t("address")}
+                value={formData.location}
+                onChange={handleLocationChange}
                 placeholder="e.g., 123 Commerce Street, District 5"
-                className={`resize-none ${
-                  errors.address ? "border-destructive" : ""
-                }`}
+                error={errors.address}
+                className="w-full"
+                required={true}
               />
               <p className="text-sm text-muted-foreground">
-                {t("addressDescription")}
+                {t("addressDescription")} Drag the map marker to set the exact location.
               </p>
-              {errors.address && (
-                <p className="text-sm text-destructive">{errors.address}</p>
-              )}
             </div>
           </div>
 

@@ -12,6 +12,13 @@ export interface SellerInfo {
   country?: string;
 }
 
+// Location interface for warehouse coordinates
+export interface WarehouseLocation {
+  latitude: number;
+  longitude: number;
+  address: string;
+}
+
 // Form values for warehouse create/update
 export interface WarehouseFormValues {
   name: string;
@@ -19,6 +26,7 @@ export interface WarehouseFormValues {
   city?: string;
   currency: string;
   address?: string;
+  location?: WarehouseLocation;
   capacity?: number | null;
   capacityUnit?: string;
   isActive: boolean;
@@ -39,6 +47,7 @@ export interface Warehouse {
   city?: string;
   currency: string;
   address?: string;
+  location?: WarehouseLocation;
   capacity?: number;
   capacityUnit?: string;
   currencyConversion: {

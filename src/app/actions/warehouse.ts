@@ -256,6 +256,7 @@ export const updateWarehouse = withDbConnection(async (id: string, data: Warehou
     warehouse.city = data.city;
     warehouse.currency = data.currency;
     warehouse.address = data.address;
+    warehouse.location = data.location;
     warehouse.capacity = data.capacity;
     warehouse.capacityUnit = data.capacityUnit;
     warehouse.isActive = data.isActive;

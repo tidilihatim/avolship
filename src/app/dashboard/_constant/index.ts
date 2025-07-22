@@ -175,6 +175,7 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   'Cameroon': 'https://img.icons8.com/?size=96&id=GfqZsWUlvnOA&format=png',
   'Cape Verde': 'https://img.icons8.com/?size=96&id=9UF5HjJxrQoy&format=png',
   'Central African Republic': 'https://img.icons8.com/?size=96&id=4i5gL6USK6VC&format=png',
+  "China":"https://img.icons8.com/?size=100&id=17962&format=png&color=000000",
   'Chad': 'https://img.icons8.com/?size=96&id=nVHJ7oF0ybvK&format=png',
   'Comoros': 'https://img.icons8.com/?size=96&id=VBQmkWOg0i14&format=png',
   'Democratic Republic of the Congo': 'https://img.icons8.com/?size=96&id=GEWyMWLxV6Pl&format=png',

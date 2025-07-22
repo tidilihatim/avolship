@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { UserFormData } from "@/types/user";
 import { UserRole, UserStatus } from "@/lib/db/models/user";
 import { createUser, updateUser } from "@/app/actions/user";
-import { africanCountries } from "@/app/dashboard/_constant";
+import { getCountryNames } from "@/constants/countries";
 
 interface UserFormProps {
   user?: any;
@@ -364,7 +364,7 @@ export default function UserForm({ user, isEdit = false }: UserFormProps) {
                   <SelectValue placeholder="Select a country" />
                 </SelectTrigger>
                 <SelectContent>
-                  {africanCountries.map((country) => (
+                  {getCountryNames().sort().map((country) => (
                     <SelectItem key={country} value={country}>
                       {country}
                     </SelectItem>

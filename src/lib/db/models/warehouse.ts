@@ -19,6 +19,11 @@ export interface IWarehouse extends Document {
     autoUpdate: boolean;
     lastUpdated?: Date;
   };
+  location?: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
   // New fields for seller assignment
   isAvailableToAll: boolean; // If true, all sellers can use this warehouse
   assignedSellers: Types.ObjectId[]; // Specific sellers who can use this warehouse
@@ -55,6 +60,22 @@ const WarehouseSchema = new Schema<IWarehouse>(
     address: {
       type: String,
       trim: true,
+    },
+    location: {
+      latitude: {
+        type: Number,
+        min: -90,
+        max: 90,
+      },
+      longitude: {
+        type: Number,
+        min: -180,
+        max: 180,
+      },
+      address: {
+        type: String,
+        trim: true,
+      },
     },
     capacity: {
       type: Number,
