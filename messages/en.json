@@ -1603,6 +1603,8 @@
       "providers": "Providers",
       "chat": "Chat",
       "delivery": "Delivery",
+      "delivery-riders": "Delivery Riders",
+      "Invoices": "Invoices",
       "queue": "Order Queue",
       "customers": "Customers",
       "reports": "Reports",

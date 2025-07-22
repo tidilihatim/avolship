@@ -3,7 +3,8 @@ import {
   MessageCircle, Package, PlaneIcon, ShoppingCart, 
   Truck, User, Warehouse, Clock, Users, FileText, UserCheck,
   Zap,
-  DollarSign
+  DollarSign,
+  MapPin
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'customer-support' | 'delivery' | 'provider' | 'call_center';
@@ -37,6 +38,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name:"expeditions",
       href: "/dashboard/admin/expeditions",
       icon: PlaneIcon
+    },
+    {
+      name:"delivery-riders",
+      href:"/dashboard/admin/delivery-riders",
+      icon: MapPin
     },
     {
       name:"Invoices",

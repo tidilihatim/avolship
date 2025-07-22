@@ -117,6 +117,120 @@ export interface ServerToClientEvents {
     location?: { lat: number; lng: number }; 
     timestamp: Date 
   }) => void;
+
+  // Admin events for delivery rider tracking
+  'admin:delivery_riders': (data: Array<{
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+    isOnline: boolean;
+    isAvailableForDelivery: boolean;
+    currentLocation?: {
+      latitude: number;
+      longitude: number;
+      timestamp: Date;
+      accuracy?: number;
+    };
+    assignedOrders?: Array<{
+      _id: string;
+      orderId: string;
+      customer: {
+        name: string;
+        address: string;
+        coordinates?: {
+          latitude: number;
+          longitude: number;
+        };
+      };
+      status: string;
+      totalAmount: number;
+    }>;
+    deliveryStats?: {
+      totalDeliveries: number;
+      todayDeliveries: number;
+      averageRating?: number;
+    };
+    lastActive?: Date;
+  }>) => void;
+
+  'admin:rider_location_update': (data: {
+    riderId: string;
+    location: {
+      latitude: number;
+      longitude: number;
+      timestamp: Date;
+      accuracy?: number;
+    };
+  }) => void;
+
+  'admin:rider_status_update': (data: {
+    riderId: string;
+    isOnline: boolean;
+    isAvailableForDelivery: boolean;
+  }) => void;
+
+  'admin:rider_orders_update': (data: {
+    riderId: string;
+    orders: Array<{
+      _id: string;
+      orderId: string;
+      customer: {
+        name: string;
+        address: string;
+        coordinates?: {
+          latitude: number;
+          longitude: number;
+        };
+      };
+      status: string;
+      totalAmount: number;
+    }>;
+  }) => void;
+
+  'admin:rider_details': (data: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+    isOnline: boolean;
+    isAvailableForDelivery: boolean;
+    currentLocation?: {
+      latitude: number;
+      longitude: number;
+      timestamp: Date;
+      accuracy?: number;
+    };
+    assignedOrders: Array<{
+      _id: string;
+      orderId: string;
+      customer: {
+        name: string;
+        address: string;
+        coordinates?: {
+          latitude: number;
+          longitude: number;
+        };
+      };
+      status: string;
+      totalAmount: number;
+    }>;
+    deliveryStats?: {
+      totalDeliveries: number;
+      todayDeliveries: number;
+      averageRating?: number;
+    };
+    lastActive?: Date;
+  }) => void;
+
+  'admin:rider_route_update': (data: {
+    riderId: string;
+    routeDirections: Array<{ latitude: number; longitude: number }>;
+    orderId?: string;
+    timestamp: Date;
+  }) => void;
+
+  'admin:error': (data: { message: string }) => void;
 }
 
 export interface ClientToServerEvents {
@@ -142,6 +256,10 @@ export interface ClientToServerEvents {
     deliveryId: string;
     status: string;
   }) => void;
+
+  // Admin events
+  'admin:get_delivery_riders': () => void;
+  'admin:get_rider_details': (data: { riderId: string }) => void;
 }
 
 // Types for order data

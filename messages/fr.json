@@ -1621,6 +1621,8 @@
       "providers": "Fournisseurs",
       "chat": "Chat",
       "delivery": "Livraison",
+      "delivery-riders": "Livreurs",
+      "Invoices": "Factures",
       "queue": "File d'Attente",
       "customers": "Clients",
       "reports": "Rapports",
