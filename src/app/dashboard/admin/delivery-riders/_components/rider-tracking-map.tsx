@@ -123,7 +123,19 @@ const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
 
   // Update rider marker
   useEffect(() => {
-    if (!mapInstance.current || !rider.currentLocation) return;
+    if (!mapLoaded || !mapInstance.current || !rider.currentLocation) {
+      return;
+    }
+
+    // Validate coordinates
+    const lat = rider.currentLocation.latitude;
+    const lng = rider.currentLocation.longitude;
+    
+    if (typeof lat !== 'number' || typeof lng !== 'number' || 
+        isNaN(lat) || isNaN(lng) || 
+        lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      return;
+    }
 
     // Remove existing rider marker
     if (riderMarkerRef.current) {
@@ -145,8 +157,8 @@ const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
 
     riderMarkerRef.current = new window.google.maps.Marker({
       position: {
-        lat: rider.currentLocation.latitude,
-        lng: rider.currentLocation.longitude
+        lat: lat,
+        lng: lng
       },
       map: mapInstance.current,
       icon: riderIcon,
@@ -187,11 +199,17 @@ const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
 
     // Center map on rider
     mapInstance.current.setCenter({
-      lat: rider.currentLocation.latitude,
-      lng: rider.currentLocation.longitude
+      lat: lat,
+      lng: lng
     });
 
-  }, [rider.currentLocation, rider.name, rider.isAvailableForDelivery]);
+  }, [
+    mapLoaded,
+    rider.currentLocation?.latitude ?? null, 
+    rider.currentLocation?.longitude ?? null, 
+    rider.name, 
+    rider.isAvailableForDelivery
+  ]);
 
   // Update order markers
   useEffect(() => {
@@ -328,12 +346,33 @@ const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
     return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
+  // Check if rider has valid location data
+  const hasValidLocation = rider.currentLocation && 
+    typeof rider.currentLocation.latitude === 'number' && 
+    typeof rider.currentLocation.longitude === 'number' &&
+    !isNaN(rider.currentLocation.latitude) && 
+    !isNaN(rider.currentLocation.longitude);
+
   if (!mapLoaded) {
     return (
       <div className="flex items-center justify-center h-full bg-muted/30">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-primary" />
           <p className="text-sm text-muted-foreground">Loading map...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasValidLocation) {
+    return (
+      <div className="flex items-center justify-center h-full bg-muted/30">
+        <div className="text-center">
+          <MapPin className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+          <p className="text-lg font-medium text-muted-foreground mb-2">No Location Data</p>
+          <p className="text-sm text-muted-foreground">
+            {rider.name} hasn't shared their location yet
+          </p>
         </div>
       </div>
     );

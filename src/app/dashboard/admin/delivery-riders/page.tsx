@@ -341,12 +341,59 @@ export default function DeliveryRidersPage() {
     return `${diffInDays}d ago`;
   };
 
-  const handleRiderClick = (rider: DeliveryRider) => {
-    setSelectedRider(rider);
-    setShowMap(true);
-    
-    // Request detailed info for this rider including orders
-    socket?.emit('admin:get_rider_details', { riderId: rider.id });
+  const handleRiderClick = async (rider: DeliveryRider) => {
+    // First, fetch the latest rider data from DB to get current location
+    try {
+      const token = await getAccessToken();
+      if (!token) {
+        console.error('No auth token found');
+        return;
+      }
+
+      const API_URL = process.env.NEXT_PUBLIC_SOCKET_URL;
+      const response = await fetch(`${API_URL}/api/admin/delivery-riders/${rider.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          // Use the fresh data from DB which includes currentLocation
+          const freshRiderData = {
+            ...rider,
+            ...result.data,
+            // Ensure we have the latest location data from DB and convert timestamp to Date
+            currentLocation: result.data.currentLocation ? {
+              ...result.data.currentLocation,
+              timestamp: new Date(result.data.currentLocation.timestamp)
+            } : rider.currentLocation,
+            assignedOrders: result.data.assignedOrders || rider.assignedOrders,
+            deliveryStats: result.data.deliveryStats || rider.deliveryStats
+          };
+          
+          
+          setSelectedRider(freshRiderData);
+          setShowMap(true);
+          
+          // Now request real-time updates via socket for this rider
+          socket?.emit('admin:get_rider_details', { riderId: rider.id });
+        }
+      } else {
+        // Fallback to current rider data if API fails
+        setSelectedRider(rider);
+        setShowMap(true);
+        socket?.emit('admin:get_rider_details', { riderId: rider.id });
+      }
+    } catch (error) {
+      console.error('Error fetching fresh rider data:', error);
+      // Fallback to current rider data
+      setSelectedRider(rider);
+      setShowMap(true);
+      socket?.emit('admin:get_rider_details', { riderId: rider.id });
+    }
   };
 
   const handleBackToList = () => {
@@ -440,11 +487,11 @@ export default function DeliveryRidersPage() {
           
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                <User className="h-5 w-5 text-gray-600" />
+              <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
+                <User className="h-5 w-5 text-muted-foreground" />
               </div>
-              <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
-                selectedRider.isOnline ? 'bg-green-500' : 'bg-gray-400'
+              <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${
+                selectedRider.isOnline ? 'bg-primary' : 'bg-destructive'
               }`} />
             </div>
             
@@ -479,10 +526,10 @@ export default function DeliveryRidersPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center space-x-2">
-                <Truck className="h-4 w-4 text-blue-600" />
+                <Truck className="h-4 w-4 text-primary" />
                 <div>
                   <p className="text-sm font-medium">Active Orders</p>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className="text-2xl font-bold text-primary">
                     {selectedRider.assignedOrders?.length || 0}
                   </p>
                 </div>
@@ -493,10 +540,10 @@ export default function DeliveryRidersPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-green-600" />
+                <Clock className="h-4 w-4 text-primary" />
                 <div>
                   <p className="text-sm font-medium">Today's Deliveries</p>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-2xl font-bold text-primary">
                     {selectedRider.deliveryStats?.todayDeliveries || 0}
                   </p>
                 </div>
@@ -507,10 +554,10 @@ export default function DeliveryRidersPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-purple-600" />
+                <MapPin className="h-4 w-4 text-primary" />
                 <div>
                   <p className="text-sm font-medium">GPS Accuracy</p>
-                  <p className="text-2xl font-bold text-purple-600">
+                  <p className="text-2xl font-bold text-primary">
                     {selectedRider.currentLocation?.accuracy ? 
                       `${selectedRider.currentLocation.accuracy.toFixed(0)}m` : 'N/A'}
                   </p>
@@ -523,9 +570,20 @@ export default function DeliveryRidersPage() {
         {/* Real-time tracking map */}
         <Card>
           <CardHeader>
-            <CardTitle>Real-time Tracking</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              Real-time Tracking
+              {selectedRider.currentLocation && (
+                <Badge variant="outline" className="text-xs">
+                  <MapPin className="h-3 w-3 mr-1" />
+                  Location: {new Date(selectedRider.currentLocation.timestamp).toLocaleString()}
+                </Badge>
+              )}
+            </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Live GPS location and assigned orders for {selectedRider.name}
+              {selectedRider.isOnline ? 
+                `Live GPS tracking and assigned orders for ${selectedRider.name}` :
+                `Last known location and orders for ${selectedRider.name} (Offline)`
+              }
             </p>
           </CardHeader>
           
@@ -547,9 +605,9 @@ export default function DeliveryRidersPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Online Delivery Riders</h1>
+          <h1 className="text-3xl font-bold">Delivery Riders</h1>
           <p className="text-muted-foreground">
-            Click on a rider to view real-time tracking
+            Click on any rider to view their tracking and location data
           </p>
         </div>
         
@@ -597,17 +655,19 @@ export default function DeliveryRidersPage() {
       {/* Riders List */}
       <Card>
         <CardHeader>
-          <CardTitle>Online Riders</CardTitle>
+          <CardTitle>All Riders</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Click on any rider to view their real-time location and orders
+            All registered delivery riders with their online status and location data
           </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {onlineRiders.map((rider) => (
+            {riders.map((rider) => (
               <div 
                 key={rider.id} 
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted cursor-pointer transition-colors"
+                className={`flex items-center justify-between p-4 border rounded-lg hover:bg-muted cursor-pointer transition-colors ${
+                  rider.isOnline ? 'border-primary/30 bg-primary/5' : 'border-muted bg-muted/20'
+                }`}
                 onClick={() => handleRiderClick(rider)}
               >
                 <div className="flex items-center space-x-4">
@@ -616,15 +676,28 @@ export default function DeliveryRidersPage() {
                       <User className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-background ${
-                      rider.isOnline ? 'bg-green-500' : 'bg-muted-foreground'
+                      rider.isOnline ? 'bg-primary' : 'bg-destructive'
                     }`} />
                   </div>
                   
                   <div>
-                    <p className="font-medium text-lg">{rider.name}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-medium text-lg">{rider.name}</p>
+                      <Badge variant={rider.isOnline ? "default" : "secondary"} className="text-xs">
+                        {rider.isOnline ? "Online" : "Offline"}
+                      </Badge>
+                      {rider.isOnline && (
+                        <Badge variant={rider.isAvailableForDelivery ? "default" : "outline"} className="text-xs">
+                          {rider.isAvailableForDelivery ? "Available" : "Busy"}
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-sm text-muted-foreground">{rider.email}</p>
                     {rider.country && (
-                      <p className="text-xs text-muted-foreground">📍 {rider.country}</p>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {rider.country}
+                      </p>
                     )}
                     <p className="text-xs text-muted-foreground">
                       {rider.assignedOrders?.length || 0} active orders
@@ -643,10 +716,15 @@ export default function DeliveryRidersPage() {
                         {rider.deliveryStats.todayDeliveries} deliveries today
                       </p>
                     )}
-                    {rider.currentLocation && (
-                      <p className="text-xs text-green-500 flex items-center gap-1">
+                    {rider.currentLocation ? (
+                      <p className="text-xs text-primary flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
-                        GPS Active
+                        Location Available
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        No Location Data
                       </p>
                     )}
                   </div>
@@ -665,11 +743,11 @@ export default function DeliveryRidersPage() {
               </div>
             ))}
             
-            {onlineRiders.length === 0 && (
+            {riders.length === 0 && (
               <div className="text-center py-12 text-muted-foreground">
                 <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="text-lg">No riders are currently online</p>
-                <p className="text-sm">Riders will appear here when they come online</p>
+                <p className="text-lg">No delivery riders found</p>
+                <p className="text-sm">Delivery riders will appear here once they register</p>
               </div>
             )}
           </div>
