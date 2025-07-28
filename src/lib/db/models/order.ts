@@ -7,10 +7,15 @@ import mongoose, { Document, Schema } from 'mongoose';
 export enum OrderStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
-  SHIPPED = 'shipped',
-  DELIVERED = 'delivered',
-  REFUNDED = 'refunded',
   CANCELLED = 'cancelled',
+  SHIPPED = 'shipped',
+  ASSIGNED_TO_DELIVERY = 'assigned_to_delivery',
+  ACCEPTED_BY_DELIVERY = 'accepted_by_delivery',
+  IN_TRANSIT = 'in_transit',
+  OUT_FOR_DELIVERY = 'out_for_delivery',
+  DELIVERED = 'delivered',
+  DELIVERY_FAILED = 'delivery_failed',
+  REFUNDED = 'refunded',
   WRONG_NUMBER = 'wrong_number',
   DOUBLE = 'double',
   UNREACHED = 'unreached',
@@ -24,6 +29,10 @@ export interface CustomerInfo {
   name: string;
   phoneNumbers: string[]; // Multiple phone numbers for single customer
   shippingAddress: string; // Simple string for shipping address
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 /**
@@ -66,21 +75,6 @@ export interface CallAttempt {
 }
 
 /**
- * Discount tracking interface for price adjustments during confirmation
- */
-export interface PriceAdjustment {
-  productId: mongoose.Types.ObjectId;
-  originalPrice: number;
-  adjustedPrice: number;
-  discountAmount: number;
-  discountPercentage: number;
-  reason: string; // Reason for discount (e.g., "Customer negotiation", "Promotion", etc.)
-  appliedBy: mongoose.Types.ObjectId; // Call center agent who applied the discount
-  appliedAt: Date;
-  notes?: string; // Additional notes about the discount
-}
-
-/**
  * Double order reference interface - Updated for rule-based detection
  */
 export interface DoubleOrderReference {
@@ -88,6 +82,39 @@ export interface DoubleOrderReference {
   orderNumber: string; // The display order ID (e.g., ORD-12345678-ABCD)
   matchedRule: string; // Name of the rule that detected this duplicate
   detectedAt: Date; // When this duplicate was detected
+}
+
+/**
+ * Delivery tracking interface for real-time delivery monitoring
+ */
+export interface DeliveryTracking {
+  deliveryGuyId: mongoose.Types.ObjectId;
+  assignedAt: Date;
+  acceptedAt?: Date;
+  pickedUpAt?: Date;
+  estimatedDeliveryTime?: Date;
+  actualDeliveryTime?: Date;
+  deliveryFee: number;
+  commission: number;
+  distance?: number; // Distance in kilometers
+  trackingNumber: string; // Unique tracking number for customers
+  currentLocation?: {
+    latitude: number;
+    longitude: number;
+    timestamp: Date;
+  };
+  route?: {
+    latitude: number;
+    longitude: number;
+    timestamp: Date;
+  }[];
+  deliveryNotes?: string;
+  customerRating?: number; // 1-5 rating from customer
+  deliveryProof?: {
+    type: 'photo' | 'signature';
+    url: string;
+    uploadedAt: Date;
+  };
 }
 
 /**
@@ -110,7 +137,7 @@ export interface IOrder extends Document {
   statusComment?: string; // Reason for status change (e.g., cancellation reason)
   statusChangedBy?: mongoose.Types.ObjectId; // Call center agent who changed status
   statusChangedAt: Date;
-  
+  doubleOrderRefrences:DoubleOrderReference[]
   // Call Tracking
   callAttempts: CallAttempt[];
   totalCallAttempts: number;
@@ -127,10 +154,14 @@ export interface IOrder extends Document {
   isDouble: boolean;
   doubleOrderReferences: DoubleOrderReference[];
   
-  // Price Adjustments & Discounts
-  priceAdjustments: PriceAdjustment[];
-  finalTotalPrice: number; // Total price after all discounts applied
-  totalDiscountAmount: number; // Sum of all discounts applied
+  // Delivery Tracking
+  deliveryTracking?: DeliveryTracking;
+  isDeliveryRequired: boolean;
+  deliveryAddress?: {
+    latitude?: number;
+    longitude?: number;
+    address: string;
+  };
   
   // Timestamps
   orderDate: Date; // For double order detection (same day logic)
@@ -165,6 +196,18 @@ const OrderSchema = new Schema<IOrder>(
         type: String,
         required: [true, 'Shipping address is required'],
         trim: true,
+      },
+      location: {
+        latitude: {
+          type: Number,
+          min: -90,
+          max: 90,
+        },
+        longitude: {
+          type: Number,
+          min: -180,
+          max: 180,
+        },
       },
     },
     
@@ -333,7 +376,6 @@ const OrderSchema = new Schema<IOrder>(
       orderId: {
         type: Schema.Types.ObjectId,
         ref: 'Order',
-        required: true,
       },
       orderNumber: {
         type: String,
@@ -351,62 +393,123 @@ const OrderSchema = new Schema<IOrder>(
       },
     }],
     
-    // Price Adjustments & Discounts
-    priceAdjustments: [{
-      productId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true,
-      },
-      originalPrice: {
-        type: Number,
-        required: true,
-        min: [0, 'Original price cannot be negative'],
-      },
-      adjustedPrice: {
-        type: Number,
-        required: true,
-        min: [0, 'Adjusted price cannot be negative'],
-      },
-      discountAmount: {
-        type: Number,
-        required: true,
-        min: [0, 'Discount amount cannot be negative'],
-      },
-      discountPercentage: {
-        type: Number,
-        required: true,
-        min: [0, 'Discount percentage cannot be negative'],
-        max: [100, 'Discount percentage cannot exceed 100%'],
-      },
-      reason: {
-        type: String,
-        required: [true, 'Discount reason is required'],
-        trim: true,
-      },
-      appliedBy: {
+    // Delivery Tracking
+    deliveryTracking: {
+      deliveryGuyId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
       },
-      appliedAt: {
+      assignedAt: {
         type: Date,
-        default: Date.now,
       },
-      notes: {
+      acceptedAt: {
+        type: Date,
+      },
+      pickedUpAt: {
+        type: Date,
+      },
+      estimatedDeliveryTime: {
+        type: Date,
+      },
+      actualDeliveryTime: {
+        type: Date,
+      },
+      deliveryFee: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+      commission: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+      distance: {
+        type: Number,
+        min: 0,
+      },
+      trackingNumber: {
+        type: String,
+        unique: true,
+        sparse: true,
+      },
+      currentLocation: {
+        latitude: {
+          type: Number,
+          min: -90,
+          max: 90,
+        },
+        longitude: {
+          type: Number,
+          min: -180,
+          max: 180,
+        },
+        timestamp: {
+          type: Date,
+        },
+      },
+      route: [{
+        latitude: {
+          type: Number,
+          required: true,
+          min: -90,
+          max: 90,
+        },
+        longitude: {
+          type: Number,
+          required: true,
+          min: -180,
+          max: 180,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      }],
+      deliveryNotes: {
         type: String,
         trim: true,
       },
-    }],
-    finalTotalPrice: {
-      type: Number,
-      min: [0, 'Final total price cannot be negative'],
-      index: true,
+      customerRating: {
+        type: Number,
+        min: 1,
+        max: 5,
+      },
+      deliveryProof: {
+        type: {
+          type: String,
+          enum: ['photo', 'signature'],
+        },
+        url: {
+          type: String,
+          trim: true,
+        },
+        uploadedAt: {
+          type: Date,
+        },
+      },
     },
-    totalDiscountAmount: {
-      type: Number,
-      default: 0,
-      min: [0, 'Total discount amount cannot be negative'],
+    
+    isDeliveryRequired: {
+      type: Boolean,
+      default: true,
+    },
+    
+    deliveryAddress: {
+      latitude: {
+        type: Number,
+        min: -90,
+        max: 90,
+      },
+      longitude: {
+        type: Number,
+        min: -180,
+        max: 180,
+      },
+      address: {
+        type: String,
+        trim: true,
+      },
     },
     
     // Timestamps
@@ -427,14 +530,24 @@ OrderSchema.index({ warehouseId: 1 });
 OrderSchema.index({ status: 1 });
 OrderSchema.index({ 'customer.name': 1, 'customer.phoneNumbers': 1, orderDate: 1 }); // For double order detection
 OrderSchema.index({ orderDate: 1, sellerId: 1 });
+OrderSchema.index({ 'deliveryTracking.deliveryGuyId': 1 }); // For delivery guy queries
+OrderSchema.index({ isDeliveryRequired: 1, status: 1 }); // For delivery assignment queries
 
-// Pre-save middleware to auto-generate order ID
+// Pre-save middleware to auto-generate order ID and tracking number
 OrderSchema.pre('save', async function (next) {
   if (this.isNew && !this.orderId) {
     const timestamp = Date.now().toString().slice(-8);
     const random = Math.random().toString(36).substring(2, 6).toUpperCase();
     this.orderId = `ORD-${timestamp}-${random}`;
   }
+  
+  // Generate tracking number when delivery tracking is assigned
+  if (this.deliveryTracking?.deliveryGuyId && !this.deliveryTracking.trackingNumber) {
+    const timestamp = Date.now().toString().slice(-8);
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    this.deliveryTracking.trackingNumber = `TRK-${timestamp}-${random}`;
+  }
+  
   next();
 });
 
@@ -463,6 +576,35 @@ OrderSchema.pre('save', function (next) {
   next();
 });
 
+// Static method for double order detection
+OrderSchema.statics.findPotentialDoubles = async function(
+  customerName: string,
+  phoneNumbers: string[],
+  productIds: mongoose.Types.ObjectId[],
+  orderDate: Date,
+  excludeOrderId?: mongoose.Types.ObjectId
+) {
+  const startOfDay = new Date(orderDate);
+  startOfDay.setHours(0, 0, 0, 0);
+  
+  const endOfDay = new Date(orderDate);
+  endOfDay.setHours(23, 59, 59, 999);
+  
+  const query: any = {
+    orderDate: { $gte: startOfDay, $lte: endOfDay },
+    $or: [
+      { 'customer.name': { $regex: new RegExp(customerName, 'i') } },
+      { 'customer.phoneNumbers': { $in: phoneNumbers } },
+      { 'products.productId': { $in: productIds } },
+    ],
+  };
+  
+  if (excludeOrderId) {
+    query._id = { $ne: excludeOrderId };
+  }
+  
+  return this.find(query);
+};
 
 // Create the model only if it doesn't already exist
 const Order = mongoose.models?.Order || mongoose.model<IOrder>('Order', OrderSchema);

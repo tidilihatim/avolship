@@ -52,6 +52,10 @@ export interface OrderTableData {
     name: string;
     phoneNumbers: string[];
     shippingAddress: string;
+    location?: {
+      latitude: number;
+      longitude: number;
+    };
   };
   warehouseId: string;
   warehouseName: string;
@@ -76,6 +80,10 @@ export interface OrderTableData {
   doubleOrderReferences: DoubleOrderReference[];
   orderDate: Date;
   assignedAgent?: string;
+  assignedRider?: {
+    name: string;
+    email: string;
+  };
   // Discount tracking fields
   priceAdjustments?: PriceAdjustment[];
   finalTotalPrice?: number;

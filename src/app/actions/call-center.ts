@@ -737,3 +737,154 @@ export const addCallAttempt = withDbConnection(async (
     };
   }
 });
+
+/**
+ * Get available delivery riders for a specific country
+ */
+export const getAvailableRiders = withDbConnection(async (country: string) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user || ![UserRole.CALL_CENTER, UserRole.ADMIN, UserRole.MODERATOR].includes(user.role)) {
+      return {
+        success: false,
+        message: 'Unauthorized access',
+      };
+    }
+
+    if (!country) {
+      return {
+        success: false,
+        message: 'Country parameter is required',
+      };
+    }
+
+    // Find delivery riders in the specified country
+    const riders = await User.find({
+      role: UserRole.DELIVERY,
+      status: 'approved',
+      country: country,
+    }).select('_id name email country').sort({ name: 1 }).lean();
+
+    return {
+      success: true,
+      riders: riders,
+    };
+  } catch (error: any) {
+    console.error('Error fetching delivery riders:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to fetch delivery riders',
+    };
+  }
+});
+
+/**
+ * Update customer information for an order
+ */
+export const updateCustomerInfo = withDbConnection(async (
+  orderId: string,
+  customerData: {
+    name: string;
+    phoneNumbers: string[];
+    shippingAddress: string;
+    location?: {
+      latitude: number;
+      longitude: number;
+    };
+  }
+) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user || ![UserRole.CALL_CENTER, UserRole.ADMIN, UserRole.MODERATOR].includes(user.role)) {
+      return {
+        success: false,
+        message: 'Unauthorized access. Only call center agents, admins, and moderators can update customer information.',
+      };
+    }
+
+    if (!orderId || !mongoose.Types.ObjectId.isValid(orderId)) {
+      return {
+        success: false,
+        message: 'Invalid order ID',
+      };
+    }
+
+    // Validate customer data
+    if (!customerData.name?.trim()) {
+      return {
+        success: false,
+        message: 'Customer name is required',
+      };
+    }
+
+    if (!customerData.phoneNumbers || customerData.phoneNumbers.length === 0) {
+      return {
+        success: false,
+        message: 'At least one phone number is required',
+      };
+    }
+
+    if (!customerData.shippingAddress?.trim()) {
+      return {
+        success: false,
+        message: 'Shipping address is required',
+      };
+    }
+
+    // Find the order
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return {
+        success: false,
+        message: 'Order not found',
+      };
+    }
+
+    // Update customer information
+    const updateData: any = {
+      'customer.name': customerData.name.trim(),
+      'customer.phoneNumbers': customerData.phoneNumbers.filter(phone => phone.trim()),
+      'customer.shippingAddress': customerData.shippingAddress.trim(),
+    };
+
+    // Add location if provided
+    if (customerData.location) {
+      updateData['customer.location'] = {
+        latitude: customerData.location.latitude,
+        longitude: customerData.location.longitude,
+      };
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedOrder) {
+      return {
+        success: false,
+        message: 'Failed to update customer information',
+      };
+    }
+
+    console.log(`Customer information updated for order ${order.orderId} by ${user.name}`);
+
+    return {
+      success: true,
+      message: 'Customer information updated successfully',
+      data: {
+        orderId: orderId,
+        orderNumber: order.orderId,
+        updatedBy: user.name,
+        updatedAt: new Date(),
+      }
+    };
+  } catch (error: any) {
+    console.error('Error updating customer information:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to update customer information',
+    };
+  }
+});

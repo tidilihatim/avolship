@@ -18,6 +18,8 @@ import {
   History,
   Percent,
   Tag,
+  Truck,
+  Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +58,9 @@ interface OrderTableRowProps {
   userRole: string | null;
   onStatusUpdate: (order: OrderTableData) => void;
   onAssignOrder: (order: OrderTableData) => void;
+  onAssignRider?: (order: OrderTableData) => void;
+  onEditCustomer?: (order: OrderTableData) => void;
+  onApplyDiscount?: (order: OrderTableData) => void;
   columnVisibility: ColumnVisibility;
 }
 
@@ -66,6 +71,9 @@ export default function OrderTableRow({
   userRole,
   onStatusUpdate,
   onAssignOrder,
+  onAssignRider,
+  onEditCustomer,
+  onApplyDiscount,
   columnVisibility,
 }: OrderTableRowProps) {
   const t = useTranslations();
@@ -98,10 +106,35 @@ export default function OrderTableRow({
         className:
           "bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200",
       },
+      [OrderStatus.ASSIGNED_TO_DELIVERY]: {
+        label: "Assigned to Delivery",
+        className:
+          "bg-indigo-50 text-indigo-700 hover:bg-indigo-50 border-indigo-200",
+      },
+      [OrderStatus.ACCEPTED_BY_DELIVERY]: {
+        label: "Accepted by Delivery",
+        className:
+          "bg-teal-50 text-teal-700 hover:bg-teal-50 border-teal-200",
+      },
+      [OrderStatus.IN_TRANSIT]: {
+        label: "In Transit",
+        className:
+          "bg-cyan-50 text-cyan-700 hover:bg-cyan-50 border-cyan-200",
+      },
+      [OrderStatus.OUT_FOR_DELIVERY]: {
+        label: "Out for Delivery",
+        className:
+          "bg-sky-50 text-sky-700 hover:bg-sky-50 border-sky-200",
+      },
       [OrderStatus.DELIVERED]: {
         label: t("orders.statuses.delivered"),
         className:
           "bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200",
+      },
+      [OrderStatus.DELIVERY_FAILED]: {
+        label: "Delivery Failed",
+        className:
+          "bg-rose-50 text-rose-700 hover:bg-rose-50 border-rose-200",
       },
       [OrderStatus.REFUNDED]: {
         label: t("orders.statuses.refunded"),
@@ -359,6 +392,23 @@ export default function OrderTableRow({
                 <User className="h-4 w-4 text-blue-600" />
                 <span className="text-sm font-medium text-blue-600">
                   {order.assignedAgent}
+                </span>
+              </>
+            ) : (
+              <span className="text-sm text-gray-500 italic">Unassigned</span>
+            )}
+          </div>
+        </TableCell>
+      )}
+
+      {columnVisibility.assignedRider && (
+        <TableCell className="table-cell">
+          <div className="flex items-center gap-2">
+            {order.assignedRider ? (
+              <>
+                <Truck className="h-4 w-4 text-green-600" />
+                <span className="text-sm font-medium text-green-600">
+                  {order.assignedRider.name}
                 </span>
               </>
             ) : (
@@ -715,7 +765,7 @@ export default function OrderTableRow({
             )}
 
             {/* Admin/Moderator Actions */}
-            {isAdminOrModerator || userRole === UserRole.CALL_CENTER && (
+            {isAdminOrModerator && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -730,6 +780,64 @@ export default function OrderTableRow({
                 >
                   {t("orders.actions.assignToAgent")}
                 </DropdownMenuItem>
+                {onAssignRider && (
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => onAssignRider(order)}
+                  >
+                    <Truck className="mr-2 h-4 w-4" />
+                    Assign Rider
+                  </DropdownMenuItem>
+                )}
+                {onEditCustomer && (
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => onEditCustomer(order)}
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Customer
+                  </DropdownMenuItem>
+                )}
+              </>
+            )}
+
+            {/* Call Center Actions */}
+            {userRole === UserRole.CALL_CENTER && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => onStatusUpdate(order)}
+                >
+                  {t("orders.actions.updateStatus")}
+                </DropdownMenuItem>
+                {onAssignRider && (
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => onAssignRider(order)}
+                  >
+                    <Truck className="mr-2 h-4 w-4" />
+                    Assign Rider
+                  </DropdownMenuItem>
+                )}
+                {onEditCustomer && (
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => onEditCustomer(order)}
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Customer
+                  </DropdownMenuItem>
+                )}
+                {onApplyDiscount && (
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => onApplyDiscount(order)}
+                  >
+                    <Percent className="mr-2 h-4 w-4" />
+                    Apply Discount
+                  </DropdownMenuItem>
+                )}
               </>
             )}
           </DropdownMenuContent>

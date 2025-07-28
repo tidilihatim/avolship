@@ -20,6 +20,7 @@ export interface ColumnVisibility {
   warehouse: boolean;
   seller: boolean;
   assignedAgent: boolean;
+  assignedRider: boolean;
   products: boolean;
   totalPrice: boolean;
   status: boolean;
@@ -40,6 +41,7 @@ const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
   warehouse: true,
   seller: true,
   assignedAgent: true,
+  assignedRider: true,
   products: true,
   totalPrice: true,
   status: true,
@@ -61,6 +63,7 @@ export default function ColumnToggle({
     { key: 'warehouse', label: t("orders.fields.warehouse"), alwaysVisible: false },
     { key: 'seller', label: t("orders.fields.seller"), alwaysVisible: false, adminOnly: true },
     { key: 'assignedAgent', label: t("orders.fields.assignedAgent"), alwaysVisible: false, adminOnly: true },
+    { key: 'assignedRider', label: 'Assigned Rider', alwaysVisible: false },
     { key: 'products', label: t("orders.fields.products"), alwaysVisible: false },
     { key: 'totalPrice', label: t("orders.fields.totalPrice"), alwaysVisible: false },
     { key: 'status', label: t("orders.fields.status"), alwaysVisible: false },

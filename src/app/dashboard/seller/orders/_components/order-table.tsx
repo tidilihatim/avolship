@@ -20,8 +20,9 @@ import {
 
 import { UserRole } from "@/lib/db/models/user";
 import { getLoginUserRole } from "@/app/actions/auth";
-import { assignOrderToAgent} from "@/app/actions/call-center";
+import { assignOrderToAgent, updateCustomerInfo } from "@/app/actions/call-center";
 import { getCallCenterAgents } from "@/app/actions/user";
+import { getAccessToken } from "@/app/actions/cookie";
 import StatusUpdateDialog from "./order-table/status-update-dialog";
 
 // Import new components
@@ -31,6 +32,9 @@ import OrderTableHeader from "./order-table/order-table-header";
 import OrderTableRow from "./order-table/order-table-row";
 import OrderPagination from "./order-table/order-pagination";
 import OrderAssignmentDialog from "./order-table/order-assignment-dialog";
+import RiderAssignmentDialog from "./order-table/rider-assignment-dialog";
+import CustomerUpdateDialog, { CustomerUpdateData } from "./order-table/customer-update-dialog";
+import DiscountDialog from "./order-table/discount-dialog";
 import ColumnToggle from "./order-table/column-toggle";
 import { useColumnVisibility } from "./order-table/use-column-visibility";
 
@@ -102,6 +106,33 @@ export default function OrderTable({
     order: null,
   });
 
+  // State for rider assignment dialog
+  const [riderAssignmentDialog, setRiderAssignmentDialog] = useState<{
+    isOpen: boolean;
+    order: OrderTableData | null;
+  }>({
+    isOpen: false,
+    order: null,
+  });
+
+  // State for customer update dialog
+  const [customerUpdateDialog, setCustomerUpdateDialog] = useState<{
+    isOpen: boolean;
+    order: OrderTableData | null;
+  }>({
+    isOpen: false,
+    order: null,
+  });
+
+  // State for discount dialog
+  const [discountDialog, setDiscountDialog] = useState<{
+    isOpen: boolean;
+    order: OrderTableData | null;
+  }>({
+    isOpen: false,
+    order: null,
+  });
+
   // State for call center agents
   const [callCenterAgents, setCallCenterAgents] = useState<Array<{
     _id: string;
@@ -111,6 +142,20 @@ export default function OrderTable({
 
   const [selectedAgent, setSelectedAgent] = useState<string>("");
   const [isAssigning, setIsAssigning] = useState(false);
+
+  // State for delivery riders
+  const [deliveryRiders, setDeliveryRiders] = useState<Array<{
+    _id: string;
+    name: string;
+    email: string;
+    country: string;
+  }>>([]);
+
+  const [selectedRider, setSelectedRider] = useState<string>("");
+  const [isAssigningRider, setIsAssigningRider] = useState(false);
+
+  // Customer update state
+  const [isUpdatingCustomer, setIsUpdatingCustomer] = useState(false);
 
   // Column visibility management
   const { columnVisibility, setColumnVisibility } = useColumnVisibility();
@@ -333,6 +378,53 @@ export default function OrderTable({
     setSelectedAgent("");
   };
 
+  // Rider assignment dialog handlers
+  const openRiderAssignmentDialog = (order: OrderTableData) => {
+    setRiderAssignmentDialog({
+      isOpen: true,
+      order,
+    });
+    setSelectedRider("");
+  };
+
+  const closeRiderAssignmentDialog = () => {
+    setRiderAssignmentDialog({
+      isOpen: false,
+      order: null,
+    });
+    setSelectedRider("");
+  };
+
+  // Customer update dialog handlers
+  const openCustomerUpdateDialog = (order: OrderTableData) => {
+    setCustomerUpdateDialog({
+      isOpen: true,
+      order,
+    });
+  };
+
+  const closeCustomerUpdateDialog = () => {
+    setCustomerUpdateDialog({
+      isOpen: false,
+      order: null,
+    });
+  };
+
+  // Discount dialog handlers
+  const openDiscountDialog = (order: OrderTableData) => {
+    setDiscountDialog({
+      isOpen: true,
+      order,
+    });
+  };
+
+  const closeDiscountDialog = () => {
+    setDiscountDialog({
+      isOpen: false,
+      order: null,
+    });
+  };
+
   // Handle order assignment
   const handleAssignOrder = async () => {
     if (!selectedAgent || !assignmentDialog.order) {
@@ -357,6 +449,77 @@ export default function OrderTable({
       toast.error("Failed to assign order");
     } finally {
       setIsAssigning(false);
+    }
+  };
+
+  // Handle rider assignment
+  const handleAssignRider = async () => {
+    if (!selectedRider || !riderAssignmentDialog.order) {
+      toast.error("Please select a delivery rider");
+      return;
+    }
+
+    setIsAssigningRider(true);
+    try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        toast.error("Authentication required");
+        return;
+      }
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/orders/assign-rider`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderId: riderAssignmentDialog.order._id,
+          riderId: selectedRider,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success(result.message || "Rider assigned successfully");
+        closeRiderAssignmentDialog();
+        router.refresh();
+      } else {
+        toast.error(result.message || "Failed to assign rider");
+      }
+    } catch (error) {
+      console.error("Error assigning rider:", error);
+      toast.error("Failed to assign rider");
+    } finally {
+      setIsAssigningRider(false);
+    }
+  };
+
+  // Handle customer update
+  const handleCustomerUpdate = async (customerData: CustomerUpdateData) => {
+    if (!customerUpdateDialog.order) {
+      toast.error("No order selected for update");
+      return;
+    }
+
+    setIsUpdatingCustomer(true);
+    try {
+      const result = await updateCustomerInfo(customerUpdateDialog.order._id, customerData);
+
+      if (result.success) {
+        toast.success(result.message || "Customer information updated successfully");
+        closeCustomerUpdateDialog();
+        router.refresh();
+      } else {
+        toast.error(result.message || "Failed to update customer information");
+      }
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      toast.error("Failed to update customer information");
+    } finally {
+      setIsUpdatingCustomer(false);
     }
   };
 
@@ -457,6 +620,9 @@ export default function OrderTable({
                       userRole={userRole}
                       onStatusUpdate={openStatusUpdateDialog}
                       onAssignOrder={openAssignmentDialog}
+                      onAssignRider={openRiderAssignmentDialog}
+                      onEditCustomer={openCustomerUpdateDialog}
+                      onApplyDiscount={openDiscountDialog}
                       columnVisibility={columnVisibility}
                     />
                   ))}
@@ -507,6 +673,43 @@ export default function OrderTable({
         isAssigning={isAssigning}
         onAssign={handleAssignOrder}
       />
+
+      {/* Rider Assignment Dialog */}
+      <RiderAssignmentDialog
+        isOpen={riderAssignmentDialog.isOpen}
+        onOpenChange={(open) => {
+          if (!open) closeRiderAssignmentDialog();
+        }}
+        order={riderAssignmentDialog.order}
+        selectedRider={selectedRider}
+        onSelectedRiderChange={setSelectedRider}
+        isAssigning={isAssigningRider}
+        onAssign={handleAssignRider}
+      />
+
+      {/* Customer Update Dialog */}
+      <CustomerUpdateDialog
+        isOpen={customerUpdateDialog.isOpen}
+        onOpenChange={(open) => {
+          if (!open) closeCustomerUpdateDialog();
+        }}
+        order={customerUpdateDialog.order}
+        isUpdating={isUpdatingCustomer}
+        onUpdate={handleCustomerUpdate}
+      />
+
+      {/* Discount Dialog */}
+      {discountDialog.order && (
+        <DiscountDialog
+          isOpen={discountDialog.isOpen}
+          onClose={closeDiscountDialog}
+          order={discountDialog.order}
+          onDiscountApplied={() => {
+            closeDiscountDialog();
+            router.refresh();
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -39,6 +39,11 @@ export default function OrderTableHeader({
             {t("orders.fields.assignedAgent")}
           </TableHead>
         )}
+        {columnVisibility.assignedRider && (
+          <TableHead className="table-cell">
+            Assigned Rider
+          </TableHead>
+        )}
         {columnVisibility.products && (
           <TableHead className="table-cell">
             {t("orders.fields.products")}
