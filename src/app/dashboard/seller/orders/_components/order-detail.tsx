@@ -10,6 +10,11 @@ import {
   Users,
   PhoneCall,
   AlertTriangle,
+  UserCheck,
+  Truck,
+  Navigation,
+  MapPin,
+  PackageX,
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -59,11 +64,41 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
         className: 'border-primary bg-primary/10',
         icon: CheckCircle
       },
+      [OrderStatus.CANCELLED]: { 
+        label: t('statuses.cancelled'), 
+        description: t('statusDescriptions.cancelled'),
+        className: 'border-destructive bg-destructive/10',
+        icon: XCircle
+      },
       [OrderStatus.SHIPPED]: { 
         label: t('statuses.shipped'), 
         description: t('statusDescriptions.shipped'),
         className: 'border-blue-500 bg-blue-500/10',
         icon: CheckCircle
+      },
+      [OrderStatus.ASSIGNED_TO_DELIVERY]: { 
+        label: t('statuses.assigned_to_delivery'), 
+        description: t('statusDescriptions.assigned_to_delivery'),
+        className: 'border-indigo-500 bg-indigo-500/10',
+        icon: UserCheck
+      },
+      [OrderStatus.ACCEPTED_BY_DELIVERY]: { 
+        label: t('statuses.accepted_by_delivery'), 
+        description: t('statusDescriptions.accepted_by_delivery'),
+        className: 'border-cyan-500 bg-cyan-500/10',
+        icon: CheckCircle
+      },
+      [OrderStatus.IN_TRANSIT]: { 
+        label: t('statuses.in_transit'), 
+        description: t('statusDescriptions.in_transit'),
+        className: 'border-blue-600 bg-blue-600/10',
+        icon: Navigation
+      },
+      [OrderStatus.OUT_FOR_DELIVERY]: { 
+        label: t('statuses.out_for_delivery'), 
+        description: t('statusDescriptions.out_for_delivery'),
+        className: 'border-emerald-500 bg-emerald-500/10',
+        icon: Truck
       },
       [OrderStatus.DELIVERED]: { 
         label: t('statuses.delivered'), 
@@ -71,17 +106,17 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
         className: 'border-green-500 bg-green-500/10',
         icon: CheckCircle
       },
+      [OrderStatus.DELIVERY_FAILED]: { 
+        label: t('statuses.delivery_failed'), 
+        description: t('statusDescriptions.delivery_failed'),
+        className: 'border-red-500 bg-red-500/10',
+        icon: PackageX
+      },
       [OrderStatus.REFUNDED]: { 
         label: t('statuses.refunded'), 
         description: t('statusDescriptions.refunded'),
         className: 'border-yellow-500 bg-yellow-500/10',
         icon: AlertTriangle
-      },
-      [OrderStatus.CANCELLED]: { 
-        label: t('statuses.cancelled'), 
-        description: t('statusDescriptions.cancelled'),
-        className: 'border-destructive bg-destructive/10',
-        icon: XCircle
       },
       [OrderStatus.WRONG_NUMBER]: { 
         label: t('statuses.wrong_number'), 

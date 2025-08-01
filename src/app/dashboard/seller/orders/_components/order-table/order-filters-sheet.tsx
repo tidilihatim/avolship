@@ -87,17 +87,32 @@ export default function OrderFiltersSheet({
       [OrderStatus.CONFIRMED]: {
         label: t("orders.statuses.confirmed"),
       },
+      [OrderStatus.CANCELLED]: {
+        label: t("orders.statuses.cancelled"),
+      },
       [OrderStatus.SHIPPED]: {
         label: t("orders.statuses.shipped"),
+      },
+      [OrderStatus.ASSIGNED_TO_DELIVERY]: {
+        label: t("orders.statuses.assigned_to_delivery"),
+      },
+      [OrderStatus.ACCEPTED_BY_DELIVERY]: {
+        label: t("orders.statuses.accepted_by_delivery"),
+      },
+      [OrderStatus.IN_TRANSIT]: {
+        label: t("orders.statuses.in_transit"),
+      },
+      [OrderStatus.OUT_FOR_DELIVERY]: {
+        label: t("orders.statuses.out_for_delivery"),
       },
       [OrderStatus.DELIVERED]: {
         label: t("orders.statuses.delivered"),
       },
+      [OrderStatus.DELIVERY_FAILED]: {
+        label: t("orders.statuses.delivery_failed"),
+      },
       [OrderStatus.REFUNDED]: {
         label: t("orders.statuses.refunded"),
-      },
-      [OrderStatus.CANCELLED]: {
-        label: t("orders.statuses.cancelled"),
       },
       [OrderStatus.WRONG_NUMBER]: {
         label: t("orders.statuses.wrong_number"),

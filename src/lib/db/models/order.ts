@@ -118,6 +118,21 @@ export interface DeliveryTracking {
 }
 
 /**
+ * Discount tracking interface for price adjustments during confirmation
+ */
+export interface PriceAdjustment {
+  productId: mongoose.Types.ObjectId;
+  originalPrice: number;
+  adjustedPrice: number;
+  discountAmount: number;
+  discountPercentage: number;
+  reason: string; // Reason for discount (e.g., "Customer negotiation", "Promotion", etc.)
+  appliedBy: mongoose.Types.ObjectId; // Call center agent who applied the discount
+  appliedAt: Date;
+  notes?: string; // Additional notes about the discount
+}
+
+/**
  * Order interface based on SRS requirements (Section 2.3)
  */
 export interface IOrder extends Document {
@@ -149,6 +164,11 @@ export interface IOrder extends Document {
   lockedBy?: mongoose.Types.ObjectId; // Agent currently working on this order
   lockedAt?: Date; // When the order was locked
   lockExpiry?: Date; // When the lock expires (auto-unlock)
+
+  // Price Adjustments & Discounts
+  priceAdjustments: PriceAdjustment[];
+  finalTotalPrice: number; // Total price after all discounts applied
+  totalDiscountAmount: number; // Sum of all discounts applied
   
   // Double Order Detection
   isDouble: boolean;
@@ -489,6 +509,8 @@ const OrderSchema = new Schema<IOrder>(
         },
       },
     },
+
+    
     
     isDeliveryRequired: {
       type: Boolean,
@@ -511,12 +533,72 @@ const OrderSchema = new Schema<IOrder>(
         trim: true,
       },
     },
+
+    
     
     // Timestamps
     orderDate: {
       type: Date,
       default: Date.now,
       index: true, // For double order detection queries
+    },
+
+    // Price Adjustments & Discounts
+    priceAdjustments: [{
+      productId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
+      },
+      originalPrice: {
+        type: Number,
+        required: true,
+        min: [0, 'Original price cannot be negative'],
+      },
+      adjustedPrice: {
+        type: Number,
+        required: true,
+        min: [0, 'Adjusted price cannot be negative'],
+      },
+      discountAmount: {
+        type: Number,
+        required: true,
+        min: [0, 'Discount amount cannot be negative'],
+      },
+      discountPercentage: {
+        type: Number,
+        required: true,
+        min: [0, 'Discount percentage cannot be negative'],
+        max: [100, 'Discount percentage cannot exceed 100%'],
+      },
+      reason: {
+        type: String,
+        required: [true, 'Discount reason is required'],
+        trim: true,
+      },
+      appliedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      appliedAt: {
+        type: Date,
+        default: Date.now,
+      },
+      notes: {
+        type: String,
+        trim: true,
+      },
+    }],
+    finalTotalPrice: {
+      type: Number,
+      min: [0, 'Final total price cannot be negative'],
+      index: true,
+    },
+    totalDiscountAmount: {
+      type: Number,
+      default: 0,
+      min: [0, 'Total discount amount cannot be negative'],
     },
   },
   {

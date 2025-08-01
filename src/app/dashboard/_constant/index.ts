@@ -128,11 +128,6 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       href: "/dashboard/call_center/customers",
       icon: Users,
     },
-    {
-      name: "reports",
-      href: "/dashboard/call_center/reports",
-      icon: FileText,
-    },
   ],
   // Provide empty arrays or add real data if needed
   'customer-support': [],

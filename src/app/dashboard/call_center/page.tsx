@@ -2,161 +2,223 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Phone, Clock, CheckCircle, AlertCircle, TrendingUp, Users, PhoneCall } from 'lucide-react'
-import { getCallCenterStats, getHourlyCallData, getCallOutcomeData, getWeeklyPerformanceData, getPriorityQueue, getRecentActivity } from '@/app/actions/call-center'
+import { 
+  Phone, 
+  Clock, 
+  CheckCircle, 
+  AlertTriangle, 
+  Users, 
+  PhoneCall,
+  Timer
+} from 'lucide-react'
+import { getCallCenterStats, getPriorityQueue, getRecentActivity } from '@/app/actions/call-center'
 import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
+import { CallCenterDashboardClient } from '@/components/call-center/call-center-dashboard-client'
 
-const CallCenterDashboard = async () => {
-  const t = await getTranslations('callCenter')
+const CallCenterDashboard = async ({ searchParams }: { searchParams: Promise<{ startDate?: string; endDate?: string }> }) => {
+  const { startDate, endDate } = await searchParams
   
+  // Fetch data for the dashboard
   const [
     statsResult,
-    hourlyDataResult,
-    outcomeDataResult,
-    weeklyDataResult,
     queueResult,
     activityResult
   ] = await Promise.all([
-    getCallCenterStats(),
-    getHourlyCallData(),
-    getCallOutcomeData(),
-    getWeeklyPerformanceData(),
+    getCallCenterStats(startDate, endDate),
     getPriorityQueue(),
-    getRecentActivity()
-  ]);
+    getRecentActivity(startDate, endDate)
+  ])
 
-  const stats = statsResult.success ? statsResult.stats : null;
-  const priorityOrders = queueResult.success ? queueResult.orders : [];
-  const recentActivities = activityResult.success ? activityResult.activities : [];
+  const stats = statsResult.success ? statsResult.stats : null
+  const priorityOrders = queueResult.success ? queueResult.orders : []
+  const recentActivities = activityResult.success ? activityResult.activities : []
+  
+  // Generate dynamic labels based on date range
+  const getDateRangeLabel = () => {
+    if (!startDate || !endDate) return 'Today'
+    
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const now = new Date()
+    
+    // Check if it's today
+    const today = new Date(now)
+    today.setHours(0, 0, 0, 0)
+    const todayEnd = new Date(today)
+    todayEnd.setHours(23, 59, 59, 999)
+    
+    if (start.getTime() === today.getTime() && end.getDate() === todayEnd.getDate()) {
+      return 'Today'
+    }
+    
+    // Check if it's yesterday
+    const yesterday = new Date(now)
+    yesterday.setDate(yesterday.getDate() - 1)
+    yesterday.setHours(0, 0, 0, 0)
+    const yesterdayEnd = new Date(yesterday)
+    yesterdayEnd.setHours(23, 59, 59, 999)
+    
+    if (start.getTime() === yesterday.getTime() && end.getTime() === yesterdayEnd.getTime()) {
+      return 'Yesterday'
+    }
+    
+    // Check for this week
+    const startOfWeek = new Date(now)
+    const day = startOfWeek.getDay()
+    startOfWeek.setDate(startOfWeek.getDate() - day)
+    startOfWeek.setHours(0, 0, 0, 0)
+    
+    if (start.getTime() === startOfWeek.getTime()) {
+      return 'This Week'
+    }
+    
+    // Check for this month
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    if (start.getTime() === startOfMonth.getTime()) {
+      return 'This Month'
+    }
+    
+    // Calculate day difference for other ranges
+    const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+    
+    switch (daysDiff) {
+      case 2: return 'Last 3 Days'
+      case 6: return 'Last 7 Days'
+      case 29: return 'Last 30 Days'
+      default: 
+        // Custom range - show dates
+        const startStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        const endStr = end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        return `${startStr} - ${endStr}`
+    }
+  }
+  
+  const dateRangeLabel = getDateRangeLabel()
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <p className="text-muted-foreground mt-1">{t('subtitle')}</p>
-        </div>
-        <div className="flex gap-2">
-          <Button asChild>
-            <Link href="/dashboard/call-center/queue">
-              <Phone className="w-4 h-4 mr-2" />
-              {t('actions.priorityQueue')}
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/dashboard/call-center/reports">
-              <TrendingUp className="w-4 h-4 mr-2" />
-              {t('actions.viewReports')}
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      {/* Key Metrics */}
+    <CallCenterDashboardClient>
+      {/* Key Performance Metrics */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* My Assigned Orders */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('dashboard.totalOrdersToday')}</CardTitle>
+              <CardTitle className="text-sm font-medium">My Assigned Orders</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalOrdersToday}</div>
               <p className="text-xs text-muted-foreground">
-                {stats.pendingConfirmations} {t('dashboard.pendingConfirmations').toLowerCase()}
+                {stats.pendingConfirmations} pending calls
               </p>
             </CardContent>
           </Card>
 
+          {/* Calls Made */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('dashboard.successRate')}</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.successRate}%</div>
-              <p className="text-xs text-muted-foreground">
-                {stats.successfulCalls} {t('dashboard.confirmedCalls')}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('dashboard.averageCallTime')}</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.avgCallTime}m</div>
-              <p className="text-xs text-muted-foreground">
-                {stats.totalCallAttempts} {t('dashboard.totalAttempts')}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('dashboard.queueLength')}</CardTitle>
+              <CardTitle className="text-sm font-medium">Calls Made {dateRangeLabel}</CardTitle>
               <PhoneCall className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.queueLength}</div>
+              <div className="text-2xl font-bold">{stats.totalCallAttempts}</div>
               <p className="text-xs text-muted-foreground">
-                {t('dashboard.activeCalls')}: {stats.activeCalls}
+                Avg {stats.avgCallTime}m per call
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Confirmed */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Confirmed {dateRangeLabel}</CardTitle>
+              <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.successfulCalls}</div>
+              <p className="text-xs text-muted-foreground">
+                {stats.successRate}% success rate
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Priority Queue */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Priority Queue</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.queueLength}</div>
+              <p className="text-xs text-muted-foreground">
+                Orders need calling
               </p>
             </CardContent>
           </Card>
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Priority Queue */}
-        <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Priority Orders to Call */}
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
-              {t('sections.priorityQueue')}
+              <Phone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              Priority Orders - Need Calling
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {priorityOrders?.slice(0, 5).map((order) => (
-                <div key={order._id} className="flex items-center justify-between p-3 border rounded-lg">
+              {priorityOrders?.slice(0, 6).map((order) => (
+                <div key={order._id} className="flex items-center justify-between p-4 border rounded-lg bg-muted/50">
                   <div className="flex-1">
-                    <div className="font-medium">{order.customerName}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {order.orderId} • ${order.totalPrice} {order.currency}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold">{order.customerName}</span>
+                      <Badge 
+                        variant={
+                          order.priority === 'urgent' ? 'destructive' : 
+                          order.priority === 'high' ? 'default' : 'secondary'
+                        }
+                        className="text-xs"
+                      >
+                        {order.priority?.toUpperCase()}
+                      </Badge>
                     </div>
+                    <div className="text-sm text-muted-foreground">
+                      Order: {order.orderId} • ${order.totalPrice} {order.currency}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      📞 {order.phoneNumbers?.[0]} • Waiting: {Math.floor(order.waitingTime / 60)}h {order.waitingTime % 60}m
+                    </div>
+                    {order.attempts > 0 && (
+                      <div className="text-xs text-orange-600 mt-1">
+                        {order.attempts} previous attempts
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge 
-                      variant={
-                        order.priority === 'urgent' ? 'destructive' : 
-                        order.priority === 'high' ? 'default' : 'secondary'
-                      }
-                    >
-                      {t(`priority.${order.priority}`)}
-                    </Badge>
+                  <div className="flex flex-col gap-2">
                     <Button size="sm" asChild>
-                      <Link href={`/dashboard/call-center/queue?orderId=${order._id}`}>
-                        {t('actions.call')}
+                      <Link href={`/dashboard/call-center/call/${order._id}`}>
+                        <Phone className="w-4 h-4 mr-1" />
+                        Call Now
                       </Link>
                     </Button>
                   </div>
                 </div>
               ))}
+              
               {priorityOrders?.length === 0 && (
-                <div className="text-center py-6 text-muted-foreground">
-                  {t('messages.noOrdersInQueue')}
+                <div className="text-center py-8 text-muted-foreground">
+                  <CheckCircle className="w-12 h-12 mx-auto mb-2 text-green-500" />
+                  <p>Great job! No pending calls right now.</p>
                 </div>
               )}
-              {priorityOrders && priorityOrders?.length > 5 && (
-                <div className="text-center pt-3">
+              
+              {priorityOrders && priorityOrders?.length > 6 && (
+                <div className="text-center pt-4">
                   <Button variant="outline" asChild>
                     <Link href="/dashboard/call-center/queue">
-                      {t('actions.viewAll')} ({priorityOrders?.length})
+                      View All Orders ({priorityOrders?.length})
                     </Link>
                   </Button>
                 </div>
@@ -168,62 +230,45 @@ const CallCenterDashboard = async () => {
         {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('sections.recentActivity')}</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              My Recent Activity
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {recentActivities?.map((activity:any, index:number) => (
+              {recentActivities?.map((activity: any, index: number) => (
                 <div key={index} className="flex items-start gap-3 text-sm">
-                  <div className={`w-2 h-2 rounded-full mt-2 ${
-                    activity.type === 'status_change' ? 'bg-blue-500' : 'bg-green-500'
+                  <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                    activity.type === 'call_attempt' ? (
+                      activity.status === 'answered' ? 'bg-green-500' : 'bg-orange-500'
+                    ) : 'bg-blue-500'
                   }`} />
-                  <div className="flex-1">
-                    <div>{activity.message}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="break-words">{activity.message}</div>
                     <div className="text-xs text-muted-foreground">
-                      {new Date(activity.timestamp).toLocaleTimeString()}
+                      {new Date(activity.timestamp).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                      })}
                     </div>
                   </div>
                 </div>
               ))}
+              
               {recentActivities?.length === 0 && (
                 <div className="text-center py-6 text-muted-foreground">
-                  {t('messages.noRecentActivity')}
+                  <Timer className="w-8 h-8 mx-auto mb-2" />
+                  <p>No recent activity</p>
                 </div>
               )}
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('sections.quickActions')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button asChild className="h-20 flex-col">
-              <Link href="/dashboard/call-center/queue">
-                <Phone className="w-6 h-6 mb-2" />
-                {t('actions.startCalling')}
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="h-20 flex-col">
-              <Link href="/dashboard/call-center/customers">
-                <Users className="w-6 h-6 mb-2" />
-                {t('actions.customerDatabase')}
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="h-20 flex-col">
-              <Link href="/dashboard/call-center/reports">
-                <TrendingUp className="w-6 h-6 mb-2" />
-                {t('actions.viewReports')}
-              </Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    </CallCenterDashboardClient>
   )
 }
 
