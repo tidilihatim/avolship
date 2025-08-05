@@ -450,6 +450,8 @@ export const getOrders = withDbConnection(async (
         doubleOrderReferences: order.doubleOrderReferences || [],
         orderDate: order.orderDate,
         assignedAgent: assignedAgentData?.name,
+        deliveryTracking: order?.deliveryTracking,
+        isDeliveryRequired: order.isDeliveryRequired || false,
         assignedRider: assignedRiderData ? {
           name: assignedRiderData.name,
           email: assignedRiderData.email,
@@ -470,7 +472,6 @@ export const getOrders = withDbConnection(async (
 
     // Calculate pagination data
     const totalPages = Math.ceil(total / limit);
-
     return {
       success: true,
       orders: JSON.parse(JSON.stringify(ordersWithNames)),

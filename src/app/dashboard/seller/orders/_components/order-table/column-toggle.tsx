@@ -18,6 +18,7 @@ export interface ColumnVisibility {
   orderId: boolean;
   customer: boolean;
   warehouse: boolean;
+  deliveryTracking: boolean;
   seller: boolean;
   assignedAgent: boolean;
   assignedRider: boolean;
@@ -40,6 +41,7 @@ const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
   customer: true,
   warehouse: true,
   seller: true,
+  deliveryTracking: true,
   assignedAgent: true,
   assignedRider: true,
   products: true,

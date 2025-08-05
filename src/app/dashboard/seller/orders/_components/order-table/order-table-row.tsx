@@ -6,7 +6,6 @@ import {
   ChevronDown,
   Globe,
   Phone,
-  MapPin,
   Package,
   Users,
   Calendar,
@@ -20,6 +19,11 @@ import {
   Tag,
   Truck,
   Edit,
+  MapPin,
+  Clock,
+  DollarSign,
+  Image,
+  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +54,7 @@ import { UserRole } from "@/lib/db/models/user";
 import { OrderTableData, WarehouseOption } from "./order-table-types";
 import { ColumnVisibility } from "./column-toggle";
 import { MakeCallButton } from "@/components/call-center/make-call-button";
+import { getAccessToken } from "@/app/actions/cookie";
 
 interface OrderTableRowProps {
   order: OrderTableData;
@@ -87,6 +92,38 @@ export default function OrderTableRow({
     toast.success(`Call completed - Status: ${callData.status}`)
     router.refresh()
   };
+
+  // Function to view delivery proof
+  const handleViewDeliveryProof = async (orderId: string) => {
+    try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        toast.error("Authentication required");
+        return;
+      }
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/orders/delivery-proof-url/${orderId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Open the signed URL in a new tab
+        window.open(result.data.signedUrl, '_blank');
+      } else {
+        toast.error(result.message || "Failed to get delivery proof image");
+      }
+    } catch (error) {
+      console.error("Error fetching delivery proof:", error);
+      toast.error("Failed to load delivery proof image");
+    }
+  };
   
   // Get status badge styling
   const getStatusBadge = (status: OrderStatus) => {
@@ -114,7 +151,7 @@ export default function OrderTableRow({
       [OrderStatus.ACCEPTED_BY_DELIVERY]: {
         label: "Accepted by Delivery",
         className:
-          "bg-teal-50 text-teal-700 hover:bg-teal-50 border-teal-200",
+          "bg-violet-50 text-violet-700 hover:bg-violet-50 border-violet-200",
       },
       [OrderStatus.IN_TRANSIT]: {
         label: "In Transit",
@@ -415,6 +452,183 @@ export default function OrderTableRow({
               <span className="text-sm text-gray-500 italic">Unassigned</span>
             )}
           </div>
+        </TableCell>
+      )}
+
+      {order.deliveryTracking && (
+        <TableCell className="table-cell">
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                className="h-auto w-full p-2 justify-start"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <Truck className="h-4 w-4 text-blue-600" />
+                    <span className="font-medium text-sm">
+                      Delivery Tracking
+                    </span>
+                    <Badge variant="outline" className="text-xs">
+                      {order.deliveryTracking.trackingNumber}
+                    </Badge>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </div>
+              </Button>
+            </CollapsibleTrigger>
+
+            <CollapsibleContent className="px-2 pb-2 overflow-hidden transition-all duration-500 data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+              <div className="space-y-3 bg-muted/50 p-4 rounded-md border max-h-80 overflow-y-auto">
+                
+                {/* Delivery Timeline */}
+                <div>
+                  <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+                    <Clock className="h-3 w-3" />
+                    Delivery Timeline
+                  </div>
+                  <div className="space-y-2">
+                    {order.deliveryTracking.assignedAt && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Assigned:</span>
+                        <span className="font-medium">{formatDate(order.deliveryTracking.assignedAt)}</span>
+                      </div>
+                    )}
+                    {order.deliveryTracking.acceptedAt && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Accepted:</span>
+                        <span className="font-medium">{formatDate(order.deliveryTracking.acceptedAt)}</span>
+                      </div>
+                    )}
+                    {order.deliveryTracking.pickedUpAt && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Picked Up:</span>
+                        <span className="font-medium">{formatDate(order.deliveryTracking.pickedUpAt)}</span>
+                      </div>
+                    )}
+                    {order.deliveryTracking.actualDeliveryTime && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Delivered:</span>
+                        <span className="font-medium text-green-600">{formatDate(order.deliveryTracking.actualDeliveryTime)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Distance and Location Info */}
+                {order.deliveryTracking.distance && (
+                  <div>
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+                      <MapPin className="h-3 w-3" />
+                      Distance & Location
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Distance:</span>
+                        <span className="font-medium">{order.deliveryTracking.distance} km</span>
+                      </div>
+                      {order.deliveryTracking.currentLocation && (
+                        <div className="text-xs text-muted-foreground">
+                          Last location: {order.deliveryTracking.currentLocation.latitude.toFixed(4)}, {order.deliveryTracking.currentLocation.longitude.toFixed(4)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Financial Info - Only for Admin, Moderator, Call Center */}
+                {(userRole === UserRole.ADMIN || userRole === UserRole.MODERATOR || userRole === UserRole.CALL_CENTER) && (
+                  <div>
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+                      <DollarSign className="h-3 w-3" />
+                      Financial Details
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Delivery Fee:</span>
+                        <span className="font-medium">{formatPrice(order.deliveryTracking.deliveryFee, order.warehouseId)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Commission:</span>
+                        <span className="font-medium text-green-600">{formatPrice(order.deliveryTracking.commission, order.warehouseId)}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Customer Rating */}
+                {order.deliveryTracking.customerRating && (
+                  <div>
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+                      <Star className="h-3 w-3" />
+                      Customer Rating
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < (order?.deliveryTracking?.customerRating || 0)
+                              ? 'text-yellow-400 fill-current'
+                              : 'text-gray-300'
+                          }`}
+                        />
+                      ))}
+                      <span className="ml-2 text-sm font-medium">
+                        {order.deliveryTracking.customerRating}/5
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Delivery Proof */}
+                {order.deliveryTracking.deliveryProof && (
+                  <div>
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+                      <Image className="h-3 w-3" />
+                      Delivery Proof
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Type:</span>
+                        <Badge variant="outline" className="text-xs">
+                          {order.deliveryTracking.deliveryProof.type}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Uploaded:</span>
+                        <span className="font-medium">{formatDate(order.deliveryTracking.deliveryProof.uploadedAt)}</span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-2"
+                        onClick={() => handleViewDeliveryProof(order._id)}
+                      >
+                        <Image className="h-4 w-4 mr-2" />
+                        View Proof
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Delivery Notes */}
+                {order.deliveryTracking.deliveryNotes && (
+                  <div>
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+                      <Edit className="h-3 w-3" />
+                      Delivery Notes
+                    </div>
+                    <div className="bg-background p-3 rounded border">
+                      <p className="text-sm leading-relaxed">
+                        {order.deliveryTracking.deliveryNotes}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </TableCell>
       )}
 

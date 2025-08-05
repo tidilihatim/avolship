@@ -33,6 +33,7 @@ import WarehouseInfoCard from './order-detail/warehouse-info-card';
 import SellerInfoCard from './order-detail/seller-info-card';
 import DoubleOrdersCard from './order-detail/double-orders-card';
 import DiscountSummaryCard from './order-detail/discount-summary-card';
+import DeliveryTrackingCard from './order-detail/delivery-tracking-card';
 
 interface OrderDetailsProps {
   order: any;
@@ -250,6 +251,16 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
               order={order}
               formatPrice={formatPrice}
             />
+
+            {/* Delivery Tracking */}
+            {order.deliveryTracking && (
+              <DeliveryTrackingCard
+                order={order}
+                formatDate={formatDate}
+                formatPrice={formatPrice}
+                userRole={userRole}
+              />
+            )}
 
             {/* Status & Comments */}
             <StatusInfoCard 

@@ -129,6 +129,37 @@ export interface PriceAdjustment {
   notes?: string;
 }
 
+export interface DeliveryTracking {
+  deliveryGuyId: string;
+  assignedAt: Date;
+  acceptedAt?: Date;
+  pickedUpAt?: Date;
+  estimatedDeliveryTime?: Date;
+  actualDeliveryTime?: Date;
+  deliveryFee: number;
+  commission: number;
+  distance?: number; // Distance in kilometers
+  trackingNumber: string;
+  currentLocation?: {
+    latitude: number;
+    longitude: number;
+    timestamp: Date;
+  };
+  route?: {
+    latitude: number;
+    longitude: number;
+    timestamp: Date;
+  }[];
+  deliveryNotes?: string;
+  customerRating?: number; // 1-5 rating from customer
+  deliveryProof?: {
+    type: 'photo' | 'signature';
+    url: string;
+    signedUrl?: string; // Generated signed URL for private S3 images
+    uploadedAt: Date;
+  };
+}
+
 export interface OrderTableData {
   _id: string;
   orderId: string;
@@ -169,6 +200,9 @@ export interface OrderTableData {
     name: string;
     email: string;
   };
+  // Delivery tracking information
+  deliveryTracking?: DeliveryTracking;
+  isDeliveryRequired: boolean;
   // Discount tracking fields
   priceAdjustments?: PriceAdjustment[];
   finalTotalPrice?: number;

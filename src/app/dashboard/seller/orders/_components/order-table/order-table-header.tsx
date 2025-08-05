@@ -44,6 +44,11 @@ export default function OrderTableHeader({
             Assigned Rider
           </TableHead>
         )}
+        {columnVisibility.deliveryTracking && (
+          <TableHead className="table-cell">
+            Delivery Tracking
+          </TableHead>
+        )}
         {columnVisibility.products && (
           <TableHead className="table-cell">
             {t("orders.fields.products")}

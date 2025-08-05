@@ -2,8 +2,16 @@
 
 import { withDbConnection } from '@/lib/db/db-connect';
 import { getCurrentUser } from './auth';
-import { UserRole } from '@/lib/db/models/user';
+import { UserRole, UserStatus } from '@/lib/db/models/user';
+import User from '@/lib/db/models/user';
 import Order, { OrderStatus } from '@/lib/db/models/order';
+
+interface DeliveryRider {
+  _id: string;
+  name: string;
+  email: string;
+  country: string;
+}
 
 /**
  * Get call center dashboard statistics for the current agent
@@ -768,7 +776,24 @@ export const getAvailableRiders = withDbConnection(async (country: string) => {
       return { success: false, message: 'Unauthorized access' };
     }
 
-    return { success: true, riders: [] };
+    // Get delivery riders with approved status and matching country
+    const riders = await User.find({
+      role: UserRole.DELIVERY,
+      status: UserStatus.APPROVED,
+      country: country
+    })
+    .select('_id name email country')
+    .lean();
+
+    // Transform to match frontend interface
+    const transformedRiders: DeliveryRider[] = riders.map(rider => ({
+      _id: (rider?._id as any)?.toString(),
+      name: rider.name,
+      email: rider.email,
+      country: rider.country || ''
+    }));
+
+    return { success: true, riders: transformedRiders };
   } catch (error: any) {
     return { success: false, message: error.message || 'Failed to fetch delivery riders' };
   }
