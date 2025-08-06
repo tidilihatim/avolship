@@ -23,6 +23,7 @@ import { getLoginUserRole } from "@/app/actions/auth";
 import { assignOrderToAgent, updateCustomerInfo } from "@/app/actions/call-center";
 import { getCallCenterAgents } from "@/app/actions/user";
 import { getAccessToken } from "@/app/actions/cookie";
+import { getAppSettings } from "@/app/actions/app-settings";
 import StatusUpdateDialog from "./order-table/status-update-dialog";
 
 // Import new components
@@ -157,6 +158,12 @@ export default function OrderTable({
   // Customer update state
   const [isUpdatingCustomer, setIsUpdatingCustomer] = useState(false);
 
+  // App settings state for tracking permissions
+  const [trackingSettings, setTrackingSettings] = useState<{
+    seller: boolean;
+    call_center: boolean;
+  } | null>(null);
+
   // Column visibility management
   const { columnVisibility, setColumnVisibility } = useColumnVisibility();
 
@@ -176,6 +183,12 @@ export default function OrderTable({
           if (agentsResult.success) {
             setCallCenterAgents(agentsResult.agents);
           }
+        }
+
+        // Fetch app settings for tracking permissions
+        const settingsResult = await getAppSettings();
+        if (settingsResult.success) {
+          setTrackingSettings(settingsResult.data.showLocationTracking);
         }
       } catch (error) {
         console.error("Error fetching user role:", error);
@@ -201,6 +214,23 @@ export default function OrderTable({
   // Check if user is admin or moderator
   const isAdminOrModerator =
     userRole === UserRole.ADMIN || userRole === UserRole.MODERATOR;
+
+  // Check if tracking is allowed for current user
+  const isTrackingAllowed = () => {
+    if (!trackingSettings) return false;
+    
+    switch (userRole) {
+      case UserRole.SELLER:
+        return trackingSettings.seller;
+      case UserRole.CALL_CENTER:
+        return trackingSettings.call_center;
+      case UserRole.ADMIN:
+      case UserRole.MODERATOR:
+        return true; // Admins always have access
+      default:
+        return false;
+    }
+  };
 
   // Handle search submit
   const handleSearch = (e: React.FormEvent) => {
@@ -624,6 +654,7 @@ export default function OrderTable({
                       onEditCustomer={openCustomerUpdateDialog}
                       onApplyDiscount={openDiscountDialog}
                       columnVisibility={columnVisibility}
+                      isTrackingAllowed={isTrackingAllowed()}
                     />
                   ))}
                 </TableBody>

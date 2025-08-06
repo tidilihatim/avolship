@@ -4,7 +4,8 @@ import {
   Truck, User, Warehouse, Clock, Users, FileText, UserCheck,
   Zap,
   DollarSign,
-  MapPin
+  MapPin,
+  Settings
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'customer-support' | 'delivery' | 'provider' | 'call_center';

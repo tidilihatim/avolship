@@ -3,7 +3,7 @@ import { compare, hash } from 'bcryptjs';
 import crypto from 'crypto';
 
 /**
- * User roles
+ * User roles according to SRS section 3.1
  */
 export enum UserRole {
   SELLER = 'seller',
@@ -25,6 +25,17 @@ export enum UserStatus {
 }
 
 /**
+ * Delivery guy location interface for real-time tracking
+ */
+export interface DeliveryLocation {
+  latitude: number;
+  longitude: number;
+  timestamp: Date;
+  accuracy?: number; // GPS accuracy in meters
+}
+
+
+/**
  * User interface based on SRS requirements
  * Implements authentication features from section 2.1
  */
@@ -40,6 +51,13 @@ export interface IUser extends Document {
   serviceType?: string; // Added for providers
   country?: string;
   assignedCallCenterAgent?: mongoose.Types.ObjectId; // For sellers: which call center agent handles their orders
+  
+  // Delivery Guy specific fields
+  isAvailableForDelivery?: boolean; // Whether delivery guy is accepting new orders
+  currentLocation?: DeliveryLocation; // Current GPS location
+  locationHistory?: DeliveryLocation[]; // Location tracking history
+  maxDeliveryRadius?: number; // Maximum delivery radius in km
+  
   twoFactorEnabled: boolean;
   twoFactorSecret?: string;
   passwordResetToken?: string;
@@ -53,6 +71,10 @@ export interface IUser extends Document {
   generatePasswordResetToken: () => { token: string; hashedToken: string; expires: Date };
   generateTwoFactorSecret: () => string;
   verifyTwoFactorToken: (token: string) => boolean;
+  
+  // Delivery methods
+  updateLocation: (location: DeliveryLocation) => Promise<void>;
+  calculateDistanceToLocation: (targetLat: number, targetLng: number) => number;
 }
 
 /**
@@ -113,6 +135,60 @@ const UserSchema = new Schema<IUser>(
       ref: 'User',
       // Only for sellers - references a call center agent
     },
+    
+    // Delivery Guy specific fields
+    isAvailableForDelivery: {
+      type: Boolean,
+      default:true,
+    },
+    currentLocation: {
+      latitude: {
+        type: Number,
+        min: -90,
+        max: 90,
+      },
+      longitude: {
+        type: Number,
+        min: -180,
+        max: 180,
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+      accuracy: {
+        type: Number,
+        min: 0,
+      },
+    },
+    locationHistory: [{
+      latitude: {
+        type: Number,
+        required: true,
+        min: -90,
+        max: 90,
+      },
+      longitude: {
+        type: Number,
+        required: true,
+        min: -180,
+        max: 180,
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+      accuracy: {
+        type: Number,
+        min: 0,
+      },
+    }],
+    maxDeliveryRadius: {
+      type: Number,
+      default: 10, // 10km default radius
+      min: 1,
+    },
+    
     twoFactorEnabled: {
       type: Boolean,
       default: false,
@@ -211,6 +287,61 @@ UserSchema.methods.verifyTwoFactorToken = function (token: string): boolean {
   // For demonstration purposes only:
   return token === '123456'; // Obviously, this is not secure and needs real implementation
 };
+
+/**
+ * Update delivery guy's current location and add to history
+ * @param location - New location data
+ */
+UserSchema.methods.updateLocation = async function (location: DeliveryLocation): Promise<void> {
+  if (this.role !== UserRole.DELIVERY) {
+    throw new Error('Only delivery guys can update location');
+  }
+  
+  // Update current location
+  this.currentLocation = location;
+  
+  // Add to location history (keep only last 100 locations)
+  if (!this.locationHistory) {
+    this.locationHistory = [];
+  }
+  
+  this.locationHistory.push(location);
+  
+  // Keep only last 100 location entries
+  if (this.locationHistory.length > 100) {
+    this.locationHistory = this.locationHistory.slice(-100);
+  }
+  
+  this.lastActive = new Date();
+  await this.save();
+};
+
+/**
+ * Calculate distance between delivery guy's current location and target location
+ * @param targetLat - Target latitude
+ * @param targetLng - Target longitude
+ * @returns Distance in kilometers
+ */
+UserSchema.methods.calculateDistanceToLocation = function (targetLat: number, targetLng: number): number {
+  if (!this.currentLocation) {
+    return Infinity;
+  }
+  
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = (targetLat - this.currentLocation.latitude) * Math.PI / 180;
+  const dLon = (targetLng - this.currentLocation.longitude) * Math.PI / 180;
+  
+  const a = 
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(this.currentLocation.latitude * Math.PI / 180) * Math.cos(targetLat * Math.PI / 180) * 
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c;
+  
+  return distance;
+};
+
 
 // Create the model only if it doesn't already exist
 const User = mongoose.models?.User || mongoose.model<IUser>('User', UserSchema);

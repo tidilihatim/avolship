@@ -125,6 +125,84 @@ export const getOrderById = withDbConnection(async (orderId: string) => {
 });
 
 /**
+ * Get orders by rider ID with role-based filtering
+ */
+export const getOrdersByRiderId = withDbConnection(async (
+  riderId: string, 
+  statusFilter?: string[]
+) => {
+  try {
+    // Get the current user
+    const user = await getCurrentUser();
+    if (!user) {
+      return {
+        success: false,
+        message: 'Unauthorized',
+        orders: []
+      };
+    }
+
+    // Build query based on user role
+    const allowedStatuses = statusFilter?.length 
+      ? statusFilter 
+      : ['assigned_to_delivery', 'accepted_by_delivery', 'delivered'];
+    
+    const query: Record<string, any> = {
+      'deliveryTracking.deliveryGuyId': riderId,
+      status: { $in: allowedStatuses }
+    };
+
+    // If user is a seller, only show their orders
+    if (user.role === UserRole.SELLER) {
+      query.sellerId = user._id;
+    }
+
+    // Find orders with basic details needed for tracking
+    const orders = await Order.find(query)
+      .select({
+        _id: 1,
+        orderId: 1,
+        status: 1,
+        totalPrice: 1,
+        'customer.name': 1,
+        'customer.shippingAddress': 1,
+        'customer.location': 1,
+        'deliveryTracking.deliveryGuyId': 1,
+        'deliveryTracking.currentLocation': 1
+      })
+      .lean();
+
+    // Transform orders to match the tracking map format
+    const transformedOrders = orders.map((order: any) => ({
+      _id: order._id.toString(),
+      orderId: order.orderId,
+      customer: {
+        name: order.customer.name,
+        address: order.customer.shippingAddress,
+        coordinates: order.customer.location ? {
+          latitude: order.customer.location.latitude,
+          longitude: order.customer.location.longitude
+        } : undefined
+      },
+      status: order.status,
+      totalAmount: order.totalPrice
+    }));
+
+    return {
+      success: true,
+      orders: transformedOrders
+    };
+  } catch (error: any) {
+    console.error('Error fetching orders by rider ID:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to fetch orders',
+      orders: []
+    };
+  }
+});
+
+/**
  * Get all warehouses for filter dropdown
  */
 export const getAllWarehouses = withDbConnection(async () => {

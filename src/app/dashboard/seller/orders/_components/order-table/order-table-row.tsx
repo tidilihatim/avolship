@@ -67,6 +67,7 @@ interface OrderTableRowProps {
   onEditCustomer?: (order: OrderTableData) => void;
   onApplyDiscount?: (order: OrderTableData) => void;
   columnVisibility: ColumnVisibility;
+  isTrackingAllowed: boolean;
 }
 
 export default function OrderTableRow({
@@ -80,6 +81,7 @@ export default function OrderTableRow({
   onEditCustomer,
   onApplyDiscount,
   columnVisibility,
+  isTrackingAllowed,
 }: OrderTableRowProps) {
   const t = useTranslations();
   const router = useRouter();
@@ -953,6 +955,19 @@ export default function OrderTableRow({
                   {t("orders.viewDoubleOrders")}
                 </Link>
               </DropdownMenuItem>
+            )}
+
+            {/* Track Order Action - Show if tracking is allowed and order has assigned rider */}
+            {isTrackingAllowed && order?.deliveryTracking?.deliveryGuyId && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer" asChild>
+                  <Link href={`/dashboard/${userRole}/orders/${order._id}/track`}>
+                    <MapPin className="mr-2 h-4 w-4" />
+                    Track Order
+                  </Link>
+                </DropdownMenuItem>
+              </>
             )}
 
             <DropdownMenuSeparator />
