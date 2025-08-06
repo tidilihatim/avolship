@@ -37,9 +37,18 @@ interface DeliveryRider {
   isAvailableForDelivery: boolean;
 }
 
+interface LocationHistory {
+  latitude: number;
+  longitude: number;
+  timestamp: string;
+  accuracy?: number;
+}
+
 interface RiderTrackingMapProps {
   rider: DeliveryRider;
   orders: Order[];
+  locationHistory?: LocationHistory[];
+  showLocationHistory?: boolean;
 }
 
 // Google Maps will be loaded dynamically
@@ -52,13 +61,17 @@ declare global {
 
 const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
   rider,
-  orders
+  orders,
+  locationHistory = [],
+  showLocationHistory = false
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const riderMarkerRef = useRef<any>(null);
   const activeInfoWindowRef = useRef<any>(null);
+  const locationHistoryPathRef = useRef<any>(null);
+  const locationHistoryMarkersRef = useRef<any[]>([]);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const hasSetBounds = useRef(false);
@@ -305,6 +318,136 @@ const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
 
   }, [orders, mapLoaded]);
 
+  // Update location history path and markers
+  useEffect(() => {
+    if (!mapInstance.current || !mapLoaded) {
+      return;
+    }
+
+    // Clear existing location history elements
+    if (locationHistoryPathRef.current) {
+      locationHistoryPathRef.current.setMap(null);
+      locationHistoryPathRef.current = null;
+    }
+    locationHistoryMarkersRef.current.forEach(marker => marker.setMap(null));
+    locationHistoryMarkersRef.current = [];
+
+    if (!showLocationHistory || !locationHistory.length) {
+      return;
+    }
+
+    // Sort location history by timestamp
+    const sortedHistory = [...locationHistory]
+      .filter(loc => loc.latitude && loc.longitude)
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+
+    if (sortedHistory.length < 2) {
+      return;
+    }
+
+    // Create path coordinates
+    const pathCoordinates = sortedHistory.map(location => ({
+      lat: location.latitude,
+      lng: location.longitude
+    }));
+
+    // Create polyline path
+    locationHistoryPathRef.current = new window.google.maps.Polyline({
+      path: pathCoordinates,
+      geodesic: true,
+      strokeColor: '#6366f1',
+      strokeOpacity: 0.8,
+      strokeWeight: 3,
+      map: mapInstance.current
+    });
+
+    // Add markers for start and end points with timestamps
+    const startPoint = sortedHistory[0];
+    const endPoint = sortedHistory[sortedHistory.length - 1];
+
+    // Start marker (green)
+    const startMarker = new window.google.maps.Marker({
+      position: { lat: startPoint.latitude, lng: startPoint.longitude },
+      map: mapInstance.current,
+      icon: {
+        url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+          <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="14" fill="#10b981" stroke="white" stroke-width="2"/>
+            <text x="16" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="bold">S</text>
+          </svg>
+        `)}`,
+        scaledSize: new window.google.maps.Size(32, 32),
+        anchor: new window.google.maps.Point(16, 16)
+      },
+      title: `Start: ${new Date(startPoint.timestamp).toLocaleString()}`,
+      zIndex: 999
+    });
+
+    // End marker (red)
+    const endMarker = new window.google.maps.Marker({
+      position: { lat: endPoint.latitude, lng: endPoint.longitude },
+      map: mapInstance.current,
+      icon: {
+        url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+          <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="14" fill="#ef4444" stroke="white" stroke-width="2"/>
+            <text x="16" y="20" text-anchor="middle" fill="white" font-size="12" font-weight="bold">E</text>
+          </svg>
+        `)}`,
+        scaledSize: new window.google.maps.Size(32, 32),
+        anchor: new window.google.maps.Point(16, 16)
+      },
+      title: `End: ${new Date(endPoint.timestamp).toLocaleString()}`,
+      zIndex: 999
+    });
+
+    // Add info windows for start and end points
+    const startInfoWindow = new window.google.maps.InfoWindow({
+      content: `
+        <div style="padding: 12px; min-width: 180px; background: white; border-radius: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <div style="width: 12px; height: 12px; border-radius: 50%; background-color: #10b981;"></div>
+            <h3 style="font-weight: 600; color: #1f2937; margin: 0;">Route Start</h3>
+          </div>
+          <p style="margin: 4px 0; color: #4b5563; font-size: 14px;">📅 ${new Date(startPoint.timestamp).toLocaleString()}</p>
+          <p style="margin: 4px 0; color: #6b7280; font-size: 12px;">GPS: ${startPoint.accuracy ? `${startPoint.accuracy}m accuracy` : 'Unknown accuracy'}</p>
+        </div>
+      `
+    });
+
+    const endInfoWindow = new window.google.maps.InfoWindow({
+      content: `
+        <div style="padding: 12px; min-width: 180px; background: white; border-radius: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <div style="width: 12px; height: 12px; border-radius: 50%; background-color: #ef4444;"></div>
+            <h3 style="font-weight: 600; color: #1f2937; margin: 0;">Route End</h3>
+          </div>
+          <p style="margin: 4px 0; color: #4b5563; font-size: 14px;">📅 ${new Date(endPoint.timestamp).toLocaleString()}</p>
+          <p style="margin: 4px 0; color: #6b7280; font-size: 12px;">GPS: ${endPoint.accuracy ? `${endPoint.accuracy}m accuracy` : 'Unknown accuracy'}</p>
+        </div>
+      `
+    });
+
+    startMarker.addListener('click', () => {
+      if (activeInfoWindowRef.current) {
+        activeInfoWindowRef.current.close();
+      }
+      startInfoWindow.open(mapInstance.current, startMarker);
+      activeInfoWindowRef.current = startInfoWindow;
+    });
+
+    endMarker.addListener('click', () => {
+      if (activeInfoWindowRef.current) {
+        activeInfoWindowRef.current.close();
+      }
+      endInfoWindow.open(mapInstance.current, endMarker);
+      activeInfoWindowRef.current = endInfoWindow;
+    });
+
+    locationHistoryMarkersRef.current.push(startMarker, endMarker);
+
+  }, [locationHistory, showLocationHistory, mapLoaded]);
+
   // Set initial bounds only once when map loads and has data
   useEffect(() => {
     if (!mapInstance.current || !mapLoaded || hasSetBounds.current) {
@@ -333,6 +476,19 @@ const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
         hasMarkers = true;
       }
     });
+
+    // Add location history to bounds if shown
+    if (showLocationHistory && locationHistory.length > 0) {
+      locationHistory.forEach(location => {
+        if (location.latitude && location.longitude) {
+          bounds.extend({
+            lat: location.latitude,
+            lng: location.longitude
+          });
+          hasMarkers = true;
+        }
+      });
+    }
     
     if (hasMarkers) {
       console.log('Setting initial bounds to show all markers');
@@ -340,7 +496,7 @@ const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
       hasSetBounds.current = true;
     }
 
-  }, [mapLoaded, rider.currentLocation, orders]);
+  }, [mapLoaded, rider.currentLocation, orders, showLocationHistory, locationHistory]);
 
   const formatStatus = (status: string) => {
     return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -417,17 +573,46 @@ const RiderTrackingMap: React.FC<RiderTrackingMapProps> = ({
                   <span className="text-muted-foreground">Delivered</span>
                 </div>
               </div>
+
+              {/* Location History Legend */}
+              {showLocationHistory && locationHistory.length > 0 && (
+                <div className="pt-1 border-t border-muted">
+                  <div className="text-[10px] font-medium text-muted-foreground mb-1">Route History:</div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-3 h-1 bg-indigo-500 rounded"></div>
+                    <span className="text-muted-foreground">Path Traveled</span>
+                  </div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-3 h-3 rounded-full bg-green-500 text-white text-[6px] flex items-center justify-center font-bold">S</div>
+                    <span className="text-muted-foreground">Route Start</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500 text-white text-[6px] flex items-center justify-center font-bold">E</div>
+                    <span className="text-muted-foreground">Route End</span>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
         
         {/* Route Summary */}
-        {orders.length > 0 && (
+        {(orders.length > 0 || (showLocationHistory && locationHistory.length > 0)) && (
           <Card className="absolute bottom-2 left-2 shadow-lg border-0 bg-background/95 backdrop-blur">
             <CardContent className="p-2">
-              <div className="flex items-center gap-2 text-xs">
-                <Package className="h-3 w-3 text-primary" />
-                <span className="font-medium">{orders.length} stops</span>
+              <div className="space-y-1">
+                {orders.length > 0 && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <Package className="h-3 w-3 text-primary" />
+                    <span className="font-medium">{orders.length} stops</span>
+                  </div>
+                )}
+                {showLocationHistory && locationHistory.length > 0 && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <Clock className="h-3 w-3 text-indigo-500" />
+                    <span className="font-medium">{locationHistory.length} locations</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

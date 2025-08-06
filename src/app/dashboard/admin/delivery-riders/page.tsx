@@ -4,7 +4,10 @@ import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Activity, MapPin } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { ArrowLeft, Activity, MapPin, Clock } from 'lucide-react';
+import { getRiderLocationHistory } from '@/app/actions/user';
 import dynamic from 'next/dynamic';
 
 // Hooks
@@ -17,6 +20,14 @@ import { RidersFiltersComponent } from './_components/riders-filters';
 import { RidersList } from './_components/riders-list';
 import { RidersPaginationComponent } from './_components/riders-pagination';
 
+// Interfaces
+interface LocationHistory {
+  latitude: number;
+  longitude: number;
+  timestamp: string;
+  accuracy?: number;
+}
+
 // Dynamic imports
 const RiderTrackingMap = dynamic(() => import('./_components/rider-tracking-map'), {
   ssr: false,
@@ -26,6 +37,9 @@ const RiderTrackingMap = dynamic(() => import('./_components/rider-tracking-map'
 export default function DeliveryRidersPage() {
   const [selectedRider, setSelectedRider] = useState<DeliveryRider | null>(null);
   const [showMap, setShowMap] = useState(false);
+  const [trackRiderHistory, setTrackRiderHistory] = useState(false);
+  const [riderLocationHistory, setRiderLocationHistory] = useState<LocationHistory[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   // Data management
   const {
@@ -42,6 +56,35 @@ export default function DeliveryRidersPage() {
   } = useDeliveryRiders();
 
   const { isConnected } = useRiderSocket({ riders, updateRider, addRider });
+
+  // Location history functions
+  const fetchRiderLocationHistory = useCallback(async (riderId: string) => {
+    setIsLoadingHistory(true);
+    try {
+      const result = await getRiderLocationHistory(riderId);
+      if (result.success) {
+        setRiderLocationHistory(result.locationHistory);
+      } else {
+        console.error('Failed to fetch location history:', result.message);
+        setRiderLocationHistory([]);
+      }
+    } catch (error) {
+      console.error('Error fetching location history:', error);
+      setRiderLocationHistory([]);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  }, []);
+
+  const handleTrackRiderHistoryToggle = useCallback(async (checked: boolean) => {
+    setTrackRiderHistory(checked);
+    
+    if (checked && selectedRider) {
+      await fetchRiderLocationHistory(selectedRider.id);
+    } else {
+      setRiderLocationHistory([]);
+    }
+  }, [selectedRider, fetchRiderLocationHistory]);
 
   // Event handlers
   const handleTrackRider = useCallback(async (rider: DeliveryRider) => {
@@ -84,6 +127,8 @@ export default function DeliveryRidersPage() {
   const handleBackToList = useCallback(() => {
     setShowMap(false);
     setSelectedRider(null);
+    setTrackRiderHistory(false);
+    setRiderLocationHistory([]);
   }, []);
 
   const handlePageChange = useCallback((page: number) => {
@@ -138,7 +183,31 @@ export default function DeliveryRidersPage() {
             </div>
           </div>
           
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-4">
+            <Card className="p-3">
+              <div className="flex items-center space-x-3">
+                <Label htmlFor="track-history-admin" className="text-sm font-medium">
+                  Track Rider History
+                </Label>
+                <Switch
+                  id="track-history-admin"
+                  checked={trackRiderHistory}
+                  onCheckedChange={handleTrackRiderHistoryToggle}
+                  disabled={isLoadingHistory || !selectedRider}
+                />
+                {trackRiderHistory && (
+                  <Badge variant="secondary" className="ml-2">
+                    {riderLocationHistory.length} locations
+                  </Badge>
+                )}
+              </div>
+              {trackRiderHistory && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Showing last 100 location records for {selectedRider?.name}
+                </p>
+              )}
+            </Card>
+            
             <Badge variant={isConnected ? "default" : "destructive"} className="flex items-center gap-1">
               <Activity className="h-3 w-3" />
               {isConnected ? "Live Tracking" : "Disconnected"}
@@ -217,6 +286,8 @@ export default function DeliveryRidersPage() {
               <RiderTrackingMap 
                 rider={selectedRider}
                 orders={selectedRider.assignedOrders || []}
+                locationHistory={trackRiderHistory ? riderLocationHistory : []}
+                showLocationHistory={trackRiderHistory}
               />
             </div>
           </CardContent>

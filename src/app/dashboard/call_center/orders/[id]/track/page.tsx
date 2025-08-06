@@ -105,12 +105,7 @@ export default async function TrackOrderPage({ params }: TrackOrderPageProps) {
     id: order.deliveryTracking.deliveryGuyId,
     name: rider.name,
     email: rider.email,
-    currentLocation: order.deliveryTracking?.currentLocation ? {
-      latitude: order.deliveryTracking.currentLocation.latitude,
-      longitude: order.deliveryTracking.currentLocation.longitude,
-      timestamp: new Date(),
-      accuracy: order.deliveryTracking.currentLocation.accuracy
-    } : undefined,
+    currentLocation: rider?.currentLocation || undefined,
     isOnline: true, // Assume online if we have location data
     isAvailableForDelivery: order.status !== 'delivered'
   };

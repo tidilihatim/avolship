@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { MapPin, Package, Filter } from 'lucide-react';
 import RiderTrackingMap from '@/app/dashboard/admin/delivery-riders/_components/rider-tracking-map';
 import { getOrdersByRiderId } from '@/app/actions/order';
+import { getRiderLocationHistory } from '@/app/actions/user';
 
 interface Order {
   _id: string;
@@ -39,6 +40,13 @@ interface DeliveryRider {
   isAvailableForDelivery: boolean;
 }
 
+interface LocationHistory {
+  latitude: number;
+  longitude: number;
+  timestamp: string;
+  accuracy?: number;
+}
+
 interface OrderTrackingClientProps {
   initialOrder: Order;
   rider: DeliveryRider;
@@ -55,8 +63,11 @@ export default function OrderTrackingClient({
   rider 
 }: OrderTrackingClientProps) {
   const [trackAllOrders, setTrackAllOrders] = useState(false);
+  const [trackRiderHistory, setTrackRiderHistory] = useState(false);
   const [allOrders, setAllOrders] = useState<Order[]>([initialOrder]);
+  const [riderLocationHistory, setRiderLocationHistory] = useState<LocationHistory[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [statusFilters, setStatusFilters] = useState<string[]>([
     'assigned_to_delivery', 
     'accepted_by_delivery', 
@@ -81,6 +92,24 @@ export default function OrderTrackingClient({
     }
   };
 
+  const fetchRiderLocationHistory = async () => {
+    setIsLoadingHistory(true);
+    try {
+      const result = await getRiderLocationHistory(rider.id);
+      if (result.success) {
+        setRiderLocationHistory(result.locationHistory);
+      } else {
+        console.error('Failed to fetch location history:', result.message);
+        setRiderLocationHistory([]);
+      }
+    } catch (error) {
+      console.error('Error fetching location history:', error);
+      setRiderLocationHistory([]);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
   const handleTrackAllToggle = async (checked: boolean) => {
     setTrackAllOrders(checked);
     
@@ -88,6 +117,16 @@ export default function OrderTrackingClient({
       await fetchAllOrders();
     } else {
       setAllOrders([initialOrder]);
+    }
+  };
+
+  const handleTrackRiderHistoryToggle = async (checked: boolean) => {
+    setTrackRiderHistory(checked);
+    
+    if (checked) {
+      await fetchRiderLocationHistory();
+    } else {
+      setRiderLocationHistory([]);
     }
   };
 
@@ -169,6 +208,31 @@ export default function OrderTrackingClient({
             </Card>
           )}
 
+          {/* Track Rider History Card */}
+          <Card className="p-4">
+            <div className="flex items-center space-x-3">
+              <Label htmlFor="track-history" className="text-sm font-medium">
+                Track Rider History
+              </Label>
+              <Switch
+                id="track-history"
+                checked={trackRiderHistory}
+                onCheckedChange={handleTrackRiderHistoryToggle}
+                disabled={isLoadingHistory}
+              />
+              {trackRiderHistory && (
+                <Badge variant="secondary" className="ml-2">
+                  {riderLocationHistory.length} locations
+                </Badge>
+              )}
+            </div>
+            {trackRiderHistory && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Showing last 100 location records for {rider.name}
+              </p>
+            )}
+          </Card>
+
           {/* Track All Orders Card */}
           <Card className="p-4">
             <div className="flex items-center space-x-3">
@@ -196,7 +260,7 @@ export default function OrderTrackingClient({
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoading || isLoadingHistory ? (
         <Card className="h-[600px]">
           <CardContent className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -230,6 +294,8 @@ export default function OrderTrackingClient({
           <RiderTrackingMap 
             rider={rider}
             orders={ordersToShow}
+            locationHistory={trackRiderHistory ? riderLocationHistory : []}
+            showLocationHistory={trackRiderHistory}
           />
         </div>
       )}

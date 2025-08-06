@@ -586,3 +586,60 @@ export const getAssignedSellers = withDbConnection(async (agentId: string) => {
     };
   }
 });
+
+/**
+ * Get rider location history for tracking
+ * @param riderId - ID of the delivery rider
+ * @returns Location history array with timestamps
+ */
+export const getRiderLocationHistory = withDbConnection(async (riderId: string) => {
+  try {
+    if (!riderId || riderId.trim().length === 0) {
+      return {
+        success: false,
+        message: 'Rider ID is required',
+        locationHistory: []
+      };
+    }
+
+    const rider = await User.findById(riderId)
+      .select('locationHistory role')
+      .lean();
+
+    if (!rider) {
+      return {
+        success: false,
+        message: 'Rider not found',
+        locationHistory: []
+      };
+    }
+
+    const riderData = rider as any;
+
+    if (riderData.role !== 'delivery') {
+      return {
+        success: false,
+        message: 'User is not a delivery rider',
+        locationHistory: []
+      };
+    }
+
+    return {
+      success: true,
+      message: 'Location history fetched successfully',
+      locationHistory: (riderData.locationHistory || []).map((location: any) => ({
+        latitude: location.latitude,
+        longitude: location.longitude,
+        timestamp: location.timestamp.toISOString(),
+        accuracy: location.accuracy
+      }))
+    };
+  } catch (error) {
+    console.error('Error fetching rider location history:', error);
+    return {
+      success: false,
+      message: 'Failed to fetch location history',
+      locationHistory: []
+    };
+  }
+});
