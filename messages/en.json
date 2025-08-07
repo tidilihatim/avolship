@@ -1500,7 +1500,7 @@
       "cityDescription": "City where the warehouse is located",
       "currency": "Currency",
       "currencyDescription": "Primary currency used for this warehouse",
-      "address": "Address (Optional)",
+      "address": "Address",
       "addressDescription": "Physical address of the warehouse",
       "capacity": "Capacity (Optional)",
       "capacityDescription": "Maximum storage capacity",

@@ -68,12 +68,11 @@ export default function StatusUpdateDialog({
       toast.error(t("statusUpdate.noChangesMessage"));
       return;
     }
-
     startTransition(async () => {
       try {
         const result = await updateOrderStatus(order._id, selectedStatus, comment);
         
-        if (result.success) {
+        if (result?.success) {
           toast.success(t("statusUpdate.successMessage"));
           onStatusUpdated?.();
           onClose();
@@ -81,7 +80,7 @@ export default function StatusUpdateDialog({
           setComment("");
           setSelectedStatus(order.status);
         } else {
-          toast.error(result.message || t("statusUpdate.errorMessage"));
+          toast.error(result?.message || t("statusUpdate.errorMessage"));
         }
       } catch (error) {
         toast.error(t("statusUpdate.errorMessage"));

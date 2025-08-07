@@ -4,18 +4,22 @@
 import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 import StockHistory, { StockMovementType, StockMovementReason } from '@/lib/db/models/stock-history';
-import {connectToDatabase as connectDB} from '@/lib/db/mongoose'
+import { connectToDatabase as connectDB } from '@/lib/db/mongoose'
 import Product from '@/lib/db/models/product';
 import User, { UserRole } from '@/lib/db/models/user';
 import { getCurrentUser } from './auth';
-import { 
-  StockHistoryResponse, 
-  StockHistoryFilters, 
+import {
+  StockHistoryResponse,
+  StockHistoryFilters,
   StockHistoryTableData,
   StockSummaryData,
   CreateStockMovementData,
   StockAnalytics
 } from '@/types/stock-history';
+import { sendNotification } from '@/lib/notifications/send-notification';
+import { NotificationType } from '@/types/notification';
+import { NotificationIcon } from '@/lib/db/models/notification';
+import Warehouse from '@/lib/db/models/warehouse';
 
 /**
  * Get stock history for a specific product
@@ -123,14 +127,14 @@ export async function getStockHistory(
     const [warehouses, users, orders] = await Promise.all([
       mongoose.model('Warehouse').find({ _id: { $in: warehouseIds } }).lean(),
       User.find({ _id: { $in: userIds } }).lean(),
-      orderIds.length > 0 
+      orderIds.length > 0
         ? mongoose.model('Order').find({ _id: { $in: orderIds } }).lean()
         : []
     ]);
 
     // Create lookup maps
     const warehouseMap = new Map(warehouses.map((w: any) => [w._id.toString(), w]));
-    const userMap = new Map(users.map((u:any) => [u._id?.toString(), u]));
+    const userMap = new Map(users.map((u: any) => [u._id?.toString(), u]));
     const orderMap = new Map(orders.map((o: any) => [o._id.toString(), o]));
 
     // Transform data for table display
@@ -275,7 +279,7 @@ export async function getStockSummary(productId: string): Promise<{
       warehouseBreakdown: warehouseBreakdown.map(wb => ({
         warehouseId: wb._id.toString(),
         warehouseName: wb.warehouse[0]?.name || 'Unknown',
-        currentStock: product.warehouses.find((w: any) => 
+        currentStock: product.warehouses.find((w: any) =>
           w.warehouseId.toString() === wb._id.toString()
         )?.stock || 0,
         totalMovements: wb.totalMovements,
@@ -307,6 +311,12 @@ export async function createStockMovement(data: CreateStockMovementData): Promis
 
     // Get product and verify access
     const product = await Product.findById(data.productId);
+    const warehouse = await Warehouse.findById(data.warehouseId);
+
+    if(!warehouse){
+      return {success:false, message:"Warehouse not found"}
+    }
+
     if (!product) {
       return { success: false, message: 'Product not found' };
     }
@@ -317,7 +327,7 @@ export async function createStockMovement(data: CreateStockMovementData): Promis
 
     // Find the warehouse in the product
     const warehouseIndex = product.warehouses.findIndex(
-      (w: any) => w.warehouseId.toString() === data.warehouseId
+      (w: any) => w.warehouseId.toString() === data?.warehouseId?.toString()
     );
 
     if (warehouseIndex === -1) {
@@ -325,7 +335,7 @@ export async function createStockMovement(data: CreateStockMovementData): Promis
     }
 
     const previousStock = product.warehouses[warehouseIndex].stock;
-    const newStock = data.movementType === StockMovementType.INCREASE 
+    const newStock = data.movementType === StockMovementType.INCREASE
       ? previousStock + data.quantity
       : previousStock - data.quantity;
 
@@ -353,6 +363,17 @@ export async function createStockMovement(data: CreateStockMovementData): Promis
         metadata: data.metadata,
       }
     );
+
+    if (newStock <= 10 && newStock > 0) {
+      sendNotification({
+        userId: product.sellerId.toString(),
+        title: "Low Stock Warning",
+        message: `Your product "${(product as any).name || 'Unknown Product'}" is running low on stock. Only ${newStock} units remaining in ${(warehouse as any).name || 'warehouse'}. Consider restocking soon.`,
+        type: NotificationType.WARNING,
+        icon: NotificationIcon.ALERT_TRIANGLE,
+        actionLink: `/dashboard/seller/products/${product._id}`
+      })
+    }
 
     revalidatePath('/dashboard/seller/products');
     revalidatePath(`/dashboard/seller/products/stock-history/${data.productId}`);
@@ -411,7 +432,7 @@ export async function getUsersForStockHistory(productId: string): Promise<{
 
     const users = await User.find({ _id: { $in: userIds } }).lean();
 
-    return users.map((u:any) => ({
+    return users.map((u: any) => ({
       _id: u._id.toString(),
       name: u.name,
       role: u.role,

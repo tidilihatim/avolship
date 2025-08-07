@@ -1489,7 +1489,7 @@
       "cityDescription": "Ville où se trouve l'entrepôt",
       "currency": "Devise",
       "currencyDescription": "Devise principale utilisée pour cet entrepôt",
-      "address": "Adresse (Optionnel)",
+      "address": "Adresse",
       "addressDescription": "Adresse physique de l'entrepôt",
       "capacity": "Capacité (Optionnel)",
       "capacityDescription": "Capacité de stockage maximale",

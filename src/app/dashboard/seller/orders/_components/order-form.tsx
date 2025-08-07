@@ -253,7 +253,6 @@ export default function OrderForm({
         break;
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

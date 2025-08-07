@@ -14,6 +14,7 @@ import Expedition, { IExpedition } from '@/lib/db/models/expedition';
 import { ExpeditionStatus, ProviderType } from '../dashboard/_constant/expedition';
 import { ExpeditionInput, ProductOption } from '@/types/expedition-form';
 import Product from '@/lib/db/models/product';
+import StockHistory, { StockMovementType, StockMovementReason } from '@/lib/db/models/stock-history';
 import { sendNotification, sendNotificationToUserType } from '@/lib/notifications/send-notification';
 import { NotificationType } from '@/types/notification';
 import { NotificationIcon } from '@/lib/db/models/notification';
@@ -572,13 +573,139 @@ export const updateExpeditionStatus = withDbConnection(async (
     }
     await Expedition.findByIdAndUpdate(expeditionId, updateData);
 
+    // Update product stocks and create stock history when delivered
+    if (status === ExpeditionStatus.DELIVERED) {
+      for (const product of expedition.products) {
+        try {
+          // Find the product to update
+          const productDoc = await Product.findById(product.productId);
+          if (!productDoc) continue;
+
+          // Find the warehouse stock entry
+          const warehouseStock = productDoc.warehouses.find(
+            (w: any) => w.warehouseId.toString() === expedition.warehouseId.toString()
+          );
+
+          if (warehouseStock) {
+            const previousStock = warehouseStock.stock;
+            const newStock = previousStock + product.quantity;
+
+            // Update the warehouse stock
+            warehouseStock.stock = newStock;
+            
+            // Update product status to ACTIVE if it was OUT_OF_STOCK and now has stock
+            if (productDoc.status === 'out_of_stock' && newStock > 0) {
+              productDoc.status = 'active';
+            }
+            
+            await productDoc.save();
+
+            // Create stock history record
+            await StockHistory.recordMovement(
+              new mongoose.Types.ObjectId(product.productId.toString()),
+              new mongoose.Types.ObjectId(expedition.warehouseId.toString()),
+              StockMovementType.INCREASE,
+              StockMovementReason.RESTOCK,
+              product.quantity,
+              previousStock,
+              newStock,
+              user._id as any,
+              {
+                notes: `Stock added from expedition ${expedition.expeditionCode}`,
+                metadata: {
+                  expeditionId: expedition._id,
+                  expeditionCode: expedition.expeditionCode
+                }
+              }
+            );
+          } else {
+            // If warehouse doesn't exist in product, add it
+            productDoc.warehouses.push({
+              warehouseId: expedition.warehouseId,
+              stock: product.quantity
+            });
+            
+            // Update product status to ACTIVE if it was OUT_OF_STOCK and now has stock
+            if (productDoc.status === 'out_of_stock' && product.quantity > 0) {
+              productDoc.status = 'active';
+            }
+            
+            await productDoc.save();
+
+            // Create stock history record
+            await StockHistory.recordMovement(
+              new mongoose.Types.ObjectId(product.productId.toString()),
+              new mongoose.Types.ObjectId(expedition.warehouseId.toString()),
+              StockMovementType.INCREASE,
+              StockMovementReason.RESTOCK,
+              product.quantity,
+              0,
+              product.quantity,
+              user._id as any,
+              {
+                notes: `Initial stock added from expedition ${expedition.expeditionCode}`,
+                metadata: {
+                  expeditionId: expedition._id,
+                  expeditionCode: expedition.expeditionCode
+                }
+              }
+            );
+          }
+        } catch (error) {
+          console.error(`Error updating stock for product ${product.productId}:`, error);
+        }
+      }
+    }
+
     // send notification
+    const getNotificationDetails = (status: ExpeditionStatus, expeditionCode: string) => {
+      switch (status) {
+        case ExpeditionStatus.APPROVED:
+          return {
+            type: NotificationType.SUCCESS,
+            title: `Expedition Approved ${expeditionCode}`,
+            message: 'Your expedition has been approved by admin'
+          };
+        case ExpeditionStatus.REJECTED:
+          return {
+            type: NotificationType.ERROR,
+            title: `Expedition Rejected ${expeditionCode}`,
+            message: 'Expedition has been rejected by admin. We apologize for the inconvenience.'
+          };
+        case ExpeditionStatus.IN_TRANSIT:
+          return {
+            type: NotificationType.INFO,
+            title: `Expedition In Transit ${expeditionCode}`,
+            message: 'Your expedition is now in transit. Track your shipment for updates.'
+          };
+        case ExpeditionStatus.DELIVERED:
+          return {
+            type: NotificationType.SUCCESS,
+            title: `Expedition Delivered ${expeditionCode}`,
+            message: 'Your expedition has been successfully delivered to our warehouse. You can now start accepting orders'
+          };
+        case ExpeditionStatus.CANCELLED:
+          return {
+            type: NotificationType.WARNING,
+            title: `Expedition Cancelled ${expeditionCode}`,
+            message: 'Your expedition has been cancelled. Contact support if you need assistance.'
+          };
+        default:
+          return {
+            type: NotificationType.INFO,
+            title: `Expedition Status Updated ${expeditionCode}`,
+            message: `Your expedition status has been updated to ${status}.`
+          };
+      }
+    };
+
+    const notificationDetails = getNotificationDetails(status, expedition.expeditionCode);
 
     sendNotification({
       userId: expedition?.sellerId?.toString(),
-      type: status === ExpeditionStatus.APPROVED ? NotificationType.SUCCESS : NotificationType.ERROR,
-      title: status === ExpeditionStatus.APPROVED ? `Expedition Approved ${expedition?.expeditionCode}` : `Expedition Rejected ${expedition?.expeditionCode}`,
-      message: status === ExpeditionStatus.APPROVED ? 'Your expedition has been approved by admin, you can now start selling your products on the marketplaces' : `Expedition has been rejected by admin. We apologize for the inconvenience.`,
+      type: notificationDetails.type,
+      title: notificationDetails.title,
+      message: notificationDetails.message,
       actionLink: `/dashboard/seller/expeditions/${expeditionId}`,
     })
 

@@ -21,6 +21,8 @@ import { checkDuplicatesForNewOrder } from '@/lib/duplicate-detection/duplicate-
 import DuplicateDetectionSettings from '@/lib/db/models/duplicate-settings';
 import { ApplyDiscountRequest, DiscountResponse } from '@/types/discount';
 import { getAccessToken } from './cookie';
+import { createStockMovement } from './stock-history';
+import { StockMovementReason, StockMovementType } from '@/lib/db/models/stock-history';
 
 // Add this function to src/app/actions/order.ts
 
@@ -128,7 +130,7 @@ export const getOrderById = withDbConnection(async (orderId: string) => {
  * Get orders by rider ID with role-based filtering
  */
 export const getOrdersByRiderId = withDbConnection(async (
-  riderId: string, 
+  riderId: string,
   statusFilter?: string[]
 ) => {
   try {
@@ -143,10 +145,10 @@ export const getOrdersByRiderId = withDbConnection(async (
     }
 
     // Build query based on user role
-    const allowedStatuses = statusFilter?.length 
-      ? statusFilter 
+    const allowedStatuses = statusFilter?.length
+      ? statusFilter
       : ['assigned_to_delivery', 'accepted_by_delivery', 'delivered'];
-    
+
     const query: Record<string, any> = {
       'deliveryTracking.deliveryGuyId': riderId,
       status: { $in: allowedStatuses }
@@ -667,7 +669,7 @@ export const getProductsForOrder = withDbConnection(async (warehouseId: string) 
         const expeditions = await Expedition.find({
           warehouseId: warehouseId,
           'products.productId': product._id,
-          status: ExpeditionStatus.APPROVED,
+          status: ExpeditionStatus.DELIVERED,
         })
           .select('expeditionCode transportMode expeditionDate products status')
           .sort({ expeditionDate: -1 })
@@ -762,7 +764,7 @@ export const createOrder = withDbConnection(async (orderData: any) => {
     const expeditions = await Expedition.find({
       _id: { $in: expeditionIds },
       warehouseId: orderData.warehouseId,
-      status: ExpeditionStatus.APPROVED,
+      status: ExpeditionStatus.DELIVERED,
     }).lean();
 
     if (expeditions.length !== expeditionIds.length) {
@@ -823,8 +825,6 @@ export const createOrder = withDbConnection(async (orderData: any) => {
       warehouseId: orderData.warehouseId,
       sellerId: user._id,
     });
-
-    console.log(`Duplicate Detection Result ${JSON.stringify(duplicateDetectionResult)}`)
 
     // Get warehouse and seller information
     const [warehouse, seller] = await Promise.all([
@@ -890,11 +890,6 @@ export const createOrder = withDbConnection(async (orderData: any) => {
       },
       body: JSON.stringify(orderPayload)
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText}`);
-    }
 
     const result = await response.json();
 
@@ -1102,7 +1097,7 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
         if (!jwtToken) {
           throw new Error("Configuration Error")
         }
-        
+
         const REALTIME_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 
 
@@ -1437,6 +1432,38 @@ export const updateOrderStatus = withDbConnection(async (
       comment: statusComment,
       automaticChange: false,
     });
+
+    // handle stock adjusment
+
+    const products = order.products
+    console.log(JSON.stringify(order))
+
+    if (!products || products.length === 0) {
+      revalidatePath('/dashboard/admin/orders');
+      revalidatePath('/dashboard/seller/orders');
+      return
+    }
+
+    for (const product of products){
+        try {
+            const result = await createStockMovement({
+              productId: product?.productId,
+              warehouseId: order?.warehouseId,
+              movementType:StockMovementType.DECREASE,
+              quantity: product?.quantity,
+              reason: StockMovementReason.ORDER_CONFIRMED,
+              notes:`Stock reduced due to order confirmation ${order?.orderId}`,
+              metadata:{
+                orderId,
+                orderNumber: order?.orderId
+              }
+            })
+
+            console.log(result)
+        } catch (error:any) {
+           console.log(error.message)
+        }
+    }
 
     // Revalidate the orders page
     revalidatePath('/dashboard/admin/orders');
