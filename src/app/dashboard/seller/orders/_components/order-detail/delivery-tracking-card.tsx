@@ -56,7 +56,7 @@ export default function DeliveryTrackingCard({
         return;
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:5000';
+      const apiUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
       const response = await fetch(`${apiUrl}/api/orders/delivery-proof-url/${order._id}`, {
         method: 'GET',
         headers: {
