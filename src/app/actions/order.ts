@@ -1436,8 +1436,7 @@ export const updateOrderStatus = withDbConnection(async (
     // handle stock adjusment
 
     const products = order.products
-    console.log(JSON.stringify(order))
-
+    
     if (!products || products.length === 0) {
       revalidatePath('/dashboard/admin/orders');
       revalidatePath('/dashboard/seller/orders');

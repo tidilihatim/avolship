@@ -115,7 +115,7 @@ export default function EnhancedCallCenterQueue() {
       // Call your API to update order status
       const response = await updateOrderStatus(orderId, status, comment);
 
-      if (response.success) {
+      if (response?.success) {
         toast.success(`Order status updated to ${status}`);
         // Refresh queue to get updated data
         refreshQueue();
