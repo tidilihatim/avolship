@@ -30,7 +30,7 @@ interface SidebarProps {
   onToggle: () => void;
   mobileOpen: boolean;
   onMobileClose: () => void;
-  userType: "seller" | "admin" | "customer-support" | "delivery" | "provider";
+  userType: "seller" | "admin" | "support" | "delivery" | "provider";
 }
 
 interface NavItemProps {

@@ -8,7 +8,7 @@ import Sidebar from './sidebar';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  userType: 'seller' | 'admin' | 'customer-support' | 'delivery' | 'provider';
+  userType: 'seller' | 'admin' | 'support' | 'delivery' | 'provider';
 }
 
 export default function DashboardLayout({ children, userType }: DashboardLayoutProps) {

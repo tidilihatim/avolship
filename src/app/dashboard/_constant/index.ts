@@ -5,10 +5,11 @@ import {
   Zap,
   DollarSign,
   MapPin,
-  Settings
+  Settings,
+  HeadphonesIcon
 } from "lucide-react";
 
-type UserType = 'admin' | 'seller' | 'customer-support' | 'delivery' | 'provider' | 'call_center';
+type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center';
 
 // Define the structure of a navigation item
 interface NavigationItem {
@@ -73,19 +74,9 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: PlaneIcon
     },
     {
-      name: "inventory",
-      href: "/dashboard/seller/inventory",
-      icon: Warehouse,
-    },
-    {
       name:"Invoices",
       href:"/dashboard/seller/invoices",
       icon: DollarSign
-    },
-    {
-      name: "analytics",
-      href: "/dashboard/seller/analytics",
-      icon: BarChart3,
     },
     {
       name: "providers",
@@ -98,14 +89,14 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: MessageCircle,
     },
     {
-      name: "delivery",
-      href: "/dashboard/seller/delivery",
-      icon: Truck,
-    },
-    {
       name: "integrations",
       href: "/dashboard/seller/integrations",
       icon: Zap
+    },
+    {
+      name: "support",
+      href: "/dashboard/seller/support",
+      icon: HeadphonesIcon
     },
   ],
   'call_center': [
@@ -129,9 +120,19 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       href: "/dashboard/call_center/customers",
       icon: Users,
     },
+    {
+      name: "support",
+      href: "/dashboard/call_center/support",
+      icon: HeadphonesIcon
+    },
   ],
-  // Provide empty arrays or add real data if needed
-  'customer-support': [],
+  'support': [
+    {
+      name: "overview",
+      href: "/dashboard/support",
+      icon: LayoutDashboard,
+    },
+  ],
   'delivery': [],
   'provider': [
     {
