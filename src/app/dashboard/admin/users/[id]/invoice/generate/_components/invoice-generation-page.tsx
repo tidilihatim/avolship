@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import InvoiceConfigurationForm from './invoice-configuration-form';
 import ProfessionalInvoicePreview from './professional-invoice-preview';
 
@@ -36,6 +35,11 @@ interface InvoicePreview {
   totalProducts: number;
   totalQuantity: number;
   totalSales: number;
+  totalOriginalSales: number;
+  totalDiscountAmount: number;
+  totalDiscountedOrders: number;
+  discountPercentage: number;
+  totalExpeditionValue: number;
   unpaidExpeditions: number;
   unpaidAmount: number;
   currency: string;
@@ -52,6 +56,22 @@ interface InvoicePreview {
     code: string;
     quantity: number;
     sales: number;
+    originalSales: number;
+    discountAmount: number;
+    discountPercentage: number;
+  }>;
+  orderData?: Array<{
+    orderId: string;
+    orderDate: string | Date;
+    customerName: string;
+    originalTotal: number;
+    finalTotal: number;
+    discountAmount: number;
+    discountPercentage: number;
+    hasDiscount: boolean;
+    priceAdjustments: any[];
+    productCount: number;
+    totalQuantity: number;
   }>;
 }
 

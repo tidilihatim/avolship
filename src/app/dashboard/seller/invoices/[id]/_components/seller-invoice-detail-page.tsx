@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { InvoiceStatus } from '@/types/invoice';
 import ProfessionalInvoicePreview from '@/app/dashboard/admin/users/[id]/invoice/generate/_components/professional-invoice-preview';
 import PrintInvoicePreview from '@/app/dashboard/admin/users/[id]/invoice/generate/_components/print-invoice-preview';
-import { toast } from 'sonner';
+
 
 interface InvoiceData {
   _id: string;
@@ -74,7 +74,24 @@ interface OrderData {
   orderId: string;
   status: string;
   totalPrice: number;
+  finalTotalPrice?: number;
+  totalDiscountAmount?: number;
+  priceAdjustments?: Array<{
+    productId: string;
+    originalPrice: number;
+    adjustedPrice: number;
+    discountAmount: number;
+    discountPercentage: number;
+    reason: string;
+    appliedBy: string;
+    appliedAt: Date;
+    notes?: string;
+    _id: string;
+  }>;
   createdAt: Date;
+  customer: {
+    name: string;
+  };
   products: Array<{
     productId: {
       _id: string;
@@ -157,9 +174,12 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
   };
 
   // Calculate product breakdown
-  const productBreakdown: { [key: string]: { name: string; code: string; quantity: number; sales: number } } = {};
+  // Calculate product breakdown with discount information
+  const productBreakdown: { [key: string]: { name: string; code: string; quantity: number; sales: number; originalSales: number; discountAmount: number; discountPercentage: number } } = {};
   
   orders.forEach(order => {
+    const orderPriceAdjustments = order.priceAdjustments || [];
+    
     order.products.forEach(product => {
       const productKey = product.productId._id;
       if (!productBreakdown[productKey]) {
@@ -167,11 +187,33 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
           name: product.productId.name,
           code: product.productId.code,
           quantity: 0,
-          sales: 0
+          sales: 0,
+          originalSales: 0,
+          discountAmount: 0,
+          discountPercentage: 0
         };
       }
-      productBreakdown[productKey].quantity += product.quantity;
-      productBreakdown[productKey].sales += product.unitPrice * product.quantity;
+      
+      // Find if this product has any price adjustments
+      const productAdjustment = orderPriceAdjustments.find(adj => adj.productId === productKey);
+      
+      if (productAdjustment) {
+        // Product has discount
+        const productOriginalTotal = productAdjustment.originalPrice * product.quantity;
+        const productFinalTotal = product.unitPrice * product.quantity;
+        const productDiscountAmount = productOriginalTotal - productFinalTotal;
+        
+        productBreakdown[productKey].quantity += product.quantity;
+        productBreakdown[productKey].sales += productFinalTotal;
+        productBreakdown[productKey].originalSales += productOriginalTotal;
+        productBreakdown[productKey].discountAmount += productDiscountAmount;
+      } else {
+        // No discount
+        const productTotal = product.unitPrice * product.quantity;
+        productBreakdown[productKey].quantity += product.quantity;
+        productBreakdown[productKey].sales += productTotal;
+        productBreakdown[productKey].originalSales += productTotal;
+      }
     });
   });
 
@@ -204,14 +246,50 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
     status: expedition.status,
   }));
 
+  // Calculate discount totals
+  const totalOriginalSales = productData.reduce((sum, product) => sum + product.originalSales, 0);
+  const totalDiscountAmount = productData.reduce((sum, product) => sum + product.discountAmount, 0);
+  const totalDiscountedOrders = orders.filter(order => (order.totalDiscountAmount || 0) > 0).length;
+  const discountPercentage = totalOriginalSales > 0 ? ((totalDiscountAmount / totalOriginalSales) * 100) : 0;
+
+  // Prepare order data for order breakdown
+  const orderData = orders.map(order => {
+    const orderTotalDiscount = order.totalDiscountAmount || 0;
+    const orderFinalTotal = order.finalTotalPrice || order.totalPrice;
+    const orderOriginalTotal = orderTotalDiscount > 0 
+      ? (orderFinalTotal + orderTotalDiscount) 
+      : order.totalPrice;
+    
+    return {
+      orderId: order.orderId,
+      orderDate: order.createdAt,
+      customerName: order.customer?.name || 'Unknown Customer',
+      originalTotal: orderOriginalTotal,
+      finalTotal: orderFinalTotal,
+      discountAmount: orderTotalDiscount,
+      discountPercentage: (orderTotalDiscount && orderOriginalTotal) 
+        ? ((orderTotalDiscount / orderOriginalTotal) * 100) 
+        : 0,
+      hasDiscount: orderTotalDiscount > 0,
+      priceAdjustments: order.priceAdjustments || [],
+      productCount: order.products.length,
+      totalQuantity: order.products.reduce((sum, product) => sum + product.quantity, 0)
+    };
+  });
+
   const preview = {
     totalOrders: invoice.summary.totalOrders,
     totalExpeditions: invoice.summary.totalExpeditions,
     totalProducts: invoice.summary.totalProducts,
     totalQuantity: invoice.summary.totalQuantity,
     totalSales: invoice.summary.totalSales,
+    totalOriginalSales,
+    totalDiscountAmount,
+    totalDiscountedOrders,
+    discountPercentage,
     status: invoice.status,
     unpaidExpeditions: invoice.summary.unpaidExpeditions,
+    totalExpeditionValue: invoice.summary.unpaidAmount,
     unpaidAmount: invoice.summary.unpaidAmount,
     currency: invoice.currency,
     warehouseName: invoice.warehouseId.name,
@@ -227,8 +305,12 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
       code: product.code,
       quantity: product.quantity,
       sales: product.sales,
+      originalSales: product.originalSales,
+      discountAmount: product.discountAmount,
+      discountPercentage: product.discountPercentage,
     })),
     expeditionData: expeditionData,
+    orderData: orderData,
   };
 
   const configuration = {
@@ -275,12 +357,12 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handlePrint}>
               <Printer className="h-4 w-4 mr-2" />
               Print
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
 

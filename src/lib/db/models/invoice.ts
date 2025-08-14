@@ -325,8 +325,8 @@ InvoiceSchema.pre('save', function (next) {
     this.fees.expeditionFee;
   
   this.summary.totalFees = this.fees.totalFees;
-  // Fix calculation: fees should be subtracted from seller payment
-  this.summary.netAmount = this.summary.totalSales - this.summary.totalFees;
+  // Calculate net amount: fees are added to invoice total for customer billing
+  this.summary.netAmount = this.summary.totalSales + this.summary.totalFees;
   this.summary.finalAmount = this.summary.netAmount + this.summary.totalTax;
   
   next();

@@ -203,7 +203,7 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   'Mali': 'https://img.icons8.com/?size=100&id=15545&format=png&color=000000',
   'Mauritania': 'https://img.icons8.com/?size=96&id=PmhXJZDgLrE9&format=png',
   'Mauritius': 'https://img.icons8.com/?size=96&id=A2KwAJudpnvw&format=png',
-  'Morocco': 'https://img.icons8.com/?size=96&id=GXsY9drDQj1w&format=png',
+  'Morocco': 'https://img.icons8.com/?size=100&id=22436&format=png&color=000000',
   'Mozambique': 'https://img.icons8.com/?size=96&id=QUzPD6WxOP5s&format=png',
   'Namibia': 'https://img.icons8.com/?size=96&id=P1jMtCaI61rx&format=png',
   'Niger': 'https://img.icons8.com/?size=96&id=PeHrBcLnkE4k&format=png',

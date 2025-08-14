@@ -149,23 +149,54 @@ export const generateInvoicePreview = withDbConnection(async (data: InvoicePrevi
     let totalProducts = 0;
     let totalQuantity = 0;
     let totalSales = 0;
+    let totalOriginalSales = 0;
+    let totalDiscountAmount = 0;
+    let totalDiscountedOrders = 0;
 
     // Use a Set to track unique products
     const uniqueProductIds = new Set();
     
     orders.forEach(order => {
+      const orderTotalDiscount = (order as any).totalDiscountAmount || 0;
+      const orderFinalTotal = (order as any).finalTotalPrice || (order as any).totalPrice || 0;
+      
+      // Calculate true original total: if there's a discount, original = final + discount
+      const orderOriginalTotal = orderTotalDiscount > 0 
+        ? (orderFinalTotal + orderTotalDiscount) 
+        : ((order as any).totalPrice || 0);
+  
+      // Track discount information
+      if (orderTotalDiscount > 0) {
+        totalDiscountedOrders++;
+        totalDiscountAmount += orderTotalDiscount;
+        totalOriginalSales += orderOriginalTotal;
+        totalSales += orderFinalTotal;
+      } else {
+        totalOriginalSales += orderOriginalTotal;
+        totalSales += orderOriginalTotal;
+      }
+      
       order.products.forEach((product:any) => {
         // Add unique product ID to set
         uniqueProductIds.add(product.productId.toString());
         totalQuantity += product.quantity;
-        totalSales += product.unitPrice * product.quantity;
       });
     });
     
     // Count unique products
     totalProducts = uniqueProductIds.size;
 
-    // Calculate unpaid expeditions for reference only (not added to invoice total)
+    // Add expedition values to total sales
+    let totalExpeditionValue = 0;
+    expeditions.forEach(expedition => {
+      totalExpeditionValue += expedition.totalValue || 0;
+    });
+    
+    // Update totals to include expeditions
+    totalSales += totalExpeditionValue;
+    totalOriginalSales += totalExpeditionValue; // Expeditions don't have discounts currently
+
+    // Calculate unpaid expeditions for reference
     const unpaidExpeditions = expeditions.filter(exp => !exp.isPaid);
     const unpaidAmount = unpaidExpeditions.reduce((sum, exp) => sum + (exp.totalValue || 0), 0);
 
@@ -176,6 +207,11 @@ export const generateInvoicePreview = withDbConnection(async (data: InvoicePrevi
       totalProducts,
       totalQuantity,
       totalSales,
+      totalOriginalSales,
+      totalDiscountAmount,
+      totalDiscountedOrders,
+      discountPercentage: totalOriginalSales > 0 ? ((totalDiscountAmount / totalOriginalSales) * 100) : 0,
+      totalExpeditionValue,
       unpaidExpeditions: unpaidExpeditions.length,
       unpaidAmount,
       currency: (warehouse as any).currency,
@@ -192,9 +228,11 @@ export const generateInvoicePreview = withDbConnection(async (data: InvoicePrevi
 
     // Get detailed product data
     const productData: any[] = [];
-    const productSales: { [key: string]: { name: string; code: string; quantity: number; sales: number } } = {};
+    const productSales: { [key: string]: { name: string; code: string; quantity: number; sales: number; originalSales: number; discountAmount: number; discountPercentage: number } } = {};
     
     orders.forEach(order => {
+      const orderPriceAdjustments = (order as any).priceAdjustments || [];
+      
       order.products.forEach((product: any) => {
         const productKey = product.productId.toString();
         if (!productSales[productKey]) {
@@ -202,12 +240,42 @@ export const generateInvoicePreview = withDbConnection(async (data: InvoicePrevi
             name: product.productId.name || 'Unknown Product',
             code: product.productId.code || 'N/A',
             quantity: 0,
-            sales: 0
+            sales: 0,
+            originalSales: 0,
+            discountAmount: 0,
+            discountPercentage: 0
           };
         }
-        productSales[productKey].quantity += product.quantity;
-        productSales[productKey].sales += product.unitPrice * product.quantity;
+        
+        // Find if this product has any price adjustments
+        const productAdjustment = orderPriceAdjustments.find((adj: any) => adj.productId.toString() === productKey);
+        
+        if (productAdjustment) {
+          // Product has discount
+          const productOriginalTotal = productAdjustment.originalPrice * product.quantity;
+          const productFinalTotal = product.unitPrice * product.quantity;
+          const productDiscountAmount = productOriginalTotal - productFinalTotal;
+          
+          productSales[productKey].quantity += product.quantity;
+          productSales[productKey].sales += productFinalTotal;
+          productSales[productKey].originalSales += productOriginalTotal;
+          productSales[productKey].discountAmount += productDiscountAmount;
+        } else {
+          // No discount
+          const productTotal = product.unitPrice * product.quantity;
+          productSales[productKey].quantity += product.quantity;
+          productSales[productKey].sales += productTotal;
+          productSales[productKey].originalSales += productTotal;
+        }
       });
+    });
+    
+    // Calculate discount percentage for each product
+    Object.keys(productSales).forEach(productKey => {
+      const product = productSales[productKey];
+      if (product.originalSales > 0) {
+        product.discountPercentage = ((product.discountAmount / product.originalSales) * 100);
+      }
     });
     
     // Convert to array
@@ -228,7 +296,46 @@ export const generateInvoicePreview = withDbConnection(async (data: InvoicePrevi
       status: expedition.status || 'Unknown'
     }));
 
-    return { success: true, data: { ...preview, productData, expeditionData } };
+    // Get detailed order data with discount information
+    const orderData = orders.map(order => {
+      const orderTotalDiscount = (order as any).totalDiscountAmount || 0;
+      const orderFinalTotal = (order as any).finalTotalPrice || (order as any).totalPrice || 0;
+      
+      // Calculate true original total: if there's a discount, original = final + discount
+      // If there's no discount, original = totalPrice
+      const orderOriginalTotal = orderTotalDiscount > 0 
+        ? (orderFinalTotal + orderTotalDiscount) 
+        : ((order as any).totalPrice || 0);
+      
+      return {
+        orderId: order.orderId,
+        orderDate: order.orderDate || order.createdAt,
+        customerName: order.customer.name,
+        originalTotal: orderOriginalTotal,
+        finalTotal: orderFinalTotal,
+        discountAmount: orderTotalDiscount,
+        discountPercentage: (orderTotalDiscount && orderOriginalTotal) 
+          ? ((orderTotalDiscount / orderOriginalTotal) * 100) 
+          : 0,
+        hasDiscount: orderTotalDiscount > 0,
+        priceAdjustments: ((order as any).priceAdjustments || []).map((adj: any) => ({
+          productId: adj.productId?.toString() || adj.productId,
+          originalPrice: adj.originalPrice,
+          adjustedPrice: adj.adjustedPrice,
+          discountAmount: adj.discountAmount,
+          discountPercentage: adj.discountPercentage,
+          reason: adj.reason,
+          appliedBy: adj.appliedBy?.toString() || adj.appliedBy,
+          appliedAt: adj.appliedAt,
+          notes: adj.notes,
+          _id: adj._id?.toString() || adj._id
+        })),
+        productCount: order.products.length,
+        totalQuantity: order.products.reduce((sum: number, product: any) => sum + product.quantity, 0)
+      };
+    });
+
+    return { success: true, data: { ...preview, productData, expeditionData, orderData } };
   } catch (error: any) {
     console.error('Error generating invoice preview:', error);
     return { success: false, message: error.message || 'Failed to generate preview' };
@@ -274,9 +381,9 @@ export const generateInvoice = withDbConnection(async (data: InvoiceGenerationDa
     //   return { success: false, message: 'Invoice already exists for this period' };
     // }
 
-    // Calculate totals - fees are deducted from seller payment
+    // Calculate totals - fees are added to invoice total
     const totalFees = Object.values(fees).reduce((sum, fee) => sum + fee, 0);
-    const netAmount = preview.totalSales - totalFees;
+    const netAmount = preview.totalSales + totalFees;
 
     // Create the invoice
     const invoice = new Invoice({

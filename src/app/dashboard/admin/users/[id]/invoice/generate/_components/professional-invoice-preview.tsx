@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { format } from 'date-fns';
-import { Calendar } from 'lucide-react';
+import { Calendar, Percent, Tag } from 'lucide-react';
 
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +30,11 @@ interface InvoicePreview {
   totalQuantity: number;
   status?: string
   totalSales: number;
+  totalOriginalSales: number;
+  totalDiscountAmount: number;
+  totalDiscountedOrders: number;
+  discountPercentage: number;
+  totalExpeditionValue: number;
   unpaidExpeditions: number;
   unpaidAmount: number;
   currency: string;
@@ -46,6 +51,9 @@ interface InvoicePreview {
     code: string;
     quantity: number;
     sales: number;
+    originalSales: number;
+    discountAmount: number;
+    discountPercentage: number;
   }>;
   expeditionData?: Array<{
     expeditionId: string;
@@ -54,6 +62,19 @@ interface InvoicePreview {
     totalValue: number;
     isPaid: boolean;
     status: string;
+  }>;
+  orderData?: Array<{
+    orderId: string;
+    orderDate: string | Date;
+    customerName: string;
+    originalTotal: number;
+    finalTotal: number;
+    discountAmount: number;
+    discountPercentage: number;
+    hasDiscount: boolean;
+    priceAdjustments: any[];
+    productCount: number;
+    totalQuantity: number;
   }>;
 }
 
@@ -112,7 +133,20 @@ export default function ProfessionalInvoicePreview({
   };
 
   const calculateNetAmount = () => {
-    return calculateSubtotal() - calculateTotalFees();
+    return calculateSubtotal() + calculateTotalFees();
+  };
+
+  // Calculate product-only totals (excluding expeditions)
+  const calculateProductTotals = () => {
+    const productTotalOriginal = preview.productData.reduce((sum, product) => sum + product.originalSales, 0);
+    const productTotalFinal = preview.productData.reduce((sum, product) => sum + product.sales, 0);
+    const productTotalDiscount = preview.productData.reduce((sum, product) => sum + product.discountAmount, 0);
+    
+    return {
+      originalSales: productTotalOriginal,
+      finalSales: productTotalFinal,
+      discountAmount: productTotalDiscount
+    };
   };
 
   // Generate mock invoice number for preview
@@ -268,21 +302,44 @@ export default function ProfessionalInvoicePreview({
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-border">
-                  <td className="p-4">
-                    <div>
-                      <p className="font-medium text-foreground">Order Processing & Commission</p>
-                      <p className="text-sm text-muted-foreground">
-                        Processing and commission for {preview.totalOrders} delivered orders
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {preview.totalProducts} unique products • {preview.totalQuantity} total items
-                      </p>
-                    </div>
-                  </td>
-                  <td className="p-4 text-center text-foreground">{preview.totalOrders}</td>
-                  <td className="p-4 text-right font-medium text-foreground">{formatCurrency(preview.totalSales)}</td>
-                </tr>
+                {/* Orders Row */}
+                {preview.totalOrders > 0 && (
+                  <tr className="border-b border-border">
+                    <td className="p-4">
+                      <div>
+                        <p className="font-medium text-foreground">Order Processing & Commission</p>
+                        <p className="text-sm text-muted-foreground">
+                          Processing and commission for {preview.totalOrders} delivered orders
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {preview.totalProducts} unique products • {preview.totalQuantity} total items
+                        </p>
+                      </div>
+                    </td>
+                    <td className="p-4 text-center text-foreground">{preview.totalOrders}</td>
+                    <td className="p-4 text-right font-medium text-foreground">
+                      {formatCurrency(preview.totalSales - preview.totalExpeditionValue)}
+                    </td>
+                  </tr>
+                )}
+                
+                {/* Expeditions Row */}
+                {preview.totalExpeditions > 0 && (
+                  <tr className="border-b border-border">
+                    <td className="p-4">
+                      <div>
+                        <p className="font-medium text-foreground">Expedition Processing & Commission</p>
+                        <p className="text-sm text-muted-foreground">
+                          Processing and commission for {preview.totalExpeditions} delivered expeditions
+                        </p>
+                      </div>
+                    </td>
+                    <td className="p-4 text-center text-foreground">{preview.totalExpeditions}</td>
+                    <td className="p-4 text-right font-medium text-foreground">
+                      {formatCurrency(preview.totalExpeditionValue)}
+                    </td>
+                  </tr>
+                )}
                 
               </tbody>
             </table>
@@ -298,31 +355,174 @@ export default function ProfessionalInvoicePreview({
                 Product Breakdown
               </h3>
               <div className="border border-border rounded-lg overflow-hidden">
-                <table className="w-full">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[800px]">
                   <thead>
                     <tr className="bg-muted/50 border-b border-border">
-                      <th className="text-left p-4 font-semibold text-foreground">Product Code</th>
-                      <th className="text-left p-4 font-semibold text-foreground">Product Name</th>
-                      <th className="text-center p-4 font-semibold text-foreground">Quantity</th>
-                      <th className="text-right p-4 font-semibold text-foreground">Sales</th>
+                      <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Product Code</th>
+                      <th className="text-left p-3 font-semibold text-foreground" style={{minWidth: '200px'}}>Product Name</th>
+                      <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Qty</th>
+                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Original</th>
+                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Discount</th>
+                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Final Sales</th>
                     </tr>
                   </thead>
                   <tbody>
                     {preview.productData.map((product, index) => (
                       <tr key={product.productId} className="border-b border-border">
-                        <td className="p-4 font-mono text-sm text-foreground">{product.code}</td>
-                        <td className="p-4 text-foreground">{product.name}</td>
-                        <td className="p-4 text-center text-foreground">{product.quantity}</td>
-                        <td className="p-4 text-right font-medium text-foreground">{formatCurrency(product.sales)}</td>
+                        <td className="p-3 font-mono text-sm text-foreground whitespace-nowrap">{product.code}</td>
+                        <td className="p-3">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-foreground text-sm">{product.name}</span>
+                            {product.discountAmount > 0 && (
+                              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 flex-shrink-0">
+                                <Percent className="h-3 w-3 mr-1" />
+                                {product.discountPercentage.toFixed(1)}% off
+                              </Badge>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-3 text-center text-foreground text-sm whitespace-nowrap">{product.quantity}</td>
+                        <td className="p-3 text-right text-foreground text-sm whitespace-nowrap">
+                          {product.discountAmount > 0 ? (
+                            <span className="line-through text-muted-foreground">
+                              {formatCurrency(product.originalSales)}
+                            </span>
+                          ) : (
+                            <span>{formatCurrency(product.originalSales)}</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-right text-foreground text-sm whitespace-nowrap">
+                          {product.discountAmount > 0 ? (
+                            <span className="text-green-700 font-medium">
+                              -{formatCurrency(product.discountAmount)}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-right font-medium text-foreground text-sm whitespace-nowrap">
+                          {formatCurrency(product.sales)}
+                        </td>
                       </tr>
                     ))}
                     <tr className="bg-muted/50 border-b border-border">
-                      <td className="p-4 font-semibold text-foreground" colSpan={2}>Total</td>
-                      <td className="p-4 text-center font-semibold text-foreground">{preview.totalQuantity}</td>
-                      <td className="p-4 text-right font-semibold text-foreground">{formatCurrency(preview.totalSales)}</td>
+                      <td className="p-3 font-semibold text-foreground" colSpan={2}>Total</td>
+                      <td className="p-3 text-center font-semibold text-foreground whitespace-nowrap">{preview.totalQuantity}</td>
+                      <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
+                        {calculateProductTotals().discountAmount > 0 ? (
+                          <span className="line-through text-muted-foreground">
+                            {formatCurrency(calculateProductTotals().originalSales)}
+                          </span>
+                        ) : (
+                          formatCurrency(calculateProductTotals().originalSales)
+                        )}
+                      </td>
+                      <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
+                        {calculateProductTotals().discountAmount > 0 ? (
+                          <span className="text-green-700">
+                            -{formatCurrency(calculateProductTotals().discountAmount)}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </td>
+                      <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">{formatCurrency(calculateProductTotals().finalSales)}</td>
                     </tr>
                   </tbody>
-                </table>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Order Details Table */}
+        {preview.orderData && preview.orderData.length > 0 && (
+          <>
+            <Separator />
+            <div>
+              <h3 className="text-lg font-semibold text-foreground mb-4 pb-1 border-b border-border">
+                Order Breakdown
+              </h3>
+              <div className="border border-border rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[900px]">
+                    <thead>
+                      <tr className="bg-muted/50 border-b border-border">
+                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Order ID</th>
+                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '150px'}}>Customer</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Products</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Qty</th>
+                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Original</th>
+                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Discount</th>
+                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Final Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {preview.orderData.map((order, index) => (
+                        <tr key={order.orderId} className="border-b border-border">
+                          <td className="p-3 font-mono text-sm text-foreground whitespace-nowrap">{order.orderId}</td>
+                          <td className="p-3 text-foreground text-sm">{order.customerName}</td>
+                          <td className="p-3 text-center text-foreground text-sm whitespace-nowrap">{order.productCount}</td>
+                          <td className="p-3 text-center text-foreground text-sm whitespace-nowrap">{order.totalQuantity}</td>
+                          <td className="p-3 text-right text-foreground text-sm whitespace-nowrap">
+                            {order.hasDiscount ? (
+                              <span className="line-through text-muted-foreground">
+                                {formatCurrency(order.originalTotal)}
+                              </span>
+                            ) : (
+                              <span>{formatCurrency(order.originalTotal)}</span>
+                            )}
+                          </td>
+                          <td className="p-3 text-right text-foreground text-sm whitespace-nowrap">
+                            {order.hasDiscount ? (
+                              <div className="flex items-center justify-end gap-2">
+                                <span className="text-green-700 font-medium">
+                                  -{formatCurrency(order.discountAmount)}
+                                </span>
+                                <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                  {order.discountPercentage.toFixed(1)}%
+                                </Badge>
+                              </div>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </td>
+                          <td className="p-3 text-right font-medium text-foreground text-sm whitespace-nowrap">
+                            {formatCurrency(order.finalTotal)}
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className="bg-muted/50 border-b border-border">
+                        <td className="p-3 font-semibold text-foreground" colSpan={2}>Total Orders</td>
+                        <td className="p-3 text-center font-semibold text-foreground whitespace-nowrap">{preview.orderData.reduce((sum, order) => sum + order.productCount, 0)}</td>
+                        <td className="p-3 text-center font-semibold text-foreground whitespace-nowrap">{preview.orderData.reduce((sum, order) => sum + order.totalQuantity, 0)}</td>
+                        <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
+                          {preview.totalDiscountAmount > 0 ? (
+                            <span className="line-through text-muted-foreground">
+                              {formatCurrency(preview.orderData.reduce((sum, order) => sum + order.originalTotal, 0))}
+                            </span>
+                          ) : (
+                            formatCurrency(preview.orderData.reduce((sum, order) => sum + order.originalTotal, 0))
+                          )}
+                        </td>
+                        <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
+                          {preview.totalDiscountAmount > 0 ? (
+                            <span className="text-green-700">
+                              -{formatCurrency(preview.orderData.reduce((sum, order) => sum + order.discountAmount, 0))}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </td>
+                        <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
+                          {formatCurrency(preview.orderData.reduce((sum, order) => sum + order.finalTotal, 0))}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </>
@@ -337,52 +537,54 @@ export default function ProfessionalInvoicePreview({
                 Expedition Breakdown
               </h3>
               <div className="border border-border rounded-lg overflow-hidden">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-muted/50 border-b border-border">
-                      <th className="text-left p-4 font-semibold text-foreground">Expedition Code</th>
-                      <th className="text-center p-4 font-semibold text-foreground">Date</th>
-                      <th className="text-center p-4 font-semibold text-foreground">Status</th>
-                      <th className="text-center p-4 font-semibold text-foreground">Payment</th>
-                      <th className="text-right p-4 font-semibold text-foreground">Value</th>
-                    </tr>
-                  </thead>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[600px]">
+                    <thead>
+                      <tr className="bg-muted/50 border-b border-border">
+                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Expedition Code</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Date</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Status</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Payment</th>
+                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Value</th>
+                      </tr>
+                    </thead>
                   <tbody>
                     {preview.expeditionData.map((expedition, index) => (
                       <tr key={expedition.expeditionId} className="border-b border-border">
-                        <td className="p-4 font-mono text-sm text-foreground">{expedition.expeditionCode}</td>
-                        <td className="p-4 text-center text-foreground">
+                        <td className="p-3 font-mono text-sm text-foreground whitespace-nowrap">{expedition.expeditionCode}</td>
+                        <td className="p-3 text-center text-foreground text-sm whitespace-nowrap">
                           {format(new Date(expedition.expeditionDate), 'MMM dd, yyyy')}
                         </td>
-                        <td className="p-4 text-center">
+                        <td className="p-3 text-center">
                           <Badge 
                             variant={expedition.status.toLowerCase() === 'delivered' ? 'default' : 'secondary'}
-                            className="text-xs"
+                            className="text-xs whitespace-nowrap"
                           >
                             {expedition.status}
                           </Badge>
                         </td>
-                        <td className="p-4 text-center">
+                        <td className="p-3 text-center">
                           <Badge 
                             variant={expedition.isPaid ? 'default' : 'destructive'}
-                            className="text-xs"
+                            className="text-xs whitespace-nowrap"
                           >
                             {expedition.isPaid ? 'Paid' : 'Unpaid'}
                           </Badge>
                         </td>
-                        <td className="p-4 text-right font-medium text-foreground">
+                        <td className="p-3 text-right font-medium text-foreground text-sm whitespace-nowrap">
                           {formatCurrency(expedition.totalValue)}
                         </td>
                       </tr>
                     ))}
                     <tr className="bg-muted/50 border-b border-border">
-                      <td className="p-4 font-semibold text-foreground" colSpan={4}>Total Expeditions</td>
-                      <td className="p-4 text-right font-semibold text-foreground">
+                      <td className="p-3 font-semibold text-foreground" colSpan={4}>Total Expeditions</td>
+                      <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
                         {formatCurrency(preview.expeditionData.reduce((sum, exp) => sum + exp.totalValue, 0))}
                       </td>
                     </tr>
                   </tbody>
-                </table>
+                  </table>
+                </div>
               </div>
             </div>
           </>
@@ -462,8 +664,8 @@ export default function ProfessionalInvoicePreview({
                 
                 {calculateTotalFees() > 0 && (
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-muted-foreground">Less: Service Fees</span>
-                    <span className="font-medium text-foreground">-{formatCurrency(calculateTotalFees())}</span>
+                    <span className="text-muted-foreground">Add: Service Fees</span>
+                    <span className="font-medium text-foreground">+{formatCurrency(calculateTotalFees())}</span>
                   </div>
                 )}
               </div>
