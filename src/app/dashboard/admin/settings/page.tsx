@@ -10,11 +10,13 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Settings, MapPin, DollarSign, Package, Users, Cog } from 'lucide-react';
+import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap } from 'lucide-react';
 import { DeliveryFeeRulesForm } from './_components/delivery-fee-rules-form';
 import { CommissionRulesForm } from './_components/commission-rules-form';
 import { LocationTrackingForm } from './_components/location-tracking-form';
+import { TokenSystemForm } from './_components/token-system-form';
 import { getAppSettings, updateAppSettings } from '@/app/actions/app-settings';
+import { getTokenPackages } from '@/app/actions/tokens';
 
 interface AppSettings {
   _id?: string;
@@ -29,6 +31,7 @@ interface AppSettings {
   enableCommissionSystem: boolean;
   enableDeliveryFees: boolean;
   defaultDeliveryFee: number;
+  enableTokenSystem: boolean;
   isActive: boolean;
 }
 
@@ -43,6 +46,7 @@ interface SettingSection {
 
 const AppSettingsPage = () => {
   const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [tokenPackages, setTokenPackages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState('general');
@@ -54,12 +58,19 @@ const AppSettingsPage = () => {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const result = await getAppSettings();
-      if (result.success) {
-        setSettings(result.data);
+      const [settingsResult, packagesResult] = await Promise.all([
+        getAppSettings(),
+        getTokenPackages()
+      ]);
+      
+      if (settingsResult.success) {
+        setSettings(settingsResult.data);
       } else {
-        toast.error(result.error || 'Failed to fetch app settings');
+        toast.error(settingsResult.error || 'Failed to fetch app settings');
       }
+
+      setTokenPackages(packagesResult || []);
+      
     } catch (error) {
       toast.error('Error fetching app settings');
       console.error(error);
@@ -90,6 +101,15 @@ const AppSettingsPage = () => {
 
   const updateSettings = (updates: Partial<AppSettings>) => {
     setSettings(prev => prev ? { ...prev, ...updates } : null);
+  };
+
+  const refreshTokenPackages = async () => {
+    try {
+      const packagesResult = await getTokenPackages();
+      setTokenPackages(packagesResult || []);
+    } catch (error) {
+      console.error('Error fetching token packages:', error);
+    }
   };
 
   const settingSections: SettingSection[] = [
@@ -214,6 +234,25 @@ const AppSettingsPage = () => {
           onSettingsChange={(trackingSettings) => 
             updateSettings({ showLocationTracking: trackingSettings })
           }
+        />
+      ) : null
+    },
+    {
+      id: 'tokens',
+      title: 'Token Boost System',
+      description: 'Configure token-based provider profile boosting and advertising',
+      icon: <Zap className="w-5 h-5" />,
+      badge: settings?.enableTokenSystem ? 'Active' : 'Inactive',
+      component: settings ? (
+        <TokenSystemForm
+          settings={{
+            enabled: settings.enableTokenSystem,
+            packages: tokenPackages,
+          }}
+          onSettingsChange={(tokenSettings) => 
+            updateSettings({ enableTokenSystem: tokenSettings.enabled })
+          }
+          onPackagesUpdate={refreshTokenPackages}
         />
       ) : null
     }

@@ -27,19 +27,12 @@ interface SendNotificationParams {
  */
 export async function sendNotification(params: SendNotificationParams) {
   try {
-
-    const jwtToken = await getAccessToken();
-    if (!jwtToken) {
-      throw new Error("Configuration Error")
-    }
-
     const API_URL = process.env.API_URL || 'http://localhost:4000';
 
     const response = await fetch(`${API_URL}/api/notifications/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'authorization': `Bearer ${jwtToken}` // For server-to-server authentication
       },
       body: JSON.stringify(params),
       cache: 'no-store'

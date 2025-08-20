@@ -51,6 +51,7 @@ export async function updateAppSettings(formData: FormData | any) {
       maxOrdersPerDeliveryGuy: parseInt(data.maxOrdersPerDeliveryGuy) || 10,
       enableCommissionSystem: data.enableCommissionSystem === true || data.enableCommissionSystem === 'true',
       enableDeliveryFees: data.enableDeliveryFees === true || data.enableDeliveryFees === 'true',
+      enableTokenSystem: data.enableTokenSystem === true || data.enableTokenSystem === 'true',
       defaultDeliveryFee: parseFloat(data.defaultDeliveryFee) || 0,
       showLocationTracking: {
         seller: data.showLocationTracking?.seller === true || data.showLocationTracking?.seller === 'true',

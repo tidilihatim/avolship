@@ -35,6 +35,9 @@ export interface IAppSettings extends Document {
   enableDeliveryFees: boolean;
   defaultDeliveryFee: number; // Fallback delivery fee
   
+  // Token System Settings
+  enableTokenSystem: boolean; // Enable/disable token boost system
+  
   // Admin Controls
   isActive: boolean;
   lastUpdatedBy: mongoose.Types.ObjectId;
@@ -127,6 +130,11 @@ const AppSettingsSchema = new Schema<IAppSettings>(
       type: Number,
       default: 10000, // 10000 francs
       min: 0,
+    },
+    
+    enableTokenSystem: {
+      type: Boolean,
+      default: false,
     },
     
     isActive: {

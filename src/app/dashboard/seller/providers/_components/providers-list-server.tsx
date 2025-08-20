@@ -6,9 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Eye, MessageCircle, Building2, MapPin } from 'lucide-react';
+import { Eye, MessageCircle, Building2, MapPin, TrendingUp, Zap } from 'lucide-react';
 import { IUser, UserStatus, UserRole } from '@/lib/db/models/user';
-import { getUsers } from '@/app/actions/user';
+import { getBoostedProviders, trackProviderClick } from '@/app/actions/tokens';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTranslations } from 'next-intl';
 import { ProviderSearch } from '@/components/provider/provider-search';
@@ -62,8 +62,7 @@ export function ProvidersListServer() {
       setLoading(true);
       setError(null);
       
-      const result = await getUsers(page, ITEMS_PER_PAGE, { 
-        role: UserRole.PROVIDER,
+      const result = await getBoostedProviders(page, ITEMS_PER_PAGE, { 
         search: search || undefined
       });
       
@@ -92,7 +91,15 @@ export function ProvidersListServer() {
     updateUrl(1, newSearchTerm);
   };
 
-  const handleViewProvider = (providerId: string) => {
+  const handleViewProvider = async (providerId: string, isBoosted?: boolean) => {
+    // Track click if provider is boosted
+    if (isBoosted) {
+      try {
+        await trackProviderClick(providerId);
+      } catch (error) {
+        console.error('Failed to track provider click:', error);
+      }
+    }
     router.push(`/dashboard/seller/providers/${providerId}`);
   };
 
@@ -194,21 +201,40 @@ export function ProvidersListServer() {
         <div className="space-y-6" data-testid="providers-list">
           <div className="grid gap-4">
             {data?.users.map((provider: any) => (
-              <Card key={provider._id} className="hover:shadow-md transition-shadow" data-testid="provider-card">
+              <Card 
+                key={provider._id} 
+                className={`hover:shadow-md transition-shadow ${
+                  provider.isBoosted ? 'ring-2 ring-primary/20 bg-primary/5' : ''
+                }`} 
+                data-testid="provider-card"
+              >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarFallback className="text-lg font-semibold">
-                        {provider.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="relative">
+                      <Avatar className="h-12 w-12">
+                        <AvatarFallback className="text-lg font-semibold">
+                          {provider.name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      {provider.isBoosted && (
+                        <div className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full p-1">
+                          <Zap className="h-3 w-3" />
+                        </div>
+                      )}
+                    </div>
                     
                     <div className="flex-1 space-y-2">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-semibold text-lg">{provider.name}</h3>
                         <Badge className={getStatusColor(provider.status)}>
                           {provider.status}
                         </Badge>
+                        {provider.isBoosted && (
+                          <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                            <TrendingUp className="h-3 w-3 mr-1" />
+                            Boosted
+                          </Badge>
+                        )}
                       </div>
                       
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
@@ -238,7 +264,7 @@ export function ProvidersListServer() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleViewProvider(provider._id as string)}
+                        onClick={() => handleViewProvider(provider._id as string, provider.isBoosted)}
                       >
                         <Eye className="h-4 w-4 mr-1" />
                         {t('actions.view')}
