@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { ProviderHeader } from '@/components/provider/provider-header';
 import { ProviderInfoCard } from '@/components/provider/provider-info-card';
 import { ProviderBusinessCard } from '@/components/provider/provider-business-card';
@@ -11,32 +9,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { IUser } from '@/lib/db/models/user';
 
-export function ProviderDetailContainer() {
-  const { data: session } = useSession();
-  const [provider, setProvider] = useState<IUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (session?.user) {
-      setProvider(session.user as IUser);
-      setLoading(false);
-    } else {
-      setError('Provider information not available');
-      setLoading(false);
-    }
-  }, [session]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error || !provider) {
+export function ProviderDetailContainer({provider}:{provider:IUser}) {
+  if (!provider) {
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          {error || 'Unable to load provider information'}
+          Unable to load provider information
         </AlertDescription>
       </Alert>
     );

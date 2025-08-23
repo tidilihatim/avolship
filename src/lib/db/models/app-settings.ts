@@ -18,6 +18,13 @@ export interface ShowLocationTracking {
   call_center: boolean;
 }
 
+export interface LeaderboardSettings {
+  enableSellerLeaderboard: boolean;
+  enableProviderLeaderboard: boolean;
+  enableDeliveryLeaderboard: boolean;
+  enableCallCenterLeaderboard: boolean;
+}
+
 export interface IAppSettings extends Document {
   // Delivery Configuration
   deliveryFeeRules: DeliveryFeeRule[];
@@ -29,6 +36,9 @@ export interface IAppSettings extends Document {
   
   // Real-time Tracking Settings
   showLocationTracking: ShowLocationTracking;
+  
+  // Leaderboard Settings
+  leaderboardSettings: LeaderboardSettings;
   
   // Commission & Fee Settings
   enableCommissionSystem: boolean;
@@ -111,6 +121,25 @@ const AppSettingsSchema = new Schema<IAppSettings>(
         default: true,
       },
       call_center: {
+        type: Boolean,
+        default: true,
+      },
+    },
+    
+    leaderboardSettings: {
+      enableSellerLeaderboard: {
+        type: Boolean,
+        default: true,
+      },
+      enableProviderLeaderboard: {
+        type: Boolean,
+        default: true,
+      },
+      enableDeliveryLeaderboard: {
+        type: Boolean,
+        default: true,
+      },
+      enableCallCenterLeaderboard: {
         type: Boolean,
         default: true,
       },

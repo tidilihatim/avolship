@@ -6,7 +6,9 @@ import {
   DollarSign,
   MapPin,
   Settings,
-  HeadphonesIcon
+  HeadphonesIcon,
+  Trophy,
+  Coins
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center';
@@ -50,6 +52,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name:"Invoices",
       href:"/dashboard/admin/invoices",
       icon: DollarSign
+    },
+    {
+      name: "leaderboard",
+      href: "/dashboard/admin/leaderboard",
+      icon: Trophy
     }
   ],
   seller: [
@@ -94,6 +101,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: Zap
     },
     {
+      name: "leaderboard",
+      href: "/dashboard/seller/leaderboard",
+      icon: Trophy
+    },
+    {
       name: "support",
       href: "/dashboard/seller/support",
       icon: HeadphonesIcon
@@ -121,6 +133,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: Users,
     },
     {
+      name: "leaderboard",
+      href: "/dashboard/call_center/leaderboard",
+      icon: Trophy
+    },
+    {
       name: "support",
       href: "/dashboard/call_center/support",
       icon: HeadphonesIcon
@@ -133,12 +150,23 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: LayoutDashboard,
     },
   ],
-  'delivery': [],
+  'delivery': [
+    {
+      name: "leaderboard",
+      href: "/dashboard/delivery/leaderboard",
+      icon: Trophy
+    },
+  ],
   'provider': [
     {
       name: "profile",
       href: "/dashboard/provider/profile",
       icon: User,
+    },
+    {
+      name: "tokens",
+      href: "/dashboard/provider/tokens",
+      icon: Coins,
     },
     {
       name: "chat",
@@ -149,6 +177,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name:"expeditions",
       href:"/dashboard/provider/expeditions",
       icon:PlaneIcon
+    },
+    {
+      name: "leaderboard",
+      href: "/dashboard/provider/leaderboard",
+      icon: Trophy
     }
   ]
 

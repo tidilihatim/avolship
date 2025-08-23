@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap } from 'lucide-react';
+import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap, Trophy } from 'lucide-react';
 import { DeliveryFeeRulesForm } from './_components/delivery-fee-rules-form';
 import { CommissionRulesForm } from './_components/commission-rules-form';
 import { LocationTrackingForm } from './_components/location-tracking-form';
@@ -27,6 +27,12 @@ interface AppSettings {
   showLocationTracking: {
     seller: boolean;
     call_center: boolean;
+  };
+  leaderboardSettings: {
+    enableSellerLeaderboard: boolean;
+    enableProviderLeaderboard: boolean;
+    enableDeliveryLeaderboard: boolean;
+    enableCallCenterLeaderboard: boolean;
   };
   enableCommissionSystem: boolean;
   enableDeliveryFees: boolean;
@@ -235,6 +241,128 @@ const AppSettingsPage = () => {
             updateSettings({ showLocationTracking: trackingSettings })
           }
         />
+      ) : null
+    },
+    {
+      id: 'leaderboards',
+      title: 'Leaderboard Settings',
+      description: 'Configure leaderboard visibility for different user roles',
+      icon: <Trophy className="w-5 h-5" />,
+      component: settings ? (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="seller-leaderboard">Seller Leaderboard</Label>
+                <p className="text-sm text-muted-foreground">
+                  Enable seller competition leaderboard
+                </p>
+              </div>
+              <Switch
+                id="seller-leaderboard"
+                checked={settings.leaderboardSettings?.enableSellerLeaderboard ?? true}
+                onCheckedChange={(checked) => 
+                  updateSettings({ 
+                    leaderboardSettings: {
+                      ...settings.leaderboardSettings,
+                      enableSellerLeaderboard: checked
+                    }
+                  })
+                }
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="provider-leaderboard">Provider Leaderboard</Label>
+                <p className="text-sm text-muted-foreground">
+                  Enable provider performance leaderboard
+                </p>
+              </div>
+              <Switch
+                id="provider-leaderboard"
+                checked={settings.leaderboardSettings?.enableProviderLeaderboard ?? true}
+                onCheckedChange={(checked) => 
+                  updateSettings({ 
+                    leaderboardSettings: {
+                      ...settings.leaderboardSettings,
+                      enableProviderLeaderboard: checked
+                    }
+                  })
+                }
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="delivery-leaderboard">Delivery Leaderboard</Label>
+                <p className="text-sm text-muted-foreground">
+                  Enable delivery personnel leaderboard
+                </p>
+              </div>
+              <Switch
+                id="delivery-leaderboard"
+                checked={settings.leaderboardSettings?.enableDeliveryLeaderboard ?? true}
+                onCheckedChange={(checked) => 
+                  updateSettings({ 
+                    leaderboardSettings: {
+                      ...settings.leaderboardSettings,
+                      enableDeliveryLeaderboard: checked
+                    }
+                  })
+                }
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="callcenter-leaderboard">Call Center Leaderboard</Label>
+                <p className="text-sm text-muted-foreground">
+                  Enable call center agent leaderboard
+                </p>
+              </div>
+              <Switch
+                id="callcenter-leaderboard"
+                checked={settings.leaderboardSettings?.enableCallCenterLeaderboard ?? true}
+                onCheckedChange={(checked) => 
+                  updateSettings({ 
+                    leaderboardSettings: {
+                      ...settings.leaderboardSettings,
+                      enableCallCenterLeaderboard: checked
+                    }
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="rounded-lg bg-muted/50 p-4">
+            <h4 className="text-sm font-medium mb-2">Leaderboard Status</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${settings.leaderboardSettings?.enableSellerLeaderboard ? 'bg-green-500' : 'bg-red-500'}`} />
+                <span>Sellers: {settings.leaderboardSettings?.enableSellerLeaderboard ? 'Active' : 'Disabled'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${settings.leaderboardSettings?.enableProviderLeaderboard ? 'bg-green-500' : 'bg-red-500'}`} />
+                <span>Providers: {settings.leaderboardSettings?.enableProviderLeaderboard ? 'Active' : 'Disabled'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${settings.leaderboardSettings?.enableDeliveryLeaderboard ? 'bg-green-500' : 'bg-red-500'}`} />
+                <span>Delivery: {settings.leaderboardSettings?.enableDeliveryLeaderboard ? 'Active' : 'Disabled'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${settings.leaderboardSettings?.enableCallCenterLeaderboard ? 'bg-green-500' : 'bg-red-500'}`} />
+                <span>Call Center: {settings.leaderboardSettings?.enableCallCenterLeaderboard ? 'Active' : 'Disabled'}</span>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Note: Admins can always view all leaderboards regardless of these settings.
+            </p>
+          </div>
+        </div>
       ) : null
     },
     {

@@ -73,7 +73,7 @@ export function ProviderInfoCard({ provider, hidePrivateInfo = false }: Provider
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <p className="font-medium">
-                {format(new Date(provider.createdAt), 'MMM dd, yyyy')}
+                {provider?.createdAt ? format(new Date(provider.createdAt), 'MMM dd, yyyy') : "N/A"}
               </p>
             </div>
           </div>

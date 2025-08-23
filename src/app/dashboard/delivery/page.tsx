@@ -1,18 +1,18 @@
 import React from 'react'
 
-const ProviderDashboard = () => {
+const DeliveryDashboard = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Provider Dashboard
+          Delivery Dashboard
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Welcome to your provider dashboard. Manage your services and connect with sellers.
+          Welcome to your delivery dashboard. Manage your deliveries and track your performance.
         </p>
       </div>
     </div>
   )
 }
 
-export default ProviderDashboard
+export default DeliveryDashboard

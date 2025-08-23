@@ -1628,6 +1628,8 @@
       "settings": "Settings",
       "help": "Help",
       "profile": "Profile",
+      "tokens": "Tokens",
+      "leaderboard": "Leaderboard",
       "userRole": {
         "seller": "Seller"
       }
