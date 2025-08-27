@@ -442,3 +442,171 @@ export async function getUsersForStockHistory(productId: string): Promise<{
     return [];
   }
 }
+
+/**
+ * Get stock movement chart data for a specific product
+ */
+export async function getStockMovementChartData(
+  productId: string,
+  dateRange?: string,
+  warehouseId?: string,
+  customStartDate?: string,
+  customEndDate?: string
+): Promise<{
+  success: boolean;
+  message?: string;
+  data?: {
+    date: string;
+    stockIn: number;
+    stockOut: number;
+    totalIn: number;
+    totalOut: number;
+  }[];
+}> {
+  try {
+    await connectDB();
+
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    // Verify product access
+    const product = await Product.findById(productId);
+    if (!product) {
+      return { success: false, message: 'Product not found' };
+    }
+
+    if (user.role === UserRole.SELLER && product.sellerId.toString() !== user._id.toString()) {
+      return { success: false, message: 'Access denied' };
+    }
+
+    // Calculate date range for filtering
+    let startDate = new Date();
+    let endDate = new Date();
+    let groupByFormat = "%Y-%m-%d"; // Default: group by day
+    
+    if (dateRange === 'custom' && customStartDate && customEndDate) {
+      // Use custom date range
+      startDate = new Date(customStartDate);
+      endDate = new Date(customEndDate);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+      
+      // Determine grouping based on date range length
+      const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysDiff > 365) {
+        groupByFormat = "%Y-%m"; // Group by month for ranges > 1 year
+      } else {
+        groupByFormat = "%Y-%m-%d"; // Group by day
+      }
+    } else {
+      switch (dateRange) {
+        case 'today':
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setHours(23, 59, 59, 999);
+          groupByFormat = "%Y-%m-%d %H:00:00"; // Group by hour for today
+          break;
+        case 'this_week':
+          const dayOfWeek = startDate.getDay();
+          const diff = startDate.getDate() - dayOfWeek;
+          startDate = new Date(startDate.setDate(diff));
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setHours(23, 59, 59, 999);
+          groupByFormat = "%Y-%m-%d"; // Group by day
+          break;
+        case 'this_month':
+          startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+          endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
+          endDate.setHours(23, 59, 59, 999);
+          groupByFormat = "%Y-%m-%d"; // Group by day
+          break;
+        case 'this_year':
+          startDate = new Date(startDate.getFullYear(), 0, 1);
+          endDate = new Date(startDate.getFullYear(), 11, 31);
+          endDate.setHours(23, 59, 59, 999);
+          groupByFormat = "%Y-%m"; // Group by month for yearly view
+          break;
+        default:
+          // Default to last 30 days
+          startDate.setDate(startDate.getDate() - 30);
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setHours(23, 59, 59, 999);
+          groupByFormat = "%Y-%m-%d"; // Group by day
+      }
+    }
+
+    // Build query
+    const matchQuery: Record<string, any> = {
+      productId: new mongoose.Types.ObjectId(productId),
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    };
+
+    // Add warehouse filter if provided
+    if (warehouseId) {
+      matchQuery.warehouseId = new mongoose.Types.ObjectId(warehouseId);
+    }
+
+    // Aggregate stock movements by date and type
+    const stockMovements = await StockHistory.aggregate([
+      { $match: matchQuery },
+      {
+        $addFields: {
+          date: {
+            $dateToString: {
+              format: groupByFormat,
+              date: "$createdAt"
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            date: "$date",
+            movementType: "$movementType"
+          },
+          totalQuantity: { $sum: "$quantity" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.date",
+          movements: {
+            $push: {
+              type: "$_id.movementType",
+              quantity: "$totalQuantity",
+              count: "$count"
+            }
+          }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+
+    // Transform data for chart - ensure all values are plain objects/primitives
+    const chartData = stockMovements.map(item => {
+      const stockInMovement = item.movements.find((m: any) => m.type === 'increase');
+      const stockOutMovement = item.movements.find((m: any) => m.type === 'decrease');
+
+      return {
+        date: String(item._id), // Ensure string conversion
+        stockIn: Number(stockInMovement?.quantity || 0),
+        stockOut: Number(stockOutMovement?.quantity || 0),
+        totalIn: Number(stockInMovement?.count || 0),
+        totalOut: Number(stockOutMovement?.count || 0),
+      };
+    });
+
+    return { success: true, data: chartData };
+  } catch (error: any) {
+    console.error('Error fetching stock movement chart data:', error);
+    return { success: false, message: error.message || 'Failed to fetch chart data' };
+  }
+}

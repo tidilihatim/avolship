@@ -13,11 +13,43 @@ import { notFound } from "next/navigation";
 import { getLoginUserRole } from "@/app/actions/auth";
 import { getProductById } from "@/app/actions/product";
 import StockHistoryTable from "../_components/stock-history-table";
+import StockMovementSection from "@/components/dashboard/stock-movement-section";
 
 const ALL_MOVEMENT_TYPES = "all_movement_types";
 const ALL_REASONS = "all_reasons";
 const ALL_WAREHOUSES = "all_warehouses";
 const ALL_USERS = "all_users";
+
+// Utility function to safely serialize data for client components
+const serializeForClient = (obj: any): any => {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  
+  if (obj instanceof Date) {
+    return obj.toISOString();
+  }
+  
+  if (typeof obj === 'object' && obj._id && typeof obj._id.toString === 'function') {
+    // Handle MongoDB ObjectId
+    return obj._id.toString();
+  }
+  
+  if (typeof obj === 'object' && obj.toString && obj.toString().match(/^[0-9a-fA-F]{24}$/)) {
+    // Handle ObjectId-like objects
+    return obj.toString();
+  }
+  
+  if (Array.isArray(obj)) {
+    return obj.map(serializeForClient);
+  }
+  
+  if (typeof obj === 'object') {
+    return JSON.parse(JSON.stringify(obj));
+  }
+  
+  return obj;
+};
 
 export const metadata: Metadata = {
   title: "Stock History | AvolShip",
@@ -166,14 +198,84 @@ export default async function StockHistoryPage({
 
   return (
     <div className="container px-4 py-8 mx-auto space-y-6">
+      {/* Stock Movement Chart */}
+      <StockMovementSection 
+        productId={resolvedParamsPlain.productId}
+        selectedWarehouseId={filters.warehouseId}
+      />
+      
+      {/* Stock History Table */}
       <StockHistoryTable
-        stockHistory={stockHistory || []}
-        allWarehouses={warehouses}
-        allUsers={users}
+        stockHistory={(stockHistory || []).map((item: any) => ({
+          _id: item._id?.toString() || '',
+          productId: item.productId?.toString() || '',
+          productName: item.productName || '',
+          productCode: item.productCode || '',
+          warehouseId: item.warehouseId?.toString() || '',
+          warehouseName: item.warehouseName || '',
+          warehouseCountry: item.warehouseCountry || '',
+          movementType: item.movementType || '',
+          reason: item.reason || '',
+          reasonDescription: item.reasonDescription || '',
+          quantity: item.quantity || 0,
+          previousStock: item.previousStock || 0,
+          newStock: item.newStock || 0,
+          stockDifference: item.stockDifference || 0,
+          orderId: item.orderId?.toString() || undefined,
+          orderCode: item.orderCode || undefined,
+          transferId: item.transferId?.toString() || undefined,
+          userId: item.userId?.toString() || '',
+          userName: item.userName || '',
+          userRole: item.userRole || '',
+          notes: item.notes || '',
+          metadata: typeof item.metadata === 'object' && item.metadata !== null 
+            ? JSON.parse(JSON.stringify(item.metadata)) 
+            : item.metadata,
+          createdAt: item.createdAt instanceof Date ? item.createdAt.toISOString() : item.createdAt,
+          updatedAt: item.updatedAt instanceof Date ? item.updatedAt.toISOString() : item.updatedAt,
+        }))}
+        allWarehouses={warehouses.map((w: any) => ({
+          _id: w._id?.toString() || '',
+          name: w.name || '',
+          country: w.country || ''
+        }))}
+        allUsers={users.map((u: any) => ({
+          _id: u._id?.toString() || '',
+          name: u.name || '',
+          role: u.role || ''
+        }))}
         pagination={pagination || { page: 1, limit: 10, total: 0, totalPages: 0 }}
-        summary={summaryResult.success ? summaryResult.summary : undefined}
+        summary={summaryResult.success && summaryResult.summary ? {
+          totalMovements: summaryResult.summary.totalMovements || 0,
+          totalIncreases: summaryResult.summary.totalIncreases || 0,
+          totalDecreases: summaryResult.summary.totalDecreases || 0,
+          currentStock: summaryResult.summary.currentStock || 0,
+          lastMovementDate: summaryResult.summary.lastMovementDate || undefined,
+          lastRestockDate: summaryResult.summary.lastRestockDate || undefined,
+          warehouseBreakdown: (summaryResult.summary.warehouseBreakdown || []).map((wb: any) => ({
+            warehouseId: wb.warehouseId?.toString() || '',
+            warehouseName: wb.warehouseName || '',
+            currentStock: wb.currentStock || 0,
+            totalMovements: wb.totalMovements || 0,
+            lastMovementDate: wb.lastMovementDate || undefined,
+          }))
+        } : undefined}
         error={success ? undefined : message}
-        filters={clientFilters}
+        filters={{
+          search: clientFilters.search,
+          movementType: clientFilters.movementType,
+          reason: clientFilters.reason,
+          warehouseId: clientFilters.warehouseId,
+          userId: clientFilters.userId,
+          page: clientFilters.page,
+          limit: clientFilters.limit,
+          dateFrom: clientFilters.dateFrom,
+          dateTo: clientFilters.dateTo,
+          movementTypeFilter: clientFilters.movementTypeFilter,
+          reasonFilter: clientFilters.reasonFilter,
+          warehouseFilter: clientFilters.warehouseFilter,
+          userFilter: clientFilters.userFilter,
+        }}
         productId={resolvedParamsPlain.productId}
         productName={product.name}
       />
