@@ -17,6 +17,7 @@ import {
   MessageSquare,
   ChevronDown,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -300,9 +301,11 @@ export default function Navbar({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer hover:bg-muted">
-                <User2 className="mr-3 h-4 w-4" />
-                <span>{t("dashboard.navbar.user.profile")}</span>
+              <DropdownMenuItem className="cursor-pointer hover:bg-muted" asChild>
+                <Link href={`/dashboard/${userType}/profile`}>
+                  <User2 className="mr-3 h-4 w-4" />
+                  <span>{t("dashboard.navbar.user.profile")}</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer hover:bg-muted">
                 <Settings className="mr-3 h-4 w-4" />

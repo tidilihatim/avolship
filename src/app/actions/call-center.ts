@@ -524,6 +524,162 @@ export const getWeeklyPerformanceData = withDbConnection(async (startDate?: stri
 });
 
 /**
+ * Get call center performance trends over time
+ */
+export const getPerformanceTrends = withDbConnection(async (startDate?: string, endDate?: string) => {
+  try {
+    const user = await getCurrentUser();
+    if (!user || user.role !== UserRole.CALL_CENTER) {
+      return {
+        success: false,
+        message: 'Unauthorized access',
+      };
+    }
+
+    let fromDate: Date;
+    let toDate: Date;
+    
+    if (startDate && endDate) {
+      fromDate = new Date(startDate);
+      toDate = new Date(endDate);
+    } else {
+      // Default to last 30 days
+      toDate = new Date();
+      fromDate = new Date(toDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+    }
+
+    // Get orders with call attempts in the date range
+    const orders = await Order.find({
+      assignedAgent: user._id,
+      callAttempts: { $exists: true, $ne: [] }
+    }).lean();
+
+    // Group data by date
+    const dailyData: { [key: string]: { calls: number, answered: number, confirmed: number } } = {};
+
+    orders.forEach(order => {
+      if (order.callAttempts) {
+        order.callAttempts.forEach((attempt: any) => {
+          const attemptDate = new Date(attempt.attemptDate);
+          if (attemptDate >= fromDate && attemptDate <= toDate) {
+            const dateStr = attemptDate.toISOString().slice(0, 10);
+            if (!dailyData[dateStr]) {
+              dailyData[dateStr] = { calls: 0, answered: 0, confirmed: 0 };
+            }
+            dailyData[dateStr].calls++;
+            if (attempt.status === 'answered') {
+              dailyData[dateStr].answered++;
+            }
+          }
+        });
+      }
+
+      // Count confirmed orders
+      if (order.status === OrderStatus.CONFIRMED && order.statusChangedAt) {
+        const statusDate = new Date(order.statusChangedAt);
+        if (statusDate >= fromDate && statusDate <= toDate) {
+          const dateStr = statusDate.toISOString().slice(0, 10);
+          if (!dailyData[dateStr]) {
+            dailyData[dateStr] = { calls: 0, answered: 0, confirmed: 0 };
+          }
+          dailyData[dateStr].confirmed++;
+        }
+      }
+    });
+
+    // Convert to array and fill missing dates
+    const result = [];
+    const currentDate = new Date(fromDate);
+    while (currentDate <= toDate) {
+      const dateStr = currentDate.toISOString().slice(0, 10);
+      const data = dailyData[dateStr] || { calls: 0, answered: 0, confirmed: 0 };
+      result.push({
+        date: dateStr,
+        calls: data.calls,
+        answered: data.answered,
+        confirmed: data.confirmed,
+        successRate: data.calls > 0 ? Math.round((data.answered / data.calls) * 100) : 0
+      });
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error: any) {
+    console.error('Error fetching performance trends:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to fetch performance trends',
+    };
+  }
+});
+
+/**
+ * Get call center priority distribution data
+ */
+export const getPriorityDistribution = withDbConnection(async () => {
+  try {
+    const user = await getCurrentUser();
+    if (!user || user.role !== UserRole.CALL_CENTER) {
+      return {
+        success: false,
+        message: 'Unauthorized access',
+      };
+    }
+
+    const orders = await Order.find({
+      assignedAgent: user._id,
+      status: OrderStatus.PENDING
+    }).lean();
+
+    const priorities = { urgent: 0, high: 0, normal: 0 };
+
+    orders.forEach(order => {
+      const waitingTime = Math.floor((Date.now() - new Date(order.orderDate).getTime()) / (1000 * 60));
+      let priority = 'normal';
+      if (waitingTime > 240 || order.totalCallAttempts >= 3) priority = 'urgent';
+      else if (waitingTime > 120 || order.totalCallAttempts >= 2) priority = 'high';
+
+      priorities[priority as keyof typeof priorities]++;
+    });
+
+    const total = Object.values(priorities).reduce((sum, count) => sum + count, 0);
+
+    const data = [
+      {
+        priority: 'Urgent',
+        count: priorities.urgent,
+        percentage: total > 0 ? Math.round((priorities.urgent / total) * 100) : 0
+      },
+      {
+        priority: 'High',
+        count: priorities.high,
+        percentage: total > 0 ? Math.round((priorities.high / total) * 100) : 0
+      },
+      {
+        priority: 'Normal',
+        count: priorities.normal,
+        percentage: total > 0 ? Math.round((priorities.normal / total) * 100) : 0
+      }
+    ].filter(item => item.count > 0);
+
+    return {
+      success: true,
+      data,
+      total
+    };
+  } catch (error: any) {
+    console.error('Error fetching priority distribution:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to fetch priority distribution',
+    };
+  }
+});
+
+/**
  * Add call attempt to order
  */
 export const addCallAttempt = withDbConnection(async (

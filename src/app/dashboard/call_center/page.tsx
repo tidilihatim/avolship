@@ -11,9 +11,21 @@ import {
   PhoneCall,
   Timer
 } from 'lucide-react'
-import { getCallCenterStats, getPriorityQueue, getRecentActivity } from '@/app/actions/call-center'
+import { 
+  getCallCenterStats, 
+  getPriorityQueue, 
+  getRecentActivity,
+  getCallOutcomeData,
+  getHourlyCallData,
+  getPerformanceTrends,
+  getPriorityDistribution
+} from '@/app/actions/call-center'
 import Link from 'next/link'
 import { CallCenterDashboardClient } from '@/components/call-center/call-center-dashboard-client'
+import { CallOutcomeChart } from '@/components/call-center/dashboard/charts/call-outcome-chart'
+import { HourlyCallsChart } from '@/components/call-center/dashboard/charts/hourly-calls-chart'
+import { PerformanceTrendsChart } from '@/components/call-center/dashboard/charts/performance-trends-chart'
+import { PriorityDistributionChart } from '@/components/call-center/dashboard/charts/priority-distribution-chart'
 
 const CallCenterDashboard = async ({ searchParams }: { searchParams: Promise<{ startDate?: string; endDate?: string }> }) => {
   const { startDate, endDate } = await searchParams
@@ -22,16 +34,28 @@ const CallCenterDashboard = async ({ searchParams }: { searchParams: Promise<{ s
   const [
     statsResult,
     queueResult,
-    activityResult
+    activityResult,
+    callOutcomeResult,
+    hourlyCallsResult,
+    performanceTrendsResult,
+    priorityDistributionResult
   ] = await Promise.all([
     getCallCenterStats(startDate, endDate),
     getPriorityQueue(),
-    getRecentActivity(startDate, endDate)
+    getRecentActivity(startDate, endDate),
+    getCallOutcomeData(startDate, endDate),
+    getHourlyCallData(startDate, endDate),
+    getPerformanceTrends(startDate, endDate),
+    getPriorityDistribution()
   ])
 
   const stats = statsResult.success ? statsResult.stats : null
   const priorityOrders = queueResult.success ? queueResult.orders : []
   const recentActivities = activityResult.success ? activityResult.activities : []
+  const callOutcomes = callOutcomeResult.success ? { data: callOutcomeResult.data || [], total: callOutcomeResult.total || 0 } : { data: [], total: 0 }
+  const hourlyCalls = hourlyCallsResult.success ? hourlyCallsResult.data || [] : []
+  const performanceTrends = performanceTrendsResult.success ? performanceTrendsResult.data || [] : []
+  const priorityDistribution = priorityDistributionResult.success ? { data: priorityDistributionResult.data || [], total: priorityDistributionResult.total || 0 } : { data: [], total: 0 }
   
   // Generate dynamic labels based on date range
   const getDateRangeLabel = () => {
@@ -157,6 +181,21 @@ const CallCenterDashboard = async ({ searchParams }: { searchParams: Promise<{ s
           </Card>
         </div>
       )}
+
+      {/* Charts Section */}
+      <div className="space-y-6">
+        {/* Top Charts Row */}
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 xl:grid-cols-2">
+          <CallOutcomeChart data={callOutcomes.data} total={callOutcomes.total} />
+          <PriorityDistributionChart data={priorityDistribution.data} total={priorityDistribution.total} />
+        </div>
+
+        {/* Performance Trends - Full Width */}
+        <PerformanceTrendsChart data={performanceTrends} />
+
+        {/* Hourly Activity Chart - Full Width */}
+        <HourlyCallsChart data={hourlyCalls} />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Priority Orders to Call */}

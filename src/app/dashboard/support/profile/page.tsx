@@ -4,11 +4,11 @@ import { getLoginUserRole } from "@/app/actions/auth";
 import { UserRole } from "@/app/dashboard/_constant/user";
 import { ProfileForm } from "@/components/profile/profile-form";
 
-export default async function ProviderProfilePage() {
+export default async function SupportProfilePage() {
   const role = await getLoginUserRole();
   
-  // Redirect if not provider
-  if (role !== UserRole.PROVIDER) {
+  // Redirect if not support
+  if (role !== UserRole.SUPPORT) {
     redirect("/dashboard");
   }
 
@@ -18,9 +18,9 @@ export default async function ProviderProfilePage() {
     return (
       <div className="container mx-auto p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold">Provider Profile</h1>
+          <h1 className="text-3xl font-bold">Support Profile</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your provider account information
+            Manage your support account information
           </p>
         </div>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -35,9 +35,9 @@ export default async function ProviderProfilePage() {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Provider Profile</h1>
+        <h1 className="text-3xl font-bold">Support Profile</h1>
         <p className="text-muted-foreground mt-2">
-          Update your provider account and service information
+          Update your support account information
         </p>
       </div>
 
