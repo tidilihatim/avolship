@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -128,6 +129,8 @@ interface InvoiceDetailPageProps {
 }
 
 export default function InvoiceDetailPage({ invoice, orders, expeditions }: InvoiceDetailPageProps) {
+  const t = useTranslations('invoices');
+  const tDetail = useTranslations('invoices.detail');
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [isEditingStatus, setIsEditingStatus] = useState(false);
@@ -144,11 +147,11 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
       const result = await updateInvoiceStatus(invoice._id, newStatus);
       
       if (result.success) {
-        toast.success('Invoice status updated successfully');
+        toast.success(t('messages.statusUpdatedSuccess'));
         setIsEditingStatus(false);
         router.refresh();
       } else {
-        toast.error(result.message || 'Failed to update status');
+        toast.error(result.message || t('messages.statusUpdateFailed'));
         setNewStatus(invoice.status); // Reset to original status
       }
     });
@@ -194,11 +197,11 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
   // Get status badge styling
   const getStatusBadge = (status: InvoiceStatus) => {
     const statusConfig = {
-      [InvoiceStatus.DRAFT]: { label: 'Draft', className: 'bg-muted text-muted-foreground' },
-      [InvoiceStatus.GENERATED]: { label: 'Generated', className: 'bg-primary/10 text-primary' },
-      [InvoiceStatus.PAID]: { label: 'Paid', className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
-      [InvoiceStatus.OVERDUE]: { label: 'Overdue', className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
-      [InvoiceStatus.CANCELLED]: { label: 'Cancelled', className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
+      [InvoiceStatus.DRAFT]: { label: t('statusLabels.DRAFT'), className: 'bg-muted text-muted-foreground' },
+      [InvoiceStatus.GENERATED]: { label: t('statusLabels.GENERATED'), className: 'bg-primary/10 text-primary' },
+      [InvoiceStatus.PAID]: { label: t('statusLabels.PAID'), className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
+      [InvoiceStatus.OVERDUE]: { label: t('statusLabels.OVERDUE'), className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
+      [InvoiceStatus.CANCELLED]: { label: t('statusLabels.CANCELLED'), className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
     };
     
     return statusConfig[status] || { label: status, className: 'bg-muted text-muted-foreground' };
@@ -306,7 +309,7 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
     return {
       orderId: order.orderId,
       orderDate: order.createdAt,
-      customerName: order.customer?.name || 'Unknown Customer',
+      customerName: order.customer?.name || tDetail('unknownCustomer'),
       originalTotal: orderOriginalTotal,
       finalTotal: orderFinalTotal,
       discountAmount: orderTotalDiscount,
@@ -380,13 +383,13 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
           <Link href="/dashboard/admin/invoices">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Invoices
+              {tDetail('backToInvoices')}
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Invoice Details</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{tDetail('invoiceDetails')}</h1>
             <p className="text-muted-foreground">
-              Invoice {invoice.invoiceNumber} • Generated {formatDate(invoice.generatedAt)}
+              {tDetail('invoiceInfo', { number: invoice.invoiceNumber, date: formatDate(invoice.generatedAt) })}
             </p>
           </div>
         </div>
@@ -434,7 +437,7 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handlePrint}>
               <Printer className="h-4 w-4 mr-2" />
-              Print
+              {tDetail('print')}
             </Button>
           </div>
         </div>
@@ -454,10 +457,10 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
         <div className="bg-background border border-border rounded-lg shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border">
             <h3 className="text-lg font-semibold text-foreground">
-              Associated Orders ({orders.length})
+              {tDetail('associatedOrders', { count: orders.length })}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Orders included in this invoice
+              {tDetail('ordersIncluded')}
             </p>
           </div>
           
@@ -484,7 +487,7 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
                   </div>
                   
                   <div className="text-xs text-muted-foreground mb-2">
-                    Created: {formatDate(order.createdAt)}
+                    {tDetail('created')} {formatDate(order.createdAt)}
                   </div>
                   
                   <div className="space-y-1">
@@ -507,7 +510,7 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
             </div>
           ) : (
             <div className="p-6 text-center text-muted-foreground">
-              No orders associated with this invoice
+              {tDetail('noOrdersAssociated')}
             </div>
           )}
         </div>
@@ -516,10 +519,10 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
         <div className="bg-background border border-border rounded-lg shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border">
             <h3 className="text-lg font-semibold text-foreground">
-              Associated Expeditions ({expeditions.length})
+              {tDetail('associatedExpeditions', { count: expeditions.length })}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Expeditions included in this invoice
+              {tDetail('expeditionsIncluded')}
             </p>
           </div>
           
@@ -542,7 +545,7 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
                         variant={expedition.isPaid ? 'default' : 'destructive'}
                         className="text-xs"
                       >
-                        {expedition.isPaid ? 'Paid' : 'Unpaid'}
+                        {expedition.isPaid ? tDetail('paid') : tDetail('unpaid')}
                       </Badge>
                       <ExternalLink className="h-3 w-3 text-muted-foreground" />
                     </div>
@@ -555,14 +558,14 @@ export default function InvoiceDetailPage({ invoice, orders, expeditions }: Invo
                   </div>
                   
                   <div className="text-xs text-muted-foreground">
-                    Expedition Date: {formatDate(expedition.expeditionDate)}
+                    {tDetail('expeditionDate')} {formatDate(expedition.expeditionDate)}
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
             <div className="p-6 text-center text-muted-foreground">
-              No expeditions associated with this invoice
+              {tDetail('noExpeditionsAssociated')}
             </div>
           )}
         </div>

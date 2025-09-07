@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
@@ -51,6 +52,7 @@ interface SettingSection {
 }
 
 const AppSettingsPage = () => {
+  const t = useTranslations('settings');
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [tokenPackages, setTokenPackages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,13 +74,13 @@ const AppSettingsPage = () => {
       if (settingsResult.success) {
         setSettings(settingsResult.data);
       } else {
-        toast.error(settingsResult.error || 'Failed to fetch app settings');
+        toast.error(settingsResult.error || t('messages.fetchFailed'));
       }
 
       setTokenPackages(packagesResult || []);
       
     } catch (error) {
-      toast.error('Error fetching app settings');
+      toast.error(t('messages.fetchError'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -93,13 +95,13 @@ const AppSettingsPage = () => {
         const result = await updateAppSettings(settings);
         
         if (result.success) {
-          toast.success('Settings saved successfully');
+          toast.success(t('messages.saveSuccess'));
           setSettings(result.data); // Update with latest data
         } else {
-          toast.error(result.error || 'Failed to save settings');
+          toast.error(result.error || t('messages.saveFailed'));
         }
       } catch (error) {
-        toast.error('Error saving settings');
+        toast.error(t('messages.saveError'));
         console.error(error);
       }
     });
@@ -121,16 +123,16 @@ const AppSettingsPage = () => {
   const settingSections: SettingSection[] = [
     {
       id: 'general',
-      title: 'General Settings',
-      description: 'Configure basic application settings and delivery preferences',
+      title: t('sections.general.title'),
+      description: t('sections.general.description'),
       icon: <Cog className="w-5 h-5" />,
       component: settings ? (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="auto-assign">Auto-assign Delivery</Label>
+              <Label htmlFor="auto-assign">{t('general.autoAssign.label')}</Label>
               <p className="text-sm text-muted-foreground">
-                Automatically assign orders to nearest delivery personnel
+                {t('general.autoAssign.description')}
               </p>
             </div>
             <Switch
@@ -145,7 +147,7 @@ const AppSettingsPage = () => {
           <Separator />
           
           <div className="space-y-2">
-            <Label htmlFor="max-orders">Max Orders per Delivery Person</Label>
+            <Label htmlFor="max-orders">{t('general.maxOrders.label')}</Label>
             <Input
               id="max-orders"
               type="number"
@@ -159,7 +161,7 @@ const AppSettingsPage = () => {
               className="w-32"
             />
             <p className="text-sm text-muted-foreground">
-              Maximum number of orders a delivery person can handle simultaneously
+              {t('general.maxOrders.description')}
             </p>
           </div>
         </div>
@@ -167,16 +169,16 @@ const AppSettingsPage = () => {
     },
     {
       id: 'delivery',
-      title: 'Delivery Fee Configuration',
-      description: 'Configure delivery fees and distance-based rules by warehouse',
+      title: t('sections.delivery.title'),
+      description: t('sections.delivery.description'),
       icon: <Package className="w-5 h-5" />,
       component: settings ? (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="enable-fees">Enable Delivery Fees</Label>
+              <Label htmlFor="enable-fees">{t('delivery.enableFees.label')}</Label>
               <p className="text-sm text-muted-foreground">
-                Enable or disable delivery fee system
+                {t('delivery.enableFees.description')}
               </p>
             </div>
             <Switch
@@ -199,16 +201,16 @@ const AppSettingsPage = () => {
     },
     {
       id: 'commission',
-      title: 'Commission Configuration',
-      description: 'Configure commission rules and rates for delivery personnel',
+      title: t('sections.commission.title'),
+      description: t('sections.commission.description'),
       icon: <DollarSign className="w-5 h-5" />,
       component: settings ? (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="enable-commission">Enable Commission System</Label>
+              <Label htmlFor="enable-commission">{t('commission.enableCommission.label')}</Label>
               <p className="text-sm text-muted-foreground">
-                Enable or disable commission system
+                {t('commission.enableCommission.description')}
               </p>
             </div>
             <Switch
@@ -231,8 +233,8 @@ const AppSettingsPage = () => {
     },
     {
       id: 'tracking',
-      title: 'Location Tracking Settings',
-      description: 'Configure location tracking visibility for different user roles',
+      title: t('sections.tracking.title'),
+      description: t('sections.tracking.description'),
       icon: <MapPin className="w-5 h-5" />,
       component: settings ? (
         <LocationTrackingForm
@@ -245,17 +247,17 @@ const AppSettingsPage = () => {
     },
     {
       id: 'leaderboards',
-      title: 'Leaderboard Settings',
-      description: 'Configure leaderboard visibility for different user roles',
+      title: t('sections.leaderboards.title'),
+      description: t('sections.leaderboards.description'),
       icon: <Trophy className="w-5 h-5" />,
       component: settings ? (
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="seller-leaderboard">Seller Leaderboard</Label>
+                <Label htmlFor="seller-leaderboard">{t('leaderboards.seller.label')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Enable seller competition leaderboard
+                  {t('leaderboards.seller.description')}
                 </p>
               </div>
               <Switch
@@ -274,9 +276,9 @@ const AppSettingsPage = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="provider-leaderboard">Provider Leaderboard</Label>
+                <Label htmlFor="provider-leaderboard">{t('leaderboards.provider.label')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Enable provider performance leaderboard
+                  {t('leaderboards.provider.description')}
                 </p>
               </div>
               <Switch
@@ -295,9 +297,9 @@ const AppSettingsPage = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="delivery-leaderboard">Delivery Leaderboard</Label>
+                <Label htmlFor="delivery-leaderboard">{t('leaderboards.delivery.label')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Enable delivery personnel leaderboard
+                  {t('leaderboards.delivery.description')}
                 </p>
               </div>
               <Switch
@@ -316,9 +318,9 @@ const AppSettingsPage = () => {
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="callcenter-leaderboard">Call Center Leaderboard</Label>
+                <Label htmlFor="callcenter-leaderboard">{t('leaderboards.callCenter.label')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Enable call center agent leaderboard
+                  {t('leaderboards.callCenter.description')}
                 </p>
               </div>
               <Switch
@@ -339,27 +341,27 @@ const AppSettingsPage = () => {
           <Separator />
 
           <div className="rounded-lg bg-muted/50 p-4">
-            <h4 className="text-sm font-medium mb-2">Leaderboard Status</h4>
+            <h4 className="text-sm font-medium mb-2">{t('leaderboards.status.title')}</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${settings.leaderboardSettings?.enableSellerLeaderboard ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span>Sellers: {settings.leaderboardSettings?.enableSellerLeaderboard ? 'Active' : 'Disabled'}</span>
+                <span>{t('leaderboards.status.sellers')}: {settings.leaderboardSettings?.enableSellerLeaderboard ? t('common.active') : t('common.disabled')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${settings.leaderboardSettings?.enableProviderLeaderboard ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span>Providers: {settings.leaderboardSettings?.enableProviderLeaderboard ? 'Active' : 'Disabled'}</span>
+                <span>{t('leaderboards.status.providers')}: {settings.leaderboardSettings?.enableProviderLeaderboard ? t('common.active') : t('common.disabled')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${settings.leaderboardSettings?.enableDeliveryLeaderboard ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span>Delivery: {settings.leaderboardSettings?.enableDeliveryLeaderboard ? 'Active' : 'Disabled'}</span>
+                <span>{t('leaderboards.status.delivery')}: {settings.leaderboardSettings?.enableDeliveryLeaderboard ? t('common.active') : t('common.disabled')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${settings.leaderboardSettings?.enableCallCenterLeaderboard ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span>Call Center: {settings.leaderboardSettings?.enableCallCenterLeaderboard ? 'Active' : 'Disabled'}</span>
+                <span>{t('leaderboards.status.callCenter')}: {settings.leaderboardSettings?.enableCallCenterLeaderboard ? t('common.active') : t('common.disabled')}</span>
               </div>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Note: Admins can always view all leaderboards regardless of these settings.
+              {t('leaderboards.status.note')}
             </p>
           </div>
         </div>
@@ -367,10 +369,10 @@ const AppSettingsPage = () => {
     },
     {
       id: 'tokens',
-      title: 'Token Boost System',
-      description: 'Configure token-based provider profile boosting and advertising',
+      title: t('sections.tokens.title'),
+      description: t('sections.tokens.description'),
       icon: <Zap className="w-5 h-5" />,
-      badge: settings?.enableTokenSystem ? 'Active' : 'Inactive',
+      badge: settings?.enableTokenSystem ? t('common.active') : t('common.inactive'),
       component: settings ? (
         <TokenSystemForm
           settings={{
@@ -391,7 +393,7 @@ const AppSettingsPage = () => {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <Settings className="w-8 h-8 animate-spin mx-auto mb-2" />
-          <p>Loading settings...</p>
+          <p>{t('loading')}</p>
         </div>
       </div>
     );
@@ -401,9 +403,9 @@ const AppSettingsPage = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <p>Failed to load settings</p>
+          <p>{t('loadFailed')}</p>
           <Button onClick={fetchSettings} className="mt-2">
-            Try Again
+            {t('tryAgain')}
           </Button>
         </div>
       </div>
@@ -415,10 +417,10 @@ const AppSettingsPage = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            App Settings
+            {t('title')}
           </h1>
           <p className="text-muted-foreground">
-            Configure system-wide application settings
+            {t('description')}
           </p>
         </div>
         <Button 
@@ -426,7 +428,7 @@ const AppSettingsPage = () => {
           disabled={isPending}
           className="min-w-[120px]"
         >
-          {isPending ? 'Saving...' : 'Save Changes'}
+          {isPending ? t('saving') : t('saveChanges')}
         </Button>
       </div>
 

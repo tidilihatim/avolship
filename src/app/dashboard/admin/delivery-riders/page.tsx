@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Activity, MapPin, Clock } from 'lucide-react';
 import { getRiderLocationHistory } from '@/app/actions/user';
+import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 
 // Hooks
@@ -31,10 +32,17 @@ interface LocationHistory {
 // Dynamic imports
 const RiderTrackingMap = dynamic(() => import('./_components/rider-tracking-map'), {
   ssr: false,
-  loading: () => <div className="flex items-center justify-center h-96">Loading map...</div>
+  loading: () => {
+    const LoadingComponent = () => {
+      const t = useTranslations('deliveryRiders');
+      return <div className="flex items-center justify-center h-96">{t('loadingMap')}</div>;
+    };
+    return <LoadingComponent />;
+  }
 });
 
 export default function DeliveryRidersPage() {
+  const t = useTranslations('deliveryRiders');
   const [selectedRider, setSelectedRider] = useState<DeliveryRider | null>(null);
   const [showMap, setShowMap] = useState(false);
   const [trackRiderHistory, setTrackRiderHistory] = useState(false);
@@ -155,7 +163,7 @@ export default function DeliveryRidersPage() {
         <div className="flex items-center gap-4">
           <Button variant="outline" size="sm" onClick={handleBackToList}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Riders
+            {t('backToRiders')}
           </Button>
           
           <div className="flex items-center gap-4">
@@ -172,11 +180,11 @@ export default function DeliveryRidersPage() {
               <h1 className="text-2xl font-bold">{selectedRider.name}</h1>
               <div className="flex items-center gap-2">
                 <Badge variant={selectedRider.isOnline ? "default" : "secondary"}>
-                  {selectedRider.isOnline ? "Online" : "Offline"}
+                  {selectedRider.isOnline ? t('online') : t('offline')}
                 </Badge>
                 {selectedRider.isOnline && (
                   <Badge variant={selectedRider.isAvailableForDelivery ? "default" : "outline"}>
-                    {selectedRider.isAvailableForDelivery ? "Available" : "Busy"}
+                    {selectedRider.isAvailableForDelivery ? t('available') : t('busy')}
                   </Badge>
                 )}
               </div>
@@ -187,7 +195,7 @@ export default function DeliveryRidersPage() {
             <Card className="p-3">
               <div className="flex items-center space-x-3">
                 <Label htmlFor="track-history-admin" className="text-sm font-medium">
-                  Track Rider History
+                  {t('trackRiderHistory')}
                 </Label>
                 <Switch
                   id="track-history-admin"
@@ -197,20 +205,20 @@ export default function DeliveryRidersPage() {
                 />
                 {trackRiderHistory && (
                   <Badge variant="secondary" className="ml-2">
-                    {riderLocationHistory.length} locations
+                    {t('locationsCount', { count: riderLocationHistory.length })}
                   </Badge>
                 )}
               </div>
               {trackRiderHistory && (
                 <p className="text-xs text-muted-foreground mt-2">
-                  Showing last 100 location records for {selectedRider?.name}
+                  {t('showingLastRecords', { name: selectedRider?.name })}
                 </p>
               )}
             </Card>
             
             <Badge variant={isConnected ? "default" : "destructive"} className="flex items-center gap-1">
               <Activity className="h-3 w-3" />
-              {isConnected ? "Live Tracking" : "Disconnected"}
+              {isConnected ? t('liveTracking') : t('disconnected')}
             </Badge>
           </div>
         </div>
@@ -222,7 +230,7 @@ export default function DeliveryRidersPage() {
               <div className="flex items-center space-x-2">
                 <Badge className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-sm font-medium">Active Orders</p>
+                  <p className="text-sm font-medium">{t('activeOrders')}</p>
                   <p className="text-2xl font-bold text-primary">
                     {selectedRider.assignedOrders?.length || 0}
                   </p>
@@ -236,7 +244,7 @@ export default function DeliveryRidersPage() {
               <div className="flex items-center space-x-2">
                 <Badge className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-sm font-medium">Today's Deliveries</p>
+                  <p className="text-sm font-medium">{t('todaysDeliveries')}</p>
                   <p className="text-2xl font-bold text-primary">
                     {selectedRider.deliveryStats?.todayDeliveries || 0}
                   </p>
@@ -250,7 +258,7 @@ export default function DeliveryRidersPage() {
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4 text-primary" />
                 <div>
-                  <p className="text-sm font-medium">GPS Accuracy</p>
+                  <p className="text-sm font-medium">{t('gpsAccuracy')}</p>
                   <p className="text-2xl font-bold text-primary">
                     {selectedRider.currentLocation?.accuracy ? 
                       `${selectedRider.currentLocation.accuracy.toFixed(0)}m` : 'N/A'}
@@ -265,18 +273,18 @@ export default function DeliveryRidersPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Real-time Tracking
+              {t('realTimeTracking')}
               {selectedRider.currentLocation && (
                 <Badge variant="outline" className="text-xs">
                   <MapPin className="h-3 w-3 mr-1" />
-                  Location: {new Date(selectedRider.currentLocation.timestamp).toLocaleString()}
+                  {t('locationLabel')} {new Date(selectedRider.currentLocation.timestamp).toLocaleString()}
                 </Badge>
               )}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
               {selectedRider.isOnline ? 
-                `Live GPS tracking and assigned orders for ${selectedRider.name}` :
-                `Last known location and orders for ${selectedRider.name} (Offline)`
+                t('liveTrackingDescription', { name: selectedRider.name }) :
+                t('offlineTrackingDescription', { name: selectedRider.name })
               }
             </p>
           </CardHeader>
@@ -302,15 +310,15 @@ export default function DeliveryRidersPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Delivery Riders</h1>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Manage and track all delivery riders in real-time
+            {t('description')}
           </p>
         </div>
         
         <Badge variant={isConnected ? "default" : "destructive"} className="flex items-center gap-1">
           <Activity className="h-3 w-3" />
-          {isConnected ? "Connected" : "Disconnected"}
+          {isConnected ? t('connected') : t('disconnected')}
         </Badge>
       </div>
 

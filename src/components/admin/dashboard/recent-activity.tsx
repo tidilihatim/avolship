@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useTranslations } from 'next-intl';
 import { 
   ShoppingCart, 
   UserPlus, 
@@ -26,17 +27,17 @@ interface RecentActivityProps {
   }>;
 }
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string, t: any) => {
   const date = new Date(dateString);
   const now = new Date();
   const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
   
   if (diffInHours < 1) {
-    return 'Just now';
+    return t('timeAgo.justNow');
   } else if (diffInHours < 24) {
-    return `${diffInHours}h ago`;
+    return t('timeAgo.hoursAgo', { hours: diffInHours });
   } else if (diffInHours < 48) {
-    return 'Yesterday';
+    return t('timeAgo.yesterday');
   } else {
     return date.toLocaleDateString('en-US', {
       month: 'short',
@@ -93,15 +94,18 @@ const getActivityIcon = (type: string, role?: string) => {
 };
 
 export function RecentActivityComponent({ data }: RecentActivityProps) {
+  const t = useTranslations('admin.dashboard.recentActivity');
+  const tRoles = useTranslations('admin.dashboard.roles');
+  
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />
-          Recent Activity
+          {t('title')}
         </CardTitle>
         <CardDescription>
-          Latest activities across the platform
+          {t('description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -137,7 +141,7 @@ export function RecentActivityComponent({ data }: RecentActivityProps) {
                   
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">
-                      {formatDate(activity.date)}
+                      {formatDate(activity.date, t)}
                     </span>
                     
                     {activity.amount && (
@@ -149,7 +153,7 @@ export function RecentActivityComponent({ data }: RecentActivityProps) {
                     
                     {activity.role && (
                       <Badge variant="outline" className="text-xs">
-                        {activity.role}
+                        {tRoles(activity.role as any) || activity.role}
                       </Badge>
                     )}
                   </div>
@@ -160,7 +164,7 @@ export function RecentActivityComponent({ data }: RecentActivityProps) {
             {data.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
                 <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No recent activity</p>
+                <p>{t('noActivity')}</p>
               </div>
             )}
           </div>

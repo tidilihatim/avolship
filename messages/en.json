@@ -1,4 +1,615 @@
 {
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "overview": "Dashboard Overview",
+      "welcome": "Welcome to the Admin Dashboard",
+      "statsCards": {
+        "totalOrders": "Total Orders",
+        "totalUsers": "Total Users",
+        "totalRevenue": "Total Revenue",
+        "activeUsers": "Active Users",
+        "ordersDescription": "{count} orders in the system",
+        "usersDescription": "{count} users registered",
+        "revenueDescription": "${revenue} total revenue",
+        "activeDescription": "{count} active this month"
+      },
+      "filters": {
+        "title": "Dashboard Filters",
+        "dateRange": "Date Range",
+        "selectDateRange": "Select date range",
+        "datePresets": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "last7Days": "Last 7 days",
+          "last30Days": "Last 30 days",
+          "thisMonth": "This month",
+          "lastMonth": "Last month",
+          "last3Months": "Last 3 months",
+          "last6Months": "Last 6 months",
+          "thisYear": "This year",
+          "lastYear": "Last year"
+        },
+        "quickFilters": "Quick Filters",
+        "userRole": "User Role",
+        "selectUserRole": "Select user role",
+        "orderStatus": "Order Status",
+        "selectOrderStatus": "Select order status",
+        "applyFilters": "Apply Filters",
+        "clearAll": "Clear All"
+      },
+      "charts": {
+        "usersByRole": {
+          "title": "Users by Role",
+          "description": "{count} total users across all roles",
+          "noData": "No user data available",
+          "noUsers": "No users found",
+          "noUsersMessage": "There are currently no users in the system"
+        },
+        "orderStatus": {
+          "title": "Order Status Distribution",
+          "description": "{count} total orders",
+          "count": "Orders",
+          "tooltipOrders": "{value} orders",
+          "tooltipStatus": "Status: {label}"
+        },
+        "revenue": {
+          "title": "Revenue Trends",
+          "noData": "No revenue data available",
+          "noRevenueFound": "No revenue data found",
+          "noDataMessage": "Revenue data will appear here once orders are delivered",
+          "noDataAvailable": "No data available",
+          "chartDescription": "{revenue} total revenue from {orders} delivered orders ({granularity} breakdown)",
+          "granularity": {
+            "daily": "daily",
+            "weekly": "weekly", 
+            "monthly": "monthly",
+            "hourly": "hourly"
+          },
+          "revenue": "Revenue",
+          "orders": "Orders",
+          "tooltipOrders": "{value} orders",
+          "tooltipPeriod": "Period: {label}",
+          "totalRevenue": "Total Revenue",
+          "deliveredOrders": "Delivered Orders"
+        }
+      },
+      "recentActivity": {
+        "title": "Recent Activity",
+        "description": "Latest activities across the platform",
+        "noActivity": "No recent activity",
+        "timeAgo": {
+          "justNow": "Just now",
+          "hoursAgo": "{hours}h ago",
+          "yesterday": "Yesterday"
+        }
+      },
+      "roles": {
+        "ADMIN": "Admin",
+        "SELLER": "Seller", 
+        "DELIVERY": "Delivery",
+        "PROVIDER": "Provider",
+        "SUPPORT": "Support",
+        "CALL_CENTER": "Call Center",
+        "MODERATOR": "Moderator",
+        "USER": "User"
+      }
+    }
+  },
+  "leaderboard": {
+    "title": "Platform Leaderboards",
+    "description": "Monitor performance across all user roles and track platform engagement",
+    "tabs": {
+      "providers": "Providers",
+      "delivery": "Delivery",
+      "callCenter": "Call Center",
+      "sellers": "Sellers"
+    },
+    "providers": {
+      "title": "Provider Leaderboard",
+      "description": "Top performing providers ranked by expedition count"
+    },
+    "delivery": {
+      "title": "Delivery Leaderboard",
+      "description": "Top performing delivery riders ranked by completed deliveries"
+    },
+    "callCenter": {
+      "title": "Call Center Leaderboard",
+      "description": "Top performing agents ranked by orders handled"
+    },
+    "sellers": {
+      "title": "Seller Leaderboard",
+      "description": "Top performing sellers ranked by total revenue"
+    },
+    "common": {
+      "periods": {
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      },
+      "periodSingular": {
+        "week": "week",
+        "month": "month",
+        "year": "year"
+      },
+      "totalParticipants": "Total Participants",
+      "activeInPeriod": "Active in {period} period",
+      "yourRank": "Your Rank",
+      "outOf": "Out of {total}",
+      "yourScore": "Your Score",
+      "thisPeriod": "This {period}",
+      "period": "Period",
+      "currentLeaderboardPeriod": "Current leaderboard period"
+    }
+  },
+  "settings": {
+    "title": "App Settings",
+    "description": "Configure system-wide application settings",
+    "loading": "Loading settings...",
+    "loadFailed": "Failed to load settings",
+    "tryAgain": "Try Again",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "messages": {
+      "fetchFailed": "Failed to fetch app settings",
+      "fetchError": "Error fetching app settings",
+      "saveSuccess": "Settings saved successfully",
+      "saveFailed": "Failed to save settings",
+      "saveError": "Error saving settings"
+    },
+    "common": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "disabled": "Disabled"
+    },
+    "sections": {
+      "general": {
+        "title": "General Settings",
+        "description": "Configure basic application settings and delivery preferences"
+      },
+      "delivery": {
+        "title": "Delivery Fee Configuration",
+        "description": "Configure delivery fees and distance-based rules by warehouse"
+      },
+      "commission": {
+        "title": "Commission Configuration",
+        "description": "Configure commission rules and rates for delivery personnel"
+      },
+      "tracking": {
+        "title": "Location Tracking Settings",
+        "description": "Configure location tracking visibility for different user roles"
+      },
+      "leaderboards": {
+        "title": "Leaderboard Settings",
+        "description": "Configure leaderboard visibility for different user roles"
+      },
+      "tokens": {
+        "title": "Token Boost System",
+        "description": "Configure token-based provider profile boosting and advertising"
+      }
+    },
+    "general": {
+      "autoAssign": {
+        "label": "Auto-assign Delivery",
+        "description": "Automatically assign orders to nearest delivery personnel"
+      },
+      "maxOrders": {
+        "label": "Max Orders per Delivery Person",
+        "description": "Maximum number of orders a delivery person can handle simultaneously"
+      }
+    },
+    "delivery": {
+      "enableFees": {
+        "label": "Enable Delivery Fees",
+        "description": "Enable or disable delivery fee system"
+      }
+    },
+    "commission": {
+      "enableCommission": {
+        "label": "Enable Commission System",
+        "description": "Enable or disable commission system"
+      }
+    },
+    "tracking": {
+      "title": "Location Tracking Visibility",
+      "description": "Control which user roles can view real-time location tracking information",
+      "seller": {
+        "title": "Seller Access",
+        "cardDescription": "Allow sellers to view location tracking information",
+        "label": "Enable for Sellers",
+        "switchDescription": "Sellers will be able to see delivery personnel locations and track order progress"
+      },
+      "callCenter": {
+        "title": "Call Center Access",
+        "cardDescription": "Allow call center staff to view location tracking information",
+        "label": "Enable for Call Center",
+        "switchDescription": "Call center staff will be able to see delivery personnel locations for customer support"
+      }
+    },
+    "leaderboards": {
+      "seller": {
+        "label": "Seller Leaderboard",
+        "description": "Enable seller competition leaderboard"
+      },
+      "provider": {
+        "label": "Provider Leaderboard",
+        "description": "Enable provider performance leaderboard"
+      },
+      "delivery": {
+        "label": "Delivery Leaderboard",
+        "description": "Enable delivery personnel leaderboard"
+      },
+      "callCenter": {
+        "label": "Call Center Leaderboard",
+        "description": "Enable call center agent leaderboard"
+      },
+      "status": {
+        "title": "Leaderboard Status",
+        "sellers": "Sellers",
+        "providers": "Providers",
+        "delivery": "Delivery",
+        "callCenter": "Call Center",
+        "note": "Note: Admins can always view all leaderboards regardless of these settings."
+      }
+    },
+    "deliveryRules": {
+      "title": "Delivery Fee Rules",
+      "description": "Configure distance-based delivery fees for each warehouse",
+      "labels": {
+        "warehouse": "Warehouse",
+        "minDistance": "Min Distance (km)",
+        "maxDistance": "Max Distance (km)",
+        "fee": "Fee"
+      },
+      "placeholders": {
+        "selectWarehouse": "Select warehouse"
+      },
+      "actions": {
+        "remove": "Remove",
+        "addRule": "Add Rule"
+      },
+      "addNew": {
+        "title": "Add New Delivery Fee Rule",
+        "suggestedRange": "Suggested range starts from: {distance} km (to avoid overlaps)"
+      },
+      "errors": {
+        "minLessMax": "Minimum distance must be less than maximum distance",
+        "maxGreaterMin": "Maximum distance must be greater than minimum distance",
+        "rangeOverlap": "Distance range {newMin}-{newMax} km overlaps with existing rule {existingMin}-{existingMax} km"
+      }
+    },
+    "commissionRules": {
+      "title": "Commission Rules",
+      "description": "Configure delivery-based commission rates for each warehouse",
+      "labels": {
+        "warehouse": "Warehouse",
+        "minDeliveries": "Min Deliveries",
+        "commission": "Commission"
+      },
+      "placeholders": {
+        "selectWarehouse": "Select warehouse"
+      },
+      "actions": {
+        "addRule": "Add Rule"
+      },
+      "addNew": {
+        "title": "Add New Commission Rule"
+      }
+    },
+    "tokens": {
+      "enableSystem": {
+        "label": "Enable Token Boost System",
+        "description": "Enable the token-based profile boosting system for providers"
+      },
+      "packages": {
+        "title": "Token Packages",
+        "description": "Manage available token packages for providers",
+        "addPackage": "Add Package",
+        "noPackages": "No token packages configured yet.",
+        "createFirst": "Create your first token package to get started."
+      },
+      "dialog": {
+        "createTitle": "Create Token Package",
+        "editTitle": "Edit Token Package",
+        "createDescription": "Create a new token package for providers to purchase",
+        "editDescription": "Update the token package details",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "create": "Create",
+        "update": "Update"
+      },
+      "form": {
+        "name": {
+          "label": "Package Name",
+          "placeholder": "e.g., Starter Pack"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Brief description of the package"
+        },
+        "tokenCount": {
+          "label": "Token Count"
+        },
+        "price": {
+          "label": "Price (USD)"
+        },
+        "status": {
+          "label": "Status"
+        },
+        "sortOrder": {
+          "label": "Sort Order"
+        }
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "table": {
+        "package": "Package",
+        "tokens": "Tokens",
+        "price": "Price",
+        "status": "Status",
+        "order": "Order",
+        "actions": "Actions",
+        "tokenCount": "{count} tokens"
+      },
+      "messages": {
+        "packageCreated": "Token package created successfully",
+        "createFailed": "Failed to create token package",
+        "packageUpdated": "Token package updated successfully",
+        "updateFailed": "Failed to update token package",
+        "confirmArchive": "Are you sure you want to archive this token package?",
+        "packageArchived": "Token package archived successfully",
+        "archiveFailed": "Failed to archive token package"
+      }
+    },
+    "warehouseSelector": {
+      "selectWarehouse": "Select warehouse...",
+      "loadingWarehouses": "Loading warehouses...",
+      "currency": "Currency"
+    }
+  },
+  "navigation": {
+    "overview": "Overview",
+    "users": "Users",
+    "warehouse": "Warehouse",
+    "orders": "Orders",
+    "expeditions": "Expeditions",
+    "deliveryRiders": "Delivery Riders",
+    "invoices": "Invoices",
+    "leaderboard": "Leaderboard",
+    "products": "Products",
+    "providers": "Providers",
+    "chat": "Chat",
+    "integrations": "Integrations",
+    "support": "Support",
+    "queue": "Queue",
+    "customers": "Customers",
+    "profile": "Profile",
+    "tokens": "Tokens",
+    "settings": "Settings"
+  },
+  "deliveryRiders": {
+    "title": "Delivery Riders",
+    "description": "Manage and track all delivery riders in real-time",
+    "backToRiders": "Back to Riders",
+    "online": "Online",
+    "offline": "Offline",
+    "available": "Available",
+    "busy": "Busy",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "liveTracking": "Live Tracking",
+    "trackRiderHistory": "Track Rider History",
+    "locationsCount": "{count} locations",
+    "showingLastRecords": "Showing last 100 location records for {name}",
+    "activeOrders": "Active Orders",
+    "todaysDeliveries": "Today's Deliveries",
+    "gpsAccuracy": "GPS Accuracy",
+    "realTimeTracking": "Real-time Tracking",
+    "locationLabel": "Location:",
+    "liveTrackingDescription": "Live GPS tracking and assigned orders for {name}",
+    "offlineTrackingDescription": "Last known location and orders for {name} (Offline)",
+    "loadingMap": "Loading map...",
+    "stats": {
+      "totalRiders": "Total Riders",
+      "totalRidersDescription": "All registered delivery riders",
+      "onlineNow": "Online Now",
+      "onlineNowDescription": "Currently connected riders",
+      "availableForDelivery": "Available for Delivery",
+      "availableForDeliveryDescription": "Ready to accept new orders"
+    },
+    "filters": {
+      "searchPlaceholder": "Search riders by name or email...",
+      "allStatus": "All Status",
+      "onlineOnly": "Online Only",
+      "offlineOnly": "Offline Only",
+      "allAvailability": "All Availability",
+      "available": "Available",
+      "busy": "Busy",
+      "clear": "Clear",
+      "status": "Status",
+      "search": "Search",
+      "online": "online",
+      "offline": "offline",
+      "totalCount": "{count} total",
+      "onlineCount": "{count} online",
+      "availableCount": "{count} available"
+    },
+    "list": {
+      "title": "All Riders",
+      "description": "All registered delivery riders with their online status and location data",
+      "errorLoading": "Error Loading Riders",
+      "unknown": "Unknown",
+      "justNow": "Just now",
+      "minutesAgo": "{minutes}m ago",
+      "hoursAgo": "{hours}h ago",
+      "daysAgo": "{days}d ago",
+      "online": "Online",
+      "offline": "Offline",
+      "available": "Available",
+      "busy": "Busy",
+      "activeOrders": "{count} active orders",
+      "deliveriesToday": "{count} deliveries today",
+      "locationAvailable": "Location Available",
+      "noLocationData": "No Location Data",
+      "track": "Track",
+      "noRidersFound": "No delivery riders found",
+      "adjustFilters": "Try adjusting your search filters"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} riders",
+      "show": "Show"
+    }
+  },
+  "invoices": {
+    "title": "Invoices",
+    "errorLoading": "Error Loading Invoices",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "searchPlaceholder": "Search invoices...",
+    "applyFilters": "Apply Filters",
+    "filters": "Filters",
+    "filtersDescription": "Filter invoices by various criteria",
+    "filterByStatus": "Filter by Status",
+    "allStatuses": "All Statuses",
+    "filterBySeller": "Filter by Seller",
+    "allSellers": "All Sellers",
+    "dateRange": "Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "clearFilters": "Clear Filters",
+    "invoice": "invoice",
+    "invoices": "invoices",
+    "found": "found",
+    "noInvoicesFound": "No invoices found",
+    "invoiceNumber": "Invoice #",
+    "seller": "Seller",
+    "status": "Status",
+    "period": "Period",
+    "amount": "Amount",
+    "warehouse": "Warehouse",
+    "generated": "Generated",
+    "actions": "Actions",
+    "to": "to",
+    "orders": "orders",
+    "by": "by",
+    "view": "View",
+    "markAsPaid": "Mark as Paid",
+    "markAsOverdue": "Mark as Overdue",
+    "cancelInvoice": "Cancel Invoice",
+    "itemsPerPage": "Items per page:",
+    "showing": "Showing {start}-{end} of {total}",
+    "statusLabels": {
+      "DRAFT": "Draft",
+      "GENERATED": "Generated",
+      "PAID": "Paid",
+      "OVERDUE": "Overdue",
+      "CANCELLED": "Cancelled"
+    },
+    "messages": {
+      "statusUpdatedSuccess": "Invoice status updated successfully",
+      "statusUpdateFailed": "Failed to update status"
+    },
+    "detail": {
+      "errorLoadingInvoice": "Error Loading Invoice",
+      "unexpectedErrorInvoice": "An unexpected error occurred. Please try again.",
+      "backToInvoices": "Back to Invoices",
+      "invoiceDetails": "Invoice Details",
+      "invoiceInfo": "Invoice {number} • Generated {date}",
+      "print": "Print",
+      "associatedOrders": "Associated Orders ({count})",
+      "ordersIncluded": "Orders included in this invoice",
+      "associatedExpeditions": "Associated Expeditions ({count})",
+      "expeditionsIncluded": "Expeditions included in this invoice",
+      "noOrdersAssociated": "No orders associated with this invoice",
+      "noExpeditionsAssociated": "No expeditions associated with this invoice",
+      "created": "Created:",
+      "expeditionDate": "Expedition Date:",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "unknownCustomer": "Unknown Customer"
+    },
+    "preview": {
+      "companyTagline": "Logistics & E-commerce Platform",
+      "companyDetails": {
+        "name": "Avolship Inc.",
+        "address1": "123 Business Avenue",
+        "address2": "Suite 400, Business District",
+        "city": "New York, NY 10001",
+        "country": "United States",
+        "email": "Email: contact@avolship.com",
+        "phone": "Phone: +1 (555) 123-4567",
+        "website": "Website: www.avolship.com"
+      },
+      "invoice": "INVOICE",
+      "invoiceDate": "Invoice Date:",
+      "dueDate": "Due Date:",
+      "status": "Status:",
+      "draft": "Draft",
+      "billTo": "Bill To",
+      "contact": "Contact:",
+      "invoiceDetails": "Invoice Details",
+      "servicePeriod": "Service Period:",
+      "warehouse": "Warehouse:",
+      "currency": "Currency:",
+      "serviceSummary": "Service Summary",
+      "ordersDelivered": "Orders Delivered",
+      "expeditions": "Expeditions",
+      "uniqueProducts": "Unique Products",
+      "totalQuantity": "Total Quantity",
+      "serviceDetails": "Service Details",
+      "description": "Description",
+      "quantity": "Quantity",
+      "amount": "Amount",
+      "orderProcessing": "Order Processing & Commission",
+      "orderProcessingDesc": "Processing and commission for {count} delivered orders",
+      "orderProductsInfo": "{products} unique products • {quantity} total items",
+      "expeditionProcessing": "Expedition Processing & Commission",
+      "expeditionProcessingDesc": "Processing and commission for {count} delivered expeditions",
+      "productBreakdown": "Product Breakdown",
+      "productCode": "Product Code",
+      "productName": "Product Name",
+      "qty": "Qty",
+      "original": "Original",
+      "discount": "Discount",
+      "finalSales": "Final Sales",
+      "off": "off",
+      "total": "Total",
+      "orderBreakdown": "Order Breakdown",
+      "orderId": "Order ID",
+      "customer": "Customer",
+      "products": "Products",
+      "finalTotal": "Final Total",
+      "totalOrders": "Total Orders",
+      "expeditionBreakdown": "Expedition Breakdown",
+      "expeditionCode": "Expedition Code",
+      "date": "Date",
+      "payment": "Payment",
+      "value": "Value",
+      "totalExpeditions": "Total Expeditions",
+      "serviceFeesCharges": "Service Fees & Charges",
+      "feeDescription": "Fee Description",
+      "fees": {
+        "confirmationFee": "Order Confirmation Processing Fee",
+        "serviceFee": "Platform Service Fee",
+        "warehouseFee": "Warehouse Management Fee",
+        "shippingFee": "Shipping & Handling Fee",
+        "processingFee": "Transaction Processing Fee",
+        "expeditionFee": "Expedition Management Fee"
+      },
+      "grossAmount": "Gross Amount:",
+      "addServiceFees": "Add: Service Fees",
+      "netAmountPayable": "Net Amount Payable:",
+      "invoiceNotes": "Invoice Notes:",
+      "termsConditions": "Terms & Conditions:",
+      "thankYou": "Thank you for your business!",
+      "generatedOn": "This invoice was generated on {date} by Avolship Platform",
+      "questionsContact": "For questions regarding this invoice, please contact invoicing@avolship.com",
+      "orderIdHeader": "Order ID",
+      "paid": "Paid",
+      "unpaid": "Unpaid"
+    }
+  },
    "orders": {
     "common":{
       "cancel":"Cancel"
@@ -2108,8 +2719,8 @@
     "passwordsMatchError": "Passwords don't match",
     "serviceTypeRequiredError": "Service type is required for providers"
   },
-  "settings": {
-    "title": "Settings",
+  "userSettings": {
+    "title": "Settings", 
     "description": "Manage your account settings and preferences",
     "comingSoon": "This feature is coming soon",
     "badges": {
@@ -2398,6 +3009,122 @@
       "copyEmail": "Copy email",
       "copyPhone": "Copy phone number",
       "copyLocation": "Copy location"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Overview",
+      "subtitle": "Comprehensive view of your fulfillment center operations",
+      "errorAlert": "Error loading dashboard data. Please try again.",
+      "sections": {
+        "filters": "Filters",
+        "statsCards": "Statistics Overview",
+        "charts": "Analytics Charts",
+        "performance": "Performance Metrics",
+        "activity": "Recent Activity"
+      },
+      "loading": {
+        "dashboard": "Loading dashboard...",
+        "stats": "Loading statistics...",
+        "charts": "Loading charts...",
+        "performers": "Loading performance data...",
+        "activity": "Loading recent activity...",
+        "filters": "Loading filters..."
+      },
+      "statsCards": {
+        "totalUsers": "Total Users",
+        "totalOrders": "Total Orders",
+        "products": "Products",
+        "warehouses": "Warehouses",
+        "pendingUsers": "Pending Users",
+        "activeDelivery": "Active Delivery",
+        "todaysOrders": "Today's Orders",
+        "descriptions": {
+          "allPlatformUsers": "All platform users",
+          "lifetimeOrders": "Lifetime orders",
+          "availableProducts": "Available products",
+          "activeLocations": "Active locations",
+          "awaitingApproval": "Awaiting approval",
+          "availableDrivers": "Available drivers",
+          "ordersPlacedToday": "Orders placed today"
+        },
+        "trends": {
+          "pendingApproval": "{count} pending approval",
+          "allUsersActive": "All users active",
+          "ordersToday": "{count} today",
+          "noOrdersToday": "No orders today",
+          "inInventory": "In inventory",
+          "operational": "Operational",
+          "requiresAction": "Requires action",
+          "allApproved": "All approved",
+          "readyForDelivery": "Ready for delivery"
+        }
+      },
+      "filters": {
+        "title": "Dashboard Filters",
+        "dateRange": "Date Range",
+        "userRole": "User Role",
+        "orderStatus": "Order Status",
+        "warehouse": "Warehouse",
+        "applyFilters": "Apply Filters",
+        "resetFilters": "Reset Filters",
+        "datePresets": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "thisWeek": "This Week",
+          "thisMonth": "This Month",
+          "thisYear": "This Year",
+          "customRange": "Custom Range"
+        },
+        "selectDateRange": "Select date range",
+        "selectUserRole": "Select user role",
+        "selectOrderStatus": "Select order status",
+        "selectWarehouse": "Select warehouse",
+        "allRoles": "All Roles",
+        "allStatuses": "All Statuses",
+        "allWarehouses": "All Warehouses"
+      },
+      "charts": {
+        "usersByRole": {
+          "title": "Users by Role",
+          "description": "Distribution of {count} users across different roles",
+          "noData": "No user data available",
+          "noUsers": "No users found",
+          "noUsersMessage": "User data will appear here once available"
+        },
+        "orderStatus": {
+          "title": "Order Status Distribution",
+          "description": "Current status of {count} total orders",
+          "tooltipOrders": "{value} orders",
+          "tooltipStatus": "Status: {label}",
+          "count": "Count"
+        },
+        "revenue": {
+          "title": "Revenue Trend",
+          "noData": "No revenue data available for the selected period",
+          "noDataMessage": "Revenue data will appear here once orders are delivered",
+          "noRevenueFound": "No revenue data found"
+        },
+        "recentActivity": {
+          "title": "Recent Activity",
+          "description": "Latest activities across the platform",
+          "noActivity": "No recent activity",
+          "timeLabels": {
+            "justNow": "Just now",
+            "hoursAgo": "{hours}h ago",
+            "yesterday": "Yesterday"
+          }
+        }
+      },
+      "roles": {
+        "ADMIN": "Admin",
+        "SELLER": "Seller",
+        "DELIVERY": "Delivery",
+        "PROVIDER": "Provider",
+        "SUPPORT": "Support",
+        "CALL_CENTER": "Call Center",
+        "MODERATOR": "Moderator"
+      }
     }
   }
 }

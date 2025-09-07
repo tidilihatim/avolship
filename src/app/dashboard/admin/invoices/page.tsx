@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/app/actions/auth';
 import { UserRole } from '@/app/dashboard/_constant/user';
 import { getInvoicesList } from '@/app/actions/invoice';
 import InvoiceList from './_components/invoice-list';
+import ErrorMessage from './_components/error-message';
 
 interface SearchParams {
   search?: string;
@@ -50,14 +51,7 @@ export default async function InvoicesPage({ searchParams }: Props) {
     const result = await getInvoicesList(filters);
     
     if (!result.success) {
-      return (
-        <div className="container mx-auto p-6">
-          <div className="text-center py-10">
-            <h2 className="text-2xl font-bold text-destructive mb-4">Error Loading Invoices</h2>
-            <p className="text-muted-foreground">{result.message}</p>
-          </div>
-        </div>
-      );
+      return <ErrorMessage message={result.message} />;
     }
 
     return (
@@ -71,13 +65,6 @@ export default async function InvoicesPage({ searchParams }: Props) {
     );
   } catch (error) {
     console.error('Error loading invoices:', error);
-    return (
-      <div className="container mx-auto p-6">
-        <div className="text-center py-10">
-          <h2 className="text-2xl font-bold text-destructive mb-4">Error Loading Invoices</h2>
-          <p className="text-muted-foreground">An unexpected error occurred. Please try again.</p>
-        </div>
-      </div>
-    );
+    return <ErrorMessage isUnexpected={true} />;
   }
 }

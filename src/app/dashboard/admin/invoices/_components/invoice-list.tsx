@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { format } from 'date-fns';
 import { toast } from "sonner";
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -128,6 +129,7 @@ interface InvoiceListProps {
 }
 
 export default function InvoiceList({ invoices, pagination, filters }: InvoiceListProps) {
+  const t = useTranslations('invoices');
   const router = useRouter();
   const pathname = usePathname();
   const [, startTransition] = useTransition();
@@ -235,10 +237,10 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
       const result = await updateInvoiceStatus(invoiceId, status);
       
       if (result.success) {
-        toast.success('Invoice status updated successfully');
+        toast.success(t('messages.statusUpdatedSuccess'));
         router.refresh();
       } else {
-        toast.error(result.message || 'Failed to update status');
+        toast.error(result.message || t('messages.statusUpdateFailed'));
       }
     });
   };
@@ -356,11 +358,11 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
   // Get status badge styling
   const getStatusBadge = (status: InvoiceStatus) => {
     const statusConfig = {
-      [InvoiceStatus.DRAFT]: { label: 'Draft', className: 'bg-muted text-muted-foreground' },
-      [InvoiceStatus.GENERATED]: { label: 'Generated', className: 'bg-primary/10 text-primary' },
-      [InvoiceStatus.PAID]: { label: 'Paid', className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
-      [InvoiceStatus.OVERDUE]: { label: 'Overdue', className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
-      [InvoiceStatus.CANCELLED]: { label: 'Cancelled', className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
+      [InvoiceStatus.DRAFT]: { label: t('statusLabels.DRAFT'), className: 'bg-muted text-muted-foreground' },
+      [InvoiceStatus.GENERATED]: { label: t('statusLabels.GENERATED'), className: 'bg-primary/10 text-primary' },
+      [InvoiceStatus.PAID]: { label: t('statusLabels.PAID'), className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
+      [InvoiceStatus.OVERDUE]: { label: t('statusLabels.OVERDUE'), className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
+      [InvoiceStatus.CANCELLED]: { label: t('statusLabels.CANCELLED'), className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
     };
     
     return statusConfig[status] || { label: status, className: 'bg-muted text-muted-foreground' };
@@ -387,14 +389,14 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search invoices..."
+              placeholder={t('searchPlaceholder')}
               className="pl-8"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <Button type="submit" variant="default">
-            Apply Filters
+            {t('applyFilters')}
           </Button>
         </form>
 
@@ -403,27 +405,27 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
             <SheetTrigger asChild>
               <Button variant="outline" className="flex gap-2">
                 <Filter className="h-4 w-4" />
-                Filters
+                {t('filters')}
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="p-4">
               <SheetHeader className="px-1">
-                <SheetTitle className="text-xl">Filters</SheetTitle>
+                <SheetTitle className="text-xl">{t('filters')}</SheetTitle>
                 <SheetDescription className="text-sm">
-                  Filter invoices by various criteria
+                  {t('filtersDescription')}
                 </SheetDescription>
               </SheetHeader>
               
               <div className="py-8 space-y-8">
                 {/* Status Filter */}
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">Filter by Status</Label>
+                  <Label className="text-sm font-medium">{t('filterByStatus')}</Label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className='w-full'>
-                      <SelectValue placeholder="All Statuses" />
+                      <SelectValue placeholder={t('allStatuses')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={ALL_STATUSES}>All Statuses</SelectItem>
+                      <SelectItem value={ALL_STATUSES}>{t('allStatuses')}</SelectItem>
                       {Object.values(InvoiceStatus).map((status) => (
                         <SelectItem key={status} value={status}>
                           {getStatusBadge(status).label}
@@ -435,13 +437,13 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                 
                 {/* Seller Filter */}
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">Filter by Seller</Label>
+                  <Label className="text-sm font-medium">{t('filterBySeller')}</Label>
                   <Select value={sellerFilter} onValueChange={setSellerFilter}>
                     <SelectTrigger className='w-full'>
-                      <SelectValue placeholder="All Sellers" />
+                      <SelectValue placeholder={t('allSellers')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={ALL_SELLERS}>All Sellers</SelectItem>
+                      <SelectItem value={ALL_SELLERS}>{t('allSellers')}</SelectItem>
                       {uniqueSellers.map((seller) => (
                         <SelectItem key={seller?.id} value={seller?.id || ''}>
                           {seller?.businessName || seller?.name}
@@ -453,10 +455,10 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
 
                 {/* Date Range Filter */}
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">Date Range</Label>
+                  <Label className="text-sm font-medium">{t('dateRange')}</Label>
                   <div className="space-y-2">
                     <div>
-                      <Label htmlFor="start-date" className="text-xs">Start Date</Label>
+                      <Label htmlFor="start-date" className="text-xs">{t('startDate')}</Label>
                       <Input
                         id="start-date"
                         type="date"
@@ -465,7 +467,7 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                       />
                     </div>
                     <div>
-                      <Label htmlFor="end-date" className="text-xs">End Date</Label>
+                      <Label htmlFor="end-date" className="text-xs">{t('endDate')}</Label>
                       <Input
                         id="end-date"
                         type="date"
@@ -483,7 +485,7 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                 <div className="flex flex-col gap-3">
                   <SheetClose asChild>
                     <Button onClick={applyFilters}>
-                      Apply Filters
+                      {t('applyFilters')}
                     </Button>
                   </SheetClose>
                   <Button 
@@ -493,7 +495,7 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                     className="flex items-center gap-2"
                   >
                     <FilterX className="h-4 w-4" />
-                    Clear Filters
+                    {t('clearFilters')}
                   </Button>
                 </div>
               </div>
@@ -506,12 +508,12 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Invoices
+            {t('title')}
           </CardTitle>
           <CardDescription>
             {pagination?.total 
-              ? `${pagination.total} ${pagination.total === 1 ? 'invoice' : 'invoices'} found`
-              : 'No invoices found'}
+              ? `${pagination.total} ${pagination.total === 1 ? t('invoice') : t('invoices')} ${t('found')}`
+              : t('noInvoicesFound')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -520,14 +522,14 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Invoice #</TableHead>
-                    <TableHead>Seller</TableHead>
-                    <TableHead className="hidden md:table-cell">Status</TableHead>
-                    <TableHead className="hidden md:table-cell">Period</TableHead>
-                    <TableHead className="hidden lg:table-cell">Amount</TableHead>
-                    <TableHead className="hidden lg:table-cell">Warehouse</TableHead>
-                    <TableHead className="hidden xl:table-cell">Generated</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('invoiceNumber')}</TableHead>
+                    <TableHead>{t('seller')}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t('status')}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t('period')}</TableHead>
+                    <TableHead className="hidden lg:table-cell">{t('amount')}</TableHead>
+                    <TableHead className="hidden lg:table-cell">{t('warehouse')}</TableHead>
+                    <TableHead className="hidden xl:table-cell">{t('generated')}</TableHead>
+                    <TableHead className="text-right">{t('actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -550,13 +552,13 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                       <TableCell className="hidden md:table-cell">
                         <div className="text-sm">
                           <div>{formatDate(invoice.periodStart)}</div>
-                          <div className="text-muted-foreground">to {formatDate(invoice.periodEnd)}</div>
+                          <div className="text-muted-foreground">{t('to')} {formatDate(invoice.periodEnd)}</div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         <div className="text-sm">
                           <div className="font-medium">{formatCurrency(invoice.summary.finalAmount, invoice.currency)}</div>
-                          <div className="text-muted-foreground">{invoice.summary.totalOrders} orders</div>
+                          <div className="text-muted-foreground">{invoice.summary.totalOrders} {t('orders')}</div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
@@ -568,7 +570,7 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                       <TableCell className="hidden xl:table-cell">
                         <div className="text-sm">
                           <div>{formatDate(invoice.generatedAt)}</div>
-                          <div className="text-muted-foreground">by {invoice.generatedBy.name}</div>
+                          <div className="text-muted-foreground">{t('by')} {invoice.generatedBy.name}</div>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -579,11 +581,11 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
                             <DropdownMenuItem className='cursor-pointer' asChild>
                               <Link href={`/dashboard/admin/invoices/${invoice._id}`}>
                                 <Eye className="mr-2 h-4 w-4" />
-                                View
+                                {t('view')}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -593,21 +595,21 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                               <DropdownMenuItem
                                 onClick={() => handleStatusUpdate(invoice._id, InvoiceStatus.PAID)}
                               >
-                                Mark as Paid
+                                {t('markAsPaid')}
                               </DropdownMenuItem>
                             )}
                             {invoice.status !== InvoiceStatus.OVERDUE && (
                               <DropdownMenuItem
                                 onClick={() => handleStatusUpdate(invoice._id, InvoiceStatus.OVERDUE)}
                               >
-                                Mark as Overdue
+                                {t('markAsOverdue')}
                               </DropdownMenuItem>
                             )}
                             {invoice.status !== InvoiceStatus.CANCELLED && (
                               <DropdownMenuItem
                                 onClick={() => handleStatusUpdate(invoice._id, InvoiceStatus.CANCELLED)}
                               >
-                                Cancel Invoice
+                                {t('cancelInvoice')}
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -622,7 +624,7 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
             <div className="flex flex-col items-center justify-center py-10 space-y-4">
               <FileText className="h-12 w-12 text-muted-foreground" />
               <p className="text-muted-foreground text-center">
-                No invoices found
+                {t('noInvoicesFound')}
               </p>
             </div>
           )}
@@ -631,7 +633,7 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
           <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
-                Items per page:
+                {t('itemsPerPage')}
               </span>
               <Select
                 value={String(itemsPerPage)}
@@ -656,8 +658,11 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
             </Pagination>
             
             <div className="text-sm text-muted-foreground">
-              Showing {(pagination.page - 1) * pagination.limit + 1}-
-              {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
+              {t('showing', { 
+                start: (pagination.page - 1) * pagination.limit + 1,
+                end: Math.min(pagination.page * pagination.limit, pagination.total), 
+                total: pagination.total 
+              })}
             </div>
           </CardFooter>
         )}

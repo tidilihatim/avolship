@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Filter, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { RidersFilters } from '../_hooks/useDeliveryRiders';
 
 interface RidersFiltersProps {
@@ -23,6 +24,7 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
   onlineCount,
   availableCount
 }) => {
+  const t = useTranslations('deliveryRiders.filters');
   const hasActiveFilters = filters.status !== 'all' || filters.availability !== 'all' || filters.search.length > 0;
 
   const clearFilters = () => {
@@ -37,7 +39,7 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search riders by name or email..."
+            placeholder={t('searchPlaceholder')}
             value={filters.search}
             onChange={(e) => onFiltersChange({ search: e.target.value })}
             className="pl-10"
@@ -55,9 +57,9 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="online">Online Only</SelectItem>
-            <SelectItem value="offline">Offline Only</SelectItem>
+            <SelectItem value="all">{t('allStatus')}</SelectItem>
+            <SelectItem value="online">{t('onlineOnly')}</SelectItem>
+            <SelectItem value="offline">{t('offlineOnly')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -72,9 +74,9 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Availability</SelectItem>
-            <SelectItem value="available">Available</SelectItem>
-            <SelectItem value="busy">Busy</SelectItem>
+            <SelectItem value="all">{t('allAvailability')}</SelectItem>
+            <SelectItem value="available">{t('available')}</SelectItem>
+            <SelectItem value="busy">{t('busy')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -87,7 +89,7 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
             className="flex items-center gap-2"
           >
             <X className="h-4 w-4" />
-            Clear
+            {t('clear')}
           </Button>
         )}
       </div>
@@ -98,7 +100,7 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           {filters.status !== 'all' && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Status: {filters.status}
+              {t('status')}: {t(filters.status)}
               <button
                 onClick={() => onFiltersChange({ status: 'all' })}
                 className="ml-1 hover:bg-muted-foreground/20 rounded-full p-0.5"
@@ -110,7 +112,7 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
           
           {filters.availability !== 'all' && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              {filters.availability === 'available' ? 'Available' : 'Busy'}
+              {t(filters.availability)}
               <button
                 onClick={() => onFiltersChange({ availability: 'all' })}
                 className="ml-1 hover:bg-muted-foreground/20 rounded-full p-0.5"
@@ -122,7 +124,7 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
           
           {filters.search && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              Search: "{filters.search}"
+              {t('search')}: "{filters.search}"
               <button
                 onClick={() => onFiltersChange({ search: '' })}
                 className="ml-1 hover:bg-muted-foreground/20 rounded-full p-0.5"
@@ -135,9 +137,9 @@ export const RidersFiltersComponent: React.FC<RidersFiltersProps> = ({
 
         {/* Quick Stats */}
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span>{totalRiders} total</span>
-          <span className="text-primary">{onlineCount} online</span>
-          <span className="text-primary">{availableCount} available</span>
+          <span>{t('totalCount', { count: totalRiders })}</span>
+          <span className="text-primary">{t('onlineCount', { count: onlineCount })}</span>
+          <span className="text-primary">{t('availableCount', { count: availableCount })}</span>
         </div>
       </div>
     </div>

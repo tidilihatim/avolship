@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useTranslations } from 'next-intl';
 
 import { StatsCards } from '@/components/admin/dashboard/stats-cards';
 import { UsersByRoleChart } from '@/components/admin/dashboard/charts/users-by-role-chart';
@@ -45,6 +46,7 @@ interface DashboardData {
 }
 
 export default function AdminOverviewPage() {
+  const t = useTranslations('admin.dashboard');
   const [data, setData] = useState<DashboardData>({
     stats: null,
     usersByRole: [],
@@ -188,9 +190,9 @@ export default function AdminOverviewPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Admin Overview</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Comprehensive view of your fulfillment center operations
+            {t('subtitle')}
           </p>
         </div>
       </div>

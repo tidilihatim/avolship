@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { useTranslations } from 'next-intl';
 import { RevenueChart } from '@/app/actions/admin-dashboard';
 
 interface RevenueChartProps {
@@ -61,17 +62,19 @@ const formatDate = (dateString: string) => {
 };
 
 export function RevenueChartComponent({ data }: RevenueChartProps) {
+  const t = useTranslations('admin.dashboard.charts.revenue');
+  
   if (!data || data.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Revenue Trend</CardTitle>
-          <CardDescription>No revenue data available for the selected period</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No revenue data found</p>
-            <p className="text-xs mt-1">Revenue data will appear here once orders are delivered</p>
+            <p className="text-sm">{t('noRevenueFound')}</p>
+            <p className="text-xs mt-1">{t('noDataMessage')}</p>
           </div>
         </CardContent>
       </Card>
@@ -89,7 +92,7 @@ export function RevenueChartComponent({ data }: RevenueChartProps) {
 
   // Determine chart description based on data
   const getChartDescription = () => {
-    if (data.length === 0) return "No data available";
+    if (data.length === 0) return t('noDataAvailable');
     
     const hasMonthly = data.some(item => /^\w{3} \d{4}$/.test(item.date)); // Jan 2024
     const hasWeekly = data.some(item => item.date.includes('W')); // 2024 W5
@@ -100,13 +103,17 @@ export function RevenueChartComponent({ data }: RevenueChartProps) {
     else if (hasWeekly) granularity = 'weekly';
     else if (hasHourly) granularity = 'hourly';
     
-    return `${formatCurrency(totalRevenue)} total revenue from ${totalOrders} delivered orders (${granularity} breakdown)`;
+    return t('chartDescription', {
+      revenue: formatCurrency(totalRevenue),
+      orders: totalOrders,
+      granularity: t(`granularity.${granularity}`)
+    });
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Revenue Trend</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
           {getChartDescription()}
         </CardDescription>
@@ -139,10 +146,10 @@ export function RevenueChartComponent({ data }: RevenueChartProps) {
               content={
                 <ChartTooltipContent
                   formatter={(value, name) => [
-                    name === 'revenue' ? formatCurrency(Number(value)) : `${value} orders`,
-                    chartConfig[name as keyof typeof chartConfig]?.label
+                    name === 'revenue' ? formatCurrency(Number(Array.isArray(value) ? value[0] : value)) : t('tooltipOrders', { value: Array.isArray(value) ? value[0] : value }),
+                    name === 'revenue' ? t('revenue') : t('orders')
                   ]}
-                  labelFormatter={(label) => `Period: ${label}`}
+                  labelFormatter={(label) => t('tooltipPeriod', { label })}
                 />
               }
             />
@@ -161,14 +168,14 @@ export function RevenueChartComponent({ data }: RevenueChartProps) {
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-chart-2 rounded-full" />
             <div className="text-sm">
-              <p className="text-muted-foreground">Total Revenue</p>
+              <p className="text-muted-foreground">{t('totalRevenue')}</p>
               <p className="font-medium">{formatCurrency(totalRevenue)}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-chart-3 rounded-full" />
             <div className="text-sm">
-              <p className="text-muted-foreground">Delivered Orders</p>
+              <p className="text-muted-foreground">{t('deliveredOrders')}</p>
               <p className="font-medium">{totalOrders.toLocaleString()}</p>
             </div>
           </div>

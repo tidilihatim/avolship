@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Trophy, TrendingUp, Users, Calendar } from "lucide-react"
+import { useTranslations } from 'next-intl'
 import { LeaderboardPeriod } from "@/app/actions/leaderboard"
 
 interface LeaderboardHeaderProps {
@@ -27,6 +28,7 @@ export function LeaderboardHeader({
   userScore,
   icon
 }: LeaderboardHeaderProps) {
+  const t = useTranslations('leaderboard.common');
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -43,9 +45,9 @@ export function LeaderboardHeader({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="weekly">Weekly</SelectItem>
-            <SelectItem value="monthly">Monthly</SelectItem>
-            <SelectItem value="yearly">Yearly</SelectItem>
+            <SelectItem value="weekly">{t('periods.weekly')}</SelectItem>
+            <SelectItem value="monthly">{t('periods.monthly')}</SelectItem>
+            <SelectItem value="yearly">{t('periods.yearly')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -53,13 +55,13 @@ export function LeaderboardHeader({
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Participants</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('totalParticipants')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalParticipants}</div>
             <p className="text-xs text-muted-foreground">
-              Active in {period} period
+              {t('activeInPeriod', { period: t(`periods.${period}`) })}
             </p>
           </CardContent>
         </Card>
@@ -67,13 +69,13 @@ export function LeaderboardHeader({
         {userRank && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Your Rank</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('yourRank')}</CardTitle>
               <Trophy className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">#{userRank}</div>
               <p className="text-xs text-muted-foreground">
-                Out of {totalParticipants}
+                {t('outOf', { total: totalParticipants })}
               </p>
             </CardContent>
           </Card>
@@ -82,13 +84,13 @@ export function LeaderboardHeader({
         {userScore !== undefined && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Your Score</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('yourScore')}</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{userScore}</div>
               <p className="text-xs text-muted-foreground">
-                This {period.slice(0, -2)}
+                {t('thisPeriod', { period: t(`periodSingular.${period.slice(0, -2)}`) })}
               </p>
             </CardContent>
           </Card>
@@ -97,13 +99,13 @@ export function LeaderboardHeader({
         {(!userRank && userScore === undefined) && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Period</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('period')}</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold capitalize">{period}</div>
               <p className="text-xs text-muted-foreground">
-                Current leaderboard period
+                {t('currentLeaderboardPeriod')}
               </p>
             </CardContent>
           </Card>

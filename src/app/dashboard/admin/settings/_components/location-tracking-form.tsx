@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +19,8 @@ interface LocationTrackingFormProps {
 }
 
 export function LocationTrackingForm({ settings, onSettingsChange }: LocationTrackingFormProps) {
+  const t = useTranslations('settings.tracking');
+  
   const updateSetting = (key: keyof LocationTrackingSettings, value: boolean) => {
     onSettingsChange({
       ...settings,
@@ -30,10 +33,10 @@ export function LocationTrackingForm({ settings, onSettingsChange }: LocationTra
       <div>
         <h3 className="text-lg font-medium flex items-center gap-2">
           <MapPin className="w-5 h-5" />
-          Location Tracking Visibility
+          {t('title')}
         </h3>
         <p className="text-sm text-muted-foreground">
-          Control which user roles can view real-time location tracking information
+          {t('description')}
         </p>
       </div>
 
@@ -42,18 +45,18 @@ export function LocationTrackingForm({ settings, onSettingsChange }: LocationTra
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Users className="w-4 h-4" />
-              Seller Access
+              {t('seller.title')}
             </CardTitle>
             <CardDescription>
-              Allow sellers to view location tracking information
+              {t('seller.cardDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="seller-tracking">Enable for Sellers</Label>
+                <Label htmlFor="seller-tracking">{t('seller.label')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Sellers will be able to see delivery personnel locations and track order progress
+                  {t('seller.switchDescription')}
                 </p>
               </div>
               <Switch
@@ -69,18 +72,18 @@ export function LocationTrackingForm({ settings, onSettingsChange }: LocationTra
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Phone className="w-4 h-4" />
-              Call Center Access
+              {t('callCenter.title')}
             </CardTitle>
             <CardDescription>
-              Allow call center staff to view location tracking information
+              {t('callCenter.cardDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="call-center-tracking">Enable for Call Center</Label>
+                <Label htmlFor="call-center-tracking">{t('callCenter.label')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Call center staff will be able to see delivery personnel locations for customer support
+                  {t('callCenter.switchDescription')}
                 </p>
               </div>
               <Switch

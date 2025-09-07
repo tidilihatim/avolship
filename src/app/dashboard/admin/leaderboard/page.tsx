@@ -1,5 +1,8 @@
+'use client';
+
 import { Suspense } from 'react'
 import { Trophy, Truck, MapPin, Phone, ShoppingCart } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { LeaderboardContainer } from '@/components/leaderboard'
 import { fetchProviderLeaderboard } from '@/app/actions/provider-leaderboard'
@@ -58,10 +61,12 @@ function LeaderboardSkeleton() {
 }
 
 function ProviderLeaderboardTab() {
+  const t = useTranslations('leaderboard.providers');
+  
   return (
     <LeaderboardContainer
-      title="Provider Leaderboard"
-      description="Top performing providers ranked by expedition count"
+      title={t('title')}
+      description={t('description')}
       icon={<Truck className="h-6 w-6 text-blue-500" />}
       fetchLeaderboard={fetchProviderLeaderboard}
       initialPeriod="monthly"
@@ -71,10 +76,12 @@ function ProviderLeaderboardTab() {
 }
 
 function DeliveryLeaderboardTab() {
+  const t = useTranslations('leaderboard.delivery');
+  
   return (
     <LeaderboardContainer
-      title="Delivery Leaderboard"
-      description="Top performing delivery riders ranked by completed deliveries"
+      title={t('title')}
+      description={t('description')}
       icon={<MapPin className="h-6 w-6 text-green-500" />}
       fetchLeaderboard={fetchDeliveryLeaderboard}
       initialPeriod="monthly"
@@ -84,10 +91,12 @@ function DeliveryLeaderboardTab() {
 }
 
 function CallCenterLeaderboardTab() {
+  const t = useTranslations('leaderboard.callCenter');
+  
   return (
     <LeaderboardContainer
-      title="Call Center Leaderboard"
-      description="Top performing agents ranked by orders handled"
+      title={t('title')}
+      description={t('description')}
       icon={<Phone className="h-6 w-6 text-purple-500" />}
       fetchLeaderboard={fetchCallCenterLeaderboard}
       initialPeriod="monthly"
@@ -97,10 +106,12 @@ function CallCenterLeaderboardTab() {
 }
 
 function SellerLeaderboardTab() {
+  const t = useTranslations('leaderboard.sellers');
+  
   return (
     <LeaderboardContainer
-      title="Seller Leaderboard"
-      description="Top performing sellers ranked by total revenue"
+      title={t('title')}
+      description={t('description')}
       icon={<ShoppingCart className="h-6 w-6 text-orange-500" />}
       fetchLeaderboard={fetchSellerLeaderboard}
       initialPeriod="monthly"
@@ -110,14 +121,16 @@ function SellerLeaderboardTab() {
 }
 
 export default function AdminLeaderboardPage() {
+  const t = useTranslations('leaderboard');
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-6">
         <Trophy className="h-5 w-5 text-yellow-500" />
         <div>
-          <h1 className="text-xl font-semibold">Platform Leaderboards</h1>
+          <h1 className="text-xl font-semibold">{t('title')}</h1>
           <p className="text-sm text-muted-foreground">
-            Monitor performance across all user roles and track platform engagement
+            {t('description')}
           </p>
         </div>
       </div>
@@ -126,19 +139,19 @@ export default function AdminLeaderboardPage() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="providers" className="flex items-center gap-2">
             <Truck className="h-4 w-4" />
-            Providers
+            {t('tabs.providers')}
           </TabsTrigger>
           <TabsTrigger value="delivery" className="flex items-center gap-2">
             <MapPin className="h-4 w-4" />
-            Delivery
+            {t('tabs.delivery')}
           </TabsTrigger>
           <TabsTrigger value="call-center" className="flex items-center gap-2">
             <Phone className="h-4 w-4" />
-            Call Center
+            {t('tabs.callCenter')}
           </TabsTrigger>
           <TabsTrigger value="sellers" className="flex items-center gap-2">
             <ShoppingCart className="h-4 w-4" />
-            Sellers
+            {t('tabs.sellers')}
           </TabsTrigger>
         </TabsList>
 

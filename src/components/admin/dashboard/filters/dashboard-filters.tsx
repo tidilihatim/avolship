@@ -20,6 +20,7 @@ import {
 import { CalendarIcon, Filter, RotateCcw, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 export interface DashboardFilters {
   dateRange: {
@@ -39,14 +40,7 @@ interface DashboardFiltersProps {
   loading?: boolean;
 }
 
-const datePresets = [
-  { value: 'today', label: 'Today' },
-  { value: 'yesterday', label: 'Yesterday' },
-  { value: 'this_week', label: 'This Week' },
-  { value: 'this_month', label: 'This Month' },
-  { value: 'this_year', label: 'This Year' },
-  { value: 'custom', label: 'Custom Range' }
-];
+// These will be translated in the component
 
 const userRoles = [
   { value: 'ADMIN', label: 'Admin' },
@@ -74,6 +68,16 @@ export function DashboardFilters({
   warehouses = [],
   loading = false
 }: DashboardFiltersProps) {
+  const t = useTranslations('admin.dashboard.filters');
+  
+  const datePresets = [
+    { value: 'today', label: t('datePresets.today') },
+    { value: 'yesterday', label: t('datePresets.yesterday') },
+    { value: 'this_week', label: t('datePresets.thisWeek') },
+    { value: 'this_month', label: t('datePresets.thisMonth') },
+    { value: 'this_year', label: t('datePresets.thisYear') },
+    { value: 'custom', label: t('datePresets.customRange') }
+  ];
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [localFilters, setLocalFilters] = useState<DashboardFilters>(filters);
   const [hasChanges, setHasChanges] = useState(false);
@@ -165,7 +169,7 @@ export function DashboardFilters({
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Dashboard Filters
+            {t('title')}
             {getActiveFiltersCount() > 0 && (
               <Badge variant="secondary">
                 {getActiveFiltersCount()} active
@@ -185,7 +189,7 @@ export function DashboardFilters({
               className="h-8"
             >
               <RotateCcw className="h-4 w-4 mr-1" />
-              Reset
+              {t('resetFilters')}
             </Button>
             <Button
               onClick={applyFilters}
@@ -198,7 +202,7 @@ export function DashboardFilters({
               ) : (
                 <Search className="h-4 w-4 mr-1" />
               )}
-              Apply Filters
+              {t('applyFilters')}
             </Button>
           </div>
         </CardTitle>
@@ -207,7 +211,7 @@ export function DashboardFilters({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Date Range Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Date Range</label>
+            <label className="text-sm font-medium">{t('dateRange')}</label>
             <div className="flex gap-2">
               <Select
                 value={localFilters.dateRange.preset || 'this_month'}
@@ -259,7 +263,7 @@ export function DashboardFilters({
 
           {/* User Role Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">User Role</label>
+            <label className="text-sm font-medium">{t('userRole')}</label>
             <Select
               value={localFilters.userRole || 'all'}
               onValueChange={(value) => updateLocalFilters({ 
@@ -267,10 +271,10 @@ export function DashboardFilters({
               })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="All roles" />
+                <SelectValue placeholder={t('selectUserRole')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All roles</SelectItem>
+                <SelectItem value="all">{t('allRoles')}</SelectItem>
                 {userRoles.map((role) => (
                   <SelectItem key={role.value} value={role.value}>
                     {role.label}
@@ -282,7 +286,7 @@ export function DashboardFilters({
 
           {/* Order Status Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Order Status</label>
+            <label className="text-sm font-medium">{t('orderStatus')}</label>
             <Select
               value={localFilters.orderStatus || 'all'}
               onValueChange={(value) => updateLocalFilters({ 
@@ -290,10 +294,10 @@ export function DashboardFilters({
               })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="All statuses" />
+                <SelectValue placeholder={t('selectOrderStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="all">{t('allStatuses')}</SelectItem>
                 {orderStatuses.map((status) => (
                   <SelectItem key={status.value} value={status.value}>
                     {status.label}
@@ -305,7 +309,7 @@ export function DashboardFilters({
 
           {/* Warehouse Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Warehouse</label>
+            <label className="text-sm font-medium">{t('warehouse')}</label>
             <Select
               value={localFilters.warehouseId || 'all'}
               onValueChange={(value) => updateLocalFilters({ 
@@ -313,10 +317,10 @@ export function DashboardFilters({
               })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="All warehouses" />
+                <SelectValue placeholder={t('selectWarehouse')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All warehouses</SelectItem>
+                <SelectItem value="all">{t('allWarehouses')}</SelectItem>
                 {warehouses.map((warehouse) => (
                   <SelectItem key={warehouse._id} value={warehouse._id}>
                     {warehouse.name}

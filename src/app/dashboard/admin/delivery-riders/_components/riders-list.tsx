@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { User, MapPin, Clock, Navigation, AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { DeliveryRider } from '../_hooks/useDeliveryRiders';
 
 interface RidersListProps {
@@ -21,17 +22,18 @@ export const RidersList: React.FC<RidersListProps> = ({
   error,
   onTrackRider
 }) => {
+  const t = useTranslations('deliveryRiders.list');
   const formatLastSeen = (lastActive?: Date) => {
-    if (!lastActive) return 'Unknown';
+    if (!lastActive) return t('unknown');
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - lastActive.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1) return t('justNow');
+    if (diffInMinutes < 60) return t('minutesAgo', { minutes: diffInMinutes });
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInHours < 24) return t('hoursAgo', { hours: diffInHours });
     const diffInDays = Math.floor(diffInHours / 24);
-    return `${diffInDays}d ago`;
+    return t('daysAgo', { days: diffInDays });
   };
 
   if (loading) {
@@ -74,7 +76,7 @@ export const RidersList: React.FC<RidersListProps> = ({
         <CardContent className="pt-6">
           <div className="text-center py-12">
             <AlertCircle className="h-12 w-12 mx-auto mb-4 text-destructive" />
-            <p className="text-lg font-medium text-destructive mb-2">Error Loading Riders</p>
+            <p className="text-lg font-medium text-destructive mb-2">{t('errorLoading')}</p>
             <p className="text-sm text-muted-foreground">{error}</p>
           </div>
         </CardContent>
@@ -85,9 +87,9 @@ export const RidersList: React.FC<RidersListProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>All Riders</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <p className="text-sm text-muted-foreground">
-          All registered delivery riders with their online status and location data
+          {t('description')}
         </p>
       </CardHeader>
       <CardContent>
@@ -114,11 +116,11 @@ export const RidersList: React.FC<RidersListProps> = ({
                   <div className="flex items-center gap-2 mb-1">
                     <p className="font-medium text-lg">{rider.name}</p>
                     <Badge variant={rider.isOnline ? "default" : "secondary"} className="text-xs">
-                      {rider.isOnline ? "Online" : "Offline"}
+                      {rider.isOnline ? t('online') : t('offline')}
                     </Badge>
                     {rider.isOnline && (
                       <Badge variant={rider.isAvailableForDelivery ? "default" : "outline"} className="text-xs">
-                        {rider.isAvailableForDelivery ? "Available" : "Busy"}
+                        {rider.isAvailableForDelivery ? t('available') : t('busy')}
                       </Badge>
                     )}
                   </div>
@@ -130,7 +132,7 @@ export const RidersList: React.FC<RidersListProps> = ({
                     </p>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    {rider.assignedOrders?.length || 0} active orders
+                    {t('activeOrders', { count: rider.assignedOrders?.length || 0 })}
                   </p>
                 </div>
               </div>
@@ -143,25 +145,25 @@ export const RidersList: React.FC<RidersListProps> = ({
                   </p>
                   {rider.deliveryStats && (
                     <p className="text-muted-foreground">
-                      {rider.deliveryStats.todayDeliveries} deliveries today
+                      {t('deliveriesToday', { count: rider.deliveryStats.todayDeliveries })}
                     </p>
                   )}
                   {rider.currentLocation ? (
                     <p className="text-xs text-primary flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
-                      Location Available
+                      {t('locationAvailable')}
                     </p>
                   ) : (
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
-                      No Location Data
+                      {t('noLocationData')}
                     </p>
                   )}
                 </div>
                 
                 <Button variant="outline" size="sm">
                   <Navigation className="h-4 w-4 mr-2" />
-                  Track
+                  {t('track')}
                 </Button>
               </div>
             </div>
@@ -170,8 +172,8 @@ export const RidersList: React.FC<RidersListProps> = ({
           {riders.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
               <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg">No delivery riders found</p>
-              <p className="text-sm">Try adjusting your search filters</p>
+              <p className="text-lg">{t('noRidersFound')}</p>
+              <p className="text-sm">{t('adjustFilters')}</p>
             </div>
           )}
         </div>

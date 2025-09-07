@@ -45,7 +45,7 @@ interface NavItemProps {
 }
 
 function NavItem({ item, collapsed, isActive, onClick }: NavItemProps) {
-  const t = useTranslations("dashboard.sidebar");
+  const t = useTranslations();
 
   const content = (
     <Link href={item.href} onClick={onClick}>
@@ -108,7 +108,7 @@ export default function Sidebar({
   
   const bottomNavigation = [
     {
-      name: "settings",
+      name: "navigation.settings",
       href: `/dashboard/${userType}/settings`,
       icon: Settings,
     },

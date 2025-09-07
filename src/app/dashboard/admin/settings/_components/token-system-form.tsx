@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -60,6 +61,7 @@ interface TokenSystemFormProps {
 }
 
 export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }: TokenSystemFormProps) {
+  const t = useTranslations('settings.tokens');
   const [isPending, startTransition] = useTransition();
   const [editingPackage, setEditingPackage] = useState<TokenPackage | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -99,14 +101,14 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
         const result = await createTokenPackage(formData);
         
         if (result.success) {
-          toast.success('Token package created successfully');
+          toast.success(t('messages.packageCreated'));
           setShowCreateDialog(false);
           resetForm();
           // Refresh the packages list
           onPackagesUpdate?.();
         }
       } catch (error) {
-        toast.error('Failed to create token package');
+        toast.error(t('messages.createFailed'));
         console.error(error);
       }
     });
@@ -128,32 +130,32 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
         const result = await updateTokenPackage(editingPackage._id, formData);
         
         if (result.success) {
-          toast.success('Token package updated successfully');
+          toast.success(t('messages.packageUpdated'));
           resetForm();
           // Refresh the packages list
           onPackagesUpdate?.();
         }
       } catch (error) {
-        toast.error('Failed to update token package');
+        toast.error(t('messages.updateFailed'));
         console.error(error);
       }
     });
   };
 
   const handleDeletePackage = async (packageId: string) => {
-    if (!confirm('Are you sure you want to archive this token package?')) return;
+    if (!confirm(t('messages.confirmArchive'))) return;
 
     startTransition(async () => {
       try {
         const result = await deleteTokenPackage(packageId);
         
         if (result.success) {
-          toast.success('Token package archived successfully');
+          toast.success(t('messages.packageArchived'));
           // Refresh the packages list
           onPackagesUpdate?.();
         }
       } catch (error) {
-        toast.error('Failed to archive token package');
+        toast.error(t('messages.archiveFailed'));
         console.error(error);
       }
     });
@@ -190,9 +192,9 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
       {/* System Toggle */}
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
-          <Label htmlFor="token-system">Enable Token Boost System</Label>
+          <Label htmlFor="token-system">{t('enableSystem.label')}</Label>
           <p className="text-sm text-muted-foreground">
-            Enable the token-based profile boosting system for providers
+            {t('enableSystem.description')}
           </p>
         </div>
         <Switch
@@ -210,56 +212,56 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium">Token Packages</h3>
+            <h3 className="text-lg font-medium">{t('packages.title')}</h3>
             <p className="text-sm text-muted-foreground">
-              Manage available token packages for providers
+              {t('packages.description')}
             </p>
           </div>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
               <Button onClick={() => { resetForm(); setShowCreateDialog(true); }}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Package
+                {t('packages.addPackage')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>
-                  {editingPackage ? 'Edit Token Package' : 'Create Token Package'}
+                  {editingPackage ? t('dialog.editTitle') : t('dialog.createTitle')}
                 </DialogTitle>
                 <DialogDescription>
                   {editingPackage 
-                    ? 'Update the token package details' 
-                    : 'Create a new token package for providers to purchase'
+                    ? t('dialog.editDescription') 
+                    : t('dialog.createDescription')
                   }
                 </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="package-name">Package Name</Label>
+                  <Label htmlFor="package-name">{t('form.name.label')}</Label>
                   <Input
                     id="package-name"
                     value={packageForm.name}
                     onChange={(e) => setPackageForm(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="e.g., Starter Pack"
+                    placeholder={t('form.name.placeholder')}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="package-description">Description</Label>
+                  <Label htmlFor="package-description">{t('form.description.label')}</Label>
                   <Textarea
                     id="package-description"
                     value={packageForm.description}
                     onChange={(e) => setPackageForm(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Brief description of the package"
+                    placeholder={t('form.description.placeholder')}
                     rows={2}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="token-count">Token Count</Label>
+                    <Label htmlFor="token-count">{t('form.tokenCount.label')}</Label>
                     <Input
                       id="token-count"
                       type="number"
@@ -273,7 +275,7 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="price">Price (USD)</Label>
+                    <Label htmlFor="price">{t('form.price.label')}</Label>
                     <Input
                       id="price"
                       type="number"
@@ -290,7 +292,7 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
+                    <Label htmlFor="status">{t('form.status.label')}</Label>
                     <Select 
                       value={packageForm.status} 
                       onValueChange={(value) => setPackageForm(prev => ({ 
@@ -302,14 +304,14 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
+                        <SelectItem value="active">{t('status.active')}</SelectItem>
+                        <SelectItem value="inactive">{t('status.inactive')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="sort-order">Sort Order</Label>
+                    <Label htmlFor="sort-order">{t('form.sortOrder.label')}</Label>
                     <Input
                       id="sort-order"
                       type="number"
@@ -332,13 +334,13 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
                     resetForm();
                   }}
                 >
-                  Cancel
+                  {t('dialog.cancel')}
                 </Button>
                 <Button
                   onClick={editingPackage ? handleUpdatePackage : handleCreatePackage}
                   disabled={isPending || !packageForm.name}
                 >
-                  {isPending ? 'Saving...' : editingPackage ? 'Update' : 'Create'}
+                  {isPending ? t('dialog.saving') : editingPackage ? t('dialog.update') : t('dialog.create')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -352,12 +354,12 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Package</TableHead>
-                    <TableHead>Tokens</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Order</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('table.package')}</TableHead>
+                    <TableHead>{t('table.tokens')}</TableHead>
+                    <TableHead>{t('table.price')}</TableHead>
+                    <TableHead>{t('table.status')}</TableHead>
+                    <TableHead>{t('table.order')}</TableHead>
+                    <TableHead className="text-right">{t('table.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -377,7 +379,7 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{pkg.tokenCount} tokens</Badge>
+                        <Badge variant="outline">{t('table.tokenCount', { count: pkg.tokenCount })}</Badge>
                       </TableCell>
                       <TableCell>${pkg.priceUsd.toFixed(2)}</TableCell>
                       <TableCell>{getStatusBadge(pkg.status)}</TableCell>
@@ -412,9 +414,9 @@ export function TokenSystemForm({ settings, onSettingsChange, onPackagesUpdate }
         ) : (
           <Card>
             <CardContent className="text-center py-8">
-              <p className="text-muted-foreground">No token packages configured yet.</p>
+              <p className="text-muted-foreground">{t('packages.noPackages')}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Create your first token package to get started.
+                {t('packages.createFirst')}
               </p>
             </CardContent>
           </Card>

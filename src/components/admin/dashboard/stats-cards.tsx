@@ -12,6 +12,7 @@ import {
   Truck, 
   Calendar 
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { AdminStats } from '@/app/actions/admin-dashboard';
 
 interface StatsCardsProps {
@@ -32,54 +33,60 @@ const formatNumber = (num: number) => {
 };
 
 export function StatsCards({ stats }: StatsCardsProps) {
+  const t = useTranslations('admin.dashboard.statsCards');
+  
   const statItems = [
     {
-      title: 'Total Users',
+      title: t('totalUsers'),
       value: formatNumber(stats.totalUsers),
       icon: Users,
-      description: 'All platform users',
-      trend: stats.pendingUsers > 0 ? `${stats.pendingUsers} pending approval` : 'All users active'
+      description: t('descriptions.allPlatformUsers'),
+      trend: stats.pendingUsers > 0 
+        ? t('trends.pendingApproval', { count: stats.pendingUsers })
+        : t('trends.allUsersActive')
     },
     {
-      title: 'Total Orders',
+      title: t('totalOrders'),
       value: formatNumber(stats.totalOrders),
       icon: ShoppingCart,
-      description: 'Lifetime orders',
-      trend: stats.todayOrders > 0 ? `${stats.todayOrders} today` : 'No orders today'
+      description: t('descriptions.lifetimeOrders'),
+      trend: stats.todayOrders > 0 
+        ? t('trends.ordersToday', { count: stats.todayOrders })
+        : t('trends.noOrdersToday')
     },
     {
-      title: 'Products',
+      title: t('products'),
       value: formatNumber(stats.totalProducts),
       icon: Package,
-      description: 'Available products',
-      trend: 'In inventory'
+      description: t('descriptions.availableProducts'),
+      trend: t('trends.inInventory')
     },
     {
-      title: 'Warehouses',
+      title: t('warehouses'),
       value: formatNumber(stats.totalWarehouses),
       icon: Warehouse,
-      description: 'Active locations',
-      trend: 'Operational'
+      description: t('descriptions.activeLocations'),
+      trend: t('trends.operational')
     },
     {
-      title: 'Pending Users',
+      title: t('pendingUsers'),
       value: formatNumber(stats.pendingUsers),
       icon: UserCheck,
-      description: 'Awaiting approval',
-      trend: stats.pendingUsers > 0 ? 'Requires action' : 'All approved'
+      description: t('descriptions.awaitingApproval'),
+      trend: stats.pendingUsers > 0 ? t('trends.requiresAction') : t('trends.allApproved')
     },
     {
-      title: 'Active Delivery',
+      title: t('activeDelivery'),
       value: formatNumber(stats.activeDeliveryPersonnel),
       icon: Truck,
-      description: 'Available drivers',
-      trend: 'Ready for delivery'
+      description: t('descriptions.availableDrivers'),
+      trend: t('trends.readyForDelivery')
     },
     {
-      title: "Today's Orders",
+      title: t('todaysOrders'),
       value: formatNumber(stats.todayOrders),
       icon: Calendar,
-      description: 'Orders placed today',
+      description: t('descriptions.ordersPlacedToday'),
       trend: new Date().toLocaleDateString()
     }
   ];

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,6 +26,7 @@ interface DeliveryFeeRulesFormProps {
 }
 
 export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesFormProps) {
+  const t = useTranslations('settings.deliveryRules');
   const [newRule, setNewRule] = useState<Partial<DeliveryFeeRule>>({
     minDistance: 0,
     maxDistance: 5,
@@ -89,14 +91,19 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
 
     // Validate that minDistance is less than maxDistance
     if (newRule.minDistance >= newRule.maxDistance) {
-      toast.error('Minimum distance must be less than maximum distance');
+      toast.error(t('errors.minLessMax'));
       return;
     }
 
     // Check for overlapping ranges
     const overlappingRule = getOverlappingRule(newRule.warehouseId, newRule.minDistance, newRule.maxDistance);
     if (overlappingRule) {
-      toast.error(`Distance range ${newRule.minDistance}-${newRule.maxDistance} km overlaps with existing rule ${overlappingRule.minDistance}-${overlappingRule.maxDistance} km`);
+      toast.error(t('errors.rangeOverlap', { 
+        newMin: newRule.minDistance, 
+        newMax: newRule.maxDistance, 
+        existingMin: overlappingRule.minDistance, 
+        existingMax: overlappingRule.maxDistance 
+      }));
       return;
     }
 
@@ -129,12 +136,12 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
         
         // Validate that minDistance < maxDistance
         if (field === 'minDistance' && value >= rule.maxDistance) {
-          toast.error('Minimum distance must be less than maximum distance');
+          toast.error(t('errors.minLessMax'));
           return rule; // Return original rule without changes
         }
         
         if (field === 'maxDistance' && rule.minDistance >= value) {
-          toast.error('Maximum distance must be greater than minimum distance');
+          toast.error(t('errors.maxGreaterMin'));
           return rule; // Return original rule without changes
         }
         
@@ -144,7 +151,12 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
         
         const overlappingRule = getOverlappingRule(rule.warehouseId, newMin, newMax, index);
         if (overlappingRule) {
-          toast.error(`Distance range ${newMin}-${newMax} km overlaps with existing rule ${overlappingRule.minDistance}-${overlappingRule.maxDistance} km`);
+          toast.error(t('errors.rangeOverlap', { 
+            newMin: newMin, 
+            newMax: newMax, 
+            existingMin: overlappingRule.minDistance, 
+            existingMax: overlappingRule.maxDistance 
+          }));
           return rule; // Return original rule without changes
         }
         
@@ -158,9 +170,9 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-medium">Delivery Fee Rules</h3>
+        <h3 className="text-lg font-medium">{t('title')}</h3>
         <p className="text-sm text-muted-foreground">
-          Configure distance-based delivery fees for each warehouse
+          {t('description')}
         </p>
       </div>
 
@@ -173,14 +185,14 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label>Warehouse</Label>
+                      <Label>{t('labels.warehouse')}</Label>
                       <WarehouseSelector
                         value={rule.warehouseId}
                         onValueChange={(warehouseId, currency) => {
                           updateRule(index, 'warehouseId', warehouseId);
                           updateRule(index, 'currency', currency);
                         }}
-                        placeholder="Select warehouse"
+                        placeholder={t('placeholders.selectWarehouse')}
                       />
                     </div>
                     
@@ -191,14 +203,14 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
                         onClick={() => removeRule(index)}
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Remove
+                        {t('actions.remove')}
                       </Button>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <Label htmlFor={`min-${index}`}>Min Distance (km)</Label>
+                      <Label htmlFor={`min-${index}`}>{t('labels.minDistance')}</Label>
                       <Input
                         id={`min-${index}`}
                         type="number"
@@ -212,7 +224,7 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
                     </div>
                     
                     <div>
-                      <Label htmlFor={`max-${index}`}>Max Distance (km)</Label>
+                      <Label htmlFor={`max-${index}`}>{t('labels.maxDistance')}</Label>
                       <Input
                         id={`max-${index}`}
                         type="number"
@@ -226,7 +238,7 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
                     </div>
                     
                     <div>
-                      <Label htmlFor={`fee-${index}`}>Fee {rule.currency && `(${rule.currency})`}</Label>
+                      <Label htmlFor={`fee-${index}`}>{t('labels.fee')} {rule.currency && `(${rule.currency})`}</Label>
                       <Input
                         id={`fee-${index}`}
                         type="number"
@@ -251,7 +263,7 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
       {/* Add New Rule Form */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Add New Delivery Fee Rule</CardTitle>
+          <CardTitle className="text-sm">{t('addNew.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -265,7 +277,7 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
                 />
                 {newRule.warehouseId && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    Suggested range starts from: {getSuggestedMinDistance(newRule.warehouseId)} km (to avoid overlaps)
+                    {t('addNew.suggestedRange', { distance: getSuggestedMinDistance(newRule.warehouseId) })}
                   </p>
                 )}
               </div>
@@ -276,14 +288,14 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
                   disabled={!newRule.warehouseId || !newRule.minDistance || !newRule.maxDistance || !newRule.fee}
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Rule
+                  {t('actions.addRule')}
                 </Button>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="new-min">Min Distance (km)</Label>
+                <Label htmlFor="new-min">{t('labels.minDistance')}</Label>
                 <Input
                   id="new-min"
                   type="number"
@@ -300,7 +312,7 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
               </div>
               
               <div>
-                <Label htmlFor="new-max">Max Distance (km)</Label>
+                <Label htmlFor="new-max">{t('labels.maxDistance')}</Label>
                 <Input
                   id="new-max"
                   type="number"
@@ -317,7 +329,7 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
               </div>
               
               <div>
-                <Label htmlFor="new-fee">Fee {newRule.currency && `(${newRule.currency})`}</Label>
+                <Label htmlFor="new-fee">{t('labels.fee')} {newRule.currency && `(${newRule.currency})`}</Label>
                 <Input
                   id="new-fee"
                   type="number"

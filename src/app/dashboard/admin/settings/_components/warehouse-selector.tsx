@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Select,
   SelectContent,
@@ -28,11 +29,14 @@ interface WarehouseSelectorProps {
 export function WarehouseSelector({ 
   value, 
   onValueChange, 
-  placeholder = "Select warehouse..." 
+  placeholder 
 }: WarehouseSelectorProps) {
+  const t = useTranslations('settings.warehouseSelector');
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCurrency, setSelectedCurrency] = useState<string>("");
+  
+  const defaultPlaceholder = placeholder || t('selectWarehouse');
 
   useEffect(() => {
     fetchWarehouses();
@@ -73,7 +77,7 @@ export function WarehouseSelector({
       <div className="flex items-center space-x-2">
         <Select disabled>
           <SelectTrigger>
-            <SelectValue placeholder="Loading warehouses..." />
+            <SelectValue placeholder={t('loadingWarehouses')} />
           </SelectTrigger>
         </Select>
       </div>
@@ -84,7 +88,7 @@ export function WarehouseSelector({
     <div className="flex items-center space-x-2">
       <Select value={value} onValueChange={handleValueChange}>
         <SelectTrigger className="min-w-[200px]">
-          <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={defaultPlaceholder} />
         </SelectTrigger>
         <SelectContent>
           {warehouses.map((warehouse) => (
@@ -102,7 +106,7 @@ export function WarehouseSelector({
       
       {selectedCurrency && (
         <Badge variant="outline" className="text-xs">
-          Currency: {selectedCurrency}
+          {t('currency')}: {selectedCurrency}
         </Badge>
       )}
     </div>

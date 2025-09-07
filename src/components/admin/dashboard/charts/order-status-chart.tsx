@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { useTranslations } from 'next-intl';
 import { OrderStatusChart } from '@/app/actions/admin-dashboard';
 
 interface OrderStatusChartProps {
@@ -20,14 +21,15 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function OrderStatusChartComponent({ data }: OrderStatusChartProps) {
+  const t = useTranslations('admin.dashboard.charts.orderStatus');
   const totalOrders = data.reduce((sum, item) => sum + item.count, 0);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Order Status Distribution</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          Current status of {totalOrders.toLocaleString()} total orders
+          {t('description', { count: totalOrders.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -57,10 +59,10 @@ export function OrderStatusChartComponent({ data }: OrderStatusChartProps) {
               content={
                 <ChartTooltipContent
                   formatter={(value, name) => [
-                    `${value} orders`,
-                    'Count'
+                    t('tooltipOrders', { value: Array.isArray(value) ? value[0] : value }),
+                    t('count')
                   ]}
-                  labelFormatter={(label) => `Status: ${label}`}
+                  labelFormatter={(label) => t('tooltipStatus', { label })}
                 />
               }
             />

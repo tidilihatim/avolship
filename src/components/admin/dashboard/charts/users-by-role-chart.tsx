@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
+import { useTranslations } from 'next-intl';
 import { UsersByRole } from '@/app/actions/admin-dashboard';
 
 interface UsersByRoleChartProps {
@@ -28,18 +29,7 @@ const getRoleColor = (role: string, index: number): string => {
   return `hsl(var(--chart-${((index % 5) + 1)}))`;
 };
 
-const getRoleLabel = (role: string): string => {
-  const labels: Record<string, string> = {
-    'ADMIN': 'Admin',
-    'SELLER': 'Seller',
-    'DELIVERY': 'Delivery',
-    'PROVIDER': 'Provider',
-    'SUPPORT': 'Support',
-    'CALL_CENTER': 'Call Center',
-    'MODERATOR': 'Moderator'
-  };
-  return labels[role] || role;
-};
+// Role labels will be translated in the component
 
 const chartConfig = {
   count: {
@@ -48,17 +38,24 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function UsersByRoleChart({ data }: UsersByRoleChartProps) {
+  const t = useTranslations('admin.dashboard.charts.usersByRole');
+  const tRoles = useTranslations('admin.dashboard.roles');
+  
+  const getRoleLabel = (role: string): string => {
+    return tRoles(role as any) || role;
+  };
+
   if (!data || data.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Users by Role</CardTitle>
-          <CardDescription>No user data available</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No users found</p>
-            <p className="text-xs mt-1">User data will appear here once available</p>
+            <p className="text-sm">{t('noUsers')}</p>
+            <p className="text-xs mt-1">{t('noUsersMessage')}</p>
           </div>
         </CardContent>
       </Card>
@@ -77,9 +74,9 @@ export function UsersByRoleChart({ data }: UsersByRoleChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Users by Role</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          Distribution of {totalUsers.toLocaleString()} users across different roles
+          {t('description', { count: totalUsers.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>

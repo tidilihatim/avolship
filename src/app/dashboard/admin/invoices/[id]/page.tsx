@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/app/actions/auth';
 import { UserRole } from '@/app/dashboard/_constant/user';
 import { getInvoiceById } from '@/app/actions/invoice';
 import InvoiceDetailPage from './_components/invoice-detail-page';
+import InvoiceErrorMessage from './_components/invoice-error-message';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -29,14 +30,7 @@ export default async function ViewInvoicePage({ params }: Props) {
     const result = await getInvoiceById(id);
     
     if (!result.success) {
-      return (
-        <div className="container mx-auto p-6">
-          <div className="text-center py-10">
-            <h2 className="text-2xl font-bold text-destructive mb-4">Error Loading Invoice</h2>
-            <p className="text-muted-foreground">{result.message}</p>
-          </div>
-        </div>
-      );
+      return <InvoiceErrorMessage message={result.message} />;
     }
 
     return (
@@ -50,13 +44,6 @@ export default async function ViewInvoicePage({ params }: Props) {
     );
   } catch (error) {
     console.error('Error loading invoice:', error);
-    return (
-      <div className="container mx-auto p-6">
-        <div className="text-center py-10">
-          <h2 className="text-2xl font-bold text-destructive mb-4">Error Loading Invoice</h2>
-          <p className="text-muted-foreground">An unexpected error occurred. Please try again.</p>
-        </div>
-      </div>
-    );
+    return <InvoiceErrorMessage isUnexpected={true} />;
   }
 }

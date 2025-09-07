@@ -1,4 +1,615 @@
 {
+  "admin": {
+    "dashboard": {
+      "title": "Tableau de Bord",
+      "overview": "Aperçu du Tableau de Bord",
+      "welcome": "Bienvenue dans le Tableau de Bord Admin",
+      "statsCards": {
+        "totalOrders": "Total des Commandes",
+        "totalUsers": "Total des Utilisateurs",
+        "totalRevenue": "Chiffre d'Affaires Total",
+        "activeUsers": "Utilisateurs Actifs",
+        "ordersDescription": "{count} commandes dans le système",
+        "usersDescription": "{count} utilisateurs enregistrés",
+        "revenueDescription": "${revenue} de chiffre d'affaires total",
+        "activeDescription": "{count} actifs ce mois-ci"
+      },
+      "filters": {
+        "title": "Filtres du Tableau de Bord",
+        "dateRange": "Plage de Dates",
+        "selectDateRange": "Sélectionner une plage de dates",
+        "datePresets": {
+          "today": "Aujourd'hui",
+          "yesterday": "Hier",
+          "last7Days": "7 derniers jours",
+          "last30Days": "30 derniers jours",
+          "thisMonth": "Ce mois-ci",
+          "lastMonth": "Le mois dernier",
+          "last3Months": "3 derniers mois",
+          "last6Months": "6 derniers mois",
+          "thisYear": "Cette année",
+          "lastYear": "L'année dernière"
+        },
+        "quickFilters": "Filtres Rapides",
+        "userRole": "Rôle Utilisateur",
+        "selectUserRole": "Sélectionner un rôle d'utilisateur",
+        "orderStatus": "Statut de Commande",
+        "selectOrderStatus": "Sélectionner un statut de commande",
+        "applyFilters": "Appliquer les Filtres",
+        "clearAll": "Effacer Tout"
+      },
+      "charts": {
+        "usersByRole": {
+          "title": "Utilisateurs par Rôle",
+          "description": "{count} utilisateurs au total dans tous les rôles",
+          "noData": "Aucune donnée utilisateur disponible",
+          "noUsers": "Aucun utilisateur trouvé",
+          "noUsersMessage": "Il n'y a actuellement aucun utilisateur dans le système"
+        },
+        "orderStatus": {
+          "title": "Distribution des Statuts de Commande",
+          "description": "{count} commandes au total",
+          "count": "Commandes",
+          "tooltipOrders": "{value} commandes",
+          "tooltipStatus": "Statut : {label}"
+        },
+        "revenue": {
+          "title": "Tendances des Revenus",
+          "noData": "Aucune donnée de revenus disponible",
+          "noRevenueFound": "Aucune donnée de revenus trouvée",
+          "noDataMessage": "Les données de revenus apparaîtront ici une fois les commandes livrées",
+          "noDataAvailable": "Aucune donnée disponible",
+          "chartDescription": "{revenue} de revenus totaux de {orders} commandes livrées (répartition {granularity})",
+          "granularity": {
+            "daily": "quotidienne",
+            "weekly": "hebdomadaire",
+            "monthly": "mensuelle",
+            "hourly": "horaire"
+          },
+          "revenue": "Revenus",
+          "orders": "Commandes",
+          "tooltipOrders": "{value} commandes",
+          "tooltipPeriod": "Période : {label}",
+          "totalRevenue": "Revenus Totaux",
+          "deliveredOrders": "Commandes Livrées"
+        }
+      },
+      "recentActivity": {
+        "title": "Activité Récente",
+        "description": "Dernières activités sur la plateforme",
+        "noActivity": "Aucune activité récente",
+        "timeAgo": {
+          "justNow": "À l'instant",
+          "hoursAgo": "Il y a {hours}h",
+          "yesterday": "Hier"
+        }
+      },
+      "roles": {
+        "ADMIN": "Admin",
+        "SELLER": "Vendeur",
+        "DELIVERY": "Livraison",
+        "PROVIDER": "Fournisseur",
+        "SUPPORT": "Support",
+        "CALL_CENTER": "Centre d'Appels",
+        "MODERATOR": "Modérateur",
+        "USER": "Utilisateur"
+      }
+    }
+  },
+  "leaderboard": {
+    "title": "Classements de la Plateforme",
+    "description": "Surveiller les performances de tous les rôles d'utilisateurs et suivre l'engagement de la plateforme",
+    "tabs": {
+      "providers": "Fournisseurs",
+      "delivery": "Livraison",
+      "callCenter": "Centre d'Appels",
+      "sellers": "Vendeurs"
+    },
+    "providers": {
+      "title": "Classement des Fournisseurs",
+      "description": "Meilleurs fournisseurs classés par nombre d'expéditions"
+    },
+    "delivery": {
+      "title": "Classement des Livreurs",
+      "description": "Meilleurs livreurs classés par livraisons terminées"
+    },
+    "callCenter": {
+      "title": "Classement du Centre d'Appels",
+      "description": "Meilleurs agents classés par commandes traitées"
+    },
+    "sellers": {
+      "title": "Classement des Vendeurs",
+      "description": "Meilleurs vendeurs classés par chiffre d'affaires total"
+    },
+    "common": {
+      "periods": {
+        "weekly": "Hebdomadaire",
+        "monthly": "Mensuel",
+        "yearly": "Annuel"
+      },
+      "periodSingular": {
+        "week": "semaine",
+        "month": "mois",
+        "year": "année"
+      },
+      "totalParticipants": "Total des Participants",
+      "activeInPeriod": "Actifs dans la période {period}",
+      "yourRank": "Votre Rang",
+      "outOf": "Sur {total}",
+      "yourScore": "Votre Score",
+      "thisPeriod": "Cette {period}",
+      "period": "Période",
+      "currentLeaderboardPeriod": "Période actuelle du classement"
+    }
+  },
+  "settings": {
+    "title": "Paramètres de l'Application",
+    "description": "Configurer les paramètres système de l'application",
+    "loading": "Chargement des paramètres...",
+    "loadFailed": "Échec du chargement des paramètres",
+    "tryAgain": "Réessayer",
+    "saving": "Enregistrement...",
+    "saveChanges": "Enregistrer les Modifications",
+    "messages": {
+      "fetchFailed": "Échec de la récupération des paramètres d'application",
+      "fetchError": "Erreur lors de la récupération des paramètres d'application",
+      "saveSuccess": "Paramètres enregistrés avec succès",
+      "saveFailed": "Échec de l'enregistrement des paramètres",
+      "saveError": "Erreur lors de l'enregistrement des paramètres"
+    },
+    "common": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "disabled": "Désactivé"
+    },
+    "sections": {
+      "general": {
+        "title": "Paramètres Généraux",
+        "description": "Configurer les paramètres de base de l'application et les préférences de livraison"
+      },
+      "delivery": {
+        "title": "Configuration des Frais de Livraison",
+        "description": "Configurer les frais de livraison et les règles basées sur la distance par entrepôt"
+      },
+      "commission": {
+        "title": "Configuration des Commissions",
+        "description": "Configurer les règles de commission et les taux pour le personnel de livraison"
+      },
+      "tracking": {
+        "title": "Paramètres de Suivi de Localisation",
+        "description": "Configurer la visibilité du suivi de localisation pour différents rôles d'utilisateurs"
+      },
+      "leaderboards": {
+        "title": "Paramètres des Classements",
+        "description": "Configurer la visibilité des classements pour différents rôles d'utilisateurs"
+      },
+      "tokens": {
+        "title": "Système de Boost par Jetons",
+        "description": "Configurer le boost de profil fournisseur basé sur les jetons et la publicité"
+      }
+    },
+    "general": {
+      "autoAssign": {
+        "label": "Attribution Automatique de Livraison",
+        "description": "Attribuer automatiquement les commandes au personnel de livraison le plus proche"
+      },
+      "maxOrders": {
+        "label": "Max Commandes par Livreur",
+        "description": "Nombre maximum de commandes qu'un livreur peut gérer simultanément"
+      }
+    },
+    "delivery": {
+      "enableFees": {
+        "label": "Activer les Frais de Livraison",
+        "description": "Activer ou désactiver le système de frais de livraison"
+      }
+    },
+    "commission": {
+      "enableCommission": {
+        "label": "Activer le Système de Commission",
+        "description": "Activer ou désactiver le système de commission"
+      }
+    },
+    "tracking": {
+      "title": "Visibilité du Suivi de Localisation",
+      "description": "Contrôler quels rôles d'utilisateurs peuvent voir les informations de suivi de localisation en temps réel",
+      "seller": {
+        "title": "Accès Vendeur",
+        "cardDescription": "Permettre aux vendeurs de voir les informations de suivi de localisation",
+        "label": "Activer pour les Vendeurs",
+        "switchDescription": "Les vendeurs pourront voir les emplacements du personnel de livraison et suivre le progrès des commandes"
+      },
+      "callCenter": {
+        "title": "Accès Centre d'Appels",
+        "cardDescription": "Permettre au personnel du centre d'appels de voir les informations de suivi de localisation",
+        "label": "Activer pour le Centre d'Appels",
+        "switchDescription": "Le personnel du centre d'appels pourra voir les emplacements du personnel de livraison pour le support client"
+      }
+    },
+    "leaderboards": {
+      "seller": {
+        "label": "Classement des Vendeurs",
+        "description": "Activer le classement de compétition des vendeurs"
+      },
+      "provider": {
+        "label": "Classement des Fournisseurs",
+        "description": "Activer le classement de performance des fournisseurs"
+      },
+      "delivery": {
+        "label": "Classement des Livreurs",
+        "description": "Activer le classement du personnel de livraison"
+      },
+      "callCenter": {
+        "label": "Classement du Centre d'Appels",
+        "description": "Activer le classement des agents du centre d'appels"
+      },
+      "status": {
+        "title": "Statut des Classements",
+        "sellers": "Vendeurs",
+        "providers": "Fournisseurs",
+        "delivery": "Livraison",
+        "callCenter": "Centre d'Appels",
+        "note": "Note : Les administrateurs peuvent toujours voir tous les classements indépendamment de ces paramètres."
+      }
+    },
+    "deliveryRules": {
+      "title": "Règles de Frais de Livraison",
+      "description": "Configurer les frais de livraison basés sur la distance pour chaque entrepôt",
+      "labels": {
+        "warehouse": "Entrepôt",
+        "minDistance": "Distance Min (km)",
+        "maxDistance": "Distance Max (km)",
+        "fee": "Frais"
+      },
+      "placeholders": {
+        "selectWarehouse": "Sélectionner un entrepôt"
+      },
+      "actions": {
+        "remove": "Supprimer",
+        "addRule": "Ajouter une Règle"
+      },
+      "addNew": {
+        "title": "Ajouter une Nouvelle Règle de Frais de Livraison",
+        "suggestedRange": "Plage suggérée commence à : {distance} km (pour éviter les chevauchements)"
+      },
+      "errors": {
+        "minLessMax": "La distance minimum doit être inférieure à la distance maximum",
+        "maxGreaterMin": "La distance maximum doit être supérieure à la distance minimum",
+        "rangeOverlap": "La plage de distance {newMin}-{newMax} km chevauche avec la règle existante {existingMin}-{existingMax} km"
+      }
+    },
+    "commissionRules": {
+      "title": "Règles de Commission",
+      "description": "Configurer les taux de commission basés sur les livraisons pour chaque entrepôt",
+      "labels": {
+        "warehouse": "Entrepôt",
+        "minDeliveries": "Livraisons Min",
+        "commission": "Commission"
+      },
+      "placeholders": {
+        "selectWarehouse": "Sélectionner un entrepôt"
+      },
+      "actions": {
+        "addRule": "Ajouter une Règle"
+      },
+      "addNew": {
+        "title": "Ajouter une Nouvelle Règle de Commission"
+      }
+    },
+    "tokens": {
+      "enableSystem": {
+        "label": "Activer le Système de Boost par Jetons",
+        "description": "Activer le système de boost de profil basé sur les jetons pour les fournisseurs"
+      },
+      "packages": {
+        "title": "Paquets de Jetons",
+        "description": "Gérer les paquets de jetons disponibles pour les fournisseurs",
+        "addPackage": "Ajouter un Paquet",
+        "noPackages": "Aucun paquet de jetons configuré encore.",
+        "createFirst": "Créez votre premier paquet de jetons pour commencer."
+      },
+      "dialog": {
+        "createTitle": "Créer un Paquet de Jetons",
+        "editTitle": "Modifier le Paquet de Jetons",
+        "createDescription": "Créer un nouveau paquet de jetons pour que les fournisseurs puissent acheter",
+        "editDescription": "Mettre à jour les détails du paquet de jetons",
+        "cancel": "Annuler",
+        "saving": "Enregistrement...",
+        "create": "Créer",
+        "update": "Mettre à jour"
+      },
+      "form": {
+        "name": {
+          "label": "Nom du Paquet",
+          "placeholder": "ex : Pack de Démarrage"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Brève description du paquet"
+        },
+        "tokenCount": {
+          "label": "Nombre de Jetons"
+        },
+        "price": {
+          "label": "Prix (USD)"
+        },
+        "status": {
+          "label": "Statut"
+        },
+        "sortOrder": {
+          "label": "Ordre de Tri"
+        }
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif"
+      },
+      "table": {
+        "package": "Paquet",
+        "tokens": "Jetons",
+        "price": "Prix",
+        "status": "Statut",
+        "order": "Ordre",
+        "actions": "Actions",
+        "tokenCount": "{count} jetons"
+      },
+      "messages": {
+        "packageCreated": "Paquet de jetons créé avec succès",
+        "createFailed": "Échec de la création du paquet de jetons",
+        "packageUpdated": "Paquet de jetons mis à jour avec succès",
+        "updateFailed": "Échec de la mise à jour du paquet de jetons",
+        "confirmArchive": "Êtes-vous sûr de vouloir archiver ce paquet de jetons ?",
+        "packageArchived": "Paquet de jetons archivé avec succès",
+        "archiveFailed": "Échec de l'archivage du paquet de jetons"
+      }
+    },
+    "warehouseSelector": {
+      "selectWarehouse": "Sélectionner un entrepôt...",
+      "loadingWarehouses": "Chargement des entrepôts...",
+      "currency": "Devise"
+    }
+  },
+  "navigation": {
+    "overview": "Aperçu",
+    "users": "Utilisateurs",
+    "warehouse": "Entrepôt",
+    "orders": "Commandes",
+    "expeditions": "Expéditions",
+    "deliveryRiders": "Livreurs",
+    "invoices": "Factures",
+    "leaderboard": "Classement",
+    "products": "Produits",
+    "providers": "Fournisseurs",
+    "chat": "Chat",
+    "integrations": "Intégrations",
+    "support": "Support",
+    "queue": "File d'Attente",
+    "customers": "Clients",
+    "profile": "Profil",
+    "tokens": "Jetons",
+    "settings": "Paramètres"
+  },
+  "deliveryRiders": {
+    "title": "Livreurs",
+    "description": "Gérer et suivre tous les livreurs en temps réel",
+    "backToRiders": "Retour aux Livreurs",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "available": "Disponible",
+    "busy": "Occupé",
+    "connected": "Connecté",
+    "disconnected": "Déconnecté",
+    "liveTracking": "Suivi en Direct",
+    "trackRiderHistory": "Suivre l'Historique du Livreur",
+    "locationsCount": "{count} emplacements",
+    "showingLastRecords": "Affichage des 100 derniers enregistrements de localisation pour {name}",
+    "activeOrders": "Commandes Actives",
+    "todaysDeliveries": "Livraisons d'Aujourd'hui",
+    "gpsAccuracy": "Précision GPS",
+    "realTimeTracking": "Suivi en Temps Réel",
+    "locationLabel": "Emplacement :",
+    "liveTrackingDescription": "Suivi GPS en direct et commandes assignées pour {name}",
+    "offlineTrackingDescription": "Dernière localisation connue et commandes pour {name} (Hors ligne)",
+    "loadingMap": "Chargement de la carte...",
+    "stats": {
+      "totalRiders": "Total des Livreurs",
+      "totalRidersDescription": "Tous les livreurs enregistrés",
+      "onlineNow": "En Ligne Maintenant",
+      "onlineNowDescription": "Livreurs actuellement connectés",
+      "availableForDelivery": "Disponibles pour Livraison",
+      "availableForDeliveryDescription": "Prêts à accepter de nouvelles commandes"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher des livreurs par nom ou email...",
+      "allStatus": "Tous les Statuts",
+      "onlineOnly": "En ligne uniquement",
+      "offlineOnly": "Hors ligne uniquement",
+      "allAvailability": "Toutes les Disponibilités",
+      "available": "Disponible",
+      "busy": "Occupé",
+      "clear": "Effacer",
+      "status": "Statut",
+      "search": "Recherche",
+      "online": "en ligne",
+      "offline": "hors ligne",
+      "totalCount": "{count} au total",
+      "onlineCount": "{count} en ligne",
+      "availableCount": "{count} disponibles"
+    },
+    "list": {
+      "title": "Tous les Livreurs",
+      "description": "Tous les livreurs enregistrés avec leur statut en ligne et données de localisation",
+      "errorLoading": "Erreur de Chargement des Livreurs",
+      "unknown": "Inconnu",
+      "justNow": "À l'instant",
+      "minutesAgo": "Il y a {minutes}m",
+      "hoursAgo": "Il y a {hours}h",
+      "daysAgo": "Il y a {days}j",
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "available": "Disponible",
+      "busy": "Occupé",
+      "activeOrders": "{count} commandes actives",
+      "deliveriesToday": "{count} livraisons aujourd'hui",
+      "locationAvailable": "Localisation Disponible",
+      "noLocationData": "Aucune Donnée de Localisation",
+      "track": "Suivre",
+      "noRidersFound": "Aucun livreur trouvé",
+      "adjustFilters": "Essayez d'ajuster vos filtres de recherche"
+    },
+    "pagination": {
+      "showing": "Affichage de {start} à {end} sur {total} livreurs",
+      "show": "Afficher"
+    }
+  },
+  "invoices": {
+    "title": "Factures",
+    "errorLoading": "Erreur de Chargement des Factures",
+    "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "searchPlaceholder": "Rechercher des factures...",
+    "applyFilters": "Appliquer les Filtres",
+    "filters": "Filtres",
+    "filtersDescription": "Filtrer les factures selon divers critères",
+    "filterByStatus": "Filtrer par Statut",
+    "allStatuses": "Tous les Statuts",
+    "filterBySeller": "Filtrer par Vendeur",
+    "allSellers": "Tous les Vendeurs",
+    "dateRange": "Plage de Dates",
+    "startDate": "Date de Début",
+    "endDate": "Date de Fin",
+    "clearFilters": "Effacer les Filtres",
+    "invoice": "facture",
+    "invoices": "factures",
+    "found": "trouvée(s)",
+    "noInvoicesFound": "Aucune facture trouvée",
+    "invoiceNumber": "Facture #",
+    "seller": "Vendeur",
+    "status": "Statut",
+    "period": "Période",
+    "amount": "Montant",
+    "warehouse": "Entrepôt",
+    "generated": "Générée",
+    "actions": "Actions",
+    "to": "à",
+    "orders": "commandes",
+    "by": "par",
+    "view": "Voir",
+    "markAsPaid": "Marquer comme Payée",
+    "markAsOverdue": "Marquer en Retard",
+    "cancelInvoice": "Annuler la Facture",
+    "itemsPerPage": "Éléments par page :",
+    "showing": "Affichage de {start}-{end} sur {total}",
+    "statusLabels": {
+      "DRAFT": "Brouillon",
+      "GENERATED": "Générée",
+      "PAID": "Payée",
+      "OVERDUE": "En Retard",
+      "CANCELLED": "Annulée"
+    },
+    "messages": {
+      "statusUpdatedSuccess": "Statut de la facture mis à jour avec succès",
+      "statusUpdateFailed": "Échec de la mise à jour du statut"
+    },
+    "detail": {
+      "errorLoadingInvoice": "Erreur de Chargement de la Facture",
+      "unexpectedErrorInvoice": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "backToInvoices": "Retour aux Factures",
+      "invoiceDetails": "Détails de la Facture",
+      "invoiceInfo": "Facture {number} • Générée le {date}",
+      "print": "Imprimer",
+      "associatedOrders": "Commandes Associées ({count})",
+      "ordersIncluded": "Commandes incluses dans cette facture",
+      "associatedExpeditions": "Expéditions Associées ({count})",
+      "expeditionsIncluded": "Expéditions incluses dans cette facture",
+      "noOrdersAssociated": "Aucune commande associée à cette facture",
+      "noExpeditionsAssociated": "Aucune expédition associée à cette facture",
+      "created": "Créée :",
+      "expeditionDate": "Date d'Expédition :",
+      "paid": "Payée",
+      "unpaid": "Non Payée",
+      "unknownCustomer": "Client Inconnu"
+    },
+    "preview": {
+      "companyTagline": "Plateforme Logistique & E-commerce",
+      "companyDetails": {
+        "name": "Avolship Inc.",
+        "address1": "123 Avenue des Affaires",
+        "address2": "Suite 400, Quartier d'Affaires",
+        "city": "New York, NY 10001",
+        "country": "États-Unis",
+        "email": "Email : contact@avolship.com",
+        "phone": "Téléphone : +1 (555) 123-4567",
+        "website": "Site Web : www.avolship.com"
+      },
+      "invoice": "FACTURE",
+      "invoiceDate": "Date de Facture :",
+      "dueDate": "Date d'Échéance :",
+      "status": "Statut :",
+      "draft": "Brouillon",
+      "billTo": "Facturer à",
+      "contact": "Contact :",
+      "invoiceDetails": "Détails de la Facture",
+      "servicePeriod": "Période de Service :",
+      "warehouse": "Entrepôt :",
+      "currency": "Devise :",
+      "serviceSummary": "Résumé des Services",
+      "ordersDelivered": "Commandes Livrées",
+      "expeditions": "Expéditions",
+      "uniqueProducts": "Produits Uniques",
+      "totalQuantity": "Quantité Totale",
+      "serviceDetails": "Détails des Services",
+      "description": "Description",
+      "quantity": "Quantité",
+      "amount": "Montant",
+      "orderProcessing": "Traitement des Commandes & Commission",
+      "orderProcessingDesc": "Traitement et commission pour {count} commandes livrées",
+      "orderProductsInfo": "{products} produits uniques • {quantity} articles au total",
+      "expeditionProcessing": "Traitement des Expéditions & Commission",
+      "expeditionProcessingDesc": "Traitement et commission pour {count} expéditions livrées",
+      "productBreakdown": "Répartition des Produits",
+      "productCode": "Code Produit",
+      "productName": "Nom du Produit",
+      "qty": "Qté",
+      "original": "Original",
+      "discount": "Remise",
+      "finalSales": "Ventes Finales",
+      "off": "de remise",
+      "total": "Total",
+      "orderBreakdown": "Répartition des Commandes",
+      "orderId": "ID Commande",
+      "customer": "Client",
+      "products": "Produits",
+      "finalTotal": "Total Final",
+      "totalOrders": "Total Commandes",
+      "expeditionBreakdown": "Répartition des Expéditions",
+      "expeditionCode": "Code Expédition",
+      "date": "Date",
+      "payment": "Paiement",
+      "value": "Valeur",
+      "totalExpeditions": "Total Expéditions",
+      "serviceFeesCharges": "Frais de Service & Charges",
+      "feeDescription": "Description des Frais",
+      "fees": {
+        "confirmationFee": "Frais de Traitement de Confirmation de Commande",
+        "serviceFee": "Frais de Service de Plateforme",
+        "warehouseFee": "Frais de Gestion d'Entrepôt",
+        "shippingFee": "Frais d'Expédition & Manutention",
+        "processingFee": "Frais de Traitement de Transaction",
+        "expeditionFee": "Frais de Gestion d'Expédition"
+      },
+      "grossAmount": "Montant Brut :",
+      "addServiceFees": "Ajouter : Frais de Service",
+      "netAmountPayable": "Montant Net à Payer :",
+      "invoiceNotes": "Notes de Facture :",
+      "termsConditions": "Termes & Conditions :",
+      "thankYou": "Merci pour votre collaboration !",
+      "generatedOn": "Cette facture a été générée le {date} par la Plateforme Avolship",
+      "questionsContact": "Pour toute question concernant cette facture, veuillez contacter invoicing@avolship.com",
+      "orderIdHeader": "ID Commande",
+      "paid": "Payée",
+      "unpaid": "Non Payée"
+    }
+  },
   "orders": {
     "common":{
       "cancel":"Annuler"
@@ -2094,7 +2705,7 @@
     "passwordsMatchError": "Les mots de passe ne correspondent pas",
     "serviceTypeRequiredError": "Le type de service est requis pour les fournisseurs"
   },
-  "settings": {
+  "userSettings": {
     "title": "Paramètres",
     "description": "Gérez vos paramètres de compte et préférences",
     "comingSoon": "Cette fonctionnalité arrive bientôt",
@@ -2384,6 +2995,122 @@
       "copyEmail": "Copier l'email",
       "copyPhone": "Copier le numéro de téléphone",
       "copyLocation": "Copier la localisation"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Aperçu Admin",
+      "subtitle": "Vue d'ensemble complète de vos opérations de centre de distribution",
+      "errorAlert": "Erreur lors du chargement des données du tableau de bord. Veuillez réessayer.",
+      "sections": {
+        "filters": "Filtres",
+        "statsCards": "Aperçu des Statistiques",
+        "charts": "Graphiques d'Analyse",
+        "performance": "Métriques de Performance",
+        "activity": "Activité Récente"
+      },
+      "loading": {
+        "dashboard": "Chargement du tableau de bord...",
+        "stats": "Chargement des statistiques...",
+        "charts": "Chargement des graphiques...",
+        "performers": "Chargement des données de performance...",
+        "activity": "Chargement de l'activité récente...",
+        "filters": "Chargement des filtres..."
+      },
+      "statsCards": {
+        "totalUsers": "Total Utilisateurs",
+        "totalOrders": "Total Commandes",
+        "products": "Produits",
+        "warehouses": "Entrepôts",
+        "pendingUsers": "Utilisateurs en Attente",
+        "activeDelivery": "Livraison Active",
+        "todaysOrders": "Commandes d'Aujourd'hui",
+        "descriptions": {
+          "allPlatformUsers": "Tous les utilisateurs de la plateforme",
+          "lifetimeOrders": "Commandes à vie",
+          "availableProducts": "Produits disponibles",
+          "activeLocations": "Emplacements actifs",
+          "awaitingApproval": "En attente d'approbation",
+          "availableDrivers": "Chauffeurs disponibles",
+          "ordersPlacedToday": "Commandes passées aujourd'hui"
+        },
+        "trends": {
+          "pendingApproval": "{count} en attente d'approbation",
+          "allUsersActive": "Tous les utilisateurs actifs",
+          "ordersToday": "{count} aujourd'hui",
+          "noOrdersToday": "Aucune commande aujourd'hui",
+          "inInventory": "En inventaire",
+          "operational": "Opérationnel",
+          "requiresAction": "Nécessite une action",
+          "allApproved": "Tout approuvé",
+          "readyForDelivery": "Prêt pour la livraison"
+        }
+      },
+      "filters": {
+        "title": "Filtres du Tableau de Bord",
+        "dateRange": "Plage de Dates",
+        "userRole": "Rôle Utilisateur",
+        "orderStatus": "Statut de Commande",
+        "warehouse": "Entrepôt",
+        "applyFilters": "Appliquer les Filtres",
+        "resetFilters": "Réinitialiser les Filtres",
+        "datePresets": {
+          "today": "Aujourd'hui",
+          "yesterday": "Hier",
+          "thisWeek": "Cette Semaine",
+          "thisMonth": "Ce Mois",
+          "thisYear": "Cette Année",
+          "customRange": "Plage Personnalisée"
+        },
+        "selectDateRange": "Sélectionner la plage de dates",
+        "selectUserRole": "Sélectionner le rôle utilisateur",
+        "selectOrderStatus": "Sélectionner le statut de commande",
+        "selectWarehouse": "Sélectionner l'entrepôt",
+        "allRoles": "Tous les Rôles",
+        "allStatuses": "Tous les Statuts",
+        "allWarehouses": "Tous les Entrepôts"
+      },
+      "charts": {
+        "usersByRole": {
+          "title": "Utilisateurs par Rôle",
+          "description": "Répartition de {count} utilisateurs selon différents rôles",
+          "noData": "Aucune donnée utilisateur disponible",
+          "noUsers": "Aucun utilisateur trouvé",
+          "noUsersMessage": "Les données utilisateur apparaîtront ici une fois disponibles"
+        },
+        "orderStatus": {
+          "title": "Répartition du Statut des Commandes",
+          "description": "Statut actuel de {count} commandes au total",
+          "tooltipOrders": "{value} commandes",
+          "tooltipStatus": "Statut: {label}",
+          "count": "Nombre"
+        },
+        "revenue": {
+          "title": "Tendance des Revenus",
+          "noData": "Aucune donnée de revenus disponible pour la période sélectionnée",
+          "noDataMessage": "Les données de revenus apparaîtront ici une fois les commandes livrées",
+          "noRevenueFound": "Aucune donnée de revenus trouvée"
+        },
+        "recentActivity": {
+          "title": "Activité Récente",
+          "description": "Dernières activités sur la plateforme",
+          "noActivity": "Aucune activité récente",
+          "timeLabels": {
+            "justNow": "À l'instant",
+            "hoursAgo": "Il y a {hours}h",
+            "yesterday": "Hier"
+          }
+        }
+      },
+      "roles": {
+        "ADMIN": "Admin",
+        "SELLER": "Vendeur",
+        "DELIVERY": "Livraison",
+        "PROVIDER": "Fournisseur",
+        "SUPPORT": "Support",
+        "CALL_CENTER": "Centre d'Appel",
+        "MODERATOR": "Modérateur"
+      }
     }
   }
 }

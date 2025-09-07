@@ -24,162 +24,167 @@ interface NavigationItem {
 export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
   admin: [
     {
-      name:"users",
+      name: "navigation.overview",
+      href: "/dashboard/admin",
+      icon: LayoutDashboard,
+    },
+    {
+      name: "navigation.users",
       href: "/dashboard/admin/users",
       icon: User
     },
     {
-      name: "warehouse",
+      name: "navigation.warehouse",
       href: "/dashboard/admin/warehouse",
       icon: Warehouse,
     },
     {
-      name: "orders",
+      name: "navigation.orders",
       href: "/dashboard/admin/orders",
       icon: ShoppingCart
     },
     {
-      name:"expeditions",
+      name: "navigation.expeditions",
       href: "/dashboard/admin/expeditions",
       icon: PlaneIcon
     },
     {
-      name:"delivery-riders",
+      name: "navigation.deliveryRiders",
       href:"/dashboard/admin/delivery-riders",
       icon: MapPin
     },
     {
-      name:"Invoices",
+      name: "navigation.invoices",
       href:"/dashboard/admin/invoices",
       icon: DollarSign
     },
     {
-      name: "leaderboard",
+      name: "navigation.leaderboard",
       href: "/dashboard/admin/leaderboard",
       icon: Trophy
     }
   ],
   seller: [
     {
-      name: "overview",
+      name: "navigation.overview",
       href: "/dashboard/seller",
       icon: LayoutDashboard,
     },
     {
-      name: "products",
+      name: "navigation.products",
       href: "/dashboard/seller/products",
       icon: Package,
     },
     {
-      name: "orders",
+      name: "navigation.orders",
       href: "/dashboard/seller/orders",
       icon: ShoppingCart,
     },
     {
-      name:"expeditions",
+      name: "navigation.expeditions",
       href: "/dashboard/seller/expeditions",
       icon: PlaneIcon
     },
     {
-      name:"Invoices",
+      name: "navigation.invoices",
       href:"/dashboard/seller/invoices",
       icon: DollarSign
     },
     {
-      name: "providers",
+      name: "navigation.providers",
       href: "/dashboard/seller/providers",
       icon: UserCheck,
     },
     {
-      name: "chat",
+      name: "navigation.chat",
       href: "/dashboard/seller/chat",
       icon: MessageCircle,
     },
     {
-      name: "integrations",
+      name: "navigation.integrations",
       href: "/dashboard/seller/integrations",
       icon: Zap
     },
     {
-      name: "leaderboard",
+      name: "navigation.leaderboard",
       href: "/dashboard/seller/leaderboard",
       icon: Trophy
     },
     {
-      name: "support",
+      name: "navigation.support",
       href: "/dashboard/seller/support",
       icon: HeadphonesIcon
     },
   ],
   'call_center': [
     {
-      name: "overview",
+      name: "navigation.overview",
       href: "/dashboard/call_center",
       icon: LayoutDashboard,
     },
     {
-      name: "queue",
+      name: "navigation.queue",
       href: "/dashboard/call_center/queue",
       icon: Clock,
     },
     {
-      name: "orders",
+      name: "navigation.orders",
       href: "/dashboard/call_center/orders",
       icon: ShoppingCart,
     },
     {
-      name: "customers",
+      name: "navigation.customers",
       href: "/dashboard/call_center/customers",
       icon: Users,
     },
     {
-      name: "leaderboard",
+      name: "navigation.leaderboard",
       href: "/dashboard/call_center/leaderboard",
       icon: Trophy
     },
     {
-      name: "support",
+      name: "navigation.support",
       href: "/dashboard/call_center/support",
       icon: HeadphonesIcon
     },
   ],
   'support': [
     {
-      name: "overview",
+      name: "navigation.overview",
       href: "/dashboard/support",
       icon: LayoutDashboard,
     },
   ],
   'delivery': [
     {
-      name: "leaderboard",
+      name: "navigation.leaderboard",
       href: "/dashboard/delivery/leaderboard",
       icon: Trophy
     },
   ],
   'provider': [
     {
-      name: "profile",
+      name: "navigation.profile",
       href: "/dashboard/provider/profile",
       icon: User,
     },
     {
-      name: "tokens",
+      name: "navigation.tokens",
       href: "/dashboard/provider/tokens",
       icon: Coins,
     },
     {
-      name: "chat",
+      name: "navigation.chat",
       href: "/dashboard/provider/chat",
       icon: MessageCircle,
     },
     {
-      name:"expeditions",
+      name: "navigation.expeditions",
       href:"/dashboard/provider/expeditions",
       icon:PlaneIcon
     },
     {
-      name: "leaderboard",
+      name: "navigation.leaderboard",
       href: "/dashboard/provider/leaderboard",
       icon: Trophy
     }

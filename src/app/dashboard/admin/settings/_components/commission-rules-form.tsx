@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +25,7 @@ interface CommissionRulesFormProps {
 }
 
 export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFormProps) {
+  const t = useTranslations('settings.commissionRules');
   const [newRule, setNewRule] = useState<Partial<CommissionRule>>({
     minDeliveries: 1,
     commission: 0,
@@ -64,9 +66,9 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-medium">Commission Rules</h3>
+        <h3 className="text-lg font-medium">{t('title')}</h3>
         <p className="text-sm text-muted-foreground">
-          Configure delivery-based commission rates for each warehouse
+          {t('description')}
         </p>
       </div>
 
@@ -78,19 +80,19 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
               <CardContent className="pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                   <div>
-                    <Label>Warehouse</Label>
+                    <Label>{t('labels.warehouse')}</Label>
                     <WarehouseSelector
                       value={rule.warehouseId}
                       onValueChange={(warehouseId, currency) => {
                         updateRule(index, 'warehouseId', warehouseId);
                         updateRule(index, 'currency', currency);
                       }}
-                      placeholder="Select warehouse"
+                      placeholder={t('placeholders.selectWarehouse')}
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor={`min-deliveries-${index}`}>Min Deliveries</Label>
+                    <Label htmlFor={`min-deliveries-${index}`}>{t('labels.minDeliveries')}</Label>
                     <Input
                       id={`min-deliveries-${index}`}
                       type="number"
@@ -103,7 +105,7 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                   </div>
                   
                   <div>
-                    <Label htmlFor={`commission-${index}`}>Commission</Label>
+                    <Label htmlFor={`commission-${index}`}>{t('labels.commission')}</Label>
                     <div className="space-y-1">
                       <Input
                         id={`commission-${index}`}
@@ -144,7 +146,7 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
       {/* Add New Rule Form */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Add New Commission Rule</CardTitle>
+          <CardTitle className="text-sm">{t('addNew.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -155,12 +157,12 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                 onValueChange={(warehouseId, currency) => {
                   setNewRule(prev => ({ ...prev, warehouseId, currency }));
                 }}
-                placeholder="Select warehouse"
+                placeholder={t('placeholders.selectWarehouse')}
               />
             </div>
             
             <div>
-              <Label htmlFor="new-min-deliveries">Min Deliveries</Label>
+              <Label htmlFor="new-min-deliveries">{t('labels.minDeliveries')}</Label>
               <Input
                 id="new-min-deliveries"
                 type="number"
@@ -176,7 +178,7 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
             </div>
             
             <div>
-              <Label htmlFor="new-commission">Commission</Label>
+              <Label htmlFor="new-commission">{t('labels.commission')}</Label>
               <div className="space-y-1">
                 <Input
                   id="new-commission"
@@ -206,7 +208,7 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                 disabled={!newRule.warehouseId || !newRule.minDeliveries || !newRule.commission}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Rule
+                {t('actions.addRule')}
               </Button>
             </div>
           </div>

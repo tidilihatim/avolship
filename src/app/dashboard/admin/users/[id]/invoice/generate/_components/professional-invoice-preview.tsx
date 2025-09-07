@@ -3,6 +3,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { Calendar, Percent, Tag } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -117,6 +118,7 @@ export default function ProfessionalInvoicePreview({
   preview,
   configuration,
 }: ProfessionalInvoicePreviewProps) {
+  const t = useTranslations('invoices.preview');
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -164,42 +166,42 @@ export default function ProfessionalInvoicePreview({
               <AvolShipLogo className="w-12 h-12" />
               <div>
                 <h1 className="text-2xl font-bold text-foreground">AVOLSHIP</h1>
-                <p className="text-sm text-muted-foreground">Logistics & E-commerce Platform</p>
+                <p className="text-sm text-muted-foreground">{t('companyTagline')}</p>
               </div>
             </div>
             
             {/* Company Details */}
             <div className="text-sm text-muted-foreground space-y-1">
-              <p className="font-medium text-foreground">Avolship Inc.</p>
-              <p>123 Business Avenue</p>
-              <p>Suite 400, Business District</p>
-              <p>New York, NY 10001</p>
-              <p>United States</p>
+              <p className="font-medium text-foreground">{t('companyDetails.name')}</p>
+              <p>{t('companyDetails.address1')}</p>
+              <p>{t('companyDetails.address2')}</p>
+              <p>{t('companyDetails.city')}</p>
+              <p>{t('companyDetails.country')}</p>
               <div className="pt-2 space-y-1">
-                <p>Email: contact@avolship.com</p>
-                <p>Phone: +1 (555) 123-4567</p>
-                <p>Website: www.avolship.com</p>
+                <p>{t('companyDetails.email')}</p>
+                <p>{t('companyDetails.phone')}</p>
+                <p>{t('companyDetails.website')}</p>
               </div>
             </div>
           </div>
 
           <div className="text-right space-y-4">
             <div>
-              <h2 className="text-3xl font-bold text-foreground">INVOICE</h2>
+              <h2 className="text-3xl font-bold text-foreground">{t('invoice')}</h2>
               <p className="text-lg font-medium text-muted-foreground">#{mockInvoiceNumber}</p>
             </div>
             <div className="text-sm space-y-1">
               <div className="flex justify-end gap-2">
-                <span className="text-muted-foreground">Invoice Date:</span>
+                <span className="text-muted-foreground">{t('invoiceDate')}</span>
                 <span className="font-medium text-foreground">{format(new Date(), 'MMM dd, yyyy')}</span>
               </div>
               <div className="flex justify-end gap-2">
-                <span className="text-muted-foreground">Due Date:</span>
+                <span className="text-muted-foreground">{t('dueDate')}</span>
                 <span className="font-medium text-foreground">{format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'MMM dd, yyyy')}</span>
               </div>
               <div className="flex justify-end gap-2">
-                <span className="text-muted-foreground">Status:</span>
-                <Badge variant="secondary" className="text-xs">{preview?.status || "Draft"}</Badge>
+                <span className="text-muted-foreground">{t('status')}</span>
+                <Badge variant="secondary" className="text-xs">{preview?.status || t('draft')}</Badge>
               </div>
             </div>
           </div>
@@ -212,14 +214,14 @@ export default function ProfessionalInvoicePreview({
           {/* Bill To */}
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-3 pb-1 border-b border-border">
-              Bill To
+              {t('billTo')}
             </h3>
             <div className="space-y-2 text-sm">
               <p className="font-semibold text-foreground text-base">
                 {seller.businessName || seller.name}
               </p>
               {seller.businessName && seller.name && (
-                <p className="text-muted-foreground">Contact: {seller.name}</p>
+                <p className="text-muted-foreground">{t('contact')} {seller.name}</p>
               )}
               <p className="text-muted-foreground">{seller.email}</p>
               {seller.phone && (
@@ -234,23 +236,23 @@ export default function ProfessionalInvoicePreview({
           {/* Invoice Details */}
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-3 pb-1 border-b border-border">
-              Invoice Details
+              {t('invoiceDetails')}
             </h3>
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Service Period:</span>
+                <span className="text-muted-foreground">{t('servicePeriod')}</span>
               </div>
               <p className="font-medium text-foreground pl-6">
                 {format(new Date(preview.periodStart), 'MMM dd, yyyy')} - {format(new Date(preview.periodEnd), 'MMM dd, yyyy')}
               </p>
               <div className="pt-2 space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Warehouse:</span>
+                  <span className="text-muted-foreground">{t('warehouse')}</span>
                   <span className="font-medium text-foreground">{preview.warehouseName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Currency:</span>
+                  <span className="text-muted-foreground">{t('currency')}</span>
                   <span className="font-medium text-foreground">{preview.currency}</span>
                 </div>
               </div>
@@ -263,24 +265,24 @@ export default function ProfessionalInvoicePreview({
         {/* Service Summary */}
         <div>
           <h3 className="text-lg font-semibold text-foreground mb-4 pb-1 border-b border-border">
-            Service Summary
+            {t('serviceSummary')}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-muted/50 rounded-lg border border-border">
               <div className="text-2xl font-bold text-foreground">{preview.totalOrders}</div>
-              <div className="text-sm text-muted-foreground">Orders Delivered</div>
+              <div className="text-sm text-muted-foreground">{t('ordersDelivered')}</div>
             </div>
             <div className="text-center p-4 bg-muted/50 rounded-lg border border-border">
               <div className="text-2xl font-bold text-foreground">{preview.totalExpeditions}</div>
-              <div className="text-sm text-muted-foreground">Expeditions</div>
+              <div className="text-sm text-muted-foreground">{t('expeditions')}</div>
             </div>
             <div className="text-center p-4 bg-muted/50 rounded-lg border border-border">
               <div className="text-2xl font-bold text-foreground">{preview.totalProducts}</div>
-              <div className="text-sm text-muted-foreground">Unique Products</div>
+              <div className="text-sm text-muted-foreground">{t('uniqueProducts')}</div>
             </div>
             <div className="text-center p-4 bg-muted/50 rounded-lg border border-border">
               <div className="text-2xl font-bold text-foreground">{preview.totalQuantity}</div>
-              <div className="text-sm text-muted-foreground">Total Quantity</div>
+              <div className="text-sm text-muted-foreground">{t('totalQuantity')}</div>
             </div>
           </div>
         </div>
@@ -290,15 +292,15 @@ export default function ProfessionalInvoicePreview({
         {/* Invoice Line Items */}
         <div>
           <h3 className="text-lg font-semibold text-foreground mb-4 pb-1 border-b border-border">
-            Service Details
+            {t('serviceDetails')}
           </h3>
           <div className="border border-border rounded-lg overflow-hidden">
             <table className="w-full">
               <thead>
                 <tr className="bg-muted/50 border-b border-border">
-                  <th className="text-left p-4 font-semibold text-foreground">Description</th>
-                  <th className="text-center p-4 font-semibold text-foreground">Quantity</th>
-                  <th className="text-right p-4 font-semibold text-foreground">Amount</th>
+                  <th className="text-left p-4 font-semibold text-foreground">{t('description')}</th>
+                  <th className="text-center p-4 font-semibold text-foreground">{t('quantity')}</th>
+                  <th className="text-right p-4 font-semibold text-foreground">{t('amount')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -307,12 +309,12 @@ export default function ProfessionalInvoicePreview({
                   <tr className="border-b border-border">
                     <td className="p-4">
                       <div>
-                        <p className="font-medium text-foreground">Order Processing & Commission</p>
+                        <p className="font-medium text-foreground">{t('orderProcessing')}</p>
                         <p className="text-sm text-muted-foreground">
-                          Processing and commission for {preview.totalOrders} delivered orders
+                          {t('orderProcessingDesc', { count: preview.totalOrders })}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {preview.totalProducts} unique products • {preview.totalQuantity} total items
+                          {t('orderProductsInfo', { products: preview.totalProducts, quantity: preview.totalQuantity })}
                         </p>
                       </div>
                     </td>
@@ -328,9 +330,9 @@ export default function ProfessionalInvoicePreview({
                   <tr className="border-b border-border">
                     <td className="p-4">
                       <div>
-                        <p className="font-medium text-foreground">Expedition Processing & Commission</p>
+                        <p className="font-medium text-foreground">{t('expeditionProcessing')}</p>
                         <p className="text-sm text-muted-foreground">
-                          Processing and commission for {preview.totalExpeditions} delivered expeditions
+                          {t('expeditionProcessingDesc', { count: preview.totalExpeditions })}
                         </p>
                       </div>
                     </td>
@@ -352,19 +354,19 @@ export default function ProfessionalInvoicePreview({
             <Separator />
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-4 pb-1 border-b border-border">
-                Product Breakdown
+                {t('productBreakdown')}
               </h3>
               <div className="border border-border rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[800px]">
                   <thead>
                     <tr className="bg-muted/50 border-b border-border">
-                      <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Product Code</th>
-                      <th className="text-left p-3 font-semibold text-foreground" style={{minWidth: '200px'}}>Product Name</th>
-                      <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Qty</th>
-                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Original</th>
-                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Discount</th>
-                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Final Sales</th>
+                      <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>{t('productCode')}</th>
+                      <th className="text-left p-3 font-semibold text-foreground" style={{minWidth: '200px'}}>{t('productName')}</th>
+                      <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>{t('qty')}</th>
+                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>{t('original')}</th>
+                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>{t('discount')}</th>
+                      <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>{t('finalSales')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -377,7 +379,7 @@ export default function ProfessionalInvoicePreview({
                             {product.discountAmount > 0 && (
                               <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200 flex-shrink-0">
                                 <Percent className="h-3 w-3 mr-1" />
-                                {product.discountPercentage.toFixed(1)}% off
+                                {product.discountPercentage.toFixed(1)}% {t('off')}
                               </Badge>
                             )}
                           </div>
@@ -407,7 +409,7 @@ export default function ProfessionalInvoicePreview({
                       </tr>
                     ))}
                     <tr className="bg-muted/50 border-b border-border">
-                      <td className="p-3 font-semibold text-foreground" colSpan={2}>Total</td>
+                      <td className="p-3 font-semibold text-foreground" colSpan={2}>{t('total')}</td>
                       <td className="p-3 text-center font-semibold text-foreground whitespace-nowrap">{preview.totalQuantity}</td>
                       <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
                         {calculateProductTotals().discountAmount > 0 ? (
@@ -443,20 +445,20 @@ export default function ProfessionalInvoicePreview({
             <Separator />
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-4 pb-1 border-b border-border">
-                Order Breakdown
+                {t('orderBreakdown')}
               </h3>
               <div className="border border-border rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[900px]">
                     <thead>
                       <tr className="bg-muted/50 border-b border-border">
-                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Order ID</th>
-                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '150px'}}>Customer</th>
-                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Products</th>
-                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Qty</th>
-                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Original</th>
-                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Discount</th>
-                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Final Total</th>
+                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>{t('orderIdHeader')}</th>
+                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '150px'}}>{t('customer')}</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>{t('products')}</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>{t('qty')}</th>
+                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>{t('original')}</th>
+                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>{t('discount')}</th>
+                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>{t('finalTotal')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -495,7 +497,7 @@ export default function ProfessionalInvoicePreview({
                         </tr>
                       ))}
                       <tr className="bg-muted/50 border-b border-border">
-                        <td className="p-3 font-semibold text-foreground" colSpan={2}>Total Orders</td>
+                        <td className="p-3 font-semibold text-foreground" colSpan={2}>{t('totalOrders')}</td>
                         <td className="p-3 text-center font-semibold text-foreground whitespace-nowrap">{preview.orderData.reduce((sum, order) => sum + order.productCount, 0)}</td>
                         <td className="p-3 text-center font-semibold text-foreground whitespace-nowrap">{preview.orderData.reduce((sum, order) => sum + order.totalQuantity, 0)}</td>
                         <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
@@ -534,18 +536,18 @@ export default function ProfessionalInvoicePreview({
             <Separator />
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-4 pb-1 border-b border-border">
-                Expedition Breakdown
+                {t('expeditionBreakdown')}
               </h3>
               <div className="border border-border rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[600px]">
                     <thead>
                       <tr className="bg-muted/50 border-b border-border">
-                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>Expedition Code</th>
-                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Date</th>
-                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Status</th>
-                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>Payment</th>
-                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>Value</th>
+                        <th className="text-left p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '120px'}}>{t('expeditionCode')}</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>{t('date')}</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>{t('status')}</th>
+                        <th className="text-center p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '80px'}}>{t('payment')}</th>
+                        <th className="text-right p-3 font-semibold text-foreground whitespace-nowrap" style={{minWidth: '100px'}}>{t('value')}</th>
                       </tr>
                     </thead>
                   <tbody>
@@ -568,7 +570,7 @@ export default function ProfessionalInvoicePreview({
                             variant={expedition.isPaid ? 'default' : 'destructive'}
                             className="text-xs whitespace-nowrap"
                           >
-                            {expedition.isPaid ? 'Paid' : 'Unpaid'}
+                            {expedition.isPaid ? t('paid') : t('unpaid')}
                           </Badge>
                         </td>
                         <td className="p-3 text-right font-medium text-foreground text-sm whitespace-nowrap">
@@ -577,7 +579,7 @@ export default function ProfessionalInvoicePreview({
                       </tr>
                     ))}
                     <tr className="bg-muted/50 border-b border-border">
-                      <td className="p-3 font-semibold text-foreground" colSpan={4}>Total Expeditions</td>
+                      <td className="p-3 font-semibold text-foreground" colSpan={4}>{t('totalExpeditions')}</td>
                       <td className="p-3 text-right font-semibold text-foreground whitespace-nowrap">
                         {formatCurrency(preview.expeditionData.reduce((sum, exp) => sum + exp.totalValue, 0))}
                       </td>
@@ -596,50 +598,50 @@ export default function ProfessionalInvoicePreview({
             <Separator />
             <div>
               <h3 className="text-lg font-semibold text-foreground mb-4 pb-1 border-b border-border">
-                Service Fees & Charges
+                {t('serviceFeesCharges')}
               </h3>
               <div className="border border-border rounded-lg overflow-hidden">
                 <table className="w-full">
                   <thead>
                     <tr className="bg-muted/50 border-b border-border">
-                      <th className="text-left p-4 font-semibold text-foreground">Fee Description</th>
-                      <th className="text-right p-4 font-semibold text-foreground">Amount</th>
+                      <th className="text-left p-4 font-semibold text-foreground">{t('feeDescription')}</th>
+                      <th className="text-right p-4 font-semibold text-foreground">{t('amount')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {configuration.fees.confirmationFee > 0 && (
                       <tr className="border-b border-border">
-                        <td className="p-4 text-foreground">Order Confirmation Processing Fee</td>
+                        <td className="p-4 text-foreground">{t('fees.confirmationFee')}</td>
                         <td className="p-4 text-right text-foreground">{formatCurrency(configuration.fees.confirmationFee)}</td>
                       </tr>
                     )}
                     {configuration.fees.serviceFee > 0 && (
                       <tr className="border-b border-border">
-                        <td className="p-4 text-foreground">Platform Service Fee</td>
+                        <td className="p-4 text-foreground">{t('fees.serviceFee')}</td>
                         <td className="p-4 text-right text-foreground">{formatCurrency(configuration.fees.serviceFee)}</td>
                       </tr>
                     )}
                     {configuration.fees.warehouseFee > 0 && (
                       <tr className="border-b border-border">
-                        <td className="p-4 text-foreground">Warehouse Management Fee</td>
+                        <td className="p-4 text-foreground">{t('fees.warehouseFee')}</td>
                         <td className="p-4 text-right text-foreground">{formatCurrency(configuration.fees.warehouseFee)}</td>
                       </tr>
                     )}
                     {configuration.fees.shippingFee > 0 && (
                       <tr className="border-b border-border">
-                        <td className="p-4 text-foreground">Shipping & Handling Fee</td>
+                        <td className="p-4 text-foreground">{t('fees.shippingFee')}</td>
                         <td className="p-4 text-right text-foreground">{formatCurrency(configuration.fees.shippingFee)}</td>
                       </tr>
                     )}
                     {configuration.fees.processingFee > 0 && (
                       <tr className="border-b border-border">
-                        <td className="p-4 text-foreground">Transaction Processing Fee</td>
+                        <td className="p-4 text-foreground">{t('fees.processingFee')}</td>
                         <td className="p-4 text-right text-foreground">{formatCurrency(configuration.fees.processingFee)}</td>
                       </tr>
                     )}
                     {configuration.fees.expeditionFee > 0 && (
                       <tr className="border-b border-border">
-                        <td className="p-4 text-foreground">Expedition Management Fee</td>
+                        <td className="p-4 text-foreground">{t('fees.expeditionFee')}</td>
                         <td className="p-4 text-right text-foreground">{formatCurrency(configuration.fees.expeditionFee)}</td>
                       </tr>
                     )}
@@ -658,13 +660,13 @@ export default function ProfessionalInvoicePreview({
             <div className="w-full max-w-md space-y-3">
               <div className="space-y-2">
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-muted-foreground">Gross Amount:</span>
+                  <span className="text-muted-foreground">{t('grossAmount')}</span>
                   <span className="font-medium text-foreground">{formatCurrency(calculateSubtotal())}</span>
                 </div>
                 
                 {calculateTotalFees() > 0 && (
                   <div className="flex justify-between items-center py-2">
-                    <span className="text-muted-foreground">Add: Service Fees</span>
+                    <span className="text-muted-foreground">{t('addServiceFees')}</span>
                     <span className="font-medium text-foreground">+{formatCurrency(calculateTotalFees())}</span>
                   </div>
                 )}
@@ -673,7 +675,7 @@ export default function ProfessionalInvoicePreview({
               <Separator />
               
               <div className="flex justify-between items-center py-3 text-xl font-bold">
-                <span className="text-foreground">Net Amount Payable:</span>
+                <span className="text-foreground">{t('netAmountPayable')}</span>
                 <span className="text-foreground">{formatCurrency(calculateNetAmount())}</span>
               </div>
             </div>
@@ -684,7 +686,7 @@ export default function ProfessionalInvoicePreview({
         <div className="space-y-6">
           {configuration.notes && (
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Invoice Notes:</h4>
+              <h4 className="font-semibold text-foreground mb-2">{t('invoiceNotes')}</h4>
               <div className="p-4 bg-muted/50 rounded-lg border border-border">
                 <p className="text-sm text-foreground whitespace-pre-wrap">
                   {configuration.notes}
@@ -695,7 +697,7 @@ export default function ProfessionalInvoicePreview({
           
           {configuration.terms && (
             <div>
-              <h4 className="font-semibold text-foreground mb-2">Terms & Conditions:</h4>
+              <h4 className="font-semibold text-foreground mb-2">{t('termsConditions')}</h4>
               <div className="p-4 bg-muted/50 rounded-lg border border-border">
                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
                   {configuration.terms}
@@ -710,13 +712,13 @@ export default function ProfessionalInvoicePreview({
         {/* Footer */}
         <div className="text-center space-y-2">
           <p className="text-sm font-medium text-foreground">
-            Thank you for your business!
+            {t('thankYou')}
           </p>
           <p className="text-xs text-muted-foreground">
-            This invoice was generated on {format(new Date(), 'PPP')} by Avolship Platform
+            {t('generatedOn', { date: format(new Date(), 'PPP') })}
           </p>
           <p className="text-xs text-muted-foreground">
-            For questions regarding this invoice, please contact invoicing@avolship.com
+            {t('questionsContact')}
           </p>
         </div>
       </div>

@@ -4,6 +4,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { RidersPagination } from '../_hooks/useDeliveryRiders';
 
 interface RidersPaginationProps {
@@ -17,6 +18,7 @@ export const RidersPaginationComponent: React.FC<RidersPaginationProps> = ({
   onPageChange,
   onLimitChange
 }) => {
+  const t = useTranslations('deliveryRiders.pagination');
   const { currentPage, totalPages, totalRiders, limit } = pagination;
 
   if (totalRiders === 0) return null;
@@ -60,13 +62,13 @@ export const RidersPaginationComponent: React.FC<RidersPaginationProps> = ({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
       {/* Results info */}
       <div className="text-sm text-muted-foreground">
-        Showing {startItem} to {endItem} of {totalRiders} riders
+        {t('showing', { start: startItem, end: endItem, total: totalRiders })}
       </div>
 
       <div className="flex items-center gap-4">
         {/* Items per page */}
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Show:</span>
+          <span className="text-sm text-muted-foreground">{t('show')}:</span>
           <Select
             value={limit.toString()}
             onValueChange={(value) => onLimitChange(parseInt(value))}
