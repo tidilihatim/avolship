@@ -112,11 +112,6 @@ export default function Sidebar({
       href: `/dashboard/${userType}/settings`,
       icon: Settings,
     },
-    {
-      name: "help",
-      href: `/dashboard/${userType}/help`,
-      icon: HelpCircle,
-    },
   ];
 
   // Desktop Sidebar

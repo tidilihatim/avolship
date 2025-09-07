@@ -63,6 +63,11 @@ export interface IUser extends Document {
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   lastActive?: Date;
+  
+  // Profile image fields
+  profileImage?: string; // S3 URL for profile image
+  profileImageKey?: string; // S3 key for profile image
+  
   createdAt: Date;
   updatedAt: Date;
 
@@ -204,6 +209,16 @@ const UserSchema = new Schema<IUser>(
     },
     lastActive: {
       type: Date,
+    },
+    
+    // Profile image fields
+    profileImage: {
+      type: String,
+      trim: true,
+    },
+    profileImageKey: {
+      type: String,
+      trim: true,
     },
   },
   {

@@ -112,16 +112,17 @@ export function RevenueChartComponent({ data }: RevenueChartProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px] sm:h-[350px] lg:h-[400px]">
-          <LineChart 
-            data={formattedData} 
-            margin={{ 
-              top: 20, 
-              right: 15, 
-              left: 15, 
-              bottom: 60 
-            }}
-          >
+        <ChartContainer config={chartConfig} className="h-[300px] sm:h-[350px] lg:h-[400px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart 
+              data={formattedData} 
+              margin={{ 
+                top: 20, 
+                right: 15, 
+                left: 15, 
+                bottom: 60 
+              }}
+            >
             <XAxis 
               dataKey="date" 
               tick={{ fontSize: 11 }}
@@ -153,7 +154,8 @@ export function RevenueChartComponent({ data }: RevenueChartProps) {
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}
             />
-          </LineChart>
+            </LineChart>
+          </ResponsiveContainer>
         </ChartContainer>
         <div className="grid grid-cols-2 gap-4 mt-4">
           <div className="flex items-center gap-2">

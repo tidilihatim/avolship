@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { getCurrentUserProfile } from "@/app/actions/profile";
 import {
   Bell,
   Search,
@@ -77,11 +78,26 @@ export default function Navbar({
   const [searchQuery, setSearchQuery] = useState("");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [currentLocale, setCurrentLocale] = useState("en");
+  const [userProfile, setUserProfile] = useState<any>(null);
   const { status, data: session } = useSession();
 
   useEffect(() => {
     getUserLocale().then((locale) => setCurrentLocale(locale));
   }, []);
+
+  // Fetch user profile including profile image
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (status === "authenticated") {
+        const result = await getCurrentUserProfile();
+        if (result.success) {
+          setUserProfile(result.data);
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, [status]);
 
   const handleLanguageChange = async (locale: Locale) => {
     await setUserLocale(locale);
@@ -262,7 +278,10 @@ export default function Navbar({
                 <Avatar className="h-10 w-10">
                   {status === "authenticated" ? (
                     <>
-                      <AvatarImage src="/avatars/user.jpg" alt="User" />
+                      <AvatarImage 
+                        src={userProfile?.profileImage || "/avatars/user.jpg"} 
+                        alt="User" 
+                      />
                       <AvatarFallback className="bg-primary text-primary-foreground font-bold">
                         {session?.user?.name?.charAt(0)?.toUpperCase() +
                           session?.user?.name
@@ -307,13 +326,11 @@ export default function Navbar({
                   <span>{t("dashboard.navbar.user.profile")}</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-muted">
+              <DropdownMenuItem className="cursor-pointer hover:bg-muted" asChild>
+                <Link href={`/dashboard/${userType}/settings`}>
                 <Settings className="mr-3 h-4 w-4" />
                 <span>{t("dashboard.navbar.user.settings")}</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer hover:bg-muted">
-                <Bell className="mr-3 h-4 w-4" />
-                <span>{t("dashboard.navbar.user.notifications")}</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

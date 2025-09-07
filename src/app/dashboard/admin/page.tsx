@@ -251,11 +251,11 @@ export default function AdminOverviewPage() {
 
         {/* Bottom Charts Row */}
         <div className="grid gap-4 sm:gap-6 grid-cols-1 xl:grid-cols-2">
-          {loadingStates.performers ? (
+          {/* {loadingStates.performers ? (
             <TopPerformersSkeleton />
           ) : (
             <TopPerformersComponent data={data.topPerformers} />
-          )}
+          )} */}
           
           {loadingStates.activity ? (
             <RecentActivitySkeleton />

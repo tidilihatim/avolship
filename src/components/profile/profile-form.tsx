@@ -10,8 +10,8 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Save, Eye, EyeOff } from 'lucide-react';
-import { updateUserProfile, changePassword } from '@/app/actions/profile';
+import { Loader2, Save, Eye, EyeOff, Upload, User } from 'lucide-react';
+import { updateUserProfile, changePassword, uploadProfileImage } from '@/app/actions/profile';
 import { UserRole } from '@/lib/db/models/user';
 import { toast } from 'sonner';
 import { COUNTRIES } from '@/constants/countries';
@@ -23,9 +23,11 @@ interface ProfileFormProps {
 export function ProfileForm({ user }: ProfileFormProps) {
   const [isPending, startTransition] = useTransition();
   const [isPasswordPending, startPasswordTransition] = useTransition();
+  const [isImageUploading, startImageTransition] = useTransition();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [profileImageUrl, setProfileImageUrl] = useState(user.profileImage || null);
 
   // Profile form state
   const [formData, setFormData] = useState({
@@ -98,8 +100,89 @@ export function ProfileForm({ user }: ProfileFormProps) {
     setPasswordData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    startImageTransition(async () => {
+      const formData = new FormData();
+      formData.append('profileImage', file);
+
+      const result = await uploadProfileImage(formData);
+      
+      if (result.success) {
+        setProfileImageUrl(result.profileImageUrl || null);
+        toast.success(result.message || 'Profile image updated successfully');
+      } else {
+        toast.error(result.message || 'Failed to upload profile image');
+      }
+    });
+  };
+
   return (
     <div className="space-y-6">
+      {/* Profile Image Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Image</CardTitle>
+          <CardDescription>
+            Upload a profile picture to personalize your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center space-x-6">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+                {profileImageUrl ? (
+                  <img
+                    src={profileImageUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <User className="w-12 h-12 text-gray-400" />
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="profileImage" className="cursor-pointer">
+                <div className="flex items-center space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isImageUploading}
+                    className="cursor-pointer"
+                    asChild
+                  >
+                    <div>
+                      {isImageUploading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Upload className="mr-2 h-4 w-4" />
+                      )}
+                      {isImageUploading ? 'Uploading...' : 'Upload Image'}
+                    </div>
+                  </Button>
+                </div>
+                <Input
+                  id="profileImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={isImageUploading}
+                />
+              </Label>
+              <p className="text-xs text-muted-foreground mt-2">
+                Supported formats: JPEG, PNG, GIF, WebP. Max size: 5MB
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Basic Information Card */}
       <Card>
         <CardHeader>

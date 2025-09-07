@@ -62,13 +62,6 @@ export function StatsCards({ stats }: StatsCardsProps) {
       trend: 'Operational'
     },
     {
-      title: 'Total Revenue',
-      value: formatCurrency(stats.totalRevenue),
-      icon: DollarSign,
-      description: 'Lifetime earnings',
-      trend: 'All time'
-    },
-    {
       title: 'Pending Users',
       value: formatNumber(stats.pendingUsers),
       icon: UserCheck,
