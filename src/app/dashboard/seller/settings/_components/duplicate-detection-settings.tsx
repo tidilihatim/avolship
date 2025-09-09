@@ -175,9 +175,9 @@ export default function DuplicateDetectionSettings() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-lg">Detection Rules</CardTitle>
+                  <CardTitle className="text-lg">{t('detectionRulesTitle')}</CardTitle>
                   <CardDescription>
-                    Configure specific rules for detecting duplicate orders
+                    {t('detectionRulesDescription')}
                   </CardDescription>
                 </div>
                 <Button onClick={handleAddRule} size="sm">

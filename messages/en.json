@@ -186,7 +186,18 @@
       "tokens": {
         "title": "Token Boost System",
         "description": "Configure token-based provider profile boosting and advertising"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Manage email and in-app notification preferences"
+      },
+      "duplicates": {
+        "title": "Duplicate Detection",
+        "description": "Configure automatic duplicate order detection rules"
       }
+    },
+    "badges": {
+      "new": "New"
     },
     "general": {
       "autoAssign": {
@@ -363,10 +374,119 @@
         "archiveFailed": "Failed to archive token package"
       }
     },
+    "notifications": {
+      "title": "Notification Settings",
+      "description": "Configure how and when you receive notifications",
+      "loadFailed": "Failed to Load Settings",
+      "loadFailedDescription": "Unable to load your notification preferences. Please try refreshing the page.",
+      "preferences": {
+        "title": "Notification Preferences",
+        "description": "Choose which types of notifications you want to receive"
+      },
+      "inAppNotifications": {
+        "title": "In-App Notifications",
+        "description": "Receive notifications within the application while you're online"
+      },
+      "emailNotifications": {
+        "title": "Email Notifications",
+        "description": "Receive important updates and alerts via email"
+      },
+      "summary": {
+        "title": "Current Settings",
+        "description": "Overview of your current notification preferences"
+      },
+      "messages": {
+        "errorLoading": "Failed to load notification settings",
+        "settingsSaved": "Notification settings saved successfully",
+        "errorSaving": "Failed to save notification settings"
+      }
+    },
     "warehouseSelector": {
       "selectWarehouse": "Select warehouse...",
       "loadingWarehouses": "Loading warehouses...",
       "currency": "Currency"
+    },
+    "duplicateDetection": {
+      "title": "Duplicate Order Detection",
+      "description": "Configure rules to automatically detect and prevent duplicate orders",
+      "enableToggle": "Enable duplicate detection",
+      "addRule": "Add New Rule",
+      "editRule": "Edit Rule",
+      "detectionRulesTitle": "Detection Rules",
+      "detectionRulesDescription": "Configure specific rules for detecting duplicate orders",
+      "ruleName": "Rule Name",
+      "ruleNamePlaceholder": "Enter rule name",
+      "conditions": "Conditions",
+      "conditionsDescription": "Select which fields to compare when detecting duplicates",
+      "logicalOperator": "Logical Operator",
+      "timeWindow": "Time Window",
+      "timeWindowDescription": "Orders will be compared within this time period",
+      "isActive": "Active",
+      "inactive": "Inactive",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "noRules": "No Rules Configured",
+      "noRulesDescription": "Create your first rule to start detecting duplicate orders",
+      "table": {
+        "ruleName": "Rule Name",
+        "conditions": "Conditions",
+        "logic": "Logic",
+        "timeWindow": "Time Window",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "fields": {
+        "customerName": "Customer Name",
+        "customerPhone": "Customer Phone",
+        "customerAddress": "Customer Address",
+        "productId": "Product ID",
+        "productName": "Product Name",
+        "productCode": "Product Code",
+        "orderTotal": "Order Total",
+        "warehouse": "Warehouse"
+      },
+      "operators": {
+        "and": "AND",
+        "or": "OR"
+      },
+      "timeUnits": {
+        "minutes": "minutes",
+        "hours": "hours",
+        "days": "days"
+      },
+      "categories": {
+        "customer": "Customer Information",
+        "product": "Product Details",
+        "order": "Order Information"
+      },
+      "tooltips": {
+        "activateRule": "Activate rule",
+        "deactivateRule": "Deactivate rule",
+        "editRule": "Edit rule",
+        "deleteRule": "Delete rule"
+      },
+      "dialogs": {
+        "deleteRule": {
+          "title": "Delete Rule",
+          "description": "Are you sure you want to delete the rule \"{ruleName}\"? This action cannot be undone."
+        }
+      },
+      "common": {
+        "cancel": "Cancel",
+        "delete": "Delete"
+      },
+      "messages": {
+        "errorLoading": "Failed to load settings",
+        "settingsSaved": "Settings saved successfully",
+        "errorSaving": "Failed to save settings",
+        "ruleAdded": "Rule added successfully",
+        "ruleUpdated": "Rule updated successfully",
+        "ruleDeleted": "Rule deleted successfully",
+        "ruleNameRequired": "Rule name is required",
+        "conditionsRequired": "At least one condition is required",
+        "timeWindowRequired": "Time window is required"
+      }
     }
   },
   "navigation": {

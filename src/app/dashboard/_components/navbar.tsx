@@ -104,74 +104,6 @@ export default function Navbar({
     setCurrentLocale(locale);
   };
 
-  // Mock notifications data
-  const notifications: Notification[] = [
-    {
-      id: "1",
-      title: "Low Stock Alert",
-      message: 'Product "Wireless Headphones" has only 5 items left',
-      time: "2 minutes ago",
-      type: "warning",
-      read: false,
-      icon: Bell,
-    },
-    {
-      id: "2",
-      title: "New Order Received",
-      message: "Order #12345 from John Doe - $299.99",
-      time: "5 minutes ago",
-      type: "success",
-      read: false,
-      icon: MessageSquare,
-    },
-    {
-      id: "3",
-      title: "Payment Received",
-      message: "$1,250.00 payment processed successfully",
-      time: "1 hour ago",
-      type: "success",
-      read: true,
-      icon: Calendar,
-    },
-    {
-      id: "4",
-      title: "Inventory Update",
-      message: "Weekly inventory sync completed",
-      time: "3 hours ago",
-      type: "info",
-      read: true,
-      icon: Clock,
-    },
-  ];
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const getNotificationColor = (type: string) => {
-    switch (type) {
-      case "warning":
-        return "border-l-yellow-500 bg-yellow-50 dark:bg-yellow-950/20 dark:border-l-yellow-400";
-      case "success":
-        return "border-l-green-500 bg-green-50 dark:bg-green-950/20 dark:border-l-green-400";
-      case "error":
-        return "border-l-red-500 bg-red-50 dark:bg-red-950/20 dark:border-l-red-400";
-      default:
-        return "border-l-blue-500 bg-blue-50 dark:bg-blue-950/20 dark:border-l-blue-400";
-    }
-  };
-
-  const getNotificationIconStyle = (type: string) => {
-    switch (type) {
-      case "warning":
-        return "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400";
-      case "success":
-        return "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400";
-      case "error":
-        return "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400";
-      default:
-        return "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400";
-    }
-  };
-
   return (
     <header className="h-16 bg-background/95 backdrop-blur-xl border-b border-border sticky top-0 z-30 shadow-sm">
       <div className="flex h-full items-center justify-between px-6">
@@ -278,9 +210,9 @@ export default function Navbar({
                 <Avatar className="h-10 w-10">
                   {status === "authenticated" ? (
                     <>
-                      <AvatarImage 
-                        src={userProfile?.profileImage || "/avatars/user.jpg"} 
-                        alt="User" 
+                      <AvatarImage
+                        src={userProfile?.profileImage || "/avatars/user.jpg"}
+                        alt="User"
                       />
                       <AvatarFallback className="bg-primary text-primary-foreground font-bold">
                         {session?.user?.name?.charAt(0)?.toUpperCase() +
@@ -320,16 +252,18 @@ export default function Navbar({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer hover:bg-muted" asChild>
-                <Link href={`/dashboard/${userType}/profile`}>
-                  <User2 className="mr-3 h-4 w-4" />
-                  <span>{t("dashboard.navbar.user.profile")}</span>
-                </Link>
-              </DropdownMenuItem>
+              {userType !== "admin" && (
+                <DropdownMenuItem className="cursor-pointer hover:bg-muted" asChild>
+                  <Link href={`/dashboard/${userType}/profile`}>
+                    <User2 className="mr-3 h-4 w-4" />
+                    <span>{t("dashboard.navbar.user.profile")}</span>
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem className="cursor-pointer hover:bg-muted" asChild>
                 <Link href={`/dashboard/${userType}/settings`}>
-                <Settings className="mr-3 h-4 w-4" />
-                <span>{t("dashboard.navbar.user.settings")}</span>
+                  <Settings className="mr-3 h-4 w-4" />
+                  <span>{t("dashboard.navbar.user.settings")}</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

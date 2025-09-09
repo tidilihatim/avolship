@@ -18,24 +18,8 @@ export interface DiscountSettings {
  * Notification settings for the seller
  */
 export interface NotificationSettings {
-  emailNotifications: {
-    orderUpdates: boolean;
-    paymentAlerts: boolean;
-    stockAlerts: boolean;
-    weeklyReports: boolean;
-    monthlyReports: boolean;
-  };
-  smsNotifications: {
-    urgentAlerts: boolean;
-    orderConfirmations: boolean;
-    paymentUpdates: boolean;
-  };
-  inAppNotifications: {
-    all: boolean;
-    orderUpdates: boolean;
-    messages: boolean;
-    systemUpdates: boolean;
-  };
+  inAppNotifications: boolean;
+  emailNotifications: boolean;
   updatedAt: Date;
 }
 
@@ -155,45 +139,13 @@ const SellerSettingsSchema = new Schema<ISellerSettings>(
     
     // Notification settings
     notificationSettings: {
-      emailNotifications: {
-        orderUpdates: {
-          type: Boolean,
-          default: true,
-        },
-        paymentAlerts: {
-          type: Boolean,
-          default: true,
-        },
-        stockAlerts: {
-          type: Boolean,
-          default: true,
-        },
-        weeklyReports: {
-          type: Boolean,
-          default: false,
-        },
-        monthlyReports: {
-          type: Boolean,
-          default: false,
-        },
-      },
       inAppNotifications: {
-        all: {
-          type: Boolean,
-          default: true,
-        },
-        orderUpdates: {
-          type: Boolean,
-          default: true,
-        },
-        messages: {
-          type: Boolean,
-          default: true,
-        },
-        systemUpdates: {
-          type: Boolean,
-          default: true,
-        },
+        type: Boolean,
+        default: true,
+      },
+      emailNotifications: {
+        type: Boolean,
+        default: true,
       },
       updatedAt: {
         type: Date,

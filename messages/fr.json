@@ -186,7 +186,18 @@
       "tokens": {
         "title": "Système de Boost par Jetons",
         "description": "Configurer le boost de profil fournisseur basé sur les jetons et la publicité"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Gérer les préférences de notification par email et dans l'application"
+      },
+      "duplicates": {
+        "title": "Détection des Doublons",
+        "description": "Configurer les règles de détection automatique des commandes dupliquées"
       }
+    },
+    "badges": {
+      "new": "Nouveau"
     },
     "general": {
       "autoAssign": {
@@ -363,10 +374,119 @@
         "archiveFailed": "Échec de l'archivage du paquet de jetons"
       }
     },
+    "notifications": {
+      "title": "Paramètres de Notification",
+      "description": "Configurez comment et quand vous recevez des notifications",
+      "loadFailed": "Échec du Chargement des Paramètres",
+      "loadFailedDescription": "Impossible de charger vos préférences de notification. Veuillez rafraîchir la page.",
+      "preferences": {
+        "title": "Préférences de Notification",
+        "description": "Choisissez les types de notifications que vous souhaitez recevoir"
+      },
+      "inAppNotifications": {
+        "title": "Notifications Dans l'Application",
+        "description": "Recevez des notifications dans l'application lorsque vous êtes en ligne"
+      },
+      "emailNotifications": {
+        "title": "Notifications par Email",
+        "description": "Recevez des mises à jour importantes et des alertes par email"
+      },
+      "summary": {
+        "title": "Paramètres Actuels",
+        "description": "Aperçu de vos préférences de notification actuelles"
+      },
+      "messages": {
+        "errorLoading": "Échec du chargement des paramètres de notification",
+        "settingsSaved": "Paramètres de notification enregistrés avec succès",
+        "errorSaving": "Échec de l'enregistrement des paramètres de notification"
+      }
+    },
     "warehouseSelector": {
       "selectWarehouse": "Sélectionner un entrepôt...",
       "loadingWarehouses": "Chargement des entrepôts...",
       "currency": "Devise"
+    },
+    "duplicateDetection": {
+      "title": "Détection des Commandes Dupliquées",
+      "description": "Configurez des règles pour détecter et prévenir automatiquement les commandes dupliquées",
+      "enableToggle": "Activer la détection des doublons",
+      "addRule": "Ajouter une Nouvelle Règle",
+      "editRule": "Modifier la Règle",
+      "detectionRulesTitle": "Règles de Détection",
+      "detectionRulesDescription": "Configurez des règles spécifiques pour détecter les commandes dupliquées",
+      "ruleName": "Nom de la Règle",
+      "ruleNamePlaceholder": "Saisir le nom de la règle",
+      "conditions": "Conditions",
+      "conditionsDescription": "Sélectionnez les champs à comparer lors de la détection des doublons",
+      "logicalOperator": "Opérateur Logique",
+      "timeWindow": "Fenêtre Temporelle",
+      "timeWindowDescription": "Les commandes seront comparées dans cette période",
+      "isActive": "Actif",
+      "inactive": "Inactif",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "noRules": "Aucune Règle Configurée",
+      "noRulesDescription": "Créez votre première règle pour commencer à détecter les commandes dupliquées",
+      "table": {
+        "ruleName": "Nom de la Règle",
+        "conditions": "Conditions",
+        "logic": "Logique",
+        "timeWindow": "Fenêtre Temporelle",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "fields": {
+        "customerName": "Nom du Client",
+        "customerPhone": "Téléphone du Client",
+        "customerAddress": "Adresse du Client",
+        "productId": "ID du Produit",
+        "productName": "Nom du Produit",
+        "productCode": "Code du Produit",
+        "orderTotal": "Total de la Commande",
+        "warehouse": "Entrepôt"
+      },
+      "operators": {
+        "and": "ET",
+        "or": "OU"
+      },
+      "timeUnits": {
+        "minutes": "minutes",
+        "hours": "heures",
+        "days": "jours"
+      },
+      "categories": {
+        "customer": "Informations Client",
+        "product": "Détails du Produit",
+        "order": "Informations de Commande"
+      },
+      "tooltips": {
+        "activateRule": "Activer la règle",
+        "deactivateRule": "Désactiver la règle",
+        "editRule": "Modifier la règle",
+        "deleteRule": "Supprimer la règle"
+      },
+      "dialogs": {
+        "deleteRule": {
+          "title": "Supprimer la Règle",
+          "description": "Êtes-vous sûr de vouloir supprimer la règle \"{ruleName}\" ? Cette action ne peut pas être annulée."
+        }
+      },
+      "common": {
+        "cancel": "Annuler",
+        "delete": "Supprimer"
+      },
+      "messages": {
+        "errorLoading": "Échec du chargement des paramètres",
+        "settingsSaved": "Paramètres enregistrés avec succès",
+        "errorSaving": "Échec de l'enregistrement des paramètres",
+        "ruleAdded": "Règle ajoutée avec succès",
+        "ruleUpdated": "Règle mise à jour avec succès",
+        "ruleDeleted": "Règle supprimée avec succès",
+        "ruleNameRequired": "Le nom de la règle est requis",
+        "conditionsRequired": "Au moins une condition est requise",
+        "timeWindowRequired": "La fenêtre temporelle est requise"
+      }
     }
   },
   "navigation": {

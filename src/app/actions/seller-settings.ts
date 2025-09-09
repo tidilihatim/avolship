@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { withDbConnection } from '@/lib/db/db-connect';
 import { getCurrentUser } from './auth';
 import { UserRole } from '@/lib/db/models/user';
-import SellerSettings, { DiscountSettings } from '@/lib/db/models/seller-settings';
+import SellerSettings, { DiscountSettings, NotificationSettings } from '@/lib/db/models/seller-settings';
 import Warehouse from '@/lib/db/models/warehouse';
 import mongoose from 'mongoose';
 
@@ -374,5 +374,110 @@ export const getDiscountLimitsForWarehouse = withDbConnection(async (
   } catch (error) {
     console.error('Error getting discount limits:', error);
     return { success: false, message: 'Failed to retrieve discount limits' };
+  }
+});
+
+/**
+ * Get notification settings for a user (works for any user type)
+ */
+export const getNotificationSettings = withDbConnection(async (): Promise<ApiResponse> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    const settings = await SellerSettings.findOne({ sellerId: user._id }).lean() as any;
+    
+    if (!settings || !settings.notificationSettings) {
+      // Return default settings if none exist
+      return {
+        success: true,
+        message: 'Default notification settings',
+        data: {
+          notificationSettings: {
+            inAppNotifications: true,
+            emailNotifications: true,
+            updatedAt: new Date()
+          }
+        }
+      };
+    }
+
+    return {
+      success: true,
+      message: 'Notification settings retrieved successfully',
+      data: {
+        notificationSettings: settings.notificationSettings
+      }
+    };
+  } catch (error) {
+    console.error('Error getting notification settings:', error);
+    return { success: false, message: 'Failed to retrieve notification settings' };
+  }
+});
+
+/**
+ * Update notification settings for a user (works for any user type)
+ */
+export const updateNotificationSettings = withDbConnection(async (
+  notificationSettings: Omit<NotificationSettings, 'updatedAt'>
+): Promise<ApiResponse> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    // Find or create user settings
+    let settings = await SellerSettings.findOne({ sellerId: user._id });
+    
+    if (!settings) {
+      settings = new SellerSettings({
+        sellerId: user._id,
+        discountSettings: [],
+        notificationSettings: {
+          ...notificationSettings,
+          updatedAt: new Date()
+        }
+      });
+    } else {
+      // Update notification settings
+      settings.notificationSettings = {
+        ...notificationSettings,
+        updatedAt: new Date()
+      };
+    }
+
+    await settings.save();
+
+    // Revalidate all possible user type paths
+    const userTypePaths = [
+      '/dashboard/seller/settings',
+      '/dashboard/call_center/settings',
+      '/dashboard/delivery/settings',
+      '/dashboard/provider/settings',
+      '/dashboard/support/settings',
+      '/dashboard/admin/settings'
+    ];
+
+    userTypePaths.forEach(path => {
+      try {
+        revalidatePath(path);
+      } catch (e) {
+        // Silent fail for paths that might not exist
+      }
+    });
+
+    return {
+      success: true,
+      message: 'Notification settings updated successfully',
+      data: {
+        notificationSettings: settings.notificationSettings
+      }
+    };
+  } catch (error) {
+    console.error('Error updating notification settings:', error);
+    return { success: false, message: 'Failed to update notification settings' };
   }
 });

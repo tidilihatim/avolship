@@ -2,20 +2,15 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { 
-  Bell, 
-  Copy,
-  Percent
-} from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import SharedNotificationSettings from './notification-settings';
 
-// Import setting components
-import DuplicateDetectionSettings from './duplicate-detection-settings';
-import DiscountSettings from './discount-settings';
-import NotificationSettings from './notification-settings';
-
+interface UserSettingsLayoutProps {
+  userType: 'call_center' | 'delivery' | 'provider' | 'support';
+}
 
 interface SettingSection {
   id: string;
@@ -26,32 +21,17 @@ interface SettingSection {
   badge?: string;
 }
 
-export default function SettingsLayout() {
+export default function UserSettingsLayout({ userType }: UserSettingsLayoutProps) {
   const t = useTranslations('settings');
-  const [activeTab, setActiveTab] = useState('discount');
+  const [activeTab, setActiveTab] = useState('notifications');
 
   const settingSections: SettingSection[] = [
-    {
-      id: 'discount',
-      title: 'Discount Settings',
-      description: 'Configure maximum discount limits for call center agents',
-      icon: <Percent className="w-5 h-5" />,
-      component: <DiscountSettings />
-    },
-    {
-      id: 'duplicates',
-      title: t('sections.duplicates.title'),
-      description: t('sections.duplicates.description'),
-      icon: <Copy className="w-5 h-5" />,
-      component: <DuplicateDetectionSettings />,
-      badge: t('badges.new')
-    },
     {
       id: 'notifications',
       title: t('sections.notifications.title'),
       description: t('sections.notifications.description'),
       icon: <Bell className="w-5 h-5" />,
-      component: <NotificationSettings />
+      component: <SharedNotificationSettings userType={userType} />
     },
   ];
 
