@@ -72,8 +72,8 @@ export default function ShopifyCompletePage() {
       <Card className="max-w-md mx-auto">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-              <CheckCircle className="h-6 w-6 text-green-600" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/10">
+              <CheckCircle className="h-6 w-6 text-green-500" />
             </div>
           </div>
           <CardTitle>Shopify App Installed Successfully!</CardTitle>
@@ -84,9 +84,9 @@ export default function ShopifyCompletePage() {
         
         <CardContent className="space-y-6">
           {shopInfo && (
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-3">
-                <Store className="h-5 w-5 text-blue-600" />
+                <Store className="h-5 w-5 text-primary" />
                 <div>
                   <p className="font-medium text-sm">{shopInfo.name}</p>
                   <p className="text-xs text-muted-foreground">{shopInfo.domain}</p>
@@ -100,15 +100,15 @@ export default function ShopifyCompletePage() {
             <p className="text-sm font-medium">What happens next:</p>
             <div className="space-y-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-3 w-3 text-green-600" />
+                <CheckCircle className="h-3 w-3 text-green-500" />
                 <span>App installed and authorized</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle className="h-3 w-3 text-green-600" />
+                <CheckCircle className="h-3 w-3 text-green-500" />
                 <span>Webhooks configured for order sync</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-blue-600" />
+                <div className="h-3 w-3 rounded-full bg-primary" />
                 <span>Complete setup to start receiving orders</span>
               </div>
             </div>

@@ -233,7 +233,7 @@ export async function GET(request: NextRequest) {
 
 async function createShopifyWebhooks(shop: string, accessToken: string, integrationId: string): Promise<any | null> {
   try {
-    const baseWebhookUrl = `${process.env.NEXTAUTH_URL}/api/webhooks/shopify`;
+    const baseWebhookUrl = `https://42866d3d8620.ngrok-free.app/api/webhooks/shopify`;
     
     // Create only orders/create webhook
     const webhookResponse = await fetch(`https://${shop}/admin/api/2023-10/webhooks.json`, {
