@@ -268,42 +268,6 @@ export function ShopifySetupDialog({ open, onClose }: ShopifySetupDialogProps) {
                   </div>
                 </CardContent>
               </Card>
-
-              <div className="bg-muted/50 border border-muted rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-4 w-4 rounded-full bg-primary" />
-                  <p className="text-sm font-medium">Alternative: Development Testing</p>
-                </div>
-                <p className="text-xs text-muted-foreground mb-3">
-                  For testing purposes, you can also install directly using this link from your Shopify Admin
-                </p>
-                <div className="space-y-2">
-                  <Label htmlFor="testStoreUrl" className="text-xs">Your Store Domain (for testing only)</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="testStoreUrl"
-                      type="text"
-                      placeholder="yourstore.myshopify.com"
-                      value={storeUrl}
-                      onChange={(e) => setStoreUrl(e.target.value)}
-                      className="flex-1 h-8 text-xs"
-                    />
-                    <Button 
-                      size="sm" 
-                      onClick={() => {
-                        if (storeUrl.trim()) {
-                          const cleanUrl = storeUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
-                          window.open(`https://${cleanUrl}/admin/apps`, '_blank');
-                        }
-                      }}
-                      disabled={!storeUrl.trim()}
-                    >
-                      Open Admin
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
               {error && (
                 <div className="text-center py-4">
                   <p className="text-destructive">{error}</p>
