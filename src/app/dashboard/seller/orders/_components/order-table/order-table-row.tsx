@@ -84,6 +84,7 @@ export default function OrderTableRow({
   isTrackingAllowed,
 }: OrderTableRowProps) {
   const t = useTranslations();
+  const dt = useTranslations('dashboard.seller.deliveryTracking');
   const router = useRouter();
 
   const handleCallComplete = (callData: {
@@ -146,22 +147,22 @@ export default function OrderTableRow({
           "bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200",
       },
       [OrderStatus.ASSIGNED_TO_DELIVERY]: {
-        label: "Assigned to Delivery",
+        label: t("orders.statuses.assigned_to_delivery"),
         className:
           "bg-indigo-50 text-indigo-700 hover:bg-indigo-50 border-indigo-200",
       },
       [OrderStatus.ACCEPTED_BY_DELIVERY]: {
-        label: "Accepted by Delivery",
+        label: t("orders.statuses.accepted_by_delivery"),
         className:
           "bg-violet-50 text-violet-700 hover:bg-violet-50 border-violet-200",
       },
       [OrderStatus.IN_TRANSIT]: {
-        label: "In Transit",
+        label: t("orders.statuses.in_transit"),
         className:
           "bg-cyan-50 text-cyan-700 hover:bg-cyan-50 border-cyan-200",
       },
       [OrderStatus.OUT_FOR_DELIVERY]: {
-        label: "Out for Delivery",
+        label: t("orders.statuses.out_for_delivery"),
         className:
           "bg-sky-50 text-sky-700 hover:bg-sky-50 border-sky-200",
       },
@@ -171,7 +172,7 @@ export default function OrderTableRow({
           "bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200",
       },
       [OrderStatus.DELIVERY_FAILED]: {
-        label: "Delivery Failed",
+        label: t("orders.statuses.delivery_failed"),
         className:
           "bg-rose-50 text-rose-700 hover:bg-rose-50 border-rose-200",
       },
@@ -207,7 +208,7 @@ export default function OrderTableRow({
 
     return (
       statusConfig[status] || {
-        label: "Unknown",
+        label: dt("unknown"),
         className: "bg-gray-50 text-gray-700 hover:bg-gray-50 border-gray-200",
       }
     );
@@ -346,8 +347,7 @@ export default function OrderTableRow({
                     {order.customer.name}
                   </div>
                   <Badge variant="outline" className="text-xs">
-                    {order.customer.phoneNumbers.length} phone
-                    {order.customer.phoneNumbers.length > 1 ? "s" : ""}
+                    {order.customer.phoneNumbers.length} {order.customer.phoneNumbers.length > 1 ? dt("phones") : dt("phone")}
                   </Badge>
                 </div>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -360,7 +360,7 @@ export default function OrderTableRow({
               <div>
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                   <Phone className="h-3 w-3" />
-                  Phone Numbers
+                  {dt("phoneNumbers")}
                 </div>
                 <div className="space-y-1">
                   {order.customer.phoneNumbers.map((phone, index) => (
@@ -388,7 +388,7 @@ export default function OrderTableRow({
               <div>
                 <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                   <MapPin className="h-3 w-3" />
-                  Shipping Address
+                  {dt("shippingAddress")}
                 </div>
                 <div className="bg-background p-3 rounded border">
                   <p className="text-sm leading-relaxed">
@@ -434,7 +434,7 @@ export default function OrderTableRow({
                 </span>
               </>
             ) : (
-              <span className="text-sm text-gray-500 italic">Unassigned</span>
+              <span className="text-sm text-gray-500 italic">{dt("unassigned")}</span>
             )}
           </div>
         </TableCell>
@@ -451,7 +451,7 @@ export default function OrderTableRow({
                 </span>
               </>
             ) : (
-              <span className="text-sm text-gray-500 italic">Unassigned</span>
+              <span className="text-sm text-gray-500 italic">{dt("unassigned")}</span>
             )}
           </div>
         </TableCell>
@@ -469,7 +469,7 @@ export default function OrderTableRow({
                   <div className="flex items-center gap-2">
                     <Truck className="h-4 w-4 text-blue-600" />
                     <span className="font-medium text-sm">
-                      Delivery Tracking
+                      {dt("title")}
                     </span>
                     <Badge variant="outline" className="text-xs">
                       {order.deliveryTracking.trackingNumber}
@@ -487,30 +487,30 @@ export default function OrderTableRow({
                 <div>
                   <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                     <Clock className="h-3 w-3" />
-                    Delivery Timeline
+                    {dt("deliveryTimeline")}
                   </div>
                   <div className="space-y-2">
                     {order.deliveryTracking.assignedAt && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Assigned:</span>
+                        <span className="text-muted-foreground">{dt("assigned")}</span>
                         <span className="font-medium">{formatDate(order.deliveryTracking.assignedAt)}</span>
                       </div>
                     )}
                     {order.deliveryTracking.acceptedAt && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Accepted:</span>
+                        <span className="text-muted-foreground">{dt("accepted")}</span>
                         <span className="font-medium">{formatDate(order.deliveryTracking.acceptedAt)}</span>
                       </div>
                     )}
                     {order.deliveryTracking.pickedUpAt && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Picked Up:</span>
+                        <span className="text-muted-foreground">{dt("pickedUp")}</span>
                         <span className="font-medium">{formatDate(order.deliveryTracking.pickedUpAt)}</span>
                       </div>
                     )}
                     {order.deliveryTracking.actualDeliveryTime && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Delivered:</span>
+                        <span className="text-muted-foreground">{dt("delivered")}</span>
                         <span className="font-medium text-green-600">{formatDate(order.deliveryTracking.actualDeliveryTime)}</span>
                       </div>
                     )}
@@ -522,16 +522,16 @@ export default function OrderTableRow({
                   <div>
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                       <MapPin className="h-3 w-3" />
-                      Distance & Location
+                      {dt("distanceLocation")}
                     </div>
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Distance:</span>
+                        <span className="text-muted-foreground">{dt("distance")}</span>
                         <span className="font-medium">{order.deliveryTracking.distance} km</span>
                       </div>
                       {order.deliveryTracking.currentLocation && (
                         <div className="text-xs text-muted-foreground">
-                          Last location: {order.deliveryTracking.currentLocation.latitude.toFixed(4)}, {order.deliveryTracking.currentLocation.longitude.toFixed(4)}
+                          {dt("lastLocation")} {order.deliveryTracking.currentLocation.latitude.toFixed(4)}, {order.deliveryTracking.currentLocation.longitude.toFixed(4)}
                         </div>
                       )}
                     </div>
@@ -543,15 +543,15 @@ export default function OrderTableRow({
                   <div>
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                       <DollarSign className="h-3 w-3" />
-                      Financial Details
+                      {dt("financialDetails")}
                     </div>
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Delivery Fee:</span>
+                        <span className="text-muted-foreground">{dt("deliveryFee")}</span>
                         <span className="font-medium">{formatPrice(order.deliveryTracking.deliveryFee, order.warehouseId)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Commission:</span>
+                        <span className="text-muted-foreground">{dt("commission")}</span>
                         <span className="font-medium text-green-600">{formatPrice(order.deliveryTracking.commission, order.warehouseId)}</span>
                       </div>
                     </div>
@@ -563,7 +563,7 @@ export default function OrderTableRow({
                   <div>
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                       <Star className="h-3 w-3" />
-                      Customer Rating
+                      {dt("customerRating")}
                     </div>
                     <div className="flex items-center gap-1">
                       {Array.from({ length: 5 }, (_, i) => (
@@ -588,17 +588,17 @@ export default function OrderTableRow({
                   <div>
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                       <Image className="h-3 w-3" />
-                      Delivery Proof
+                      {dt("deliveryProof")}
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Type:</span>
+                        <span className="text-muted-foreground">{dt("type")}</span>
                         <Badge variant="outline" className="text-xs">
                           {order.deliveryTracking.deliveryProof.type}
                         </Badge>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Uploaded:</span>
+                        <span className="text-muted-foreground">{dt("uploaded")}</span>
                         <span className="font-medium">{formatDate(order.deliveryTracking.deliveryProof.uploadedAt)}</span>
                       </div>
                       <Button
@@ -608,7 +608,7 @@ export default function OrderTableRow({
                         onClick={() => handleViewDeliveryProof(order._id)}
                       >
                         <Image className="h-4 w-4 mr-2" />
-                        View Proof
+                        {dt("viewProof")}
                       </Button>
                     </div>
                   </div>
@@ -619,7 +619,7 @@ export default function OrderTableRow({
                   <div>
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                       <Edit className="h-3 w-3" />
-                      Delivery Notes
+                      {dt("deliveryNotes")}
                     </div>
                     <div className="bg-background p-3 rounded border">
                       <p className="text-sm leading-relaxed">
@@ -647,7 +647,7 @@ export default function OrderTableRow({
                   <Package className="h-4 w-4 text-muted-foreground" />
                   <span className="font-medium text-sm">
                     {order.products.length}{" "}
-                    {order.products.length === 1 ? "item" : "items"}
+                    {order.products.length === 1 ? dt("item") : dt("items")}
                   </span>
                   {hasDiscounts ? (
                     <div className="flex items-center gap-2">
@@ -689,7 +689,7 @@ export default function OrderTableRow({
                             {product.productName}
                           </h4>
                           <p className="text-sm text-muted-foreground mt-1">
-                            Code: <span className="font-mono">{product.productCode}</span>
+                            {dt("code")} <span className="font-mono">{product.productCode}</span>
                           </p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -710,14 +710,14 @@ export default function OrderTableRow({
                         <div className="bg-green-50 border border-green-200 rounded-md p-3">
                           <div className="flex items-center gap-2 mb-1">
                             <Percent className="h-3 w-3 text-green-600" />
-                            <span className="text-xs font-medium text-green-800">Discount Applied</span>
+                            <span className="text-xs font-medium text-green-800">{dt("discountApplied")}</span>
                           </div>
                           <p className="text-sm text-green-700 break-words">
-                            <span className="font-medium">Reason:</span> {discountInfo!.reason}
+                            <span className="font-medium">{dt("reason")}</span> {discountInfo!.reason}
                           </p>
                           {discountInfo!.notes && (
                             <p className="text-xs text-green-600 mt-1 break-words">
-                              <span className="font-medium">Notes:</span> {discountInfo!.notes}
+                              <span className="font-medium">{dt("notes")}</span> {discountInfo!.notes}
                             </p>
                           )}
                         </div>
@@ -727,12 +727,12 @@ export default function OrderTableRow({
                       <div className="pt-4 border-t w-full">
                         <div className="flex flex-wrap items-start gap-6 w-full">
                           <div className="flex-1 min-w-[120px]">
-                            <div className="text-xs text-muted-foreground mb-1">Quantity</div>
+                            <div className="text-xs text-muted-foreground mb-1">{dt("quantity")}</div>
                             <div className="font-semibold text-xl">{product.quantity}</div>
                           </div>
                           
                           <div className="flex-1 min-w-[150px]">
-                            <div className="text-xs text-muted-foreground mb-1">Unit Price</div>
+                            <div className="text-xs text-muted-foreground mb-1">{dt("unitPrice")}</div>
                             {hasProductDiscount ? (
                               <div className="space-y-1">
                                 <div className="line-through text-muted-foreground text-base">
@@ -750,7 +750,7 @@ export default function OrderTableRow({
                           </div>
                           
                           <div className="flex-1 min-w-[150px] text-right">
-                            <div className="text-xs text-muted-foreground mb-1">Subtotal</div>
+                            <div className="text-xs text-muted-foreground mb-1">{dt("subtotal")}</div>
                             <div className="font-bold text-2xl text-primary break-words">
                               {formatPrice(
                                 product.unitPrice * product.quantity,
@@ -771,24 +771,24 @@ export default function OrderTableRow({
                     <div className="text-center">
                       <h5 className="font-medium text-lg mb-4 flex items-center justify-center gap-2">
                         <Percent className="h-5 w-5" />
-                        Order Summary with Discounts
+                        {dt("orderSummary")}
                       </h5>
                     </div>
                     <div className="flex flex-wrap justify-center gap-8 text-center">
                       <div className="flex-1 min-w-[150px]">
-                        <div className="text-sm  mb-2">Original Total</div>
+                        <div className="text-sm  mb-2">{dt("originalTotal")}</div>
                         <div className="line-through  text-xl">
                           {formatPrice(originalTotalPrice, order.warehouseId)}
                         </div>
                       </div>
                       <div className="flex-1 min-w-[150px]">
-                        <div className="text-sm  mb-2">Total Savings</div>
+                        <div className="text-sm  mb-2">{dt("totalSavings")}</div>
                         <div className="text-green-700 font-semibold text-xl">
                           -{formatPrice(totalDiscountAmount, order.warehouseId)}
                         </div>
                       </div>
                       <div className="flex-1 min-w-[150px]">
-                        <div className="text-sm  mb-2">Final Total</div>
+                        <div className="text-sm  mb-2">{dt("finalTotal")}</div>
                         <div className="font-bold text-3xl text-green-700 break-words">
                           {formatPrice(finalTotalPrice, order.warehouseId)}
                         </div>
@@ -796,13 +796,13 @@ export default function OrderTableRow({
                     </div>
                     <div className="text-center pt-3 border-t">
                       <div className="text-sm ">
-                        You saved {((totalDiscountAmount / originalTotalPrice) * 100).toFixed(1)}% on this order
+                        {dt("savedPercent", { percent: ((totalDiscountAmount / originalTotalPrice) * 100).toFixed(1) })}
                       </div>
                     </div>
                   </div>
                 ) : (
                   <div className="text-center w-full">
-                    <div className="text-sm mb-3">Order Total</div>
+                    <div className="text-sm mb-3">{dt("orderTotal")}</div>
                     <div className="font-bold text-3xl text-primary break-words">
                       {formatPrice(order.totalPrice, order.warehouseId)}
                     </div>
@@ -846,7 +846,7 @@ export default function OrderTableRow({
           </Badge>
           {order.statusComment && (
             <div className="text-xs text-muted-foreground bg-muted p-2 rounded border max-w-[150px]">
-              <div className="font-medium mb-1">Comment:</div>
+              <div className="font-medium mb-1">{dt("comment")}</div>
               <div className="leading-tight overflow-hidden">
                 <TooltipProvider>
                   <Tooltip>
@@ -877,7 +877,7 @@ export default function OrderTableRow({
           <div className="flex items-center gap-2">
             <PhoneCall className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm font-medium">
-              {order.totalCallAttempts} attempts
+              {order.totalCallAttempts} {dt("attempts")}
             </span>
           </div>
           {order.totalCallAttempts > 0 && (
@@ -894,14 +894,14 @@ export default function OrderTableRow({
               )}
               {order.lastCallAttempt && (
                 <div className="text-xs text-muted-foreground">
-                  Last: {formatDate(order.lastCallAttempt)}
+                  {dt("lastCall")} {formatDate(order.lastCallAttempt)}
                 </div>
               )}
             </div>
           )}
           {order.totalCallAttempts === 0 && (
             <div className="text-xs text-muted-foreground italic">
-              No calls made
+              {dt("noCalls")}
             </div>
           )}
         </div>
@@ -964,7 +964,7 @@ export default function OrderTableRow({
                 <DropdownMenuItem className="cursor-pointer" asChild>
                   <Link href={`/dashboard/${userRole}/orders/${order._id}/track`}>
                     <MapPin className="mr-2 h-4 w-4" />
-                    Track Order
+                    {dt("trackOrder")}
                   </Link>
                 </DropdownMenuItem>
               </>
@@ -988,7 +988,7 @@ export default function OrderTableRow({
 
                 <DropdownMenuItem className="cursor-pointer">
                   <Phone className="mr-2 h-4 w-4" />
-                  View Call History
+                  {dt("viewCallHistory")}
                 </DropdownMenuItem>
               </>
             )}
@@ -1015,7 +1015,7 @@ export default function OrderTableRow({
                     onClick={() => onAssignRider(order)}
                   >
                     <Truck className="mr-2 h-4 w-4" />
-                    Assign Rider
+                    {dt("assignRider")}
                   </DropdownMenuItem>
                 )}
                 {onEditCustomer && (
@@ -1024,7 +1024,7 @@ export default function OrderTableRow({
                     onClick={() => onEditCustomer(order)}
                   >
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit Customer
+                    {dt("editCustomer")}
                   </DropdownMenuItem>
                 )}
               </>
@@ -1046,7 +1046,7 @@ export default function OrderTableRow({
                     onClick={() => onAssignRider(order)}
                   >
                     <Truck className="mr-2 h-4 w-4" />
-                    Assign Rider
+                    {dt("assignRider")}
                   </DropdownMenuItem>
                 )}
                 {onEditCustomer && (
@@ -1055,7 +1055,7 @@ export default function OrderTableRow({
                     onClick={() => onEditCustomer(order)}
                   >
                     <Edit className="mr-2 h-4 w-4" />
-                    Edit Customer
+                    {dt("editCustomer")}
                   </DropdownMenuItem>
                 )}
                 {onApplyDiscount && (
@@ -1064,7 +1064,7 @@ export default function OrderTableRow({
                     onClick={() => onApplyDiscount(order)}
                   >
                     <Percent className="mr-2 h-4 w-4" />
-                    Apply Discount
+                    {dt("applyDiscount")}
                   </DropdownMenuItem>
                 )}
               </>

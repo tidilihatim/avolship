@@ -205,7 +205,7 @@ export default function OrderTable({
     const unsubscribe = on('order:new-seller', () => {
       // Refresh the page to fetch new orders
       router.refresh();
-      toast.success("New order received!");
+      toast.success(t("orders.newOrderReceived"));
     });
 
     return unsubscribe;
@@ -458,7 +458,7 @@ export default function OrderTable({
   // Handle order assignment
   const handleAssignOrder = async () => {
     if (!selectedAgent || !assignmentDialog.order) {
-      toast.error("Please select an agent");
+      toast.error(t("orders.errors.pleaseSelectAgent"));
       return;
     }
 
@@ -476,7 +476,7 @@ export default function OrderTable({
       }
     } catch (error) {
       console.error("Error assigning order:", error);
-      toast.error("Failed to assign order");
+      toast.error(t("orders.errors.failedToAssignOrder"));
     } finally {
       setIsAssigning(false);
     }
@@ -485,7 +485,7 @@ export default function OrderTable({
   // Handle rider assignment
   const handleAssignRider = async () => {
     if (!selectedRider || !riderAssignmentDialog.order) {
-      toast.error("Please select a delivery rider");
+      toast.error(t("orders.errors.pleaseSelectRider"));
       return;
     }
 
@@ -493,7 +493,7 @@ export default function OrderTable({
     try {
       const accessToken = await getAccessToken();
       if (!accessToken) {
-        toast.error("Authentication required");
+        toast.error(t("orders.errors.authRequired"));
         return;
       }
 
@@ -513,15 +513,15 @@ export default function OrderTable({
       const result = await response.json();
 
       if (response.ok && result.success) {
-        toast.success(result.message || "Rider assigned successfully");
+        toast.success(result.message || t("orders.success.riderAssignedSuccess"));
         closeRiderAssignmentDialog();
         router.refresh();
       } else {
-        toast.error(result.message || "Failed to assign rider");
+        toast.error(result.message || t("orders.errors.failedToAssignRider"));
       }
     } catch (error) {
       console.error("Error assigning rider:", error);
-      toast.error("Failed to assign rider");
+      toast.error(t("orders.errors.failedToAssignRider"));
     } finally {
       setIsAssigningRider(false);
     }
@@ -530,7 +530,7 @@ export default function OrderTable({
   // Handle customer update
   const handleCustomerUpdate = async (customerData: CustomerUpdateData) => {
     if (!customerUpdateDialog.order) {
-      toast.error("No order selected for update");
+      toast.error(t("orders.errors.noOrderSelected"));
       return;
     }
 
@@ -539,15 +539,15 @@ export default function OrderTable({
       const result = await updateCustomerInfo(customerUpdateDialog.order._id, customerData);
 
       if (result.success) {
-        toast.success(result.message || "Customer information updated successfully");
+        toast.success(result.message || t("orders.success.customerUpdatedSuccess"));
         closeCustomerUpdateDialog();
         router.refresh();
       } else {
-        toast.error(result.message || "Failed to update customer information");
+        toast.error(result.message || t("orders.errors.failedToUpdateCustomer"));
       }
     } catch (error) {
       console.error("Error updating customer:", error);
-      toast.error("Failed to update customer information");
+      toast.error(t("orders.errors.failedToUpdateCustomer"));
     } finally {
       setIsUpdatingCustomer(false);
     }
@@ -627,8 +627,11 @@ export default function OrderTable({
           <CardTitle>{t("orders.title")}</CardTitle>
           <CardDescription>
             {pagination?.total
-              ? `${pagination.total} ${pagination.total === 1 ? "order" : "orders"
-              } found`
+              ? t("orders.pagination.showingXofY", {
+                  start: ((pagination.page - 1) * pagination.limit + 1).toString(),
+                  end: Math.min(pagination.page * pagination.limit, pagination.total).toString(),
+                  total: pagination.total.toString()
+                })
               : t("orders.noOrdersFound")}
           </CardDescription>
         </CardHeader>

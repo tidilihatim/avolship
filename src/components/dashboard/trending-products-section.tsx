@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { TrendingProductsChart } from './trending-products-chart';
 import { CallCenterFiltersComponent } from './call-center-filters';
 import { getProductsByWarehouse, getTrendingProductsData, CallCenterFilters as CallCenterFiltersType, TrendingProductData } from '@/app/actions/dashboard';
@@ -12,6 +13,7 @@ interface Product {
 }
 
 export const TrendingProductsSection = () => {
+  const t = useTranslations('dashboard.seller.overview.trendingProducts');
   const [products, setProducts] = useState<Product[]>([]);
   const [chartData, setChartData] = useState<TrendingProductData[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
@@ -37,7 +39,7 @@ export const TrendingProductsSection = () => {
         setProducts(response.data || []);
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error(t('errorFetching'), error);
     } finally {
       setIsLoadingProducts(false);
     }
@@ -52,7 +54,7 @@ export const TrendingProductsSection = () => {
         setTotalOrders(response.data?.totalOrders || 0);
       }
     } catch (error) {
-      console.error('Error fetching trending products data:', error);
+      console.error(t('errorChart'), error);
     } finally {
       setIsLoadingCharts(false);
     }
@@ -65,9 +67,9 @@ export const TrendingProductsSection = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Trending Products</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">{t('title')}</h2>
         <p className="text-sm text-muted-foreground">
-          Most popular products based on order frequency
+          {t('subtitle')}
         </p>
       </div>
 

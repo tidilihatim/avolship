@@ -9,6 +9,7 @@ import { WooCommerceSetupDialog } from './woocommerce-setup-dialog';
 import { ShopifySetupDialog } from './shopify-setup-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface IntegrationsContainerProps {
   platforms: any;
@@ -27,6 +28,7 @@ export function IntegrationsContainer({
 }: IntegrationsContainerProps) {
   const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
   const router = useRouter();
+  const t = useTranslations('integrations.messages');
 
   const handleIntegrationUpdate = () => {
     router.refresh();
@@ -59,7 +61,7 @@ export function IntegrationsContainer({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {getErrorMessage(error)}
+            {getErrorMessage(error, t)}
           </AlertDescription>
         </Alert>
       )}
@@ -68,7 +70,7 @@ export function IntegrationsContainer({
         <Alert className="border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400">
           <CheckCircle className="h-4 w-4" />
           <AlertDescription>
-            {getSuccessMessage(success)}
+            {getSuccessMessage(success, t)}
           </AlertDescription>
         </Alert>
       )}
@@ -99,32 +101,32 @@ export function IntegrationsContainer({
   );
 }
 
-function getErrorMessage(error: string): string {
+function getErrorMessage(error: string, t: any): string {
   switch (error) {
     case 'access_denied':
-      return 'Access was denied. Please try again and allow the required permissions.';
+      return t('errors.accessDenied');
     case 'missing_parameters':
-      return 'Invalid authorization request. Please try again.';
+      return t('errors.missingParameters');
     case 'invalid_state':
-      return 'Security validation failed. Please try again.';
+      return t('errors.invalidState');
     case 'token_exchange_failed':
-      return 'Failed to connect to YouCan. Please check your credentials and try again.';
+      return t('errors.tokenExchangeFailed');
     case 'internal_error':
-      return 'An internal error occurred. Please try again later.';
+      return t('errors.internalError');
     default:
-      return 'An error occurred during integration setup. Please try again.';
+      return t('errors.defaultError');
   }
 }
 
-function getSuccessMessage(success: string): string {
+function getSuccessMessage(success: string, t: any): string {
   switch (success) {
     case 'youcan_connected':
-      return 'YouCan integration connected successfully! Orders will now sync automatically.';
+      return t('success.youcanConnected');
     case 'woocommerce_connected':
-      return 'WooCommerce integration connected successfully! Orders will now sync automatically.';
+      return t('success.woocommerceConnected');
     case 'shopify_connected':
-      return 'Shopify integration connected successfully! Orders will now sync automatically.';
+      return t('success.shopifyConnected');
     default:
-      return 'Integration connected successfully!';
+      return t('success.defaultConnected');
   }
 }

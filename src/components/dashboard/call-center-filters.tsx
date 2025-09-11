@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { useTranslations } from 'next-intl';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -26,13 +27,13 @@ interface CallCenterFiltersProps {
   onFiltersChange: (filters: CallCenterFilters) => void;
 }
 
-const datePresets = [
-  { value: 'today', label: 'Today', icon: Clock },
-  { value: 'yesterday', label: 'Yesterday', icon: Clock },
-  { value: 'this_week', label: 'This Week', icon: Clock },
-  { value: 'this_month', label: 'This Month', icon: Clock },
-  { value: 'this_year', label: 'This Year', icon: Clock },
-  { value: 'custom', label: 'Custom Range', icon: CalendarIcon },
+const getDatePresets = (t: any) => [
+  { value: 'today', label: t('datePresets.today'), icon: Clock },
+  { value: 'yesterday', label: t('datePresets.yesterday'), icon: Clock },
+  { value: 'this_week', label: t('datePresets.this_week'), icon: Clock },
+  { value: 'this_month', label: t('datePresets.this_month'), icon: Clock },
+  { value: 'this_year', label: t('datePresets.this_year'), icon: Clock },
+  { value: 'custom', label: t('datePresets.custom'), icon: CalendarIcon },
 ];
 
 const FiltersSkeleton = () => (
@@ -53,7 +54,9 @@ export const CallCenterFiltersComponent = ({
   filters, 
   onFiltersChange 
 }: CallCenterFiltersProps) => {
+  const t = useTranslations('dashboard.seller.filters');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const datePresets = getDatePresets(t);
 
   if (isLoadingProducts) {
     return <FiltersSkeleton />;
@@ -104,7 +107,7 @@ export const CallCenterFiltersComponent = ({
     <div className="flex flex-wrap items-center gap-3 p-4 bg-muted/30 rounded-lg border">
       <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Filter className="h-4 w-4" />
-        Filters:
+        {t('title')}
       </div>
 
       <div className="flex items-center gap-2">
@@ -114,10 +117,10 @@ export const CallCenterFiltersComponent = ({
           onValueChange={handleProductChange}
         >
           <SelectTrigger className="w-auto min-w-[200px] h-9">
-            <SelectValue placeholder="Select product" />
+            <SelectValue placeholder={t('selectProduct')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Products</SelectItem>
+            <SelectItem value="all">{t('allProducts')}</SelectItem>
             {products.map((product) => (
               <SelectItem key={product._id} value={product._id}>
                 {product.name} ({product.code})
@@ -134,7 +137,7 @@ export const CallCenterFiltersComponent = ({
           onValueChange={handleDatePresetChange}
         >
           <SelectTrigger className="w-auto min-w-[140px] h-9">
-            <SelectValue placeholder="Date range" />
+            <SelectValue placeholder={t('dateRange')} />
           </SelectTrigger>
           <SelectContent>
             {datePresets.map((preset) => (
@@ -167,7 +170,7 @@ export const CallCenterFiltersComponent = ({
                   format(dateRange.from, "MMM dd")
                 )
               ) : (
-                "Custom range"
+                t('customRange')
               )}
             </Button>
           </PopoverTrigger>

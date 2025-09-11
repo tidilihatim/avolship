@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface Platform {
   id: string;
@@ -51,6 +52,10 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
     platformName: ''
   });
   const router = useRouter();
+  const t = useTranslations('integrations.platforms');
+  const tActions = useTranslations('integrations.platforms.actions');
+  const tDisconnect = useTranslations('integrations.disconnect');
+  const tMessages = useTranslations('integrations.messages');
   // Handle the platforms data structure
   const platformsData = platforms?.success ? platforms.data : [];
   
@@ -65,13 +70,13 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
     try {
       const result = await pauseIntegration(integrationId);
       if (result.success) {
-        toast.success(`${platformName} integration paused successfully`);
+        toast.success(tMessages('success.paused', { platform: platformName }));
         onIntegrationUpdate?.();
       } else {
-        toast.error(result.error || 'Failed to pause integration');
+        toast.error(result.error || tMessages('errors.pauseFailed'));
       }
     } catch (error) {
-      toast.error('Failed to pause integration');
+      toast.error(tMessages('errors.pauseFailed'));
     } finally {
       setLoadingActions(prev => ({ ...prev, [integrationId]: false }));
     }
@@ -82,13 +87,13 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
     try {
       const result = await resumeIntegration(integrationId);
       if (result.success) {
-        toast.success(`${platformName} integration resumed successfully`);
+        toast.success(tMessages('success.resumed', { platform: platformName }));
         onIntegrationUpdate?.();
       } else {
-        toast.error(result.error || 'Failed to resume integration');
+        toast.error(result.error || tMessages('errors.resumeFailed'));
       }
     } catch (error) {
-      toast.error('Failed to resume integration');
+      toast.error(tMessages('errors.resumeFailed'));
     } finally {
       setLoadingActions(prev => ({ ...prev, [integrationId]: false }));
     }
@@ -110,13 +115,13 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
     try {
       const result = await disconnectIntegration(integration._id);
       if (result.success) {
-        toast.success(`${platformName} integration disconnected successfully`);
+        toast.success(tMessages('success.disconnected', { platform: platformName }));
         onIntegrationUpdate?.();
       } else {
-        toast.error(result.error || 'Failed to disconnect integration');
+        toast.error(result.error || tMessages('errors.disconnectFailed'));
       }
     } catch (error) {
-      toast.error('Failed to disconnect integration');
+      toast.error(tMessages('errors.disconnectFailed'));
     } finally {
       setLoadingActions(prev => ({ ...prev, [integration._id]: false }));
     }
@@ -125,7 +130,7 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
   if (!platformsData || platformsData.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">No platforms available</p>
+        <p className="text-muted-foreground">{t('noPlatforms')}</p>
       </div>
     );
   }
@@ -133,9 +138,9 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold">Available Platforms</h2>
+        <h2 className="text-lg font-semibold">{t('title')}</h2>
         <p className="text-sm text-muted-foreground">
-          Choose your e-commerce platform to get started
+          {t('subtitle')}
         </p>
       </div>
 
@@ -176,10 +181,10 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                     className="text-xs"
                   >
                     {isConnected 
-                      ? integration.status === 'paused' ? 'Paused' : 'Connected'
+                      ? integration.status === 'paused' ? t('status.paused') : t('status.connected')
                       : platform.status === 'available' 
-                        ? 'Available' 
-                        : 'Coming Soon'
+                        ? t('status.available') 
+                        : t('status.comingSoon')
                     }
                   </Badge>
                 </div>
@@ -201,9 +206,9 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                 {isConnected ? (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Connected {new Date(integration.createdAt).toLocaleDateString()}</span>
+                      <span>{t('stats.connected', { date: new Date(integration.createdAt).toLocaleDateString() })}</span>
                       <div className="flex items-center gap-2">
-                        <span>Orders: {integration.syncStats?.totalOrdersSynced || 0}</span>
+                        <span>{t('stats.orders', { count: integration.syncStats?.totalOrdersSynced || 0 })}</span>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
@@ -214,7 +219,7 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                             <DropdownMenuItem 
                               onClick={() => router.push(`/dashboard/seller/integrations/logs/${integration._id}`)}
                             >
-                              View Logs
+                              {tActions('viewLogs')}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -229,7 +234,7 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                           disabled={loadingActions[integration._id]}
                           onClick={() => handlePauseIntegration(integration._id, platform.name)}
                         >
-                          {loadingActions[integration._id] ? 'Pausing...' : 'Pause'}
+                          {loadingActions[integration._id] ? tActions('pausing') : tActions('pause')}
                         </Button>
                       ) : integration.status === 'paused' ? (
                         <Button 
@@ -239,7 +244,7 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                           disabled={loadingActions[integration._id]}
                           onClick={() => handleResumeIntegration(integration._id, platform.name)}
                         >
-                          {loadingActions[integration._id] ? 'Resuming...' : 'Resume'}
+                          {loadingActions[integration._id] ? tActions('resuming') : tActions('resume')}
                         </Button>
                       ) : (
                         <Button 
@@ -248,7 +253,7 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                           className="flex-1"
                           disabled={true}
                         >
-                          Unavailable
+                          {tActions('unavailable')}
                         </Button>
                       )}
                       <Button 
@@ -258,7 +263,7 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                         disabled={loadingActions[integration._id]}
                         onClick={() => handleDisconnectClick(integration, platform.name)}
                       >
-                        {loadingActions[integration._id] ? 'Disconnecting...' : 'Disconnect'}
+                        {loadingActions[integration._id] ? tActions('disconnecting') : tActions('disconnect')}
                       </Button>
                     </div>
                   </div>
@@ -271,11 +276,11 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                   >
                     {platform.status === 'available' ? (
                       <>
-                        Connect {platform.name}
+                        {tActions('connect', { platform: platform.name })}
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </>
                     ) : (
-                      'Coming Soon'
+                      t('status.comingSoon')
                     )}
                   </Button>
                 )}
@@ -291,9 +296,9 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
       }>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Disconnect {disconnectDialog.platformName} Integration</DialogTitle>
+            <DialogTitle>{tDisconnect('title', { platform: disconnectDialog.platformName })}</DialogTitle>
             <DialogDescription className="space-y-3">
-              <p>Are you sure you want to disconnect this integration? This action will:</p>
+              <p>{tDisconnect('description')}</p>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 <li>Permanently delete the integration connection</li>
                 <li>Stop all automatic order syncing</li>
@@ -302,7 +307,7 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                 <li>Clear sync statistics and history</li>
               </ul>
               <p className="text-sm font-medium text-orange-600">
-                You will need to reconnect and reconfigure if you want to use this integration again.
+                {tDisconnect('warning')}
               </p>
             </DialogDescription>
           </DialogHeader>
@@ -311,14 +316,14 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
               variant="outline" 
               onClick={() => setDisconnectDialog({ open: false, integration: null, platformName: '' })}
             >
-              Cancel
+              {tDisconnect('cancel')}
             </Button>
             <Button 
               variant="destructive" 
               onClick={handleDisconnectIntegration}
               disabled={loadingActions[disconnectDialog.integration?._id]}
             >
-              {loadingActions[disconnectDialog.integration?._id] ? 'Disconnecting...' : 'Disconnect'}
+              {loadingActions[disconnectDialog.integration?._id] ? tActions('disconnecting') : tDisconnect('confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

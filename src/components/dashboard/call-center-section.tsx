@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { CallCenterPieChart, CallCenterBarChart } from './call-center-chart';
 import { CallCenterFiltersComponent } from './call-center-filters';
 import { getProductsByWarehouse, getCallCenterConfirmationData, CallCenterFilters as CallCenterFiltersType, CallCenterChartData } from '@/app/actions/dashboard';
@@ -12,6 +13,7 @@ interface Product {
 }
 
 export const CallCenterSection = () => {
+  const t = useTranslations('dashboard.seller.overview.callCenter');
   const [products, setProducts] = useState<Product[]>([]);
   const [chartData, setChartData] = useState<CallCenterChartData[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
@@ -37,7 +39,7 @@ export const CallCenterSection = () => {
         setProducts(response.data || []);
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error(t('errorFetching'), error);
     } finally {
       setIsLoadingProducts(false);
     }
@@ -52,7 +54,7 @@ export const CallCenterSection = () => {
         setTotalOrders(response.data?.totalOrders || 0);
       }
     } catch (error) {
-      console.error('Error fetching chart data:', error);
+      console.error(t('errorChart'), error);
     } finally {
       setIsLoadingCharts(false);
     }
@@ -65,9 +67,9 @@ export const CallCenterSection = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Call Center Confirmation</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">{t('title')}</h2>
         <p className="text-sm text-muted-foreground">
-          Track order status distribution and call center performance
+          {t('subtitle')}
         </p>
       </div>
 

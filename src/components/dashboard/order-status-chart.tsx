@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations } from 'next-intl';
 
 interface OrderStatusChartData {
   status: string;
@@ -17,33 +18,33 @@ interface OrderStatusChartProps {
   isLoading?: boolean;
 }
 
-const getOrderStatusLabel = (status: string): string => {
+const getOrderStatusLabel = (status: string, t: any): string => {
   const labels: Record<string, string> = {
-    'pending': 'Pending',
-    'confirmed': 'Confirmed',
-    'cancelled': 'Cancelled',
-    'shipped': 'Shipped',
-    'assigned_to_delivery': 'Assigned to Delivery',
-    'accepted_by_delivery': 'Accepted by Delivery',
-    'in_transit': 'In Transit',
-    'out_for_delivery': 'Out for Delivery',
-    'delivered': 'Delivered',
-    'delivery_failed': 'Delivery Failed',
-    'refunded': 'Refunded',
-    'wrong_number': 'Wrong Number',
-    'double': 'Duplicate',
-    'unreached': 'Unreached',
-    'expired': 'Expired',
+    'pending': t('statuses.pending'),
+    'confirmed': t('statuses.confirmed'),
+    'cancelled': t('statuses.cancelled'),
+    'shipped': t('statuses.shipped'),
+    'assigned_to_delivery': t('statuses.assigned_to_delivery'),
+    'accepted_by_delivery': t('statuses.accepted_by_delivery'),
+    'in_transit': t('statuses.in_transit'),
+    'out_for_delivery': t('statuses.out_for_delivery'),
+    'delivered': t('statuses.delivered'),
+    'delivery_failed': t('statuses.delivery_failed'),
+    'refunded': t('statuses.refunded'),
+    'wrong_number': t('statuses.wrong_number'),
+    'double': t('statuses.double'),
+    'unreached': t('statuses.unreached'),
+    'expired': t('statuses.expired'),
   };
   return labels[status] || status;
 };
 
 
-const chartConfig = {
+const getChartConfig = (t: any) => ({
   count: {
-    label: "Orders",
+    label: t('orders'),
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig);
 
 const ChartSkeleton = () => (
   <Card className="flex flex-col">
@@ -85,6 +86,7 @@ const BarChartSkeleton = () => (
 );
 
 export const OrderStatusPieChart = ({ data, totalOrders, isLoading }: OrderStatusChartProps) => {
+  const t = useTranslations('dashboard.seller.charts.orderStatus');
   if (isLoading) {
     return <ChartSkeleton />;
   }
@@ -93,13 +95,13 @@ export const OrderStatusPieChart = ({ data, totalOrders, isLoading }: OrderStatu
     return (
       <Card className="flex flex-col">
         <CardHeader className="items-center pb-0">
-          <CardTitle>Order Status Distribution</CardTitle>
-          <CardDescription>No orders found</CardDescription>
+          <CardTitle>{t('noDataTitle')}</CardTitle>
+          <CardDescription>{t('noDataDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No order data available</p>
-            <p className="text-xs mt-1">Try adjusting your filters or check if there are any orders</p>
+            <p className="text-sm">{t('noDataMessage')}</p>
+            <p className="text-xs mt-1">{t('noDataHint')}</p>
           </div>
         </CardContent>
       </Card>
@@ -107,7 +109,7 @@ export const OrderStatusPieChart = ({ data, totalOrders, isLoading }: OrderStatu
   }
 
   const chartData = data.map((item, index) => ({
-    status: getOrderStatusLabel(item.status),
+    status: getOrderStatusLabel(item.status, t),
     count: item.count,
     percentage: item.percentage,
     fill: `hsl(var(--chart-${(index % 5) + 1}))`, // Each segment gets different color
@@ -116,12 +118,12 @@ export const OrderStatusPieChart = ({ data, totalOrders, isLoading }: OrderStatu
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Order Status Distribution</CardTitle>
-        <CardDescription>Order breakdown by status ({totalOrders} total orders)</CardDescription>
+        <CardTitle>{t('pieTitle')}</CardTitle>
+        <CardDescription>{t('pieDescription', { totalOrders: totalOrders })}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
-          config={chartConfig}
+          config={getChartConfig(t)}
           className="mx-auto aspect-square max-h-[250px]"
         >
           <PieChart>
@@ -163,6 +165,7 @@ export const OrderStatusPieChart = ({ data, totalOrders, isLoading }: OrderStatu
 };
 
 export const OrderStatusBarChart = ({ data, totalOrders, isLoading }: OrderStatusChartProps) => {
+  const t = useTranslations('dashboard.seller.charts.orderStatus');
   if (isLoading) {
     return <BarChartSkeleton />;
   }
@@ -171,13 +174,13 @@ export const OrderStatusBarChart = ({ data, totalOrders, isLoading }: OrderStatu
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Order Status Overview</CardTitle>
-          <CardDescription>No orders found</CardDescription>
+          <CardTitle>{t('barTitle')}</CardTitle>
+          <CardDescription>{t('noDataDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No order data available</p>
-            <p className="text-xs mt-1">Try adjusting your filters or check if there are any orders</p>
+            <p className="text-sm">{t('noDataMessage')}</p>
+            <p className="text-xs mt-1">{t('noDataHint')}</p>
           </div>
         </CardContent>
       </Card>
@@ -185,7 +188,7 @@ export const OrderStatusBarChart = ({ data, totalOrders, isLoading }: OrderStatu
   }
 
   const chartData = data.map((item, index) => ({
-    status: getOrderStatusLabel(item.status),
+    status: getOrderStatusLabel(item.status, t),
     count: item.count,
     fill: `hsl(var(--chart-${(index % 5) + 1}))`, // Each bar gets different color
   }));
@@ -193,11 +196,11 @@ export const OrderStatusBarChart = ({ data, totalOrders, isLoading }: OrderStatu
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Order Status Overview</CardTitle>
-        <CardDescription>Breakdown of orders by status ({totalOrders} total)</CardDescription>
+        <CardTitle>{t('barTitle')}</CardTitle>
+        <CardDescription>{t('barDescription', { totalOrders: totalOrders })}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={getChartConfig(t)}>
           <BarChart
             
             accessibilityLayer

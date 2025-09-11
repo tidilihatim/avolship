@@ -130,7 +130,7 @@ export default function OrderFiltersSheet({
 
     return (
       statusConfig[status] || {
-        label: "Unknown",
+        label: t("common.unknown"),
       }
     );
   };

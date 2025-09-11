@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/app/actions/auth';
 import { UserRole } from '@/app/dashboard/_constant/user';
 import { getSellerInvoicesList } from '@/app/actions/invoice';
 import SellerInvoiceList from './_components/seller-invoice-list';
+import { getTranslations } from 'next-intl/server';
 
 interface SearchParams {
   search?: string;
@@ -30,6 +31,9 @@ export default async function SellerInvoicesPage({ searchParams }: Props) {
     redirect('/dashboard');
   }
 
+  // Get translations
+  const t = await getTranslations('invoices');
+
   // Await searchParams
   const params = await searchParams;
 
@@ -51,7 +55,7 @@ export default async function SellerInvoicesPage({ searchParams }: Props) {
       return (
         <div className="container mx-auto p-6">
           <div className="text-center py-10">
-            <h2 className="text-2xl font-bold text-destructive mb-4">Error Loading Invoices</h2>
+            <h2 className="text-2xl font-bold text-destructive mb-4">{t('errors.loadingTitle')}</h2>
             <p className="text-muted-foreground">{result.message}</p>
           </div>
         </div>
@@ -72,8 +76,8 @@ export default async function SellerInvoicesPage({ searchParams }: Props) {
     return (
       <div className="container mx-auto p-6">
         <div className="text-center py-10">
-          <h2 className="text-2xl font-bold text-destructive mb-4">Error Loading Invoices</h2>
-          <p className="text-muted-foreground">An unexpected error occurred. Please try again.</p>
+          <h2 className="text-2xl font-bold text-destructive mb-4">{t('errors.loadingTitle')}</h2>
+          <p className="text-muted-foreground">{t('errors.unexpectedError')}</p>
         </div>
       </div>
     );

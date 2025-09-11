@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Zap, FileSpreadsheet, CheckCircle, Clock, Loader2 } from 'lucide-react';
 import { getPlatformIntegrationMethods } from '@/app/actions/integrations';
+import { useTranslations } from 'next-intl';
 
 interface YouCanSetupDialogProps {
   open: boolean;
@@ -18,6 +19,7 @@ export function YouCanSetupDialog({ open, onClose }: YouCanSetupDialogProps) {
   const [integrationMethods, setIntegrationMethods] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations('youcanSetup');
 
   useEffect(() => {
     if (open) {
@@ -46,10 +48,10 @@ export function YouCanSetupDialog({ open, onClose }: YouCanSetupDialogProps) {
         }));
         setIntegrationMethods(methodsWithDetails);
       } else {
-        setError(result.error || 'Failed to load integration methods');
+        setError(result.error || t('errorLoading'));
       }
     } catch (err) {
-      setError('Failed to load integration methods');
+      setError(t('errorLoading'));
     } finally {
       setLoading(false);
     }
@@ -75,21 +77,21 @@ export function YouCanSetupDialog({ open, onClose }: YouCanSetupDialogProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
               <Zap className="h-4 w-4 text-primary" />
             </div>
-            Connect YouCan Store
+            {t('title')}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
           <div className="text-center">
             <p className="text-muted-foreground">
-              Choose how you want to connect your YouCan store to receive orders
+              {t('selectMethod')}
             </p>
           </div>
 
           {loading && (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin" />
-              <span className="ml-2 text-muted-foreground">Loading integration methods...</span>
+              <span className="ml-2 text-muted-foreground">{t('loadingMethods')}</span>
             </div>
           )}
 
@@ -97,7 +99,7 @@ export function YouCanSetupDialog({ open, onClose }: YouCanSetupDialogProps) {
             <div className="text-center py-8">
               <p className="text-destructive">{error}</p>
               <Button variant="outline" onClick={fetchIntegrationMethods} className="mt-4">
-                Try Again
+                {t('tryAgain')}
               </Button>
             </div>
           )}
@@ -126,7 +128,7 @@ export function YouCanSetupDialog({ open, onClose }: YouCanSetupDialogProps) {
                           <CardTitle className="text-base">{method.name}</CardTitle>
                           {method.isRecommended && (
                             <Badge variant="default" className="mt-1 text-xs">
-                              Recommended
+                              {t('methods.direct.recommended')}
                             </Badge>
                           )}
                         </div>
@@ -143,7 +145,7 @@ export function YouCanSetupDialog({ open, onClose }: YouCanSetupDialogProps) {
                   
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <p className="text-sm font-medium">Features:</p>
+                      <p className="text-sm font-medium">{t('features')}:</p>
                       {method.features.map((feature:string, index:number) => (
                         <div key={index} className="flex items-center gap-2 text-sm">
                           <CheckCircle className="h-3 w-3 text-green-600" />
@@ -154,13 +156,13 @@ export function YouCanSetupDialog({ open, onClose }: YouCanSetupDialogProps) {
 
                     <div className="grid gap-3 md:grid-cols-2">
                       <div>
-                        <p className="text-xs font-medium text-green-600 mb-1">Pros</p>
+                        <p className="text-xs font-medium text-green-600 mb-1">{t('pros')}</p>
                         {method.pros.map((pro:string, index:number) => (
                           <p key={index} className="text-xs text-muted-foreground">• {pro}</p>
                         ))}
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-orange-600 mb-1">Considerations</p>
+                        <p className="text-xs font-medium text-orange-600 mb-1">{t('considerations')}</p>
                         {method.cons.map((con:string, index:number) => (
                           <p key={index} className="text-xs text-muted-foreground">• {con}</p>
                         ))}
@@ -174,13 +176,13 @@ export function YouCanSetupDialog({ open, onClose }: YouCanSetupDialogProps) {
 
               <div className="flex justify-end gap-3">
                 <Button variant="outline" onClick={onClose}>
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button 
                   disabled={!selectedMethod}
                   onClick={() => selectedMethod && handleMethodSelect(selectedMethod)}
                 >
-                  Continue with {selectedMethod === 'direct' ? 'Direct Integration' : 'Google Sheets'}
+                  {t('continueWith')} {selectedMethod === 'direct' ? t('methods.direct.title') : t('methods.direct.title')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>

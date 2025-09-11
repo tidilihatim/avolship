@@ -5,6 +5,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from "recharts";
 import { CallCenterChartData, CallStatus } from "@/app/actions/dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations } from 'next-intl';
 
 interface CallCenterChartProps {
   data: CallCenterChartData[];
@@ -12,12 +13,12 @@ interface CallCenterChartProps {
   isLoading?: boolean;
 }
 
-const getStatusLabel = (status: CallStatus): string => {
+const getStatusLabel = (status: CallStatus, t: any): string => {
   const labels: Record<CallStatus, string> = {
-    'answered': 'Answered',
-    'unreached': 'Unreached',
-    'busy': 'Busy',
-    'invalid': 'Invalid Number',
+    'answered': t('statuses.answered'),
+    'unreached': t('statuses.unreached'),
+    'busy': t('statuses.busy'),
+    'invalid': t('statuses.invalid'),
   };
   return labels[status] || status;
 };
@@ -38,11 +39,11 @@ const getStatusColor = (status: CallStatus, index?: number): string => {
   return `hsl(var(--chart-${((index || 0) % 5) + 1}))`;
 };
 
-const chartConfig = {
+const getChartConfig = (t: any) => ({
   count: {
-    label: "Call Attempts",
+    label: t('callAttempts'),
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig);
 
 const ChartSkeleton = () => (
   <Card className="flex flex-col">
@@ -84,6 +85,7 @@ const BarChartSkeleton = () => (
 );
 
 export const CallCenterPieChart = ({ data, totalOrders, isLoading }: CallCenterChartProps) => {
+  const t = useTranslations('dashboard.seller.charts.callCenter');
   if (isLoading) {
     return <ChartSkeleton />;
   }
@@ -92,13 +94,13 @@ export const CallCenterPieChart = ({ data, totalOrders, isLoading }: CallCenterC
     return (
       <Card className="flex flex-col">
         <CardHeader className="items-center pb-0">
-          <CardTitle>Call Center Confirmation Status</CardTitle>
-          <CardDescription>No call attempts found</CardDescription>
+          <CardTitle>{t('noDataTitle')}</CardTitle>
+          <CardDescription>{t('noDataDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No call center data available</p>
-            <p className="text-xs mt-1">Try adjusting your filters or check if there are any call attempts recorded</p>
+            <p className="text-sm">{t('noDataMessage')}</p>
+            <p className="text-xs mt-1">{t('noDataHint')}</p>
           </div>
         </CardContent>
       </Card>
@@ -106,7 +108,7 @@ export const CallCenterPieChart = ({ data, totalOrders, isLoading }: CallCenterC
   }
 
   const chartData = data.map((item, index) => ({
-    status: getStatusLabel(item.status),
+    status: getStatusLabel(item.status, t),
     count: item.count,
     percentage: item.percentage,
     fill: getStatusColor(item.status, index),
@@ -115,12 +117,12 @@ export const CallCenterPieChart = ({ data, totalOrders, isLoading }: CallCenterC
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Call Center Confirmation Status</CardTitle>
-        <CardDescription>Call attempt outcomes ({totalOrders} total attempts)</CardDescription>
+        <CardTitle>{t('pieTitle')}</CardTitle>
+        <CardDescription>{t('pieDescription', { totalAttempts: totalOrders })}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
-          config={chartConfig}
+          config={getChartConfig(t)}
           className="mx-auto aspect-square max-h-[250px]"
         >
           <PieChart>
@@ -162,6 +164,7 @@ export const CallCenterPieChart = ({ data, totalOrders, isLoading }: CallCenterC
 };
 
 export const CallCenterBarChart = ({ data, totalOrders, isLoading }: CallCenterChartProps) => {
+  const t = useTranslations('dashboard.seller.charts.callCenter');
   if (isLoading) {
     return <BarChartSkeleton />;
   }
@@ -170,13 +173,13 @@ export const CallCenterBarChart = ({ data, totalOrders, isLoading }: CallCenterC
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Call Attempt Overview</CardTitle>
-          <CardDescription>No call attempts found</CardDescription>
+          <CardTitle>{t('barTitle')}</CardTitle>
+          <CardDescription>{t('noDataDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No call center data available</p>
-            <p className="text-xs mt-1">Try adjusting your filters or check if there are any call attempts recorded</p>
+            <p className="text-sm">{t('noDataMessage')}</p>
+            <p className="text-xs mt-1">{t('noDataHint')}</p>
           </div>
         </CardContent>
       </Card>
@@ -192,11 +195,11 @@ export const CallCenterBarChart = ({ data, totalOrders, isLoading }: CallCenterC
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Call Attempt Overview</CardTitle>
-        <CardDescription>Breakdown of call attempts by outcome ({totalOrders} total)</CardDescription>
+        <CardTitle>{t('barTitle')}</CardTitle>
+        <CardDescription>{t('barDescription', { totalAttempts: totalOrders })}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={getChartConfig(t)}>
           <BarChart
             accessibilityLayer
             data={chartData}

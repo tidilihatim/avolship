@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { Loader2, RefreshCw } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useTranslations } from 'next-intl'
 
 interface LeaderboardListProps {
   data: PaginatedLeaderboard
@@ -29,6 +30,7 @@ export function LeaderboardList({
   compact = false,
   showAdditionalInfo = true
 }: LeaderboardListProps) {
+  const t = useTranslations('leaderboard.common');
   if (error) {
     return (
       <Alert variant="destructive">
@@ -36,7 +38,7 @@ export function LeaderboardList({
           <span>{error}</span>
           <Button variant="outline" size="sm" onClick={onRefresh}>
             <RefreshCw className="h-4 w-4 mr-2" />
-            Retry
+            {t('retry')}
           </Button>
         </AlertDescription>
       </Alert>
@@ -65,7 +67,7 @@ export function LeaderboardList({
     return (
       <Alert>
         <AlertDescription className="text-center py-8">
-          No leaderboard entries found for this period.
+          {t('noEntriesFound')}
         </AlertDescription>
       </Alert>
     )
@@ -139,11 +141,11 @@ export function LeaderboardList({
       {/* Refresh Button */}
       <div className="flex justify-between items-center">
         <div className="text-sm text-muted-foreground">
-          Showing {data.entries.length} of {data.totalCount} participants
+          {t('showingParticipants', { count: data.entries.length, total: data.totalCount })}
         </div>
         <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading}>
           <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-          Refresh
+          {t('refresh')}
         </Button>
       </div>
 

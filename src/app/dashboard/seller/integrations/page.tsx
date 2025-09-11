@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/config/auth';
 import { IntegrationsContainer } from './_components/integrations-container';
 import { getIntegrationPlatforms, getUserIntegrations } from '@/app/actions/integrations';
+import { getTranslations } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: 'Integrations | Avolship',
@@ -32,11 +33,12 @@ export default async function IntegrationsPage({ searchParams }: IntegrationsPag
   const warehouseId = cookiesStore.get('selectedWarehouse')?.value;
   
   if (!warehouseId) {
+    const t = await getTranslations('integrations.noWarehouseSelected');
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <h2 className="text-lg font-semibold ">No Warehouse Selected</h2>
-          <p className="text-muted-foreground mt-2">Please select a warehouse to view integrations.</p>
+          <h2 className="text-lg font-semibold ">{t('title')}</h2>
+          <p className="text-muted-foreground mt-2">{t('message')}</p>
         </div>
       </div>
     );

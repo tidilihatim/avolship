@@ -7,6 +7,7 @@ import { fetchProviderLeaderboard, fetchSellerLeaderboard, getSellerUserPosition
 import { getLeaderboardSettings } from '@/app/actions/leaderboard-settings'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getTranslations } from 'next-intl/server'
 
 function LeaderboardSkeleton() {
   return (
@@ -56,11 +57,12 @@ function LeaderboardSkeleton() {
   )
 }
 
-function SellerCompetitionTab() {
+async function SellerCompetitionTab() {
+  const t = await getTranslations('leaderboard.seller.sellerCompetition');
   return (
     <LeaderboardContainer
-      title="Seller Competition"
-      description="Top performing sellers ranked by total revenue - compete with other sellers!"
+      title={t('title')}
+      description={t('description')}
       icon={<ShoppingCart className="h-6 w-6 text-orange-500" />}
       fetchLeaderboard={fetchSellerLeaderboard}
       getCurrentUserPosition={getSellerUserPosition}
@@ -70,11 +72,12 @@ function SellerCompetitionTab() {
   )
 }
 
-function ProviderPerformanceTab() {
+async function ProviderPerformanceTab() {
+  const t = await getTranslations('leaderboard.seller.providerPerformance');
   return (
     <LeaderboardContainer
-      title="Provider Performance"
-      description="Top performing providers ranked by expedition count - find the best logistics partners!"
+      title={t('title')}
+      description={t('description')}
       icon={<Truck className="h-6 w-6 text-blue-500" />}
       fetchLeaderboard={fetchProviderLeaderboard}
       initialPeriod="monthly"
@@ -85,6 +88,7 @@ function ProviderPerformanceTab() {
 
 export default async function SellerLeaderboardPage() {
   const settings = await getLeaderboardSettings()
+  const t = await getTranslations('leaderboard.seller');
   
   // If both seller and provider leaderboards are disabled
   if (!settings.enableSellerLeaderboard && !settings.enableProviderLeaderboard) {
@@ -98,9 +102,9 @@ export default async function SellerLeaderboardPage() {
         <div className="flex items-center gap-2 mb-6">
           <Trophy className="h-5 w-5 text-yellow-500" />
           <div>
-            <h1 className="text-xl font-semibold">Seller Competition</h1>
+            <h1 className="text-xl font-semibold">{t('sellerCompetition.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Compete with other sellers and track your performance
+              {t('sellerCompetition.singleDescription')}
             </p>
           </div>
         </div>
@@ -118,9 +122,9 @@ export default async function SellerLeaderboardPage() {
         <div className="flex items-center gap-2 mb-6">
           <Trophy className="h-5 w-5 text-yellow-500" />
           <div>
-            <h1 className="text-xl font-semibold">Provider Performance</h1>
+            <h1 className="text-xl font-semibold">{t('providerPerformance.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Discover top-performing providers for partnerships
+              {t('providerPerformance.singleDescription')}
             </p>
           </div>
         </div>
@@ -138,9 +142,9 @@ export default async function SellerLeaderboardPage() {
       <div className="flex items-center gap-2 mb-6">
         <Trophy className="h-5 w-5 text-yellow-500" />
         <div>
-          <h1 className="text-xl font-semibold">Leaderboards</h1>
+          <h1 className="text-xl font-semibold">{t('title')}</h1>
           <p className="text-sm text-muted-foreground">
-            Compete with other sellers and discover top-performing providers
+            {t('description')}
           </p>
         </div>
       </div>
@@ -149,11 +153,11 @@ export default async function SellerLeaderboardPage() {
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="sellers" className="flex items-center gap-2">
             <ShoppingCart className="h-4 w-4" />
-            Seller Competition
+            {t('sellerCompetition.title')}
           </TabsTrigger>
           <TabsTrigger value="providers" className="flex items-center gap-2">
             <Truck className="h-4 w-4" />
-            Provider Performance
+            {t('providerPerformance.title')}
           </TabsTrigger>
         </TabsList>
 

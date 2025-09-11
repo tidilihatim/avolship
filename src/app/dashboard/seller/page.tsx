@@ -1,4 +1,5 @@
 import React from 'react';
+import { getTranslations } from 'next-intl/server';
 import { CallCenterSection } from '@/components/dashboard/call-center-section';
 import { OrderStatusSection } from '@/components/dashboard/order-status-section';
 import { TrendingProductsSection } from '@/components/dashboard/trending-products-section';
@@ -10,12 +11,14 @@ export const metadata = {
 }
 
 const page = async (props: Props) => {
+  const t = await getTranslations('dashboard.seller.overview');
+  
   return (
     <div className="space-y-8 p-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Monitor your business performance with comprehensive analytics
+          {t('subtitle')}
         </p>
       </div>
 

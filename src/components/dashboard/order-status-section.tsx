@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { OrderStatusPieChart, OrderStatusBarChart } from './order-status-chart';
 import { CallCenterFiltersComponent } from './call-center-filters';
 import { getProductsByWarehouse, getOrderStatusData, CallCenterFilters as CallCenterFiltersType } from '@/app/actions/dashboard';
@@ -18,6 +19,7 @@ interface OrderStatusChartData {
 }
 
 export const OrderStatusSection = () => {
+  const t = useTranslations('dashboard.seller.overview.orderStatus');
   const [products, setProducts] = useState<Product[]>([]);
   const [chartData, setChartData] = useState<OrderStatusChartData[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
@@ -43,7 +45,7 @@ export const OrderStatusSection = () => {
         setProducts(response.data || []);
       }
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error(t('errorFetching'), error);
     } finally {
       setIsLoadingProducts(false);
     }
@@ -58,7 +60,7 @@ export const OrderStatusSection = () => {
         setTotalOrders(response.data?.totalOrders || 0);
       }
     } catch (error) {
-      console.error('Error fetching order status data:', error);
+      console.error(t('errorChart'), error);
     } finally {
       setIsLoadingCharts(false);
     }
@@ -71,9 +73,9 @@ export const OrderStatusSection = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Order Status Overview</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">{t('title')}</h2>
         <p className="text-sm text-muted-foreground">
-          Track order progression and status distribution
+          {t('subtitle')}
         </p>
       </div>
 

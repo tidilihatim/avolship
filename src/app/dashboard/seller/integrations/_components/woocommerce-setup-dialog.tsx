@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowRight, Zap, FileSpreadsheet, CheckCircle, Clock, Loader2, Store } from 'lucide-react';
 import { getPlatformIntegrationMethods } from '@/app/actions/integrations';
+import { useTranslations } from 'next-intl';
 
 interface WooCommerceSetupDialogProps {
   open: boolean;
@@ -22,6 +23,7 @@ export function WooCommerceSetupDialog({ open, onClose }: WooCommerceSetupDialog
   const [error, setError] = useState<string | null>(null);
   const [storeUrl, setStoreUrl] = useState('');
   const [showCredentials, setShowCredentials] = useState(false);
+  const t = useTranslations('woocommerceSetup');
 
   useEffect(() => {
     if (open) {
@@ -53,10 +55,10 @@ export function WooCommerceSetupDialog({ open, onClose }: WooCommerceSetupDialog
         }));
         setIntegrationMethods(methodsWithDetails);
       } else {
-        setError(result.error || 'Failed to load integration methods');
+        setError(result.error || t('errorLoading'));
       }
     } catch (err) {
-      setError('Failed to load integration methods');
+      setError(t('errorLoading'));
     } finally {
       setLoading(false);
     }

@@ -5,6 +5,7 @@ import { Search, FilterX, Filter, Eye, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -118,6 +119,7 @@ interface SellerInvoiceListProps {
 export default function SellerInvoiceList({ invoices, pagination, filters }: SellerInvoiceListProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations('invoices');
   
   // State for search and filters
   const [search, setSearch] = useState(filters.search || '');
@@ -312,11 +314,11 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
   // Get status badge styling
   const getStatusBadge = (status: InvoiceStatus) => {
     const statusConfig = {
-      [InvoiceStatus.DRAFT]: { label: 'Draft', className: 'bg-muted text-muted-foreground' },
-      [InvoiceStatus.GENERATED]: { label: 'Generated', className: 'bg-primary/10 text-primary' },
-      [InvoiceStatus.PAID]: { label: 'Paid', className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
-      [InvoiceStatus.OVERDUE]: { label: 'Overdue', className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
-      [InvoiceStatus.CANCELLED]: { label: 'Cancelled', className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
+      [InvoiceStatus.DRAFT]: { label: t('status.draft'), className: 'bg-muted text-muted-foreground' },
+      [InvoiceStatus.GENERATED]: { label: t('status.generated'), className: 'bg-primary/10 text-primary' },
+      [InvoiceStatus.PAID]: { label: t('status.paid'), className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
+      [InvoiceStatus.OVERDUE]: { label: t('status.overdue'), className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
+      [InvoiceStatus.CANCELLED]: { label: t('status.cancelled'), className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
     };
     
     return statusConfig[status] || { label: status, className: 'bg-muted text-muted-foreground' };
@@ -343,14 +345,14 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search invoices..."
+              placeholder={t('searchInvoices')}
               className="pl-8"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <Button type="submit" variant="default">
-            Apply Filters
+            {t('applyFilters')}
           </Button>
         </form>
 
@@ -359,27 +361,27 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
             <SheetTrigger asChild>
               <Button variant="outline" className="flex gap-2">
                 <Filter className="h-4 w-4" />
-                Filters
+                {t('filters')}
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="p-4">
               <SheetHeader className="px-1">
-                <SheetTitle className="text-xl">Filters</SheetTitle>
+                <SheetTitle className="text-xl">{t('filters')}</SheetTitle>
                 <SheetDescription className="text-sm">
-                  Filter invoices by various criteria
+                  {t('filterInvoices')}
                 </SheetDescription>
               </SheetHeader>
               
               <div className="py-8 space-y-8">
                 {/* Status Filter */}
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">Filter by Status</Label>
+                  <Label className="text-sm font-medium">{t('filterByStatus')}</Label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className='w-full'>
-                      <SelectValue placeholder="All Statuses" />
+                      <SelectValue placeholder={t('allStatuses')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={ALL_STATUSES}>All Statuses</SelectItem>
+                      <SelectItem value={ALL_STATUSES}>{t('allStatuses')}</SelectItem>
                       {Object.values(InvoiceStatus).map((status) => (
                         <SelectItem key={status} value={status}>
                           {getStatusBadge(status).label}
@@ -391,10 +393,10 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
 
                 {/* Date Range Filter */}
                 <div className="space-y-3">
-                  <Label className="text-sm font-medium">Date Range</Label>
+                  <Label className="text-sm font-medium">{t('dateRange')}</Label>
                   <div className="space-y-2">
                     <div>
-                      <Label htmlFor="start-date" className="text-xs">Start Date</Label>
+                      <Label htmlFor="start-date" className="text-xs">{t('startDate')}</Label>
                       <Input
                         id="start-date"
                         type="date"
@@ -403,7 +405,7 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
                       />
                     </div>
                     <div>
-                      <Label htmlFor="end-date" className="text-xs">End Date</Label>
+                      <Label htmlFor="end-date" className="text-xs">{t('endDate')}</Label>
                       <Input
                         id="end-date"
                         type="date"
@@ -421,7 +423,7 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
                 <div className="flex flex-col gap-3">
                   <SheetClose asChild>
                     <Button onClick={applyFilters}>
-                      Apply Filters
+                      {t('applyFilters')}
                     </Button>
                   </SheetClose>
                   <Button 
@@ -431,7 +433,7 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
                     className="flex items-center gap-2"
                   >
                     <FilterX className="h-4 w-4" />
-                    Clear Filters
+                    {t('clearFilters')}
                   </Button>
                 </div>
               </div>
@@ -444,12 +446,12 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            My Invoices
+            {t('title')}
           </CardTitle>
           <CardDescription>
             {pagination?.total 
-              ? `${pagination.total} ${pagination.total === 1 ? 'invoice' : 'invoices'} found`
-              : 'No invoices found'}
+              ? `${pagination.total} ${pagination.total === 1 ? t('invoicesFound.single') : t('invoicesFound.multiple')}`
+              : t('noInvoicesFound')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -458,13 +460,13 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Invoice #</TableHead>
-                    <TableHead className="hidden md:table-cell">Status</TableHead>
-                    <TableHead className="hidden md:table-cell">Period</TableHead>
-                    <TableHead className="hidden lg:table-cell">Amount</TableHead>
-                    <TableHead className="hidden lg:table-cell">Warehouse</TableHead>
-                    <TableHead className="hidden xl:table-cell">Generated</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('table.invoiceNumber')}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t('table.status')}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t('table.period')}</TableHead>
+                    <TableHead className="hidden lg:table-cell">{t('table.amount')}</TableHead>
+                    <TableHead className="hidden lg:table-cell">{t('table.warehouse')}</TableHead>
+                    <TableHead className="hidden xl:table-cell">{t('table.generated')}</TableHead>
+                    <TableHead className="text-right">{t('table.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -481,13 +483,13 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
                       <TableCell className="hidden md:table-cell">
                         <div className="text-sm">
                           <div>{formatDate(invoice.periodStart)}</div>
-                          <div className="text-muted-foreground">to {formatDate(invoice.periodEnd)}</div>
+                          <div className="text-muted-foreground">{t('table.to')} {formatDate(invoice.periodEnd)}</div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         <div className="text-sm">
                           <div className="font-medium">{formatCurrency(invoice.summary.finalAmount, invoice.currency)}</div>
-                          <div className="text-muted-foreground">{invoice.summary.totalOrders} orders</div>
+                          <div className="text-muted-foreground">{invoice.summary.totalOrders} {t('table.orders')}</div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
@@ -499,7 +501,7 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
                       <TableCell className="hidden xl:table-cell">
                         <div className="text-sm">
                           <div>{formatDate(invoice.generatedAt)}</div>
-                          <div className="text-muted-foreground">by {invoice.generatedBy.name}</div>
+                          <div className="text-muted-foreground">{t('table.by')} {invoice.generatedBy.name}</div>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -507,7 +509,7 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
                           <Button variant="outline" size="sm" asChild>
                             <Link href={`/dashboard/seller/invoices/${invoice._id}`}>
                               <Eye className="h-4 w-4 mr-1" />
-                              View
+                              {t('table.view')}
                             </Link>
                           </Button>
                         </div>
@@ -521,7 +523,7 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
             <div className="flex flex-col items-center justify-center py-10 space-y-4">
               <FileText className="h-12 w-12 text-muted-foreground" />
               <p className="text-muted-foreground text-center">
-                No invoices found
+                {t('noInvoicesFound')}
               </p>
             </div>
           )}
@@ -530,7 +532,7 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
           <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
-                Items per page:
+                {t('pagination.itemsPerPage')}
               </span>
               <Select
                 value={String(itemsPerPage)}
@@ -555,8 +557,8 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
             </Pagination>
             
             <div className="text-sm text-muted-foreground">
-              Showing {(pagination.page - 1) * pagination.limit + 1}-
-              {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
+              {t('pagination.showing')} {(pagination.page - 1) * pagination.limit + 1}-
+              {Math.min(pagination.page * pagination.limit, pagination.total)} {t('pagination.of')} {pagination.total}
             </div>
           </CardFooter>
         )}

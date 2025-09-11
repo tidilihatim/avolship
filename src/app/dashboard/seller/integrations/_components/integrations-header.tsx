@@ -1,9 +1,15 @@
+'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Zap, Info } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
 
 export function IntegrationsHeader() {
+  const t = useTranslations('integrations');
+  const tHeader = useTranslations('integrations.header');
+  
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -11,19 +17,19 @@ export function IntegrationsHeader() {
           <Zap className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Integrations</h1>
-          <p className="text-muted-foreground">Connect your e-commerce platforms</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('subtitle')}</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Automate Your Order Fulfillment</CardTitle>
-            <Badge variant="secondary">Beta</Badge>
+            <CardTitle className="text-lg">{tHeader('automateTitle')}</CardTitle>
+            <Badge variant="secondary">{tHeader('betaLabel')}</Badge>
           </div>
           <CardDescription>
-            Connect your online stores to automatically receive and fulfill orders through our network
+            {tHeader('automateDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -33,8 +39,8 @@ export function IntegrationsHeader() {
                 <div className="h-2 w-2 rounded-full bg-green-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Real-time Sync</p>
-                <p className="text-xs text-muted-foreground">Orders sync instantly</p>
+                <p className="text-sm font-medium">{tHeader('features.realTimeSync.title')}</p>
+                <p className="text-xs text-muted-foreground">{tHeader('features.realTimeSync.description')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 rounded-lg border p-3">
@@ -42,8 +48,8 @@ export function IntegrationsHeader() {
                 <div className="h-2 w-2 rounded-full bg-blue-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Auto Fulfillment</p>
-                <p className="text-xs text-muted-foreground">Hands-free processing</p>
+                <p className="text-sm font-medium">{tHeader('features.autoFulfillment.title')}</p>
+                <p className="text-xs text-muted-foreground">{tHeader('features.autoFulfillment.description')}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 rounded-lg border p-3">
@@ -51,8 +57,8 @@ export function IntegrationsHeader() {
                 <div className="h-2 w-2 rounded-full bg-purple-600" />
               </div>
               <div>
-                <p className="text-sm font-medium">Multi-platform</p>
-                <p className="text-xs text-muted-foreground">Connect multiple stores</p>
+                <p className="text-sm font-medium">{tHeader('features.multiPlatform.title')}</p>
+                <p className="text-xs text-muted-foreground">{tHeader('features.multiPlatform.description')}</p>
               </div>
             </div>
           </div>
@@ -62,8 +68,7 @@ export function IntegrationsHeader() {
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          <strong>Warehouse-Specific Integrations:</strong> Each integration is tied to your currently selected warehouse. 
-          You can set up different integrations for different warehouses to manage orders separately.
+          <strong>{tHeader('warehouseInfo.title')}</strong> {tHeader('warehouseInfo.description')}
         </AlertDescription>
       </Alert>
     </div>

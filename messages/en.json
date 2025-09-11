@@ -139,7 +139,31 @@
       "yourScore": "Your Score",
       "thisPeriod": "This {period}",
       "period": "Period",
-      "currentLeaderboardPeriod": "Current leaderboard period"
+      "currentLeaderboardPeriod": "Current leaderboard period",
+      "retry": "Retry",
+      "refresh": "Refresh",
+      "noEntriesFound": "No leaderboard entries found for this period.",
+      "showingParticipants": "Showing {count} of {total} participants"
+    },
+    "seller": {
+      "title": "Leaderboards",
+      "description": "Compete with other sellers and discover top-performing providers",
+      "sellerCompetition": {
+        "title": "Seller Competition",
+        "description": "Top performing sellers ranked by total revenue - compete with other sellers!",
+        "singleDescription": "Compete with other sellers and track your performance"
+      },
+      "providerPerformance": {
+        "title": "Provider Performance",
+        "description": "Top performing providers ranked by expedition count - find the best logistics partners!",
+        "singleDescription": "Discover top-performing providers for partnerships"
+      }
+    },
+    "disabled": {
+      "title": "Leaderboard Temporarily Unavailable",
+      "description": "The leaderboard is currently disabled. Please check back later!",
+      "pageTitle": "Leaderboard",
+      "pageDescription": "Compete and track performance"
     }
   },
   "settings": {
@@ -496,7 +520,7 @@
     "orders": "Orders",
     "expeditions": "Expeditions",
     "deliveryRiders": "Delivery Riders",
-    "invoices": "Invoices",
+    "invoicesPage": "Invoices",
     "leaderboard": "Leaderboard",
     "products": "Products",
     "providers": "Providers",
@@ -583,42 +607,93 @@
     }
   },
   "invoices": {
-    "title": "Invoices",
-    "errorLoading": "Error Loading Invoices",
-    "unexpectedError": "An unexpected error occurred. Please try again.",
-    "searchPlaceholder": "Search invoices...",
+    "title": "My Invoices",
+    "searchInvoices": "Search invoices...",
     "applyFilters": "Apply Filters",
+    "clearFilters": "Clear Filters",
     "filters": "Filters",
     "filtersDescription": "Filter invoices by various criteria",
     "filterByStatus": "Filter by Status",
     "allStatuses": "All Statuses",
-    "filterBySeller": "Filter by Seller",
-    "allSellers": "All Sellers",
     "dateRange": "Date Range",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "clearFilters": "Clear Filters",
-    "invoice": "invoice",
-    "invoices": "invoices",
-    "found": "found",
     "noInvoicesFound": "No invoices found",
-    "invoiceNumber": "Invoice #",
-    "seller": "Seller",
-    "status": "Status",
-    "period": "Period",
-    "amount": "Amount",
-    "warehouse": "Warehouse",
-    "generated": "Generated",
-    "actions": "Actions",
-    "to": "to",
-    "orders": "orders",
-    "by": "by",
-    "view": "View",
-    "markAsPaid": "Mark as Paid",
-    "markAsOverdue": "Mark as Overdue",
-    "cancelInvoice": "Cancel Invoice",
-    "itemsPerPage": "Items per page:",
-    "showing": "Showing {start}-{end} of {total}",
+    "errorLoading": "Error Loading Invoices",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "fields": {
+      "invoiceNumber": "Invoice #",
+      "status": "Status",
+      "period": "Period",
+      "amount": "Amount",
+      "warehouse": "Warehouse",
+      "generated": "Generated",
+      "actions": "Actions"
+    },
+    "table": {
+      "invoiceNumber": "Invoice #",
+      "status": "Status",
+      "period": "Period",
+      "amount": "Amount",
+      "warehouse": "Warehouse",
+      "generated": "Generated",
+      "actions": "Actions",
+      "view": "View",
+      "to": "to",
+      "orders": "orders",
+      "by": "by"
+    },
+    "status": {
+      "draft": "Draft",
+      "generated": "Generated",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "cancelled": "Cancelled"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "generated": "Generated",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "cancelled": "Cancelled"
+    },
+    "pagination": {
+      "itemsPerPage": "Items per page:",
+      "showing": "Showing",
+      "of": "of",
+      "invoicesFound": "{total} {count, plural, one {invoice} other {invoices}} found"
+    },
+    "invoicesFound": {
+      "single": "invoice found",
+      "multiple": "invoices found"
+    },
+    "actions": {
+      "view": "View"
+    },
+    "errors": {
+      "loadingTitle": "Error Loading Invoices",
+      "unexpectedError": "An unexpected error occurred. Please try again."
+    },
+    "details": {
+      "backToInvoices": "Back to Invoices",
+      "invoiceDetails": "Invoice Details",
+      "generated": "Generated",
+      "print": "Print Invoice",
+      "downloadPdf": "Download PDF",
+      "associatedOrders": "Associated Orders",
+      "associatedExpeditions": "Associated Expeditions",
+      "ordersIncluded": "Orders included in this invoice",
+      "expeditionsIncluded": "Expeditions included in this invoice",
+      "created": "Created",
+      "expeditionDate": "Expedition Date",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "noOrdersAssociated": "No orders associated with this invoice",
+      "noExpeditionsAssociated": "No expeditions associated with this invoice",
+      "to": "to",
+      "orders": "orders",
+      "by": "by"
+    },
     "statusLabels": {
       "DRAFT": "Draft",
       "GENERATED": "Generated",
@@ -730,9 +805,234 @@
       "unpaid": "Unpaid"
     }
   },
+  "integrations": {
+    "title": "Integrations",
+    "subtitle": "Connect your e-commerce platforms",
+    "noWarehouseSelected": {
+      "title": "No Warehouse Selected",
+      "message": "Please select a warehouse to view integrations."
+    },
+    "header": {
+      "automateTitle": "Automate Your Order Fulfillment",
+      "automateDescription": "Connect your online stores to automatically receive and fulfill orders through our network",
+      "betaLabel": "Beta",
+      "features": {
+        "realTimeSync": {
+          "title": "Real-time Sync",
+          "description": "Orders sync instantly"
+        },
+        "autoFulfillment": {
+          "title": "Auto Fulfillment",
+          "description": "Hands-free processing"
+        },
+        "multiPlatform": {
+          "title": "Multi-platform",
+          "description": "Connect multiple stores"
+        }
+      },
+      "warehouseInfo": {
+        "title": "Warehouse-Specific Integrations:",
+        "description": "Each integration is tied to your currently selected warehouse. You can set up different integrations for different warehouses to manage orders separately."
+      }
+    },
+    "platforms": {
+      "title": "Available Platforms",
+      "subtitle": "Choose your e-commerce platform to get started",
+      "noPlatforms": "No platforms available",
+      "status": {
+        "connected": "Connected",
+        "paused": "Paused",
+        "available": "Available",
+        "comingSoon": "Coming Soon"
+      },
+      "actions": {
+        "connect": "Connect {platform}",
+        "pause": "Pause",
+        "pausing": "Pausing...",
+        "resume": "Resume",
+        "resuming": "Resuming...",
+        "disconnect": "Disconnect",
+        "disconnecting": "Disconnecting...",
+        "unavailable": "Unavailable",
+        "viewLogs": "View Logs"
+      },
+      "stats": {
+        "connected": "Connected {date}",
+        "orders": "Orders: {count}"
+      }
+    },
+    "disconnect": {
+      "title": "Disconnect {platform} Integration",
+      "description": "Are you sure you want to disconnect this integration? This action will:",
+      "warning": "You will need to reconnect and reconfigure if you want to use this integration again.",
+      "cancel": "Cancel",
+      "confirm": "Disconnect"
+    },
+    "messages": {
+      "errors": {
+        "accessDenied": "Access was denied. Please try again and allow the required permissions.",
+        "missingParameters": "Invalid authorization request. Please try again.",
+        "invalidState": "Security validation failed. Please try again.",
+        "tokenExchangeFailed": "Failed to connect to YouCan. Please check your credentials and try again.",
+        "internalError": "An internal error occurred. Please try again later.",
+        "defaultError": "An error occurred during integration setup. Please try again.",
+        "pauseFailed": "Failed to pause integration",
+        "resumeFailed": "Failed to resume integration",
+        "disconnectFailed": "Failed to disconnect integration"
+      },
+      "success": {
+        "youcanConnected": "YouCan integration connected successfully! Orders will now sync automatically.",
+        "woocommerceConnected": "WooCommerce integration connected successfully! Orders will now sync automatically.",
+        "shopifyConnected": "Shopify integration connected successfully! Orders will now sync automatically.",
+        "defaultConnected": "Integration connected successfully!",
+        "paused": "{platform} integration paused successfully",
+        "resumed": "{platform} integration resumed successfully",
+        "disconnected": "{platform} integration disconnected successfully"
+      }
+    }
+  },
+  "youcanSetup": {
+    "title": "Connect YouCan Store",
+    "selectMethod": "Choose how you want to connect your YouCan store to receive orders",
+    "methods": {
+      "direct": {
+        "title": "Direct Integration",
+        "description": "Connect directly to your YouCan store using OAuth",
+        "recommended": "Recommended"
+      },
+      "sheets": {
+        "title": "Google Sheets",
+        "description": "Use Google Sheets to manage your YouCan orders"
+      }
+    },
+    "loadingMethods": "Loading integration methods...",
+    "errorLoading": "Failed to load integration methods",
+    "tryAgain": "Try Again",
+    "features": "Features",
+    "pros": "Pros",
+    "considerations": "Considerations",
+    "cancel": "Cancel",
+    "continueWith": "Continue with",
+    "getStarted": "Get Started",
+    "back": "Back",
+    "close": "Close"
+  },
+  "woocommerceSetup": {
+    "title": "Connect WooCommerce Store",
+    "selectMethod": "Choose how you want to connect your WooCommerce store to receive orders",
+    "methods": {
+      "direct": {
+        "title": "Direct Integration",
+        "description": "Connect directly to your WooCommerce store using REST API",
+        "recommended": "Recommended"
+      },
+      "sheets": {
+        "title": "Google Sheets",
+        "description": "Use Google Sheets to manage your WooCommerce orders"
+      }
+    },
+    "loadingMethods": "Loading integration methods...",
+    "errorLoading": "Failed to load integration methods",
+    "tryAgain": "Try Again",
+    "features": "Features",
+    "pros": "Pros",
+    "considerations": "Considerations",
+    "cancel": "Cancel",
+    "continueWith": "Continue with",
+    "storeUrl": "Store URL",
+    "enterStoreUrl": "Enter your WooCommerce store URL",
+    "example": "Example",
+    "next": "Next"
+  },
+  "shopifySetup": {
+    "title": "Connect Shopify Store",
+    "selectMethod": "Choose how you want to connect your Shopify store to receive orders", 
+    "methods": {
+      "direct": {
+        "title": "Direct Integration",
+        "description": "Connect directly to your Shopify store using OAuth",
+        "recommended": "Recommended"
+      },
+      "sheets": {
+        "title": "Google Sheets",
+        "description": "Use Google Sheets to manage your Shopify orders"
+      }
+    },
+    "loadingMethods": "Loading integration methods...",
+    "errorLoading": "Failed to load integration methods",
+    "tryAgain": "Try Again",
+    "features": "Features", 
+    "pros": "Pros",
+    "considerations": "Considerations",
+    "cancel": "Cancel",
+    "continueWith": "Continue with"
+  },
    "orders": {
+    "manageOrders": "Manage Orders",
+    "title": "Orders",
+    "searchOrders": "Search orders by ID, customer name, phone...",
+    "importOrders": "Import Orders", 
+    "addOrder": "Add Order",
+    "noOrdersFound": "No orders found",
+    "newOrderReceived": "New order received!",
+    "applyFilters": "Search",
+    "clearFilters": "Clear Filters",
     "common":{
       "cancel":"Cancel"
+    },
+    "fields": {
+      "orderId": "Order ID",
+      "customer": "Customer", 
+      "warehouse": "Warehouse",
+      "seller": "Seller",
+      "assignedAgent": "Assigned Agent",
+      "assignedRider": "Assigned Rider",
+      "deliveryTracking": "Delivery Tracking",
+      "products": "Products",
+      "totalPrice": "Total Price",
+      "status": "Status",
+      "callAttempts": "Call Attempts", 
+      "orderDate": "Order Date"
+    },
+    "filters": {
+      "title": "Filters",
+      "filterByStatus": "Filter by Status",
+      "allStatuses": "All Statuses",
+      "filterBySeller": "Filter by Seller", 
+      "allSellers": "All Sellers",
+      "filterByCallStatus": "Filter by Call Status",
+      "allCallStatuses": "All Call Statuses",
+      "filterByDate": "Filter by Date",
+      "dateRange": "Date Range",
+      "customRange": "Custom Range",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "lastWeek": "Last Week", 
+      "lastMonth": "Last Month",
+      "from": "From",
+      "to": "To",
+      "filterByDoubleOrders": "Show double orders only"
+    },
+    "pagination": {
+      "showingXofY": "Showing {start} to {end} of {total} orders",
+      "itemsPerPage": "Items per page",
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing",
+      "of": "of"
+    },
+    "errors": {
+      "pleaseSelectAgent": "Please select an agent",
+      "pleaseSelectRider": "Please select a delivery rider", 
+      "noOrderSelected": "No order selected for update",
+      "failedToAssignOrder": "Failed to assign order",
+      "failedToAssignRider": "Failed to assign rider",
+      "failedToUpdateCustomer": "Failed to update customer information",
+      "authRequired": "Authentication required"
+    },
+    "success": {
+      "riderAssignedSuccess": "Rider assigned successfully",
+      "customerUpdatedSuccess": "Customer information updated successfully"
     },
     "form": {
       "titleCreate": "Create New Order",
@@ -2400,6 +2700,153 @@
         "viewInventory": "View Inventory",
         "itemsLeft": "items left",
         "sku": "SKU"
+      },
+      "overview": {
+        "title": "Dashboard Overview",
+        "subtitle": "Monitor your business performance with comprehensive analytics",
+        "callCenter": {
+          "title": "Call Center Confirmation",
+          "subtitle": "Track order status distribution and call center performance",
+          "errorFetching": "Error fetching products:",
+          "errorChart": "Error fetching chart data:"
+        },
+        "orderStatus": {
+          "title": "Order Status Overview",
+          "subtitle": "Track order progression and status distribution",
+          "errorFetching": "Error fetching products:",
+          "errorChart": "Error fetching order status data:"
+        },
+        "trendingProducts": {
+          "title": "Trending Products",
+          "subtitle": "Most popular products based on order frequency",
+          "errorFetching": "Error fetching products:",
+          "errorChart": "Error fetching trending products data:"
+        }
+      },
+      "charts": {
+        "callCenter": {
+          "pieTitle": "Call Center Confirmation Status",
+          "pieDescription": "Call attempt outcomes ({totalAttempts} total attempts)",
+          "barTitle": "Call Attempt Overview", 
+          "barDescription": "Breakdown of call attempts by outcome ({totalAttempts} total)",
+          "noDataTitle": "Call Center Confirmation Status",
+          "noDataDescription": "No call attempts found",
+          "noDataMessage": "No call center data available",
+          "noDataHint": "Try adjusting your filters or check if there are any call attempts recorded",
+          "callAttempts": "Call Attempts",
+          "statuses": {
+            "answered": "Answered",
+            "unreached": "Unreached", 
+            "busy": "Busy",
+            "invalid": "Invalid Number"
+          }
+        },
+        "orderStatus": {
+          "pieTitle": "Order Status Distribution",
+          "pieDescription": "Order breakdown by status ({totalOrders} total orders)",
+          "barTitle": "Order Status Overview",
+          "barDescription": "Breakdown of orders by status ({totalOrders} total)",
+          "noDataTitle": "Order Status Distribution", 
+          "noDataDescription": "No orders found",
+          "noDataMessage": "No order data available",
+          "noDataHint": "Try adjusting your filters or check if there are any orders",
+          "orders": "Orders",
+          "statuses": {
+            "pending": "Pending",
+            "confirmed": "Confirmed", 
+            "cancelled": "Cancelled",
+            "shipped": "Shipped",
+            "assigned_to_delivery": "Assigned to Delivery",
+            "accepted_by_delivery": "Accepted by Delivery",
+            "in_transit": "In Transit",
+            "out_for_delivery": "Out for Delivery", 
+            "delivered": "Delivered",
+            "delivery_failed": "Delivery Failed",
+            "refunded": "Refunded",
+            "wrong_number": "Wrong Number",
+            "double": "Duplicate",
+            "unreached": "Unreached",
+            "expired": "Expired"
+          }
+        },
+        "trendingProducts": {
+          "title": "Trending Products",
+          "description": "Most ordered products ({totalOrders} total orders)",
+          "noDataTitle": "Trending Products",
+          "noDataDescription": "No trending products found", 
+          "noDataMessage": "No product data available",
+          "noDataHint": "Try adjusting your filters or check if there are any orders",
+          "orders": "Orders",
+          "product": "Product", 
+          "topProducts": "Top 5 Products:",
+          "code": "Code:",
+          "ordersLabel": "orders"
+        }
+      },
+      "filters": {
+        "title": "Filters:",
+        "selectProduct": "Select product", 
+        "allProducts": "All Products",
+        "dateRange": "Date range",
+        "customRange": "Custom range",
+        "datePresets": {
+          "today": "Today",
+          "yesterday": "Yesterday", 
+          "this_week": "This Week",
+          "this_month": "This Month",
+          "this_year": "This Year",
+          "custom": "Custom Range"
+        }
+      },
+      "deliveryTracking": {
+        "title": "Delivery Tracking",
+        "deliveryTimeline": "Delivery Timeline",
+        "assigned": "Assigned:",
+        "accepted": "Accepted:",
+        "pickedUp": "Picked Up:",
+        "delivered": "Delivered:",
+        "distanceLocation": "Distance & Location",
+        "distance": "Distance:",
+        "lastLocation": "Last location:",
+        "financialDetails": "Financial Details",
+        "deliveryFee": "Delivery Fee:",
+        "commission": "Commission:",
+        "customerRating": "Customer Rating",
+        "deliveryProof": "Delivery Proof",
+        "type": "Type:",
+        "uploaded": "Uploaded:",
+        "viewProof": "View Proof",
+        "deliveryNotes": "Delivery Notes",
+        "phoneNumbers": "Phone Numbers",
+        "shippingAddress": "Shipping Address",
+        "trackOrder": "Track Order",
+        "assignRider": "Assign Rider",
+        "editCustomer": "Edit Customer",
+        "applyDiscount": "Apply Discount",
+        "viewCallHistory": "View Call History",
+        "orderSummary": "Order Summary with Discounts",
+        "originalTotal": "Original Total",
+        "totalSavings": "Total Savings",
+        "finalTotal": "Final Total",
+        "savedPercent": "You saved {percent}% on this order",
+        "orderTotal": "Order Total",
+        "quantity": "Quantity",
+        "unitPrice": "Unit Price",
+        "subtotal": "Subtotal",
+        "code": "Code:",
+        "discountApplied": "Discount Applied",
+        "reason": "Reason:",
+        "notes": "Notes:",
+        "comment": "Comment:",
+        "attempts": "attempts",
+        "lastCall": "Last:",
+        "noCalls": "No calls made",
+        "phone": "phone",
+        "phones": "phones",
+        "item": "item",
+        "items": "items",
+        "unassigned": "Unassigned",
+        "unknown": "Unknown"
       }
     }
   },

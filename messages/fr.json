@@ -96,6 +96,366 @@
       }
     }
   },
+  "invoices": {
+    "title": "Factures",
+    "searchInvoices": "Rechercher des factures...",
+    "searchPlaceholder": "Rechercher des factures...",
+    "applyFilters": "Appliquer les Filtres",
+    "clearFilters": "Effacer les Filtres",
+    "filters": "Filtres",
+    "filtersDescription": "Filtrer les factures selon divers critères",
+    "filterByStatus": "Filtrer par Statut",
+    "allStatuses": "Tous les Statuts",
+    "filterBySeller": "Filtrer par Vendeur",
+    "allSellers": "Tous les Vendeurs",
+    "dateRange": "Plage de Dates",
+    "startDate": "Date de Début",
+    "endDate": "Date de Fin",
+    "invoice": "facture",
+    "invoicesCount": "factures",
+    "found": "trouvée(s)",
+    "noInvoicesFound": "Aucune facture trouvée",
+    "errorLoading": "Erreur de Chargement des Factures",
+    "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "invoiceNumber": "Facture #",
+    "seller": "Vendeur",
+    "status": "Statut",
+    "period": "Période",
+    "amount": "Montant",
+    "warehouse": "Entrepôt",
+    "generated": "Générée",
+    "actions": "Actions",
+    "to": "à",
+    "orders": "commandes",
+    "by": "par",
+    "view": "Voir",
+    "markAsPaid": "Marquer comme Payée",
+    "markAsOverdue": "Marquer en Retard",
+    "cancelInvoice": "Annuler la Facture",
+    "itemsPerPage": "Éléments par page :",
+    "showing": "Affichage de {start}-{end} sur {total}",
+    "table": {
+      "invoiceNumber": "Facture #",
+      "status": "Statut",
+      "period": "Période",
+      "amount": "Montant",
+      "warehouse": "Entrepôt",
+      "generated": "Générée",
+      "actions": "Actions",
+      "view": "Voir",
+      "to": "à",
+      "orders": "commandes",
+      "by": "par"
+    },
+    "pagination": {
+      "itemsPerPage": "Éléments par page :",
+      "showing": "Affichage de",
+      "of": "sur"
+    },
+    "invoicesFound": {
+      "single": "facture trouvée",
+      "multiple": "factures trouvées"
+    },
+    "statusLabels": {
+      "DRAFT": "Brouillon",
+      "GENERATED": "Générée",
+      "PAID": "Payée",
+      "OVERDUE": "En Retard",
+      "CANCELLED": "Annulée"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "generated": "Générée",
+      "paid": "Payée",
+      "overdue": "En Retard",
+      "cancelled": "Annulée"
+    },
+    "messages": {
+      "statusUpdatedSuccess": "Statut de la facture mis à jour avec succès",
+      "statusUpdateFailed": "Échec de la mise à jour du statut"
+    },
+    "errors": {
+      "loadingTitle": "Erreur de Chargement des Factures",
+      "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer."
+    },
+    "details": {
+      "backToInvoices": "Retour aux Factures",
+      "invoiceDetails": "Détails de la Facture",
+      "generated": "Générée",
+      "print": "Imprimer",
+      "associatedOrders": "Commandes Associées",
+      "associatedExpeditions": "Expéditions Associées",
+      "ordersIncluded": "Commandes incluses dans cette facture",
+      "expeditionsIncluded": "Expéditions incluses dans cette facture",
+      "created": "Créée",
+      "expeditionDate": "Date d'Expédition",
+      "paid": "Payée",
+      "unpaid": "Non Payée",
+      "noOrdersAssociated": "Aucune commande associée à cette facture",
+      "noExpeditionsAssociated": "Aucune expédition associée à cette facture"
+    },
+    "detail": {
+      "errorLoadingInvoice": "Erreur de Chargement de la Facture",
+      "unexpectedErrorInvoice": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "backToInvoices": "Retour aux Factures",
+      "invoiceDetails": "Détails de la Facture",
+      "invoiceInfo": "Facture {number} • Générée le {date}",
+      "print": "Imprimer",
+      "associatedOrders": "Commandes Associées ({count})",
+      "ordersIncluded": "Commandes incluses dans cette facture",
+      "associatedExpeditions": "Expéditions Associées ({count})",
+      "expeditionsIncluded": "Expéditions incluses dans cette facture",
+      "noOrdersAssociated": "Aucune commande associée à cette facture",
+      "noExpeditionsAssociated": "Aucune expédition associée à cette facture",
+      "created": "Créée :",
+      "expeditionDate": "Date d'Expédition :",
+      "paid": "Payée",
+      "unpaid": "Non Payée",
+      "unknownCustomer": "Client Inconnu"
+    },
+    "preview": {
+      "companyTagline": "Plateforme Logistique & E-commerce",
+      "companyDetails": {
+        "name": "Avolship Inc.",
+        "address1": "123 Avenue des Affaires",
+        "address2": "Suite 400, Quartier d'Affaires",
+        "city": "New York, NY 10001",
+        "country": "États-Unis",
+        "email": "Email : contact@avolship.com",
+        "phone": "Téléphone : +1 (555) 123-4567",
+        "website": "Site Web : www.avolship.com"
+      },
+      "invoice": "FACTURE",
+      "invoiceDate": "Date de Facture :",
+      "dueDate": "Date d'Échéance :",
+      "status": "Statut :",
+      "draft": "Brouillon",
+      "billTo": "Facturer à",
+      "contact": "Contact :",
+      "invoiceDetails": "Détails de la Facture",
+      "servicePeriod": "Période de Service :",
+      "warehouse": "Entrepôt :",
+      "currency": "Devise :",
+      "serviceSummary": "Résumé des Services",
+      "ordersDelivered": "Commandes Livrées",
+      "expeditions": "Expéditions",
+      "uniqueProducts": "Produits Uniques",
+      "totalQuantity": "Quantité Totale",
+      "serviceDetails": "Détails des Services",
+      "description": "Description",
+      "quantity": "Quantité",
+      "amount": "Montant",
+      "orderProcessing": "Traitement des Commandes & Commission",
+      "orderProcessingDesc": "Traitement et commission pour {count} commandes livrées",
+      "orderProductsInfo": "{products} produits uniques • {quantity} articles au total",
+      "expeditionProcessing": "Traitement des Expéditions & Commission",
+      "expeditionProcessingDesc": "Traitement et commission pour {count} expéditions livrées",
+      "productBreakdown": "Répartition des Produits",
+      "productCode": "Code Produit",
+      "productName": "Nom du Produit",
+      "qty": "Qté",
+      "original": "Original",
+      "discount": "Remise",
+      "finalSales": "Ventes Finales",
+      "off": "de remise",
+      "total": "Total",
+      "orderBreakdown": "Répartition des Commandes",
+      "orderId": "ID Commande",
+      "customer": "Client",
+      "products": "Produits",
+      "finalTotal": "Total Final",
+      "totalOrders": "Total Commandes",
+      "expeditionBreakdown": "Répartition des Expéditions",
+      "expeditionCode": "Code Expédition",
+      "date": "Date",
+      "payment": "Paiement",
+      "value": "Valeur",
+      "totalExpeditions": "Total Expéditions",
+      "serviceFeesCharges": "Frais de Service & Charges",
+      "feeDescription": "Description des Frais",
+      "fees": {
+        "confirmationFee": "Frais de Traitement de Confirmation de Commande",
+        "serviceFee": "Frais de Service de Plateforme",
+        "warehouseFee": "Frais de Gestion d'Entrepôt",
+        "shippingFee": "Frais d'Expédition & Manutention",
+        "processingFee": "Frais de Traitement de Transaction",
+        "expeditionFee": "Frais de Gestion d'Expédition"
+      },
+      "grossAmount": "Montant Brut :",
+      "addServiceFees": "Ajouter : Frais de Service",
+      "netAmountPayable": "Montant Net à Payer :",
+      "invoiceNotes": "Notes de Facture :",
+      "termsConditions": "Termes & Conditions :",
+      "thankYou": "Merci pour votre collaboration !",
+      "generatedOn": "Cette facture a été générée le {date} par la Plateforme Avolship",
+      "questionsContact": "Pour toute question concernant cette facture, veuillez contacter invoicing@avolship.com",
+      "orderIdHeader": "ID Commande",
+      "paid": "Payée",
+      "unpaid": "Non Payée"
+    }
+  },
+  "integrations": {
+    "title": "Intégrations",
+    "subtitle": "Connectez vos plateformes e-commerce",
+    "noWarehouseSelected": {
+      "title": "Aucun Entrepôt Sélectionné",
+      "message": "Veuillez sélectionner un entrepôt pour voir les intégrations."
+    },
+    "header": {
+      "automateTitle": "Automatisez votre Traitement de Commandes",
+      "automateDescription": "Connectez vos boutiques en ligne pour recevoir et traiter automatiquement les commandes via notre réseau",
+      "betaLabel": "Bêta",
+      "features": {
+        "realTimeSync": {
+          "title": "Synchronisation en Temps Réel",
+          "description": "Les commandes se synchronisent instantanément"
+        },
+        "autoFulfillment": {
+          "title": "Traitement Automatique",
+          "description": "Traitement sans intervention"
+        },
+        "multiPlatform": {
+          "title": "Multi-plateformes",
+          "description": "Connectez plusieurs boutiques"
+        }
+      },
+      "warehouseInfo": {
+        "title": "Intégrations Spécifiques à l'Entrepôt :",
+        "description": "Chaque intégration est liée à votre entrepôt actuellement sélectionné. Vous pouvez configurer différentes intégrations pour différents entrepôts pour gérer les commandes séparément."
+      }
+    },
+    "platforms": {
+      "title": "Plateformes Disponibles",
+      "subtitle": "Choisissez votre plateforme e-commerce pour commencer",
+      "noPlatforms": "Aucune plateforme disponible",
+      "status": {
+        "connected": "Connectée",
+        "paused": "En Pause",
+        "available": "Disponible",
+        "comingSoon": "Bientôt Disponible"
+      },
+      "actions": {
+        "connect": "Connecter {platform}",
+        "pause": "Mettre en Pause",
+        "pausing": "Mise en Pause...",
+        "resume": "Reprendre",
+        "resuming": "Reprise...",
+        "disconnect": "Déconnecter",
+        "disconnecting": "Déconnexion...",
+        "unavailable": "Indisponible",
+        "viewLogs": "Voir les Journaux"
+      },
+      "stats": {
+        "connected": "Connectée le {date}",
+        "orders": "Commandes : {count}"
+      }
+    },
+    "disconnect": {
+      "title": "Déconnecter l'Intégration {platform}",
+      "description": "Êtes-vous sûr de vouloir déconnecter cette intégration ? Cette action :",
+      "warning": "Vous devrez vous reconnecter et reconfigurer si vous voulez utiliser cette intégration à nouveau.",
+      "cancel": "Annuler",
+      "confirm": "Déconnecter"
+    },
+    "messages": {
+      "errors": {
+        "accessDenied": "L'accès a été refusé. Veuillez réessayer et autoriser les permissions requises.",
+        "missingParameters": "Demande d'autorisation invalide. Veuillez réessayer.",
+        "invalidState": "La validation de sécurité a échoué. Veuillez réessayer.",
+        "tokenExchangeFailed": "Échec de connexion à YouCan. Veuillez vérifier vos identifiants et réessayer.",
+        "internalError": "Une erreur interne s'est produite. Veuillez réessayer plus tard.",
+        "defaultError": "Une erreur s'est produite lors de la configuration de l'intégration. Veuillez réessayer.",
+        "pauseFailed": "Échec de la mise en pause de l'intégration",
+        "resumeFailed": "Échec de la reprise de l'intégration",
+        "disconnectFailed": "Échec de la déconnexion de l'intégration"
+      },
+      "success": {
+        "youcanConnected": "Intégration YouCan connectée avec succès ! Les commandes vont maintenant se synchroniser automatiquement.",
+        "woocommerceConnected": "Intégration WooCommerce connectée avec succès ! Les commandes vont maintenant se synchroniser automatiquement.",
+        "shopifyConnected": "Intégration Shopify connectée avec succès ! Les commandes vont maintenant se synchroniser automatiquement.",
+        "defaultConnected": "Intégration connectée avec succès !",
+        "paused": "Intégration {platform} mise en pause avec succès",
+        "resumed": "Intégration {platform} reprise avec succès",
+        "disconnected": "Intégration {platform} déconnectée avec succès"
+      }
+    }
+  },
+  "youcanSetup": {
+    "title": "Connecter la Boutique YouCan",
+    "selectMethod": "Choisissez comment vous voulez connecter votre boutique YouCan pour recevoir les commandes",
+    "methods": {
+      "direct": {
+        "title": "Intégration Directe",
+        "description": "Connectez-vous directement à votre boutique YouCan via OAuth",
+        "recommended": "Recommandée"
+      },
+      "sheets": {
+        "title": "Google Sheets",
+        "description": "Utilisez Google Sheets pour gérer vos commandes YouCan"
+      }
+    },
+    "loadingMethods": "Chargement des méthodes d'intégration...",
+    "errorLoading": "Échec du chargement des méthodes d'intégration",
+    "tryAgain": "Réessayer",
+    "features": "Fonctionnalités",
+    "pros": "Avantages",
+    "considerations": "Considérations",
+    "cancel": "Annuler",
+    "continueWith": "Continuer avec",
+    "getStarted": "Commencer",
+    "back": "Retour",
+    "close": "Fermer"
+  },
+  "woocommerceSetup": {
+    "title": "Connecter la Boutique WooCommerce",
+    "selectMethod": "Choisissez comment vous voulez connecter votre boutique WooCommerce pour recevoir les commandes",
+    "methods": {
+      "direct": {
+        "title": "Intégration Directe",
+        "description": "Connectez-vous directement à votre boutique WooCommerce via l'API REST",
+        "recommended": "Recommandée"
+      },
+      "sheets": {
+        "title": "Google Sheets",
+        "description": "Utilisez Google Sheets pour gérer vos commandes WooCommerce"
+      }
+    },
+    "loadingMethods": "Chargement des méthodes d'intégration...",
+    "errorLoading": "Échec du chargement des méthodes d'intégration",
+    "tryAgain": "Réessayer",
+    "features": "Fonctionnalités",
+    "pros": "Avantages",
+    "considerations": "Considérations",
+    "cancel": "Annuler",
+    "continueWith": "Continuer avec",
+    "storeUrl": "URL de la Boutique",
+    "enterStoreUrl": "Entrez l'URL de votre boutique WooCommerce",
+    "example": "Exemple",
+    "next": "Suivant"
+  },
+  "shopifySetup": {
+    "title": "Connecter la Boutique Shopify",
+    "selectMethod": "Choisissez comment vous voulez connecter votre boutique Shopify pour recevoir les commandes",
+    "methods": {
+      "direct": {
+        "title": "Intégration Directe",
+        "description": "Connectez-vous directement à votre boutique Shopify via OAuth",
+        "recommended": "Recommandée"
+      },
+      "sheets": {
+        "title": "Google Sheets",
+        "description": "Utilisez Google Sheets pour gérer vos commandes Shopify"
+      }
+    },
+    "loadingMethods": "Chargement des méthodes d'intégration...",
+    "errorLoading": "Échec du chargement des méthodes d'intégration",
+    "tryAgain": "Réessayer",
+    "features": "Fonctionnalités",
+    "pros": "Avantages",
+    "considerations": "Considérations",
+    "cancel": "Annuler",
+    "continueWith": "Continuer avec"
+  },
   "leaderboard": {
     "title": "Classements de la Plateforme",
     "description": "Surveiller les performances de tous les rôles d'utilisateurs et suivre l'engagement de la plateforme",
@@ -139,7 +499,31 @@
       "yourScore": "Votre Score",
       "thisPeriod": "Cette {period}",
       "period": "Période",
-      "currentLeaderboardPeriod": "Période actuelle du classement"
+      "currentLeaderboardPeriod": "Période actuelle du classement",
+      "retry": "Réessayer",
+      "refresh": "Actualiser",
+      "noEntriesFound": "Aucune entrée de classement trouvée pour cette période.",
+      "showingParticipants": "Affichage de {count} sur {total} participants"
+    },
+    "seller": {
+      "title": "Classements",
+      "description": "Concourez avec d'autres vendeurs et découvrez les meilleurs fournisseurs",
+      "sellerCompetition": {
+        "title": "Concours des Vendeurs",
+        "description": "Meilleurs vendeurs classés par chiffre d'affaires total - concourez avec d'autres vendeurs !",
+        "singleDescription": "Concourez avec d'autres vendeurs et suivez vos performances"
+      },
+      "providerPerformance": {
+        "title": "Performance des Fournisseurs",
+        "description": "Meilleurs fournisseurs classés par nombre d'expéditions - trouvez les meilleurs partenaires logistiques !",
+        "singleDescription": "Découvrez les meilleurs fournisseurs pour des partenariats"
+      }
+    },
+    "disabled": {
+      "title": "Classement Temporairement Indisponible",
+      "description": "Le classement est actuellement désactivé. Veuillez revenir plus tard !",
+      "pageTitle": "Classement",
+      "pageDescription": "Concourir et suivre les performances"
     }
   },
   "settings": {
@@ -496,7 +880,7 @@
     "orders": "Commandes",
     "expeditions": "Expéditions",
     "deliveryRiders": "Livreurs",
-    "invoices": "Factures",
+    "invoicesPage": "Factures",
     "leaderboard": "Classement",
     "products": "Produits",
     "providers": "Fournisseurs",
@@ -582,157 +966,72 @@
       "show": "Afficher"
     }
   },
-  "invoices": {
-    "title": "Factures",
-    "errorLoading": "Erreur de Chargement des Factures",
-    "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
-    "searchPlaceholder": "Rechercher des factures...",
-    "applyFilters": "Appliquer les Filtres",
-    "filters": "Filtres",
-    "filtersDescription": "Filtrer les factures selon divers critères",
-    "filterByStatus": "Filtrer par Statut",
-    "allStatuses": "Tous les Statuts",
-    "filterBySeller": "Filtrer par Vendeur",
-    "allSellers": "Tous les Vendeurs",
-    "dateRange": "Plage de Dates",
-    "startDate": "Date de Début",
-    "endDate": "Date de Fin",
-    "clearFilters": "Effacer les Filtres",
-    "invoice": "facture",
-    "invoices": "factures",
-    "found": "trouvée(s)",
-    "noInvoicesFound": "Aucune facture trouvée",
-    "invoiceNumber": "Facture #",
-    "seller": "Vendeur",
-    "status": "Statut",
-    "period": "Période",
-    "amount": "Montant",
-    "warehouse": "Entrepôt",
-    "generated": "Générée",
-    "actions": "Actions",
-    "to": "à",
-    "orders": "commandes",
-    "by": "par",
-    "view": "Voir",
-    "markAsPaid": "Marquer comme Payée",
-    "markAsOverdue": "Marquer en Retard",
-    "cancelInvoice": "Annuler la Facture",
-    "itemsPerPage": "Éléments par page :",
-    "showing": "Affichage de {start}-{end} sur {total}",
-    "statusLabels": {
-      "DRAFT": "Brouillon",
-      "GENERATED": "Générée",
-      "PAID": "Payée",
-      "OVERDUE": "En Retard",
-      "CANCELLED": "Annulée"
-    },
-    "messages": {
-      "statusUpdatedSuccess": "Statut de la facture mis à jour avec succès",
-      "statusUpdateFailed": "Échec de la mise à jour du statut"
-    },
-    "detail": {
-      "errorLoadingInvoice": "Erreur de Chargement de la Facture",
-      "unexpectedErrorInvoice": "Une erreur inattendue s'est produite. Veuillez réessayer.",
-      "backToInvoices": "Retour aux Factures",
-      "invoiceDetails": "Détails de la Facture",
-      "invoiceInfo": "Facture {number} • Générée le {date}",
-      "print": "Imprimer",
-      "associatedOrders": "Commandes Associées ({count})",
-      "ordersIncluded": "Commandes incluses dans cette facture",
-      "associatedExpeditions": "Expéditions Associées ({count})",
-      "expeditionsIncluded": "Expéditions incluses dans cette facture",
-      "noOrdersAssociated": "Aucune commande associée à cette facture",
-      "noExpeditionsAssociated": "Aucune expédition associée à cette facture",
-      "created": "Créée :",
-      "expeditionDate": "Date d'Expédition :",
-      "paid": "Payée",
-      "unpaid": "Non Payée",
-      "unknownCustomer": "Client Inconnu"
-    },
-    "preview": {
-      "companyTagline": "Plateforme Logistique & E-commerce",
-      "companyDetails": {
-        "name": "Avolship Inc.",
-        "address1": "123 Avenue des Affaires",
-        "address2": "Suite 400, Quartier d'Affaires",
-        "city": "New York, NY 10001",
-        "country": "États-Unis",
-        "email": "Email : contact@avolship.com",
-        "phone": "Téléphone : +1 (555) 123-4567",
-        "website": "Site Web : www.avolship.com"
-      },
-      "invoice": "FACTURE",
-      "invoiceDate": "Date de Facture :",
-      "dueDate": "Date d'Échéance :",
-      "status": "Statut :",
-      "draft": "Brouillon",
-      "billTo": "Facturer à",
-      "contact": "Contact :",
-      "invoiceDetails": "Détails de la Facture",
-      "servicePeriod": "Période de Service :",
-      "warehouse": "Entrepôt :",
-      "currency": "Devise :",
-      "serviceSummary": "Résumé des Services",
-      "ordersDelivered": "Commandes Livrées",
-      "expeditions": "Expéditions",
-      "uniqueProducts": "Produits Uniques",
-      "totalQuantity": "Quantité Totale",
-      "serviceDetails": "Détails des Services",
-      "description": "Description",
-      "quantity": "Quantité",
-      "amount": "Montant",
-      "orderProcessing": "Traitement des Commandes & Commission",
-      "orderProcessingDesc": "Traitement et commission pour {count} commandes livrées",
-      "orderProductsInfo": "{products} produits uniques • {quantity} articles au total",
-      "expeditionProcessing": "Traitement des Expéditions & Commission",
-      "expeditionProcessingDesc": "Traitement et commission pour {count} expéditions livrées",
-      "productBreakdown": "Répartition des Produits",
-      "productCode": "Code Produit",
-      "productName": "Nom du Produit",
-      "qty": "Qté",
-      "original": "Original",
-      "discount": "Remise",
-      "finalSales": "Ventes Finales",
-      "off": "de remise",
-      "total": "Total",
-      "orderBreakdown": "Répartition des Commandes",
-      "orderId": "ID Commande",
-      "customer": "Client",
-      "products": "Produits",
-      "finalTotal": "Total Final",
-      "totalOrders": "Total Commandes",
-      "expeditionBreakdown": "Répartition des Expéditions",
-      "expeditionCode": "Code Expédition",
-      "date": "Date",
-      "payment": "Paiement",
-      "value": "Valeur",
-      "totalExpeditions": "Total Expéditions",
-      "serviceFeesCharges": "Frais de Service & Charges",
-      "feeDescription": "Description des Frais",
-      "fees": {
-        "confirmationFee": "Frais de Traitement de Confirmation de Commande",
-        "serviceFee": "Frais de Service de Plateforme",
-        "warehouseFee": "Frais de Gestion d'Entrepôt",
-        "shippingFee": "Frais d'Expédition & Manutention",
-        "processingFee": "Frais de Traitement de Transaction",
-        "expeditionFee": "Frais de Gestion d'Expédition"
-      },
-      "grossAmount": "Montant Brut :",
-      "addServiceFees": "Ajouter : Frais de Service",
-      "netAmountPayable": "Montant Net à Payer :",
-      "invoiceNotes": "Notes de Facture :",
-      "termsConditions": "Termes & Conditions :",
-      "thankYou": "Merci pour votre collaboration !",
-      "generatedOn": "Cette facture a été générée le {date} par la Plateforme Avolship",
-      "questionsContact": "Pour toute question concernant cette facture, veuillez contacter invoicing@avolship.com",
-      "orderIdHeader": "ID Commande",
-      "paid": "Payée",
-      "unpaid": "Non Payée"
-    }
-  },
   "orders": {
+    "manageOrders": "Gérer les commandes",
+    "title": "Commandes",
+    "searchOrders": "Rechercher par ID, nom du client, téléphone...",
+    "importOrders": "Importer des commandes", 
+    "addOrder": "Ajouter une commande",
+    "noOrdersFound": "Aucune commande trouvée",
+    "newOrderReceived": "Nouvelle commande reçue !",
+    "applyFilters": "Rechercher",
+    "clearFilters": "Effacer les filtres",
     "common":{
       "cancel":"Annuler"
+    },
+    "fields": {
+      "orderId": "ID de commande",
+      "customer": "Client", 
+      "warehouse": "Entrepôt",
+      "seller": "Vendeur",
+      "assignedAgent": "Agent assigné",
+      "assignedRider": "Livreur assigné",
+      "deliveryTracking": "Suivi de livraison",
+      "products": "Produits",
+      "totalPrice": "Prix total",
+      "status": "Statut",
+      "callAttempts": "Tentatives d'appel", 
+      "orderDate": "Date de commande"
+    },
+    "filters": {
+      "title": "Filtres",
+      "filterByStatus": "Filtrer par statut",
+      "allStatuses": "Tous les statuts",
+      "filterBySeller": "Filtrer par vendeur", 
+      "allSellers": "Tous les vendeurs",
+      "filterByCallStatus": "Filtrer par statut d'appel",
+      "allCallStatuses": "Tous les statuts d'appel",
+      "filterByDate": "Filtrer par date",
+      "dateRange": "Plage de dates",
+      "customRange": "Plage personnalisée",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "lastWeek": "Semaine dernière", 
+      "lastMonth": "Mois dernier",
+      "from": "De",
+      "to": "À",
+      "filterByDoubleOrders": "Afficher uniquement les commandes doubles"
+    },
+    "pagination": {
+      "showingXofY": "Affichage de {start} à {end} sur {total} commandes",
+      "itemsPerPage": "Éléments par page",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "showing": "Affichage",
+      "of": "sur"
+    },
+    "errors": {
+      "pleaseSelectAgent": "Veuillez sélectionner un agent",
+      "pleaseSelectRider": "Veuillez sélectionner un livreur", 
+      "noOrderSelected": "Aucune commande sélectionnée pour la mise à jour",
+      "failedToAssignOrder": "Échec de l'assignation de la commande",
+      "failedToAssignRider": "Échec de l'assignation du livreur",
+      "failedToUpdateCustomer": "Échec de la mise à jour des informations client",
+      "authRequired": "Authentification requise"
+    },
+    "success": {
+      "riderAssignedSuccess": "Livreur assigné avec succès",
+      "customerUpdatedSuccess": "Informations client mises à jour avec succès"
     },
     "form": {
       "titleCreate": "Créer une nouvelle commande",
@@ -2418,6 +2717,153 @@
         "viewInventory": "Voir l'inventaire",
         "itemsLeft": "articles restants",
         "sku": "SKU"
+      },
+      "overview": {
+        "title": "Aperçu du tableau de bord",
+        "subtitle": "Surveillez les performances de votre entreprise avec des analyses complètes",
+        "callCenter": {
+          "title": "Confirmation du centre d'appels",
+          "subtitle": "Suivez la répartition du statut des commandes et les performances du centre d'appels",
+          "errorFetching": "Erreur lors de la récupération des produits :",
+          "errorChart": "Erreur lors de la récupération des données du graphique :"
+        },
+        "orderStatus": {
+          "title": "Aperçu du statut des commandes",
+          "subtitle": "Suivez la progression et la répartition du statut des commandes",
+          "errorFetching": "Erreur lors de la récupération des produits :",
+          "errorChart": "Erreur lors de la récupération des données du statut des commandes :"
+        },
+        "trendingProducts": {
+          "title": "Produits tendance",
+          "subtitle": "Produits les plus populaires basés sur la fréquence des commandes",
+          "errorFetching": "Erreur lors de la récupération des produits :",
+          "errorChart": "Erreur lors de la récupération des données des produits tendance :"
+        }
+      },
+      "charts": {
+        "callCenter": {
+          "pieTitle": "Statut de confirmation du centre d'appels",
+          "pieDescription": "Résultats des tentatives d'appel ({totalAttempts} tentatives totales)",
+          "barTitle": "Aperçu des tentatives d'appel",
+          "barDescription": "Répartition des tentatives d'appel par résultat ({totalAttempts} total)",
+          "noDataTitle": "Statut de confirmation du centre d'appels",
+          "noDataDescription": "Aucune tentative d'appel trouvée",
+          "noDataMessage": "Aucune donnée de centre d'appels disponible",
+          "noDataHint": "Essayez d'ajuster vos filtres ou vérifiez s'il y a des tentatives d'appel enregistrées",
+          "callAttempts": "Tentatives d'appel",
+          "statuses": {
+            "answered": "Répondu",
+            "unreached": "Injoignable",
+            "busy": "Occupé", 
+            "invalid": "Numéro invalide"
+          }
+        },
+        "orderStatus": {
+          "pieTitle": "Répartition des statuts de commande",
+          "pieDescription": "Répartition des commandes par statut ({totalOrders} commandes totales)",
+          "barTitle": "Aperçu des statuts de commande",
+          "barDescription": "Répartition des commandes par statut ({totalOrders} total)",
+          "noDataTitle": "Répartition des statuts de commande",
+          "noDataDescription": "Aucune commande trouvée",
+          "noDataMessage": "Aucune donnée de commande disponible",
+          "noDataHint": "Essayez d'ajuster vos filtres ou vérifiez s'il y a des commandes",
+          "orders": "Commandes",
+          "statuses": {
+            "pending": "En attente",
+            "confirmed": "Confirmée",
+            "cancelled": "Annulée",
+            "shipped": "Expédiée",
+            "assigned_to_delivery": "Assignée à la livraison",
+            "accepted_by_delivery": "Acceptée par le livreur",
+            "in_transit": "En transit",
+            "out_for_delivery": "En cours de livraison",
+            "delivered": "Livrée",
+            "delivery_failed": "Échec de livraison",
+            "refunded": "Remboursée",
+            "wrong_number": "Mauvais numéro",
+            "double": "Doublon",
+            "unreached": "Injoignable",
+            "expired": "Expirée"
+          }
+        },
+        "trendingProducts": {
+          "title": "Produits tendance",
+          "description": "Produits les plus commandés ({totalOrders} commandes totales)",
+          "noDataTitle": "Produits tendance",
+          "noDataDescription": "Aucun produit tendance trouvé",
+          "noDataMessage": "Aucune donnée de produit disponible",
+          "noDataHint": "Essayez d'ajuster vos filtres ou vérifiez s'il y a des commandes",
+          "orders": "Commandes",
+          "product": "Produit",
+          "topProducts": "Top 5 des produits :",
+          "code": "Code :",
+          "ordersLabel": "commandes"
+        }
+      },
+      "filters": {
+        "title": "Filtres :",
+        "selectProduct": "Sélectionner un produit",
+        "allProducts": "Tous les produits",
+        "dateRange": "Plage de dates",
+        "customRange": "Plage personnalisée",
+        "datePresets": {
+          "today": "Aujourd'hui",
+          "yesterday": "Hier",
+          "this_week": "Cette semaine", 
+          "this_month": "Ce mois",
+          "this_year": "Cette année",
+          "custom": "Plage personnalisée"
+        }
+      },
+      "deliveryTracking": {
+        "title": "Suivi de livraison",
+        "deliveryTimeline": "Chronologie de livraison",
+        "assigned": "Assigné :",
+        "accepted": "Accepté :",
+        "pickedUp": "Récupéré :",
+        "delivered": "Livré :",
+        "distanceLocation": "Distance et localisation",
+        "distance": "Distance :",
+        "lastLocation": "Dernière localisation :",
+        "financialDetails": "Détails financiers",
+        "deliveryFee": "Frais de livraison :",
+        "commission": "Commission :",
+        "customerRating": "Note du client",
+        "deliveryProof": "Preuve de livraison",
+        "type": "Type :",
+        "uploaded": "Téléchargé :",
+        "viewProof": "Voir la preuve",
+        "deliveryNotes": "Notes de livraison",
+        "phoneNumbers": "Numéros de téléphone",
+        "shippingAddress": "Adresse de livraison",
+        "trackOrder": "Suivre la commande",
+        "assignRider": "Assigner un livreur",
+        "editCustomer": "Modifier le client",
+        "applyDiscount": "Appliquer une remise",
+        "viewCallHistory": "Voir l'historique des appels",
+        "orderSummary": "Résumé de commande avec remises",
+        "originalTotal": "Total original",
+        "totalSavings": "Économies totales",
+        "finalTotal": "Total final",
+        "savedPercent": "Vous avez économisé {percent}% sur cette commande",
+        "orderTotal": "Total de la commande",
+        "quantity": "Quantité",
+        "unitPrice": "Prix unitaire",
+        "subtotal": "Sous-total",
+        "code": "Code :",
+        "discountApplied": "Remise appliquée",
+        "reason": "Raison :",
+        "notes": "Notes :",
+        "comment": "Commentaire :",
+        "attempts": "tentatives",
+        "lastCall": "Dernier :",
+        "noCalls": "Aucun appel effectué",
+        "phone": "téléphone",
+        "phones": "téléphones",
+        "item": "article",
+        "items": "articles",
+        "unassigned": "Non assigné",
+        "unknown": "Inconnu"
       }
     }
   },

@@ -4,6 +4,7 @@ import React from 'react';
 import { ArrowLeft, Printer, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -119,6 +120,8 @@ interface SellerInvoiceDetailPageProps {
 }
 
 export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }: SellerInvoiceDetailPageProps) {
+  const t = useTranslations('invoices');
+  
   // Handle print functionality
   const handlePrint = () => {
     const printContent = document.getElementById('print-invoice-content');
@@ -158,11 +161,11 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
   // Get status badge styling
   const getStatusBadge = (status: InvoiceStatus) => {
     const statusConfig = {
-      [InvoiceStatus.DRAFT]: { label: 'Draft', className: 'bg-muted text-muted-foreground' },
-      [InvoiceStatus.GENERATED]: { label: 'Generated', className: 'bg-primary/10 text-primary' },
-      [InvoiceStatus.PAID]: { label: 'Paid', className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
-      [InvoiceStatus.OVERDUE]: { label: 'Overdue', className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
-      [InvoiceStatus.CANCELLED]: { label: 'Cancelled', className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
+      [InvoiceStatus.DRAFT]: { label: t('status.draft'), className: 'bg-muted text-muted-foreground' },
+      [InvoiceStatus.GENERATED]: { label: t('status.generated'), className: 'bg-primary/10 text-primary' },
+      [InvoiceStatus.PAID]: { label: t('status.paid'), className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
+      [InvoiceStatus.OVERDUE]: { label: t('status.overdue'), className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
+      [InvoiceStatus.CANCELLED]: { label: t('status.cancelled'), className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
     };
     
     return statusConfig[status] || { label: status, className: 'bg-muted text-muted-foreground' };
@@ -337,13 +340,13 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
           <Link href="/dashboard/seller/invoices">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Invoices
+              {t('details.backToInvoices')}
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Invoice Details</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t('details.invoiceDetails')}</h1>
             <p className="text-muted-foreground">
-              Invoice {invoice.invoiceNumber} • Generated {formatDate(invoice.generatedAt)}
+              {t('table.invoiceNumber')} {invoice.invoiceNumber} • {t('details.generated')} {formatDate(invoice.generatedAt)}
             </p>
           </div>
         </div>
@@ -380,10 +383,10 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
         <div className="bg-background border border-border rounded-lg shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border">
             <h3 className="text-lg font-semibold text-foreground">
-              Associated Orders ({orders.length})
+              {t('details.associatedOrders')} ({orders.length})
             </h3>
             <p className="text-sm text-muted-foreground">
-              Orders included in this invoice
+              {t('details.ordersIncluded')}
             </p>
           </div>
           
@@ -410,7 +413,7 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
                   </div>
                   
                   <div className="text-xs text-muted-foreground mb-2">
-                    Created: {formatDate(order.createdAt)}
+                    {t('details.created')}: {formatDate(order.createdAt)}
                   </div>
                   
                   <div className="space-y-1">
@@ -433,7 +436,7 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
             </div>
           ) : (
             <div className="p-6 text-center text-muted-foreground">
-              No orders associated with this invoice
+              {t('details.noOrdersAssociated')}
             </div>
           )}
         </div>
@@ -442,10 +445,10 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
         <div className="bg-background border border-border rounded-lg shadow-sm overflow-hidden">
           <div className="p-6 border-b border-border">
             <h3 className="text-lg font-semibold text-foreground">
-              Associated Expeditions ({expeditions.length})
+              {t('details.associatedExpeditions')} ({expeditions.length})
             </h3>
             <p className="text-sm text-muted-foreground">
-              Expeditions included in this invoice
+              {t('details.expeditionsIncluded')}
             </p>
           </div>
           
@@ -468,7 +471,7 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
                         variant={expedition.isPaid ? 'default' : 'destructive'}
                         className="text-xs"
                       >
-                        {expedition.isPaid ? 'Paid' : 'Unpaid'}
+                        {expedition.isPaid ? t('details.paid') : t('details.unpaid')}
                       </Badge>
                       <ExternalLink className="h-3 w-3 text-muted-foreground" />
                     </div>
@@ -481,14 +484,14 @@ export default function SellerInvoiceDetailPage({ invoice, orders, expeditions }
                   </div>
                   
                   <div className="text-xs text-muted-foreground">
-                    Expedition Date: {formatDate(expedition.expeditionDate)}
+                    {t('details.expeditionDate')}: {formatDate(expedition.expeditionDate)}
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
             <div className="p-6 text-center text-muted-foreground">
-              No expeditions associated with this invoice
+              {t('details.noExpeditionsAssociated')}
             </div>
           )}
         </div>

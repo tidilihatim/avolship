@@ -5,6 +5,7 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { TrendingProductData } from "@/app/actions/dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations } from 'next-intl';
 
 interface TrendingProductsChartProps {
   data: TrendingProductData[];
@@ -12,11 +13,11 @@ interface TrendingProductsChartProps {
   isLoading?: boolean;
 }
 
-const chartConfig = {
+const getChartConfig = (t: any) => ({
   orderCount: {
-    label: "Orders",
+    label: t('orders'),
   },
-} satisfies ChartConfig;
+} satisfies ChartConfig);
 
 const ChartSkeleton = () => (
   <Card>
@@ -35,6 +36,7 @@ const ChartSkeleton = () => (
 );
 
 export const TrendingProductsChart = ({ data, totalOrders, isLoading }: TrendingProductsChartProps) => {
+  const t = useTranslations('dashboard.seller.charts.trendingProducts');
   if (isLoading) {
     return <ChartSkeleton />;
   }
@@ -43,13 +45,13 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Trending Products</CardTitle>
-          <CardDescription>No trending products found</CardDescription>
+          <CardTitle>{t('noDataTitle')}</CardTitle>
+          <CardDescription>{t('noDataDescription')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[250px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No product data available</p>
-            <p className="text-xs mt-1">Try adjusting your filters or check if there are any orders</p>
+            <p className="text-sm">{t('noDataMessage')}</p>
+            <p className="text-xs mt-1">{t('noDataHint')}</p>
           </div>
         </CardContent>
       </Card>
@@ -67,11 +69,11 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Trending Products</CardTitle>
-        <CardDescription>Most ordered products ({totalOrders} total orders)</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description', { totalOrders: totalOrders })}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[250px]">
+        <ChartContainer config={getChartConfig(t)} className="h-[250px]">
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -104,7 +106,7 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
                       <div className="grid grid-cols-2 gap-2">
                         <div className="flex flex-col">
                           <span className="text-[0.70rem] uppercase text-muted-foreground">
-                            Product
+                            {t('product')}
                           </span>
                           <span className="font-bold text-muted-foreground">
                             {data.productName}
@@ -112,7 +114,7 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
                         </div>
                         <div className="flex flex-col">
                           <span className="text-[0.70rem] uppercase text-muted-foreground">
-                            Orders
+                            {t('orders')}
                           </span>
                           <span className="font-bold">
                             {data.orderCount} ({data.percentage}%)
@@ -131,7 +133,7 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
         
         {/* Product details list */}
         <div className="mt-4 space-y-2">
-          <h4 className="text-sm font-medium">Top 5 Products:</h4>
+          <h4 className="text-sm font-medium">{t('topProducts')}</h4>
           {chartData.slice(0, 5).map((item, index) => (
             <div key={index} className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/50">
               <div className="flex items-center gap-3">
@@ -141,12 +143,12 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
                 </div>
                 <div>
                   <div className="font-medium">{item.productName}</div>
-                  <div className="text-xs text-muted-foreground">Code: {item.product}</div>
+                  <div className="text-xs text-muted-foreground">{t('code')} {item.product}</div>
                 </div>
               </div>
               <div className="text-right">
                 <div className="font-bold">{item.orderCount}</div>
-                <div className="text-xs text-muted-foreground">orders ({item.percentage}%)</div>
+                <div className="text-xs text-muted-foreground">{t('ordersLabel')} ({item.percentage}%)</div>
               </div>
             </div>
           ))}
