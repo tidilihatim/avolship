@@ -75,40 +75,6 @@ export function ShopifySetupDialog({ open, onClose }: ShopifySetupDialogProps) {
     }
   };
 
-  const handleDirectIntegration = async () => {
-    if (!storeUrl.trim()) {
-      setError('Please enter your Shopify store URL');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Call our authorize endpoint to get the auth URL
-      const response = await fetch('/api/integrations/shopify/authorize', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          storeUrl: storeUrl.trim()
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to start authorization');
-      }
-
-      // Redirect to Shopify authorization
-      window.location.href = data.authUrl;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to start authorization');
-      setLoading(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -237,36 +203,106 @@ export function ShopifySetupDialog({ open, onClose }: ShopifySetupDialogProps) {
           {showCredentials && selectedMethod === 'direct' && (
             <div className="space-y-6">
               <div className="text-center">
-                <h3 className="text-lg font-semibold">Connect Your Shopify Store</h3>
+                <h3 className="text-lg font-semibold">Install Avolship App on Shopify</h3>
                 <p className="text-muted-foreground mt-2">
-                  Enter your store URL to automatically set up the integration
+                  Install our app directly from your Shopify Admin to connect your store
                 </p>
               </div>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Store Information</CardTitle>
+                  <CardTitle className="text-base">Installation Steps</CardTitle>
                   <CardDescription>
-                    We'll automatically create a private app and webhooks for your store
+                    Follow these steps to install the Avolship app on your Shopify store
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="storeUrl">Shopify Store URL</Label>
-                    <Input
-                      id="storeUrl"
-                      type="text"
-                      placeholder="mystore.myshopify.com"
-                      value={storeUrl}
-                      onChange={(e) => setStoreUrl(e.target.value)}
-                      className="w-full"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Enter your Shopify store domain (e.g., mystore.myshopify.com)
-                    </p>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                        1
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">Go to your Shopify Admin</p>
+                        <p className="text-xs text-muted-foreground">
+                          Navigate to your store's admin panel
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                        2
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">Find & Install Avolship App</p>
+                        <p className="text-xs text-muted-foreground">
+                          Go to Apps → Visit Shopify App Store → Search "Avolship"
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                        3
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">Complete Installation</p>
+                        <p className="text-xs text-muted-foreground">
+                          Click "Install app" and authorize the required permissions
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white text-xs font-medium">
+                        ✓
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">Setup Complete</p>
+                        <p className="text-xs text-muted-foreground">
+                          You'll be redirected back here to complete the connection
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
+
+              <div className="bg-muted/50 border border-muted rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="h-4 w-4 rounded-full bg-primary" />
+                  <p className="text-sm font-medium">Alternative: Development Testing</p>
+                </div>
+                <p className="text-xs text-muted-foreground mb-3">
+                  For testing purposes, you can also install directly using this link from your Shopify Admin
+                </p>
+                <div className="space-y-2">
+                  <Label htmlFor="testStoreUrl" className="text-xs">Your Store Domain (for testing only)</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="testStoreUrl"
+                      type="text"
+                      placeholder="yourstore.myshopify.com"
+                      value={storeUrl}
+                      onChange={(e) => setStoreUrl(e.target.value)}
+                      className="flex-1 h-8 text-xs"
+                    />
+                    <Button 
+                      size="sm" 
+                      onClick={() => {
+                        if (storeUrl.trim()) {
+                          const cleanUrl = storeUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+                          window.open(`https://${cleanUrl}/admin/apps`, '_blank');
+                        }
+                      }}
+                      disabled={!storeUrl.trim()}
+                    >
+                      Open Admin
+                    </Button>
+                  </div>
+                </div>
+              </div>
 
               {error && (
                 <div className="text-center py-4">
@@ -278,18 +314,8 @@ export function ShopifySetupDialog({ open, onClose }: ShopifySetupDialogProps) {
                 <Button variant="outline" onClick={() => setShowCredentials(false)} disabled={loading}>
                   Back
                 </Button>
-                <Button onClick={handleDirectIntegration} disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Connecting...
-                    </>
-                  ) : (
-                    <>
-                      Connect Store
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  )}
+                <Button variant="outline" onClick={onClose}>
+                  I'll Install Later
                 </Button>
               </div>
             </div>

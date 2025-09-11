@@ -22,21 +22,31 @@ export async function GET(request: NextRequest) {
 
     // Decode state parameter
     let decodedState;
+    let isPendingInstall = false;
+    
     try {
       const stateString = Buffer.from(state, 'base64').toString('utf-8');
       const parts = stateString.split(':');
       
-      if (parts[0] !== 'user' || parts.length < 6) {
+      // Handle pending installation (no user context)
+      if (parts[0] === 'pending-install') {
+        isPendingInstall = true;
+        decodedState = {
+          shop: parts[1] || shop,
+          timestamp: parts[2],
+          random: parts[3]
+        };
+      } else if (parts[0] === 'user' && parts.length >= 6) {
+        decodedState = {
+          userId: parts[1],
+          warehouseId: parts[2],
+          shop: parts[3],
+          timestamp: parts[4],
+          random: parts[5]
+        };
+      } else {
         throw new Error('Invalid state format');
       }
-      
-      decodedState = {
-        userId: parts[1],
-        warehouseId: parts[2],
-        shop: parts[3],
-        timestamp: parts[4],
-        random: parts[5]
-      };
     } catch (err) {
       console.error('State decode error:', err);
       return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=invalid_state`);
@@ -90,40 +100,24 @@ export async function GET(request: NextRequest) {
     // Connect to database
     await connectToDatabase();
 
-    // Check if integration already exists
-    const existingIntegration = await UserIntegration.findOne({
-      userId: decodedState.userId,
-      platformId: 'shopify',
-      'connectionData.shop': shop,
-      isActive: true
-    });
-
     let integration;
 
-    if (existingIntegration) {
-      // Update existing integration
-      integration = existingIntegration;
-      integration.connectionData.accessToken = accessToken;
-      integration.connectionData.scope = scope;
-      integration.connectionData.storeInfo = storeInfo;
-      integration.status = IntegrationStatus.CONNECTED;
-      integration.lastSyncAt = new Date();
-      integration.updatedAt = new Date();
-    } else {
-      // Create new integration
+    if (isPendingInstall) {
+      // Create pending installation - no user context yet
       integration = new UserIntegration({
-        userId: decodedState.userId,
-        warehouseId: decodedState.warehouseId,
+        userId: 'PENDING', // Placeholder - will be updated when user claims
+        warehouseId: 'PENDING',
         platformId: 'shopify',
         integrationMethod: IntegrationMethod.DIRECT,
-        status: IntegrationStatus.CONNECTED,
+        status: IntegrationStatus.PENDING,
         connectionData: {
           accessToken,
           scope,
           shop,
           storeUrl: shop,
           storeInfo,
-          authorizationCompleted: true
+          authorizationCompleted: true,
+          pendingClaim: true
         },
         syncStats: {
           totalOrdersSynced: 0,
@@ -133,6 +127,49 @@ export async function GET(request: NextRequest) {
         createdAt: new Date(),
         updatedAt: new Date()
       });
+    } else {
+      // Regular flow with user context
+      const existingIntegration = await UserIntegration.findOne({
+        userId: decodedState.userId,
+        platformId: 'shopify',
+        'connectionData.shop': shop,
+        isActive: true
+      });
+
+      if (existingIntegration) {
+        // Update existing integration
+        integration = existingIntegration;
+        integration.connectionData.accessToken = accessToken;
+        integration.connectionData.scope = scope;
+        integration.connectionData.storeInfo = storeInfo;
+        integration.status = IntegrationStatus.CONNECTED;
+        integration.lastSyncAt = new Date();
+        integration.updatedAt = new Date();
+      } else {
+        // Create new integration
+        integration = new UserIntegration({
+          userId: decodedState.userId,
+          warehouseId: decodedState.warehouseId,
+          platformId: 'shopify',
+          integrationMethod: IntegrationMethod.DIRECT,
+          status: IntegrationStatus.CONNECTED,
+          connectionData: {
+            accessToken,
+            scope,
+            shop,
+            storeUrl: shop,
+            storeInfo,
+            authorizationCompleted: true
+          },
+          syncStats: {
+            totalOrdersSynced: 0,
+            syncErrors: 0
+          },
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
     }
 
     // Create webhooks and get webhook data
@@ -154,8 +191,12 @@ export async function GET(request: NextRequest) {
     // Save integration to database
     await integration.save();
 
-    // Redirect to success page
-    return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?success=shopify_connected`);
+    // Redirect based on installation type
+    if (isPendingInstall) {
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations/shopify/complete?shop=${shop}&id=${integration._id}`);
+    } else {
+      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?success=shopify_connected`);
+    }
 
   } catch (error) {
     console.error('Shopify callback error:', error);
