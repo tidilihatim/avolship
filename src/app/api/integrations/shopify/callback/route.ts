@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=${errorParam}`);
     }
 
-    if (!code || !state || !shop) {
+    if (!code || !shop) {
       return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=missing_parameters`);
     }
 
@@ -24,32 +24,59 @@ export async function GET(request: NextRequest) {
     let decodedState;
     let isPendingInstall = false;
     
+    console.log('Received state parameter:', state);
+    
     try {
-      const stateString = Buffer.from(state, 'base64').toString('utf-8');
-      const parts = stateString.split(':');
-      
-      // Handle pending installation (no user context)
-      if (parts[0] === 'pending-install') {
+      // If no state or invalid state, assume it's a direct install from Shopify Admin
+      if (!state || state.length === 0) {
+        console.log('No state parameter - treating as direct Shopify install');
         isPendingInstall = true;
         decodedState = {
-          shop: parts[1] || shop,
-          timestamp: parts[2],
-          random: parts[3]
-        };
-      } else if (parts[0] === 'user' && parts.length >= 6) {
-        decodedState = {
-          userId: parts[1],
-          warehouseId: parts[2],
-          shop: parts[3],
-          timestamp: parts[4],
-          random: parts[5]
+          shop: shop,
+          timestamp: Date.now().toString(),
+          random: Math.random().toString(36).substring(7)
         };
       } else {
-        throw new Error('Invalid state format');
+        const stateString = Buffer.from(state, 'base64').toString('utf-8');
+        const parts = stateString.split(':');
+        
+        console.log('Decoded state parts:', parts);
+        
+        // Handle pending installation (no user context)
+        if (parts[0] === 'pending-install') {
+          isPendingInstall = true;
+          decodedState = {
+            shop: parts[1] || shop,
+            timestamp: parts[2],
+            random: parts[3]
+          };
+        } else if (parts[0] === 'user' && parts.length >= 6) {
+          decodedState = {
+            userId: parts[1],
+            warehouseId: parts[2],
+            shop: parts[3],
+            timestamp: parts[4],
+            random: parts[5]
+          };
+        } else {
+          console.log('Unknown state format - treating as direct Shopify install');
+          isPendingInstall = true;
+          decodedState = {
+            shop: shop,
+            timestamp: Date.now().toString(),
+            random: Math.random().toString(36).substring(7)
+          };
+        }
       }
     } catch (err) {
       console.error('State decode error:', err);
-      return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/dashboard/seller/integrations?error=invalid_state`);
+      console.log('Falling back to direct install mode');
+      isPendingInstall = true;
+      decodedState = {
+        shop: shop,
+        timestamp: Date.now().toString(),
+        random: Math.random().toString(36).substring(7)
+      };
     }
 
     // Verify the shop matches
