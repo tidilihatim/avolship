@@ -187,7 +187,7 @@ export const CallCenterBarChart = ({ data, totalOrders, isLoading }: CallCenterC
   }
 
   const chartData = data.map((item, index) => ({
-    status: getStatusLabel(item.status),
+    status: getStatusLabel(item.status, t),
     count: item.count,
     fill: getStatusColor(item.status, index),
   }));
