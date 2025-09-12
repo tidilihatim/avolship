@@ -968,15 +968,6 @@
     "continueWith": "Continue with"
   },
    "orders": {
-    "manageOrders": "Manage Orders",
-    "title": "Orders",
-    "searchOrders": "Search orders by ID, customer name, phone...",
-    "importOrders": "Import Orders", 
-    "addOrder": "Add Order",
-    "noOrdersFound": "No orders found",
-    "newOrderReceived": "New order received!",
-    "applyFilters": "Search",
-    "clearFilters": "Clear Filters",
     "common":{
       "cancel":"Cancel"
     },
@@ -992,7 +983,54 @@
       "totalPrice": "Total Price",
       "status": "Status",
       "callAttempts": "Call Attempts", 
-      "orderDate": "Order Date"
+      "orderDate": "Order Date",
+      "customerName": "Customer Name",
+      "phoneNumbers": "Phone Numbers",
+      "shippingAddress": "Shipping Address",
+      "lastCall": "Last Call",
+      "statusComment": "Status Comment",
+      "changedBy": "Changed By",
+      "timeInStatus": "Time in Status",
+     
+      "orderIdInternal": "Order ID (Internal)",
+      
+      "warehouseName": "Warehouse Name",
+      "warehouseLocation": "Location",
+      "warehouseCurrency": "Currency",
+
+      "sellerName": "Seller Name",
+      "sellerId": "Seller ID",
+      "assignedAt": "Assigned At",
+    
+      "orderTotal": "Order Total",
+ 
+      "currentStatus": "Current Status",
+      "previousStatus": "Previous Status",
+      
+      "createdAt": "Created At",
+      "lastUpdated": "Last Updated",
+      "updatedAt": "Updated At",
+   
+      "totalCallAttempts": "Total Call Attempts",
+    
+      "lastCallAttempt": "Last Call Attempt",
+      "lastCallStatus": "Last Call Status",
+    
+      "statusChangedAt": "Status Changed At",
+      "statusChangedBy": "Changed By",
+
+      "timeConsumed": "Time Consumed",
+      "changeDate": "Change Date",
+      "comment": "Comment",
+      "automaticChange": "Automatic",
+      "systemReason": "System Reason",
+      "unitPrice": "Unit Price",
+      "quantity": "Quantity",
+      "subtotal": "Subtotal",
+      "totalItems": "Total Items",
+      "productCode": "Product Code",
+      "variantCode": "Variant Code",
+      "productName": "Product Name"
     },
     "filters": {
       "title": "Filters",
@@ -1011,7 +1049,8 @@
       "lastMonth": "Last Month",
       "from": "From",
       "to": "To",
-      "filterByDoubleOrders": "Show double orders only"
+      "filterByDoubleOrders": "Show double orders only",
+      "globallySelectedWarehouse": "Globally Selected Warehouse"
     },
     "pagination": {
       "showingXofY": "Showing {start} to {end} of {total} orders",
@@ -1207,66 +1246,6 @@
       "invalid": "Invalid"
     },
     
-    "fields": {
-      "orderId": "Order ID",
-      "customer": "Customer",
-      "customerName": "Customer Name",
-      "phoneNumbers": "Phone Numbers",
-      "shippingAddress": "Shipping Address",
-      "warehouse": "Warehouse",
-      "seller": "Seller",
-      "products": "Products",
-      "totalPrice": "Total Price",
-      "status": "Status",
-      "orderDate": "Order Date",
-      "callAttempts": "Call Attempts",
-      "lastCall": "Last Call",
-      "statusComment": "Status Comment",
-      "changedBy": "Changed By",
-      "timeInStatus": "Time in Status",
-     
-      "orderIdInternal": "Order ID (Internal)",
-      
-      "warehouseName": "Warehouse Name",
-      "warehouseLocation": "Location",
-      "warehouseCurrency": "Currency",
-
-      "sellerName": "Seller Name",
-      "sellerId": "Seller ID",
-      "assignedAgent": "Assigned Agent",
-      "assignedAt": "Assigned At",
-    
-      "orderTotal": "Order Total",
- 
-      "currentStatus": "Current Status",
-      "previousStatus": "Previous Status",
-      
-      "createdAt": "Created At",
-      "lastUpdated": "Last Updated",
-      "updatedAt": "Updated At",
-   
-      "totalCallAttempts": "Total Call Attempts",
-    
-      "lastCallAttempt": "Last Call Attempt",
-      "lastCallStatus": "Last Call Status",
-    
-      "statusChangedAt": "Status Changed At",
-      "statusChangedBy": "Changed By",
-
-      "timeConsumed": "Time Consumed",
-      "changeDate": "Change Date",
-      "comment": "Comment",
-      "automaticChange": "Automatic",
-      "systemReason": "System Reason",
-      "unitPrice": "Unit Price",
-      "quantity": "Quantity",
-      "subtotal": "Subtotal",
-      "totalItems": "Total Items",
-      "productCode": "Product Code",
-      "variantCode": "Variant Code",
-      "productName": "Product Name"
-    },
-
     "products": {
       "noProducts": "No products in this order",
       "item": "item",
@@ -1331,36 +1310,6 @@
       "invalidDate": "Invalid date",
       "notAvailable": "N/A"
     },
-    
-    "filters": {
-      "title":"Filters",
-      "globallySelectedWarehouse": "Globally Selected Warehouse",
-      "filterByStatus": "Filter by Status",
-      "filterByWarehouse": "Filter by Warehouse", 
-      "filterBySeller": "Filter by Seller",
-      "filterByCallStatus": "Filter by Call Status",
-      "filterByDate": "Filter by Date Range",
-      "filterByDoubleOrders": "Show Double Orders Only",
-      "allStatuses": "All Statuses",
-      "allWarehouses": "All Warehouses",
-      "allSellers": "All Sellers",
-      "allCallStatuses": "All Call Statuses",
-      "dateRange": "Date Range",
-      "from": "From",
-      "to": "To",
-      "today": "Today",
-      "yesterday": "Yesterday",
-      "lastWeek": "Last 7 Days",
-      "lastMonth": "Last 30 Days",
-      "customRange": "Custom Range"
-    },
-    
-    "pagination": {
-      "showing": "Showing",
-      "of": "of",
-      "itemsPerPage": "Items per page"
-    },
-    
     "tooltips": {
       "callAttempts": "Total call attempts made",
       "doubleOrder": "This order has similar orders",
@@ -2043,6 +1992,8 @@
       "initial_stock": "Initial Stock Added",
       "restock": "Restocked from Supplier",
       "return_from_customer": "Customer Return",
+      "customer_unreached": "Customer Unreachable - Stock Returned",
+      "delivery_failed": "Delivery Failed - Stock Returned",
       "warehouse_transfer_in": "Transfer from Another Warehouse",
       "manual_adjustment_increase": "Manual Stock Increase",
       "inventory_correction_increase": "Inventory Correction (Increase)",

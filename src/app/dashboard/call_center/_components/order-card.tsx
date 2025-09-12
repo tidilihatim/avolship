@@ -38,7 +38,6 @@ import {
   Phone, 
   MapPin, 
   Package, 
-  DollarSign, 
   User, 
   Building2,
   CheckCircle,
@@ -47,18 +46,31 @@ import {
   PhoneCall,
   MessageSquare,
   MoreVertical,
-  History
+  History,
+  Truck,
+  Package2,
+  Home,
+  RefreshCw
 } from 'lucide-react';
 import { OrderItem } from '@/types/socket';
 import { formatDistanceToNow } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { cn, formatPrice } from '@/lib/utils';
 import { MakeCallButton } from '@/components/call-center/make-call-button';
+import { Checkbox } from '@/components/ui/checkbox';
 
-// Order Status enum
+// Order Status enum - Complete list from order model
 export enum OrderStatus {
   PENDING = 'pending',
   CONFIRMED = 'confirmed',
   CANCELLED = 'cancelled',
+  SHIPPED = 'shipped',
+  ASSIGNED_TO_DELIVERY = 'assigned_to_delivery',
+  ACCEPTED_BY_DELIVERY = 'accepted_by_delivery',
+  IN_TRANSIT = 'in_transit',
+  OUT_FOR_DELIVERY = 'out_for_delivery',
+  DELIVERED = 'delivered',
+  DELIVERY_FAILED = 'delivery_failed',
+  REFUNDED = 'refunded',
   WRONG_NUMBER = 'wrong_number',
   DOUBLE = 'double',
   UNREACHED = 'unreached',
@@ -96,7 +108,7 @@ function EnhancedOrderCard({
   type?: 'assigned' | 'available';
   onRequestAssignment?: (orderId: string) => void;
   onCompleteOrder?: (orderId: string) => void;
-  onUpdateOrderStatus?: (orderId: string, status: OrderStatus, comment?: string) => void;
+  onUpdateOrderStatus?: (orderId: string, status: OrderStatus, comment?: string, shouldUpdateStock?: boolean) => void;
   onMakeCallAttempt?: (orderId: string, attempt: CallAttempt) => void;
   currentAgentId?: string;
   t: any;
@@ -105,7 +117,9 @@ function EnhancedOrderCard({
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(OrderStatus.CONFIRMED);
   const [statusComment, setStatusComment] = useState('');
   const [currentTime, setCurrentTime] = useState(Date.now());
-
+  const [updateStock, setUpdateStock] = useState(true);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  
   // Update current time every minute for real-time countdown
   useEffect(() => {
     const interval = setInterval(() => {
@@ -144,6 +158,14 @@ function EnhancedOrderCard({
       case OrderStatus.PENDING: return 'bg-yellow-100 text-yellow-800';
       case OrderStatus.CONFIRMED: return 'bg-green-100 text-green-800';
       case OrderStatus.CANCELLED: return 'bg-red-100 text-red-800';
+      case OrderStatus.SHIPPED: return 'bg-blue-100 text-blue-800';
+      case OrderStatus.ASSIGNED_TO_DELIVERY: return 'bg-indigo-100 text-indigo-800';
+      case OrderStatus.ACCEPTED_BY_DELIVERY: return 'bg-cyan-100 text-cyan-800';
+      case OrderStatus.IN_TRANSIT: return 'bg-purple-100 text-purple-800';
+      case OrderStatus.OUT_FOR_DELIVERY: return 'bg-amber-100 text-amber-800';
+      case OrderStatus.DELIVERED: return 'bg-emerald-100 text-emerald-800';
+      case OrderStatus.DELIVERY_FAILED: return 'bg-red-100 text-red-800';
+      case OrderStatus.REFUNDED: return 'bg-orange-100 text-orange-800';
       case OrderStatus.WRONG_NUMBER: return 'bg-orange-100 text-orange-800';
       case OrderStatus.DOUBLE: return 'bg-purple-100 text-purple-800';
       case OrderStatus.UNREACHED: return 'bg-gray-100 text-gray-800';
@@ -155,8 +177,17 @@ function EnhancedOrderCard({
   // Status icon mapping
   const getStatusIcon = (status: string) => {
     switch (status) {
+      case OrderStatus.PENDING: return <Clock className="w-4 h-4" />;
       case OrderStatus.CONFIRMED: return <CheckCircle className="w-4 h-4" />;
       case OrderStatus.CANCELLED: return <XCircle className="w-4 h-4" />;
+      case OrderStatus.SHIPPED: return <Package className="w-4 h-4" />;
+      case OrderStatus.ASSIGNED_TO_DELIVERY: return <User className="w-4 h-4" />;
+      case OrderStatus.ACCEPTED_BY_DELIVERY: return <CheckCircle className="w-4 h-4" />;
+      case OrderStatus.IN_TRANSIT: return <Truck className="w-4 h-4" />;
+      case OrderStatus.OUT_FOR_DELIVERY: return <Package2 className="w-4 h-4" />;
+      case OrderStatus.DELIVERED: return <Home className="w-4 h-4" />;
+      case OrderStatus.DELIVERY_FAILED: return <XCircle className="w-4 h-4" />;
+      case OrderStatus.REFUNDED: return <RefreshCw className="w-4 h-4" />;
       case OrderStatus.WRONG_NUMBER: return <AlertTriangle className="w-4 h-4" />;
       case OrderStatus.DOUBLE: return <AlertTriangle className="w-4 h-4" />;
       case OrderStatus.UNREACHED: return <Phone className="w-4 h-4" />;
@@ -165,15 +196,39 @@ function EnhancedOrderCard({
     }
   };
 
+  // Helper function to determine if status requires stock increase
+  const shouldIncreaseStock = (status: OrderStatus): boolean => {
+    return [
+      OrderStatus.DELIVERY_FAILED,
+      OrderStatus.REFUNDED,
+      OrderStatus.UNREACHED,
+      OrderStatus.CANCELLED
+    ].includes(status);
+  };
 
-  const handleStatusUpdate = () => {
+
+  const handleStatusUpdate = async () => {
     if (!onUpdateOrderStatus) return;
     
-    onUpdateOrderStatus(order.orderId, selectedStatus, statusComment.trim() || undefined);
+    setIsUpdatingStatus(true);
     
-    // Reset form
-    setStatusComment('');
-    setIsStatusDialogOpen(false);
+    try {
+      // Update order status with stock movement control
+      onUpdateOrderStatus(order.orderId, selectedStatus, statusComment.trim() || undefined, updateStock);
+      
+      // Reset form
+      setStatusComment('');
+      setUpdateStock(false);
+      setIsStatusDialogOpen(false);
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      // Still close dialog and reset form even on error
+      setStatusComment('');
+      setUpdateStock(false);
+      setIsStatusDialogOpen(false);
+    } finally {
+      setIsUpdatingStatus(false);
+    }
   };
 
   return (
@@ -325,8 +380,7 @@ function EnhancedOrderCard({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-muted-foreground" />
-              <span className="font-semibold">${order.totalPrice.toFixed(2)}</span>
+              <span className="font-semibold">{formatPrice(order.totalPrice, order.warehouse?.currency || 'USD')}</span>
             </div>
             <div className="flex items-center gap-1">
               {getStatusIcon(order.status)}
@@ -431,8 +485,17 @@ function EnhancedOrderCard({
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value={OrderStatus.PENDING}>Pending</SelectItem>
                   <SelectItem value={OrderStatus.CONFIRMED}>Confirmed</SelectItem>
                   <SelectItem value={OrderStatus.CANCELLED}>Cancelled</SelectItem>
+                  <SelectItem value={OrderStatus.SHIPPED}>Shipped</SelectItem>
+                  <SelectItem value={OrderStatus.ASSIGNED_TO_DELIVERY}>Assigned to Delivery</SelectItem>
+                  <SelectItem value={OrderStatus.ACCEPTED_BY_DELIVERY}>Accepted by Delivery</SelectItem>
+                  <SelectItem value={OrderStatus.IN_TRANSIT}>In Transit</SelectItem>
+                  <SelectItem value={OrderStatus.OUT_FOR_DELIVERY}>Out for Delivery</SelectItem>
+                  <SelectItem value={OrderStatus.DELIVERED}>Delivered</SelectItem>
+                  <SelectItem value={OrderStatus.DELIVERY_FAILED}>Delivery Failed</SelectItem>
+                  <SelectItem value={OrderStatus.REFUNDED}>Refunded</SelectItem>
                   <SelectItem value={OrderStatus.WRONG_NUMBER}>Wrong Number</SelectItem>
                   <SelectItem value={OrderStatus.DOUBLE}>Double Order</SelectItem>
                   <SelectItem value={OrderStatus.UNREACHED}>Unreached</SelectItem>
@@ -440,6 +503,30 @@ function EnhancedOrderCard({
                 </SelectContent>
               </Select>
             </div>
+            
+            {/* Stock Update Checkbox - Only show for statuses that affect stock */}
+            {shouldIncreaseStock(selectedStatus) && (
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="updateStock"
+                  checked={updateStock}
+                  onCheckedChange={(checked) => setUpdateStock(checked === true)}
+                  className="mt-0.5"
+                />
+                <div className="space-y-1">
+                  <Label 
+                    htmlFor="updateStock" 
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Update stock levels
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Automatically return stock to inventory when changing to this status. 
+                    This will increase stock quantities for all products in this order.
+                  </p>
+                </div>
+              </div>
+            )}
             
             <div>
               <Label htmlFor="statusComment">Reason/Comment (Optional)</Label>
@@ -454,11 +541,18 @@ function EnhancedOrderCard({
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsStatusDialogOpen(false)}>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsStatusDialogOpen(false)}
+              disabled={isUpdatingStatus}
+            >
               Cancel
             </Button>
-            <Button onClick={handleStatusUpdate}>
-              Update Status
+            <Button 
+              onClick={handleStatusUpdate}
+              disabled={isUpdatingStatus}
+            >
+              {isUpdatingStatus ? 'Updating...' : 'Update Status'}
             </Button>
           </DialogFooter>
         </DialogContent>

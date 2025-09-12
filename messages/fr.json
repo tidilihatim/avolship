@@ -967,15 +967,6 @@
     }
   },
   "orders": {
-    "manageOrders": "Gérer les commandes",
-    "title": "Commandes",
-    "searchOrders": "Rechercher par ID, nom du client, téléphone...",
-    "importOrders": "Importer des commandes", 
-    "addOrder": "Ajouter une commande",
-    "noOrdersFound": "Aucune commande trouvée",
-    "newOrderReceived": "Nouvelle commande reçue !",
-    "applyFilters": "Rechercher",
-    "clearFilters": "Effacer les filtres",
     "common":{
       "cancel":"Annuler"
     },
@@ -991,7 +982,47 @@
       "totalPrice": "Prix total",
       "status": "Statut",
       "callAttempts": "Tentatives d'appel", 
-      "orderDate": "Date de commande"
+      "orderDate": "Date de commande",
+      "orderIdInternal": "ID de Commande (Interne)",
+      "customerName": "Nom du Client",
+      "phoneNumbers": "Numéros de Téléphone",
+      "shippingAddress": "Adresse de Livraison",
+      "warehouseName": "Nom de l'Entrepôt",
+      "warehouseLocation": "Emplacement",
+      "warehouseCurrency": "Devise",
+   
+      "sellerName": "Nom du Vendeur",
+      "sellerId": "ID du Vendeur",
+      "assignedAt": "Assigné le",
+  
+      "orderTotal": "Total de la Commande",
+      "currentStatus": "Statut Actuel",
+      "previousStatus": "Statut Précédent",
+  
+      "createdAt": "Créé le",
+      "lastUpdated": "Dernière Mise à Jour",
+      "updatedAt": "Mis à Jour le",
+      "totalCallAttempts": "Total des Tentatives d'Appel",
+      "lastCall": "Dernier Appel",
+      "lastCallAttempt": "Dernière Tentative d'Appel",
+      "lastCallStatus": "Statut du Dernier Appel",
+      "statusComment": "Commentaire du Statut",
+      "changedBy": "Modifié par",
+      "statusChangedAt": "Statut Modifié le",
+      "statusChangedBy": "Modifié par",
+      "timeInStatus": "Temps dans le Statut",
+      "timeConsumed": "Temps Consommé",
+      "changeDate": "Date de Modification",
+      "comment": "Commentaire",
+      "automaticChange": "Automatique",
+      "systemReason": "Raison Système",
+      "unitPrice": "Prix Unitaire",
+      "quantity": "Quantité",
+      "subtotal": "Sous-total",
+      "totalItems": "Total des Articles",
+      "productCode": "Code Produit",
+      "variantCode": "Code Variante",
+      "productName": "Nom du Produit"
     },
     "filters": {
       "title": "Filtres",
@@ -1245,56 +1276,6 @@
       "expired": "La commande a expiré"
     },
 
-    "fields": {
-      "orderId": "ID de Commande",
-      "orderIdInternal": "ID de Commande (Interne)",
-      "customer": "Client",
-      "customerName": "Nom du Client",
-      "phoneNumbers": "Numéros de Téléphone",
-      "shippingAddress": "Adresse de Livraison",
-      "warehouse": "Entrepôt",
-      "warehouseName": "Nom de l'Entrepôt",
-      "warehouseLocation": "Emplacement",
-      "warehouseCurrency": "Devise",
-      "seller": "Vendeur",
-      "sellerName": "Nom du Vendeur",
-      "sellerId": "ID du Vendeur",
-      "assignedAgent": "Agent assigné",
-      "assignedAt": "Assigné le",
-      "products": "Produits",
-      "totalPrice": "Prix Total",
-      "orderTotal": "Total de la Commande",
-      "status": "Statut",
-      "currentStatus": "Statut Actuel",
-      "previousStatus": "Statut Précédent",
-      "orderDate": "Date de Commande",
-      "createdAt": "Créé le",
-      "lastUpdated": "Dernière Mise à Jour",
-      "updatedAt": "Mis à Jour le",
-      "callAttempts": "Tentatives d'Appel",
-      "totalCallAttempts": "Total des Tentatives d'Appel",
-      "lastCall": "Dernier Appel",
-      "lastCallAttempt": "Dernière Tentative d'Appel",
-      "lastCallStatus": "Statut du Dernier Appel",
-      "statusComment": "Commentaire du Statut",
-      "changedBy": "Modifié par",
-      "statusChangedAt": "Statut Modifié le",
-      "statusChangedBy": "Modifié par",
-      "timeInStatus": "Temps dans le Statut",
-      "timeConsumed": "Temps Consommé",
-      "changeDate": "Date de Modification",
-      "comment": "Commentaire",
-      "automaticChange": "Automatique",
-      "systemReason": "Raison Système",
-      "unitPrice": "Prix Unitaire",
-      "quantity": "Quantité",
-      "subtotal": "Sous-total",
-      "totalItems": "Total des Articles",
-      "productCode": "Code Produit",
-      "variantCode": "Code Variante",
-      "productName": "Nom du Produit"
-    },
-
     "products": {
       "noProducts": "Aucun produit dans cette commande",
       "item": "article",
@@ -1318,28 +1299,7 @@
       "phoneNumber": "Numéro de Téléphone"
     },
 
-    "filters": {
-      "title": "Filtres",
-      "filterByStatus": "Filtrer par Statut",
-      "filterByWarehouse": "Filtrer par Entrepôt",
-      "filterBySeller": "Filtrer par Vendeur",
-      "filterByCallStatus": "Filtrer par Statut d'Appel",
-      "filterByDate": "Filtrer par Plage de Dates",
-      "filterByDoubleOrders": "Afficher Seulement les Commandes Doublées",
-      "allStatuses": "Tous les Statuts",
-      "allWarehouses": "Tous les Entrepôts",
-      "allSellers": "Tous les Vendeurs",
-      "allCallStatuses": "Tous les Statuts d'Appel",
-      "dateRange": "Plage de Dates",
-      "from": "De",
-      "to": "À",
-      "today": "Aujourd'hui",
-      "yesterday": "Hier",
-      "lastWeek": "7 Derniers Jours",
-      "lastMonth": "30 Derniers Jours",
-      "customRange": "Plage Personnalisée"
-    },
-
+  
     "tooltips": {
       "callAttempts": "Total des tentatives d'appel effectuées",
       "doubleOrder": "Cette commande a des commandes similaires",
@@ -1349,12 +1309,6 @@
       "copyPhoneNumber": "Copier le numéro de téléphone dans le presse-papiers",
       "viewOrderHistory": "Voir l'historique complet de la commande",
       "makePhoneCall": "Passer un appel téléphonique au client"
-    },
-
-    "pagination": {
-      "showing": "Affichage",
-      "of": "de",
-      "itemsPerPage": "Éléments par page"
     },
 
     "badges": {
@@ -2029,6 +1983,8 @@
       "initial_stock": "Stock Initial Ajouté",
       "restock": "Réapprovisionné par le Fournisseur",
       "return_from_customer": "Retour Client",
+      "customer_unreached": "Client Injoignable - Stock Retourné",
+      "delivery_failed": "Livraison Échouée - Stock Retourné",
       "warehouse_transfer_in": "Transfert depuis un Autre Entrepôt",
       "manual_adjustment_increase": "Augmentation Manuelle du Stock",
       "inventory_correction_increase": "Correction d'Inventaire (Augmentation)",

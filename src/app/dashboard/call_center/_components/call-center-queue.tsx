@@ -108,12 +108,12 @@ export default function EnhancedCallCenterQueue() {
     updateAvailability,
     refreshQueue
   } = useOrderQueue();
-
+  
   // Handle order status update
-  const handleUpdateOrderStatus = async (orderId: string, status: OrderStatus, comment?: string) => {
+  const handleUpdateOrderStatus = async (orderId: string, status: OrderStatus, comment?: string, shouldUpdateStock?: boolean) => {
     try {
-      // Call your API to update order status
-      const response = await updateOrderStatus(orderId, status, comment);
+      // Call your API to update order status with stock movement control
+      const response = await updateOrderStatus(orderId, status, comment, undefined, shouldUpdateStock);
 
       if (response?.success) {
         toast.success(`Order status updated to ${status}`);

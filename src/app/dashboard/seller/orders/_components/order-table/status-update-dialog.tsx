@@ -23,6 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { OrderStatus } from "@/lib/db/models/order";
 import { updateOrderStatus } from "@/app/actions/order";
 
@@ -60,7 +61,18 @@ export default function StatusUpdateDialog({
   const t = useTranslations("orders");
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus>(order.status);
   const [comment, setComment] = useState("");
+  const [updateStock, setUpdateStock] = useState(true);
   const [isPending, startTransition] = useTransition();
+
+  // Helper function to determine if status requires stock increase
+  const shouldIncreaseStock = (status: OrderStatus): boolean => {
+    return [
+      OrderStatus.DELIVERY_FAILED,
+      OrderStatus.REFUNDED,
+      OrderStatus.UNREACHED,
+      OrderStatus.CANCELLED
+    ].includes(status);
+  };
 
 
   const handleSubmit = () => {
@@ -70,7 +82,8 @@ export default function StatusUpdateDialog({
     }
     startTransition(async () => {
       try {
-        const result = await updateOrderStatus(order._id, selectedStatus, comment);
+        // Update order status with stock movement control
+        const result = await updateOrderStatus(order._id, selectedStatus, comment, undefined, updateStock);
         
         if (result?.success) {
           toast.success(t("statusUpdate.successMessage"));
@@ -78,11 +91,13 @@ export default function StatusUpdateDialog({
           onClose();
           // Reset form
           setComment("");
+          setUpdateStock(true);
           setSelectedStatus(order.status);
         } else {
           toast.error(result?.message || t("statusUpdate.errorMessage"));
         }
       } catch (error) {
+        console.error('Error updating order status:', error);
         toast.error(t("statusUpdate.errorMessage"));
       }
     });
@@ -93,6 +108,7 @@ export default function StatusUpdateDialog({
     // Reset form when closing
     setSelectedStatus(order.status);
     setComment("");
+    setUpdateStock(true);
   };
 
   // Get status badge styling
@@ -208,6 +224,29 @@ export default function StatusUpdateDialog({
             </div>
           </div>
 
+          {/* Stock Update Checkbox - Only show for statuses that affect stock */}
+          {shouldIncreaseStock(selectedStatus) && (
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="updateStock"
+                checked={updateStock}
+                onCheckedChange={(checked) => setUpdateStock(checked === true)}
+                className="mt-0.5"
+              />
+              <div className="space-y-1">
+                <Label 
+                  htmlFor="updateStock" 
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Update stock levels
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Automatically return stock to inventory when changing to this status. 
+                  This will increase stock quantities for all products in this order.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Comment Section */}
           <div className="space-y-3">

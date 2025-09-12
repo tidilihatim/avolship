@@ -21,9 +21,11 @@ interface StockMovementChartProps {
 const chartConfig = {
   stockIn: {
     label: "Stock In",
+    color: "hsl(142 76% 36%)", // Green
   },
   stockOut: {
-    label: "Stock Out", 
+    label: "Stock Out",
+    color: "hsl(0 84% 60%)", // Red
   },
 } satisfies ChartConfig;
 
@@ -187,15 +189,19 @@ export const StockMovementChart = ({ data, isLoading }: StockMovementChartProps)
             />
             <Bar
               dataKey="stockIn"
-              fill="hsl(var(--chart-1))"
-              strokeWidth={2}
+              fill="#16a34a"
+              stroke="#16a34a"
+              strokeWidth={0}
               radius={8}
+              style={{ fill: '#16a34a' }}
             />
             <Bar
               dataKey="stockOut"
-              fill="hsl(var(--chart-2))"
-              strokeWidth={2}
+              fill="#dc2626"
+              stroke="#dc2626"
+              strokeWidth={0}
               radius={8}
+              style={{ fill: '#dc2626' }}
             />
           </BarChart>
         </ChartContainer>

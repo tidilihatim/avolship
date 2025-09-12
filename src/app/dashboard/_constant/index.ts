@@ -164,9 +164,9 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
   ],
   'provider': [
     {
-      name: "navigation.profile",
-      href: "/dashboard/provider/profile",
-      icon: User,
+      name: "navigation.overview",
+      href: "/dashboard/provider",
+      icon: LayoutDashboard,
     },
     {
       name: "navigation.tokens",

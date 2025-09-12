@@ -1320,7 +1320,8 @@ export const updateOrderStatus = withDbConnection(async (
     }>;
     totalDiscount: number;
     finalTotal: number;
-  }
+  },
+  shouldUpdateStock: boolean = true
 ) => {
   try {
     // Get the current user
@@ -1433,35 +1434,86 @@ export const updateOrderStatus = withDbConnection(async (
       automaticChange: false,
     });
 
-    // handle stock adjusment
-
+    // Handle stock adjustment based on order status
     const products = order.products
     
     if (!products || products.length === 0) {
       revalidatePath('/dashboard/admin/orders');
       revalidatePath('/dashboard/seller/orders');
-      return
+      return {
+        success: true,
+        message: 'Order status updated successfully',
+      };
     }
 
-    for (const product of products){
-        try {
-            const result = await createStockMovement({
-              productId: product?.productId,
-              warehouseId: order?.warehouseId,
-              movementType:StockMovementType.DECREASE,
-              quantity: product?.quantity,
-              reason: StockMovementReason.ORDER_CONFIRMED,
-              notes:`Stock reduced due to order confirmation ${order?.orderId}`,
-              metadata:{
-                orderId,
-                orderNumber: order?.orderId
-              }
-            })
+    // Determine stock movement type and reason based on status
+    let movementType: StockMovementType | null = null;
+    let movementReason: StockMovementReason | null = null;
+    let movementNote = '';
 
-            console.log(result)
-        } catch (error:any) {
-           console.log(error.message)
-        }
+    switch (newStatus) {
+      case OrderStatus.CONFIRMED:
+        movementType = StockMovementType.DECREASE;
+        movementReason = StockMovementReason.ORDER_CONFIRMED;
+        movementNote = `Stock reduced due to order confirmation ${order?.orderId}`;
+        break;
+      
+      case OrderStatus.DELIVERY_FAILED:
+        movementType = StockMovementType.INCREASE;
+        movementReason = StockMovementReason.DELIVERY_FAILED;
+        movementNote = `Stock returned due to delivery failure ${order?.orderId}`;
+        break;
+      
+      case OrderStatus.REFUNDED:
+        movementType = StockMovementType.INCREASE;
+        movementReason = StockMovementReason.RETURN_FROM_CUSTOMER;
+        movementNote = `Stock returned due to refund ${order?.orderId}`;
+        break;
+      
+      case OrderStatus.UNREACHED:
+        movementType = StockMovementType.INCREASE;
+        movementReason = StockMovementReason.CUSTOMER_UNREACHED;
+        movementNote = `Stock returned due to unreachable customer ${order?.orderId}`;
+        break;
+      
+      case OrderStatus.CANCELLED:
+        movementType = StockMovementType.INCREASE;
+        movementReason = StockMovementReason.RETURN_FROM_CUSTOMER;
+        movementNote = `Stock returned due to order cancellation ${order?.orderId}`;
+        break;
+      
+      // No stock movement needed for other statuses
+      default:
+        movementType = null;
+        break;
+    }
+
+    // Only process stock movement for statuses that require it and when instructed
+    if (movementType && movementReason && shouldUpdateStock) {
+      for (const product of products){
+          try {
+              const result = await createStockMovement({
+                productId: product?.productId,
+                warehouseId: order?.warehouseId,
+                movementType: movementType,
+                quantity: product?.quantity,
+                reason: movementReason,
+                notes: movementNote,
+                metadata:{
+                  orderId,
+                  orderNumber: order?.orderId,
+                  statusChange: `Changed to ${newStatus}`,
+                  changeDate: new Date().toISOString()
+                }
+              });
+
+              console.log('Stock movement result:', result);
+          } catch (error:any) {
+             console.log('Stock movement error:', error.message);
+          }
+      }
+    } else {
+      console.log('No stock movement required for status:', newStatus);
     }
 
     // Revalidate the orders page

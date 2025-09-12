@@ -294,6 +294,7 @@ export interface OrderItem {
     name: string;
     location: string;
     country: string;
+    currency: string;
   };
 }
 
