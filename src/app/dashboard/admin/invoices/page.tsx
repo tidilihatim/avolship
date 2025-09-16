@@ -2,7 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/app/actions/auth';
 import { UserRole } from '@/app/dashboard/_constant/user';
-import { getInvoicesList } from '@/app/actions/invoice';
+import { getDebtInvoicesList } from '@/app/actions/debt-invoice';
 import InvoiceList from './_components/invoice-list';
 import ErrorMessage from './_components/error-message';
 
@@ -47,8 +47,8 @@ export default async function InvoicesPage({ searchParams }: Props) {
   };
 
   try {
-    // Fetch invoices
-    const result = await getInvoicesList(filters);
+    // Fetch debt-based invoices
+    const result = await getDebtInvoicesList(filters);
     
     if (!result.success) {
       return <ErrorMessage message={result.message} />;

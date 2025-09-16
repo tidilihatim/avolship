@@ -2,7 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/app/actions/auth';
 import { UserRole } from '@/app/dashboard/_constant/user';
-import { getInvoiceById } from '@/app/actions/invoice';
+import { getDebtInvoiceById } from '@/app/actions/debt-invoice';
 import InvoiceDetailPage from './_components/invoice-detail-page';
 import InvoiceErrorMessage from './_components/invoice-error-message';
 
@@ -27,7 +27,7 @@ export default async function ViewInvoicePage({ params }: Props) {
 
   try {
     // Fetch invoice details
-    const result = await getInvoiceById(id);
+    const result = await getDebtInvoiceById(id);
     
     if (!result.success) {
       return <InvoiceErrorMessage message={result.message} />;
@@ -39,6 +39,7 @@ export default async function ViewInvoicePage({ params }: Props) {
           invoice={result.data?.invoice}
           orders={result.data?.orders || []}
           expeditions={result.data?.expeditions || []}
+          refundOrders={result.data?.refundOrders || []}
         />
       </div>
     );

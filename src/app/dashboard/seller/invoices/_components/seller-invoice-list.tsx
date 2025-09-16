@@ -67,31 +67,18 @@ interface InvoiceData {
   generatedAt: Date;
   periodStart: Date;
   periodEnd: Date;
-  summary: {
-    totalOrders: number;
-    totalSales: number;
-    totalFees: number;
-    finalAmount: number;
-    unpaidExpeditions: number;
-    unpaidAmount: number;
-  };
-  sellerId: {
-    _id: string;
-    name: string;
-    email: string;
-    businessName?: string;
-  };
-  warehouseId: {
-    _id: string;
-    name: string;
-    country: string;
-    currency: string;
-  };
-  generatedBy: {
-    _id: string;
-    name: string;
-    email: string;
-  };
+  // Seller-visible financial data (no sensitive processing fees)
+  totalOrders: number;
+  totalExpeditions: number;
+  totalSales: number; // Seller's revenue
+  totalExpeditionCosts: number; // Expedition costs they pay
+  totalRefundAmount: number; // Refunds (reduces revenue)
+  netAmount: number; // Final amount (positive = they receive, negative = they owe)
+  // Warehouse info (flattened)
+  warehouseName: string;
+  warehouseCountry: string;
+  // Additional info
+  notes?: string;
 }
 
 interface InvoiceFilters {
@@ -314,13 +301,13 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
   // Get status badge styling
   const getStatusBadge = (status: InvoiceStatus) => {
     const statusConfig = {
-      [InvoiceStatus.DRAFT]: { label: t('status.draft'), className: 'bg-muted text-muted-foreground' },
-      [InvoiceStatus.GENERATED]: { label: t('status.generated'), className: 'bg-primary/10 text-primary' },
-      [InvoiceStatus.PAID]: { label: t('status.paid'), className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
-      [InvoiceStatus.OVERDUE]: { label: t('status.overdue'), className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
-      [InvoiceStatus.CANCELLED]: { label: t('status.cancelled'), className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
+      [InvoiceStatus.DRAFT]: { label: t('statusLabels.DRAFT'), className: 'bg-muted text-muted-foreground' },
+      [InvoiceStatus.GENERATED]: { label: t('statusLabels.GENERATED'), className: 'bg-primary/10 text-primary' },
+      [InvoiceStatus.PAID]: { label: t('statusLabels.PAID'), className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' },
+      [InvoiceStatus.OVERDUE]: { label: t('statusLabels.OVERDUE'), className: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' },
+      [InvoiceStatus.CANCELLED]: { label: t('statusLabels.CANCELLED'), className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
     };
-    
+
     return statusConfig[status] || { label: status, className: 'bg-muted text-muted-foreground' };
   };
 
@@ -488,20 +475,29 @@ export default function SellerInvoiceList({ invoices, pagination, filters }: Sel
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         <div className="text-sm">
-                          <div className="font-medium">{formatCurrency(invoice.summary.finalAmount, invoice.currency)}</div>
-                          <div className="text-muted-foreground">{invoice.summary.totalOrders} {t('table.orders')}</div>
+                          <div className={`font-medium flex items-center gap-1 ${
+                            invoice.netAmount < 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
+                          }`}>
+                            {formatCurrency(Math.abs(invoice.netAmount), invoice.currency)}
+                            <Badge
+                              variant={invoice.netAmount < 0 ? 'destructive' : 'secondary'}
+                              className="text-xs px-1 py-0 h-5"
+                            >
+                              {invoice.netAmount < 0 ? 'DEBT' : 'PROFIT'}
+                            </Badge>
+                          </div>
+                          <div className="text-muted-foreground">{invoice.totalOrders} {t('table.orders')} • {invoice.totalExpeditions} expeditions</div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         <div className="text-sm">
-                          <div>{invoice.warehouseId.name}</div>
-                          <div className="text-muted-foreground">{invoice.warehouseId.country}</div>
+                          <div>{invoice.warehouseName}</div>
+                          <div className="text-muted-foreground">{invoice.warehouseCountry}</div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden xl:table-cell">
                         <div className="text-sm">
                           <div>{formatDate(invoice.generatedAt)}</div>
-                          <div className="text-muted-foreground">{t('table.by')} {invoice.generatedBy.name}</div>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">

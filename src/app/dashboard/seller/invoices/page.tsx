@@ -2,7 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/app/actions/auth';
 import { UserRole } from '@/app/dashboard/_constant/user';
-import { getSellerInvoicesList } from '@/app/actions/invoice';
+import { getSellerDebtInvoicesList } from '@/app/actions/debt-invoice';
 import SellerInvoiceList from './_components/seller-invoice-list';
 import { getTranslations } from 'next-intl/server';
 
@@ -48,8 +48,8 @@ export default async function SellerInvoicesPage({ searchParams }: Props) {
   };
 
   try {
-    // Fetch seller's invoices
-    const result = await getSellerInvoicesList(filters);
+    // Fetch seller's debt-based invoices
+    const result = await getSellerDebtInvoicesList(filters);
     
     if (!result.success) {
       return (
