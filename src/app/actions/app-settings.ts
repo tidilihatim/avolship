@@ -30,7 +30,7 @@ export async function updateAppSettings(formData: FormData | any) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id || session.user.role !== "admin") {
+    if (!session?.user?.id || (session.user.role !== "admin" && session.user.role !== "moderator")) {
       return {
         success: false,
         error: "Unauthorized",

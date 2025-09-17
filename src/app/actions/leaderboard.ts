@@ -69,7 +69,7 @@ export async function getProviderLeaderboard(
   }
 
   const user = await User.findById(session.user.id)
-  if (!user || ![UserRole.PROVIDER, UserRole.ADMIN, UserRole.SELLER].includes(user.role)) {
+  if (!user || ![UserRole.MODERATOR,UserRole.PROVIDER, UserRole.ADMIN, UserRole.SELLER].includes(user.role)) {
     throw new Error('Unauthorized access to provider leaderboard')
   }
 
@@ -165,7 +165,7 @@ export async function getDeliveryLeaderboard(
   }
 
   const user = await User.findById(session.user.id)
-  if (!user || ![UserRole.DELIVERY, UserRole.ADMIN].includes(user.role)) {
+  if (!user || ![UserRole.MODERATOR,UserRole.DELIVERY, UserRole.ADMIN].includes(user.role)) {
     throw new Error('Unauthorized access to delivery leaderboard')
   }
 
@@ -277,7 +277,7 @@ export async function getCallCenterLeaderboard(
   }
 
   const user = await User.findById(session.user.id)
-  if (!user || ![UserRole.CALL_CENTER, UserRole.ADMIN].includes(user.role)) {
+  if (!user || ![UserRole.MODERATOR,UserRole.CALL_CENTER, UserRole.ADMIN].includes(user.role)) {
     throw new Error('Unauthorized access to call center leaderboard')
   }
 
@@ -395,7 +395,7 @@ export async function getSellerLeaderboard(
   }
 
   const user = await User.findById(session.user.id)
-  if (!user || ![UserRole.ADMIN, UserRole.SELLER].includes(user.role)) {
+  if (!user || ![UserRole.MODERATOR,UserRole.ADMIN, UserRole.SELLER].includes(user.role)) {
     throw new Error('Unauthorized access to seller leaderboard')
   }
 

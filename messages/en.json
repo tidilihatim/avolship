@@ -1,98 +1,134 @@
 {
   "admin": {
     "dashboard": {
-      "title": "Dashboard",
-      "overview": "Dashboard Overview",
-      "welcome": "Welcome to the Admin Dashboard",
+      "title": "Admin Overview",
+      "subtitle": "Comprehensive view of your fulfillment center operations",
+      "errorAlert": "Error loading dashboard data. Please try again.",
+      "sections": {
+        "filters": "Filters",
+        "statsCards": "Statistics Overview",
+        "charts": "Analytics Charts",
+        "performance": "Performance Metrics",
+        "activity": "Recent Activity"
+      },
+      "loading": {
+        "dashboard": "Loading dashboard...",
+        "stats": "Loading statistics...",
+        "charts": "Loading charts...",
+        "performers": "Loading performance data...",
+        "activity": "Loading recent activity...",
+        "filters": "Loading filters..."
+      },
       "statsCards": {
-        "totalOrders": "Total Orders",
         "totalUsers": "Total Users",
-        "totalRevenue": "Total Revenue",
-        "activeUsers": "Active Users",
-        "ordersDescription": "{count} orders in the system",
-        "usersDescription": "{count} users registered",
-        "revenueDescription": "${revenue} total revenue",
-        "activeDescription": "{count} active this month"
+        "totalOrders": "Total Orders",
+        "products": "Products",
+        "warehouses": "Warehouses",
+        "pendingUsers": "Pending Users",
+        "activeDelivery": "Active Delivery",
+        "todaysOrders": "Today's Orders",
+        "descriptions": {
+          "allPlatformUsers": "All platform users",
+          "lifetimeOrders": "Lifetime orders",
+          "availableProducts": "Available products",
+          "activeLocations": "Active locations",
+          "awaitingApproval": "Awaiting approval",
+          "availableDrivers": "Available drivers",
+          "ordersPlacedToday": "Orders placed today"
+        },
+        "trends": {
+          "pendingApproval": "{count} pending approval",
+          "allUsersActive": "All users active",
+          "ordersToday": "{count} today",
+          "noOrdersToday": "No orders today",
+          "inInventory": "In inventory",
+          "operational": "Operational",
+          "requiresAction": "Requires action",
+          "allApproved": "All approved",
+          "readyForDelivery": "Ready for delivery"
+        }
       },
       "filters": {
         "title": "Dashboard Filters",
         "dateRange": "Date Range",
-        "selectDateRange": "Select date range",
+        "userRole": "User Role",
+        "orderStatus": "Order Status",
+        "warehouse": "Warehouse",
+        "applyFilters": "Apply Filters",
+        "resetFilters": "Reset Filters",
         "datePresets": {
           "today": "Today",
           "yesterday": "Yesterday",
-          "last7Days": "Last 7 days",
-          "last30Days": "Last 30 days",
-          "thisMonth": "This month",
-          "lastMonth": "Last month",
-          "last3Months": "Last 3 months",
-          "last6Months": "Last 6 months",
-          "thisYear": "This year",
-          "lastYear": "Last year"
+          "thisWeek": "This Week",
+          "thisMonth": "This Month",
+          "thisYear": "This Year",
+          "customRange": "Custom Range"
         },
-        "quickFilters": "Quick Filters",
-        "userRole": "User Role",
+        "selectDateRange": "Select date range",
         "selectUserRole": "Select user role",
-        "orderStatus": "Order Status",
         "selectOrderStatus": "Select order status",
-        "applyFilters": "Apply Filters",
-        "clearAll": "Clear All"
+        "selectWarehouse": "Select warehouse",
+        "allRoles": "All Roles",
+        "allStatuses": "All Statuses",
+        "allWarehouses": "All Warehouses"
       },
       "charts": {
         "usersByRole": {
           "title": "Users by Role",
-          "description": "{count} total users across all roles",
+          "description": "Distribution of {count} users across different roles",
           "noData": "No user data available",
           "noUsers": "No users found",
-          "noUsersMessage": "There are currently no users in the system"
+          "noUsersMessage": "User data will appear here once available"
         },
         "orderStatus": {
           "title": "Order Status Distribution",
-          "description": "{count} total orders",
-          "count": "Orders",
+          "description": "Current status of {count} total orders",
           "tooltipOrders": "{value} orders",
-          "tooltipStatus": "Status: {label}"
+          "tooltipStatus": "Status: {label}",
+          "count": "Count"
         },
         "revenue": {
-          "title": "Revenue Trends",
-          "noData": "No revenue data available",
-          "noRevenueFound": "No revenue data found",
+          "title": "Revenue Trend",
+          "noData": "No revenue data available for the selected period",
           "noDataMessage": "Revenue data will appear here once orders are delivered",
-          "noDataAvailable": "No data available",
-          "chartDescription": "{revenue} total revenue from {orders} delivered orders ({granularity} breakdown)",
-          "granularity": {
-            "daily": "daily",
-            "weekly": "weekly", 
-            "monthly": "monthly",
-            "hourly": "hourly"
-          },
-          "revenue": "Revenue",
-          "orders": "Orders",
-          "tooltipOrders": "{value} orders",
-          "tooltipPeriod": "Period: {label}",
-          "totalRevenue": "Total Revenue",
-          "deliveredOrders": "Delivered Orders"
-        }
-      },
-      "recentActivity": {
-        "title": "Recent Activity",
-        "description": "Latest activities across the platform",
-        "noActivity": "No recent activity",
-        "timeAgo": {
-          "justNow": "Just now",
-          "hoursAgo": "{hours}h ago",
-          "yesterday": "Yesterday"
+          "noRevenueFound": "No revenue data found"
+        },
+        "recentActivity": {
+          "title": "Recent Activity",
+          "description": "Latest activities across the platform",
+          "noActivity": "No recent activity",
+          "timeLabels": {
+            "justNow": "Just now",
+            "hoursAgo": "{hours}h ago",
+            "yesterday": "Yesterday"
+          }
         }
       },
       "roles": {
         "ADMIN": "Admin",
-        "SELLER": "Seller", 
+        "SELLER": "Seller",
         "DELIVERY": "Delivery",
         "PROVIDER": "Provider",
         "SUPPORT": "Support",
         "CALL_CENTER": "Call Center",
-        "MODERATOR": "Moderator",
-        "USER": "User"
+        "MODERATOR": "Moderator"
+      },
+      "statuses": {
+        "PENDING": "Pending",
+        "CONFIRMED": "Confirmed",
+        "CANCELLED": "Cancelled",
+        "SHIPPED": "Shipped",
+        "ASSIGNED_TO_DELIVERY": "Assigned to Delivery",
+        "ACCEPTED_BY_DELIVERY": "Accepted by Delivery",
+        "IN_TRANSIT": "In Transit",
+        "OUT_FOR_DELIVERY": "Out for Delivery",
+        "DELIVERED": "Delivered",
+        "DELIVERY_FAILED": "Delivery Failed",
+        "REFUNDED": "Refunded",
+        "WRONG_NUMBER": "Wrong Number",
+        "DOUBLE": "Duplicate",
+        "UNREACHED": "Unreached",
+        "EXPIRED": "Expired"
       }
     }
   },
@@ -525,6 +561,7 @@
     "products": "Products",
     "providers": "Providers",
     "chat": "Chat",
+    "invoices":"Invoices",
     "integrations": "Integrations",
     "support": "Support",
     "queue": "Queue",
@@ -609,18 +646,37 @@
   "invoices": {
     "title": "My Invoices",
     "searchInvoices": "Search invoices...",
+    "searchPlaceholder": "Search invoices...",
     "applyFilters": "Apply Filters",
     "clearFilters": "Clear Filters",
     "filters": "Filters",
     "filtersDescription": "Filter invoices by various criteria",
     "filterByStatus": "Filter by Status",
     "allStatuses": "All Statuses",
+    "filterBySeller": "Filter by Seller",
+    "allSellers": "All Sellers",
     "dateRange": "Date Range",
     "startDate": "Start Date",
     "endDate": "End Date",
     "noInvoicesFound": "No invoices found",
     "errorLoading": "Error Loading Invoices",
     "unexpectedError": "An unexpected error occurred. Please try again.",
+    "invoiceNumber": "Invoice #",
+    "seller": "Seller",
+    "period": "Period",
+    "amount": "Amount",
+    "warehouse": "Warehouse",
+    "generated": "Generated",
+    "actionsHeading": "Actions",
+    "markAsPaid": "Mark as Paid",
+    "to": "to",
+    "orders": "orders",
+    "by": "by",
+    "view": "View",
+    "markAsOverdue": "Mark as Overdue",
+    "cancelInvoice": "Cancel Invoice",
+    "itemsPerPage": "Items per page:",
+    "showing": "Showing",
     "fields": {
       "invoiceNumber": "Invoice #",
       "status": "Status",
@@ -670,6 +726,11 @@
     "actions": {
       "view": "View"
     },
+    "invoice": "invoice",
+    "invoices": "invoices",
+    "found": "found",
+    "netPayment": "Net Payment",
+    "statusHeading": "Status",
     "errors": {
       "loadingTitle": "Error Loading Invoices",
       "unexpectedError": "An unexpected error occurred. Please try again."
@@ -3527,122 +3588,6 @@
       "copyEmail": "Copy email",
       "copyPhone": "Copy phone number",
       "copyLocation": "Copy location"
-    }
-  },
-  "admin": {
-    "dashboard": {
-      "title": "Admin Overview",
-      "subtitle": "Comprehensive view of your fulfillment center operations",
-      "errorAlert": "Error loading dashboard data. Please try again.",
-      "sections": {
-        "filters": "Filters",
-        "statsCards": "Statistics Overview",
-        "charts": "Analytics Charts",
-        "performance": "Performance Metrics",
-        "activity": "Recent Activity"
-      },
-      "loading": {
-        "dashboard": "Loading dashboard...",
-        "stats": "Loading statistics...",
-        "charts": "Loading charts...",
-        "performers": "Loading performance data...",
-        "activity": "Loading recent activity...",
-        "filters": "Loading filters..."
-      },
-      "statsCards": {
-        "totalUsers": "Total Users",
-        "totalOrders": "Total Orders",
-        "products": "Products",
-        "warehouses": "Warehouses",
-        "pendingUsers": "Pending Users",
-        "activeDelivery": "Active Delivery",
-        "todaysOrders": "Today's Orders",
-        "descriptions": {
-          "allPlatformUsers": "All platform users",
-          "lifetimeOrders": "Lifetime orders",
-          "availableProducts": "Available products",
-          "activeLocations": "Active locations",
-          "awaitingApproval": "Awaiting approval",
-          "availableDrivers": "Available drivers",
-          "ordersPlacedToday": "Orders placed today"
-        },
-        "trends": {
-          "pendingApproval": "{count} pending approval",
-          "allUsersActive": "All users active",
-          "ordersToday": "{count} today",
-          "noOrdersToday": "No orders today",
-          "inInventory": "In inventory",
-          "operational": "Operational",
-          "requiresAction": "Requires action",
-          "allApproved": "All approved",
-          "readyForDelivery": "Ready for delivery"
-        }
-      },
-      "filters": {
-        "title": "Dashboard Filters",
-        "dateRange": "Date Range",
-        "userRole": "User Role",
-        "orderStatus": "Order Status",
-        "warehouse": "Warehouse",
-        "applyFilters": "Apply Filters",
-        "resetFilters": "Reset Filters",
-        "datePresets": {
-          "today": "Today",
-          "yesterday": "Yesterday",
-          "thisWeek": "This Week",
-          "thisMonth": "This Month",
-          "thisYear": "This Year",
-          "customRange": "Custom Range"
-        },
-        "selectDateRange": "Select date range",
-        "selectUserRole": "Select user role",
-        "selectOrderStatus": "Select order status",
-        "selectWarehouse": "Select warehouse",
-        "allRoles": "All Roles",
-        "allStatuses": "All Statuses",
-        "allWarehouses": "All Warehouses"
-      },
-      "charts": {
-        "usersByRole": {
-          "title": "Users by Role",
-          "description": "Distribution of {count} users across different roles",
-          "noData": "No user data available",
-          "noUsers": "No users found",
-          "noUsersMessage": "User data will appear here once available"
-        },
-        "orderStatus": {
-          "title": "Order Status Distribution",
-          "description": "Current status of {count} total orders",
-          "tooltipOrders": "{value} orders",
-          "tooltipStatus": "Status: {label}",
-          "count": "Count"
-        },
-        "revenue": {
-          "title": "Revenue Trend",
-          "noData": "No revenue data available for the selected period",
-          "noDataMessage": "Revenue data will appear here once orders are delivered",
-          "noRevenueFound": "No revenue data found"
-        },
-        "recentActivity": {
-          "title": "Recent Activity",
-          "description": "Latest activities across the platform",
-          "noActivity": "No recent activity",
-          "timeLabels": {
-            "justNow": "Just now",
-            "hoursAgo": "{hours}h ago",
-            "yesterday": "Yesterday"
-          }
-        }
-      },
-      "roles": {
-        "ADMIN": "Admin",
-        "SELLER": "Seller",
-        "DELIVERY": "Delivery",
-        "PROVIDER": "Provider",
-        "SUPPORT": "Support",
-        "CALL_CENTER": "Call Center",
-        "MODERATOR": "Moderator"
-      }
     }
   }
 }

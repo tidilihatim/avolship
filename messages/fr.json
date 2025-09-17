@@ -1,87 +1,107 @@
 {
   "admin": {
     "dashboard": {
-      "title": "Tableau de Bord",
-      "overview": "Aperçu du Tableau de Bord",
-      "welcome": "Bienvenue dans le Tableau de Bord Admin",
+      "title": "Aperçu Admin",
+      "subtitle": "Vue d'ensemble complète de vos opérations de centre de distribution",
+      "errorAlert": "Erreur lors du chargement des données du tableau de bord. Veuillez réessayer.",
+      "sections": {
+        "filters": "Filtres",
+        "statsCards": "Aperçu des Statistiques",
+        "charts": "Graphiques d'Analyse",
+        "performance": "Métriques de Performance",
+        "activity": "Activité Récente"
+      },
+      "loading": {
+        "dashboard": "Chargement du tableau de bord...",
+        "stats": "Chargement des statistiques...",
+        "charts": "Chargement des graphiques...",
+        "performers": "Chargement des données de performance...",
+        "activity": "Chargement de l'activité récente...",
+        "filters": "Chargement des filtres..."
+      },
       "statsCards": {
-        "totalOrders": "Total des Commandes",
-        "totalUsers": "Total des Utilisateurs",
-        "totalRevenue": "Chiffre d'Affaires Total",
-        "activeUsers": "Utilisateurs Actifs",
-        "ordersDescription": "{count} commandes dans le système",
-        "usersDescription": "{count} utilisateurs enregistrés",
-        "revenueDescription": "${revenue} de chiffre d'affaires total",
-        "activeDescription": "{count} actifs ce mois-ci"
+        "totalUsers": "Total Utilisateurs",
+        "totalOrders": "Total Commandes",
+        "products": "Produits",
+        "warehouses": "Entrepôts",
+        "pendingUsers": "Utilisateurs en Attente",
+        "activeDelivery": "Livraison Active",
+        "todaysOrders": "Commandes d'Aujourd'hui",
+        "descriptions": {
+          "allPlatformUsers": "Tous les utilisateurs de la plateforme",
+          "lifetimeOrders": "Commandes à vie",
+          "availableProducts": "Produits disponibles",
+          "activeLocations": "Emplacements actifs",
+          "awaitingApproval": "En attente d'approbation",
+          "availableDrivers": "Chauffeurs disponibles",
+          "ordersPlacedToday": "Commandes passées aujourd'hui"
+        },
+        "trends": {
+          "pendingApproval": "{count} en attente d'approbation",
+          "allUsersActive": "Tous les utilisateurs actifs",
+          "ordersToday": "{count} aujourd'hui",
+          "noOrdersToday": "Aucune commande aujourd'hui",
+          "inInventory": "En inventaire",
+          "operational": "Opérationnel",
+          "requiresAction": "Nécessite une action",
+          "allApproved": "Tout approuvé",
+          "readyForDelivery": "Prêt pour la livraison"
+        }
       },
       "filters": {
         "title": "Filtres du Tableau de Bord",
         "dateRange": "Plage de Dates",
-        "selectDateRange": "Sélectionner une plage de dates",
+        "userRole": "Rôle Utilisateur",
+        "orderStatus": "Statut de Commande",
+        "warehouse": "Entrepôt",
+        "applyFilters": "Appliquer les Filtres",
+        "resetFilters": "Réinitialiser les Filtres",
         "datePresets": {
           "today": "Aujourd'hui",
           "yesterday": "Hier",
-          "last7Days": "7 derniers jours",
-          "last30Days": "30 derniers jours",
-          "thisMonth": "Ce mois-ci",
-          "lastMonth": "Le mois dernier",
-          "last3Months": "3 derniers mois",
-          "last6Months": "6 derniers mois",
-          "thisYear": "Cette année",
-          "lastYear": "L'année dernière"
+          "thisWeek": "Cette Semaine",
+          "thisMonth": "Ce Mois",
+          "thisYear": "Cette Année",
+          "customRange": "Plage Personnalisée"
         },
-        "quickFilters": "Filtres Rapides",
-        "userRole": "Rôle Utilisateur",
-        "selectUserRole": "Sélectionner un rôle d'utilisateur",
-        "orderStatus": "Statut de Commande",
-        "selectOrderStatus": "Sélectionner un statut de commande",
-        "applyFilters": "Appliquer les Filtres",
-        "clearAll": "Effacer Tout"
+        "selectDateRange": "Sélectionner la plage de dates",
+        "selectUserRole": "Sélectionner le rôle utilisateur",
+        "selectOrderStatus": "Sélectionner le statut de commande",
+        "selectWarehouse": "Sélectionner l'entrepôt",
+        "allRoles": "Tous les Rôles",
+        "allStatuses": "Tous les Statuts",
+        "allWarehouses": "Tous les Entrepôts"
       },
       "charts": {
         "usersByRole": {
           "title": "Utilisateurs par Rôle",
-          "description": "{count} utilisateurs au total dans tous les rôles",
+          "description": "Répartition de {count} utilisateurs selon différents rôles",
           "noData": "Aucune donnée utilisateur disponible",
           "noUsers": "Aucun utilisateur trouvé",
-          "noUsersMessage": "Il n'y a actuellement aucun utilisateur dans le système"
+          "noUsersMessage": "Les données utilisateur apparaîtront ici une fois disponibles"
         },
         "orderStatus": {
-          "title": "Distribution des Statuts de Commande",
-          "description": "{count} commandes au total",
-          "count": "Commandes",
+          "title": "Répartition du Statut des Commandes",
+          "description": "Statut actuel de {count} commandes au total",
           "tooltipOrders": "{value} commandes",
-          "tooltipStatus": "Statut : {label}"
+          "tooltipStatus": "Statut: {label}",
+          "count": "Nombre"
         },
         "revenue": {
-          "title": "Tendances des Revenus",
-          "noData": "Aucune donnée de revenus disponible",
-          "noRevenueFound": "Aucune donnée de revenus trouvée",
+          "title": "Tendance des Revenus",
+          "noData": "Aucune donnée de revenus disponible pour la période sélectionnée",
           "noDataMessage": "Les données de revenus apparaîtront ici une fois les commandes livrées",
-          "noDataAvailable": "Aucune donnée disponible",
-          "chartDescription": "{revenue} de revenus totaux de {orders} commandes livrées (répartition {granularity})",
-          "granularity": {
-            "daily": "quotidienne",
-            "weekly": "hebdomadaire",
-            "monthly": "mensuelle",
-            "hourly": "horaire"
-          },
-          "revenue": "Revenus",
-          "orders": "Commandes",
-          "tooltipOrders": "{value} commandes",
-          "tooltipPeriod": "Période : {label}",
-          "totalRevenue": "Revenus Totaux",
-          "deliveredOrders": "Commandes Livrées"
-        }
-      },
-      "recentActivity": {
-        "title": "Activité Récente",
-        "description": "Dernières activités sur la plateforme",
-        "noActivity": "Aucune activité récente",
-        "timeAgo": {
-          "justNow": "À l'instant",
-          "hoursAgo": "Il y a {hours}h",
-          "yesterday": "Hier"
+          "noRevenueFound": "Aucune donnée de revenus trouvée"
+        },
+        "recentActivity": {
+          "title": "Activité Récente",
+          "description": "Dernières activités sur la plateforme",
+          "noActivity": "Aucune activité récente",
+          "timeLabels": {
+            "justNow": "À l'instant",
+            "hoursAgo": "Il y a {hours}h",
+            "yesterday": "Hier"
+          }
         }
       },
       "roles": {
@@ -90,9 +110,25 @@
         "DELIVERY": "Livraison",
         "PROVIDER": "Fournisseur",
         "SUPPORT": "Support",
-        "CALL_CENTER": "Centre d'Appels",
-        "MODERATOR": "Modérateur",
-        "USER": "Utilisateur"
+        "CALL_CENTER": "Centre d'Appel",
+        "MODERATOR": "Modérateur"
+      },
+      "statuses": {
+        "PENDING": "En Attente",
+        "CONFIRMED": "Confirmé",
+        "CANCELLED": "Annulé",
+        "SHIPPED": "Expédié",
+        "ASSIGNED_TO_DELIVERY": "Assigné à la Livraison",
+        "ACCEPTED_BY_DELIVERY": "Accepté par la Livraison",
+        "IN_TRANSIT": "En Transit",
+        "OUT_FOR_DELIVERY": "En Cours de Livraison",
+        "DELIVERED": "Livré",
+        "DELIVERY_FAILED": "Échec de Livraison",
+        "REFUNDED": "Remboursé",
+        "WRONG_NUMBER": "Mauvais Numéro",
+        "DOUBLE": "Doublon",
+        "UNREACHED": "Injoignable",
+        "EXPIRED": "Expiré"
       }
     }
   },
@@ -119,12 +155,12 @@
     "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer.",
     "invoiceNumber": "Facture #",
     "seller": "Vendeur",
-    "status": "Statut",
     "period": "Période",
     "amount": "Montant",
     "warehouse": "Entrepôt",
     "generated": "Générée",
     "actions": "Actions",
+    "actionsHeading": "Actions",
     "to": "à",
     "orders": "commandes",
     "by": "par",
@@ -147,6 +183,9 @@
       "orders": "commandes",
       "by": "par"
     },
+    "invoices": "factures",
+    "netPayment": "Paiement Net",
+    "statusHeading": "Statut",
     "pagination": {
       "itemsPerPage": "Éléments par page :",
       "showing": "Affichage de",
@@ -885,6 +924,7 @@
     "products": "Produits",
     "providers": "Fournisseurs",
     "chat": "Chat",
+    "invoices":"Factures",
     "integrations": "Intégrations",
     "support": "Support",
     "queue": "File d'Attente",
@@ -3517,122 +3557,6 @@
       "copyEmail": "Copier l'email",
       "copyPhone": "Copier le numéro de téléphone",
       "copyLocation": "Copier la localisation"
-    }
-  },
-  "admin": {
-    "dashboard": {
-      "title": "Aperçu Admin",
-      "subtitle": "Vue d'ensemble complète de vos opérations de centre de distribution",
-      "errorAlert": "Erreur lors du chargement des données du tableau de bord. Veuillez réessayer.",
-      "sections": {
-        "filters": "Filtres",
-        "statsCards": "Aperçu des Statistiques",
-        "charts": "Graphiques d'Analyse",
-        "performance": "Métriques de Performance",
-        "activity": "Activité Récente"
-      },
-      "loading": {
-        "dashboard": "Chargement du tableau de bord...",
-        "stats": "Chargement des statistiques...",
-        "charts": "Chargement des graphiques...",
-        "performers": "Chargement des données de performance...",
-        "activity": "Chargement de l'activité récente...",
-        "filters": "Chargement des filtres..."
-      },
-      "statsCards": {
-        "totalUsers": "Total Utilisateurs",
-        "totalOrders": "Total Commandes",
-        "products": "Produits",
-        "warehouses": "Entrepôts",
-        "pendingUsers": "Utilisateurs en Attente",
-        "activeDelivery": "Livraison Active",
-        "todaysOrders": "Commandes d'Aujourd'hui",
-        "descriptions": {
-          "allPlatformUsers": "Tous les utilisateurs de la plateforme",
-          "lifetimeOrders": "Commandes à vie",
-          "availableProducts": "Produits disponibles",
-          "activeLocations": "Emplacements actifs",
-          "awaitingApproval": "En attente d'approbation",
-          "availableDrivers": "Chauffeurs disponibles",
-          "ordersPlacedToday": "Commandes passées aujourd'hui"
-        },
-        "trends": {
-          "pendingApproval": "{count} en attente d'approbation",
-          "allUsersActive": "Tous les utilisateurs actifs",
-          "ordersToday": "{count} aujourd'hui",
-          "noOrdersToday": "Aucune commande aujourd'hui",
-          "inInventory": "En inventaire",
-          "operational": "Opérationnel",
-          "requiresAction": "Nécessite une action",
-          "allApproved": "Tout approuvé",
-          "readyForDelivery": "Prêt pour la livraison"
-        }
-      },
-      "filters": {
-        "title": "Filtres du Tableau de Bord",
-        "dateRange": "Plage de Dates",
-        "userRole": "Rôle Utilisateur",
-        "orderStatus": "Statut de Commande",
-        "warehouse": "Entrepôt",
-        "applyFilters": "Appliquer les Filtres",
-        "resetFilters": "Réinitialiser les Filtres",
-        "datePresets": {
-          "today": "Aujourd'hui",
-          "yesterday": "Hier",
-          "thisWeek": "Cette Semaine",
-          "thisMonth": "Ce Mois",
-          "thisYear": "Cette Année",
-          "customRange": "Plage Personnalisée"
-        },
-        "selectDateRange": "Sélectionner la plage de dates",
-        "selectUserRole": "Sélectionner le rôle utilisateur",
-        "selectOrderStatus": "Sélectionner le statut de commande",
-        "selectWarehouse": "Sélectionner l'entrepôt",
-        "allRoles": "Tous les Rôles",
-        "allStatuses": "Tous les Statuts",
-        "allWarehouses": "Tous les Entrepôts"
-      },
-      "charts": {
-        "usersByRole": {
-          "title": "Utilisateurs par Rôle",
-          "description": "Répartition de {count} utilisateurs selon différents rôles",
-          "noData": "Aucune donnée utilisateur disponible",
-          "noUsers": "Aucun utilisateur trouvé",
-          "noUsersMessage": "Les données utilisateur apparaîtront ici une fois disponibles"
-        },
-        "orderStatus": {
-          "title": "Répartition du Statut des Commandes",
-          "description": "Statut actuel de {count} commandes au total",
-          "tooltipOrders": "{value} commandes",
-          "tooltipStatus": "Statut: {label}",
-          "count": "Nombre"
-        },
-        "revenue": {
-          "title": "Tendance des Revenus",
-          "noData": "Aucune donnée de revenus disponible pour la période sélectionnée",
-          "noDataMessage": "Les données de revenus apparaîtront ici une fois les commandes livrées",
-          "noRevenueFound": "Aucune donnée de revenus trouvée"
-        },
-        "recentActivity": {
-          "title": "Activité Récente",
-          "description": "Dernières activités sur la plateforme",
-          "noActivity": "Aucune activité récente",
-          "timeLabels": {
-            "justNow": "À l'instant",
-            "hoursAgo": "Il y a {hours}h",
-            "yesterday": "Hier"
-          }
-        }
-      },
-      "roles": {
-        "ADMIN": "Admin",
-        "SELLER": "Vendeur",
-        "DELIVERY": "Livraison",
-        "PROVIDER": "Fournisseur",
-        "SUPPORT": "Support",
-        "CALL_CENTER": "Centre d'Appel",
-        "MODERATOR": "Modérateur"
-      }
     }
   }
 }

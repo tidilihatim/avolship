@@ -11,7 +11,7 @@ import {
   Coins
 } from "lucide-react";
 
-type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center';
+type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator';
 
 // Define the structure of a navigation item
 interface NavigationItem {
@@ -188,7 +188,44 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       href: "/dashboard/provider/leaderboard",
       icon: Trophy
     }
-  ]
+  ],
+  moderator:[
+    {
+      name: "navigation.overview",
+      href: "/dashboard/moderator",
+      icon: LayoutDashboard,
+    },
+    {
+      name: "navigation.warehouse",
+      href: "/dashboard/moderator/warehouse",
+      icon: Warehouse,
+    },
+    {
+      name: "navigation.orders",
+      href: "/dashboard/moderator/orders",
+      icon: ShoppingCart
+    },
+    {
+      name: "navigation.expeditions",
+      href: "/dashboard/moderator/expeditions",
+      icon: PlaneIcon
+    },
+    {
+      name: "navigation.deliveryRiders",
+      href:"/dashboard/moderator/delivery-riders",
+      icon: MapPin
+    },
+    {
+      name: "navigation.invoices",
+      href:"/dashboard/moderator/invoices",
+      icon: DollarSign
+    },
+    {
+      name: "navigation.leaderboard",
+      href: "/dashboard/moderator/leaderboard",
+      icon: Trophy
+    }
+  ],
 
 };
 

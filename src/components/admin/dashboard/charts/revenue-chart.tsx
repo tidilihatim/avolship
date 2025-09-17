@@ -118,30 +118,31 @@ export function RevenueChartComponent({ data }: RevenueChartProps) {
           {getChartDescription()}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px] sm:h-[350px] lg:h-[400px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart 
-              data={formattedData} 
-              margin={{ 
-                top: 20, 
-                right: 15, 
-                left: 15, 
-                bottom: 60 
-              }}
-            >
-            <XAxis 
-              dataKey="date" 
-              tick={{ fontSize: 11 }}
-              angle={-45}
-              textAnchor="end"
-              height={60}
-              interval="preserveStartEnd"
-            />
-            <YAxis 
-              tick={{ fontSize: 11 }} 
-              width={60}
-            />
+      <CardContent className="p-4">
+        <div className="w-full overflow-hidden">
+          <ChartContainer config={chartConfig} className="h-[300px] sm:h-[350px] lg:h-[450px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={formattedData}
+                margin={{
+                  top: 20,
+                  right: 15,
+                  left: 15,
+                  bottom: 60
+                }}
+              >
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 10 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                  interval="preserveStartEnd"
+                />
+                <YAxis
+                  tick={{ fontSize: 10 }}
+                  width={50}
+                />
             <ChartTooltip
               content={
                 <ChartTooltipContent
@@ -161,22 +162,24 @@ export function RevenueChartComponent({ data }: RevenueChartProps) {
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}
             />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartContainer>
-        <div className="grid grid-cols-2 gap-4 mt-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-chart-2 rounded-full" />
-            <div className="text-sm">
-              <p className="text-muted-foreground">{t('totalRevenue')}</p>
-              <p className="font-medium">{formatCurrency(totalRevenue)}</p>
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-chart-2 rounded-full flex-shrink-0" />
+              <div className="text-sm min-w-0">
+                <p className="text-muted-foreground text-xs sm:text-sm">{t('totalRevenue')}</p>
+                <p className="font-medium text-xs sm:text-sm">{formatCurrency(totalRevenue)}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-chart-3 rounded-full" />
-            <div className="text-sm">
-              <p className="text-muted-foreground">{t('deliveredOrders')}</p>
-              <p className="font-medium">{totalOrders.toLocaleString()}</p>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-chart-3 rounded-full flex-shrink-0" />
+              <div className="text-sm min-w-0">
+                <p className="text-muted-foreground text-xs sm:text-sm">{t('deliveredOrders')}</p>
+                <p className="font-medium text-xs sm:text-sm">{totalOrders.toLocaleString()}</p>
+              </div>
             </div>
           </div>
         </div>

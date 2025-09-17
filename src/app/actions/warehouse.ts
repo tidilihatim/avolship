@@ -63,7 +63,7 @@ export const getAllCountries = withDbConnection(async () => {
   try {
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole()
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
     const results = await Warehouse.aggregate([
@@ -91,7 +91,7 @@ export const createWarehouse = withDbConnection(async (data: WarehouseFormValues
     // Verify admin access
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole()
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
 
@@ -137,7 +137,7 @@ export const getWarehouses = withDbConnection(async (params?: {
     // Verify admin access
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole()
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
 
@@ -207,7 +207,7 @@ export const getWarehouseById = withDbConnection(async (id: string) => {
     // Verify admin access
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole()
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
 
@@ -239,7 +239,7 @@ export const updateWarehouse = withDbConnection(async (id: string, data: Warehou
     // Verify admin access
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole()
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
 
@@ -293,7 +293,7 @@ export const deleteWarehouse = withDbConnection(async (id: string) => {
     // Verify admin access
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole()
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
 
@@ -322,7 +322,7 @@ export const toggleWarehouseStatus = withDbConnection(async (id: string) => {
     // Verify admin access
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole()
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
 
@@ -363,7 +363,7 @@ export const updateCurrencySettings = withDbConnection(async (
     // Verify admin access
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole()
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
 
@@ -423,7 +423,7 @@ export const getApprovedSellers = withDbConnection(async (params?: {
     const session = await getServerSession(authOptions);
     const role = await getLoginUserRole();
 
-    if (!session?.user || role !== UserRole.ADMIN) {
+    if (!session?.user || (role !== UserRole.ADMIN && role !== UserRole.MODERATOR)) {
       return { error: 'Unauthorized access' };
     }
 

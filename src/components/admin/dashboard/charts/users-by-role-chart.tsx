@@ -42,7 +42,7 @@ export function UsersByRoleChart({ data }: UsersByRoleChartProps) {
   const tRoles = useTranslations('admin.dashboard.roles');
   
   const getRoleLabel = (role: string): string => {
-    return tRoles(role as any) || role;
+    return tRoles(role?.toUpperCase() as any);
   };
 
   if (!data || data.length === 0) {
@@ -79,53 +79,62 @@ export function UsersByRoleChart({ data }: UsersByRoleChartProps) {
           {t('description', { count: totalUsers.toLocaleString() })}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square h-[250px] sm:h-[300px] lg:h-[350px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="count"
-              nameKey="role"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              innerRadius={40}
-              strokeWidth={5}
+      <CardContent className="p-4">
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Chart */}
+          <div className="flex-1 min-w-0">
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square h-[250px] sm:h-[300px] lg:h-[350px]"
             >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ChartContainer>
-        <div className="grid grid-cols-2 gap-2 mt-4">
-          {chartData.map((item, index) => (
-            <div key={index} className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-3 h-3 rounded-full"
-                  style={{ 
-                    backgroundColor: item.fill,
-                    border: '1px solid hsl(var(--border))'
-                  }}
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
                 />
-                <span className="text-muted-foreground">
-                  {item.role}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="font-medium">{item.count}</span>
-                <span className="text-xs text-muted-foreground">({item.percentage}%)</span>
-              </div>
+                <Pie
+                  data={chartData}
+                  dataKey="count"
+                  nameKey="role"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius="70%"
+                  innerRadius="40%"
+                  strokeWidth={2}
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ChartContainer>
+          </div>
+
+          {/* Legend */}
+          <div className="lg:w-48 lg:min-w-[12rem]">
+            <div className="space-y-2">
+              {chartData.map((item, index) => (
+                <div key={index} className="flex items-center justify-between text-sm py-1">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{
+                        backgroundColor: item.fill,
+                        border: '1px solid hsl(var(--border))'
+                      }}
+                    />
+                    <span className="text-muted-foreground truncate text-xs sm:text-sm">
+                      {item.role}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                    <span className="font-medium text-xs sm:text-sm">{item.count}</span>
+                    <span className="text-xs text-muted-foreground">({item.percentage}%)</span>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </CardContent>
     </Card>

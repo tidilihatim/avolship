@@ -517,12 +517,12 @@ export default function InvoiceList({ invoices, pagination, filters }: InvoiceLi
                   <TableRow>
                     <TableHead>{t('invoiceNumber')}</TableHead>
                     <TableHead>{t('seller')}</TableHead>
-                    <TableHead className="hidden md:table-cell">{t('status')}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t('statusHeading')}</TableHead>
                     <TableHead className="hidden md:table-cell">{t('period')}</TableHead>
                     <TableHead className="hidden lg:table-cell">{t('netPayment')}</TableHead>
                     <TableHead className="hidden lg:table-cell">{t('warehouse')}</TableHead>
                     <TableHead className="hidden xl:table-cell">{t('generated')}</TableHead>
-                    <TableHead className="text-right">{t('actions')}</TableHead>
+                    <TableHead className="text-right">{t('actionsHeading')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
