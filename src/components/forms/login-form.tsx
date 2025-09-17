@@ -57,9 +57,12 @@ const LoginPage: React.FC = () => {
                 toast.success(t('login.success'), {
                     description: t('login.redirecting'),
                 });
-                
-                const redirectUrl = '/dashboard';
-                router.push(redirectUrl);
+
+                // Use window.location.href to force a full page reload and ensure session is properly set
+                const redirectUrl = searchParams?.get("callbackUrl") || '/dashboard';
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 100);
             }
         } catch (err) {
             console.error('Login failed:', err);
