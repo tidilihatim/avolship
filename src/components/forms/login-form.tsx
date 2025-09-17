@@ -58,7 +58,7 @@ const LoginPage: React.FC = () => {
                     description: t('login.redirecting'),
                 });
                 
-                const redirectUrl = searchParams?.get("callbackUrl") || '/dashboard';
+                const redirectUrl = '/dashboard';
                 router.push(redirectUrl);
             }
         } catch (err) {
