@@ -68,6 +68,7 @@ interface OrderTableRowProps {
   onApplyDiscount?: (order: OrderTableData) => void;
   columnVisibility: ColumnVisibility;
   isTrackingAllowed: boolean;
+  showDeliveryProofToSeller: boolean;
 }
 
 export default function OrderTableRow({
@@ -82,6 +83,7 @@ export default function OrderTableRow({
   onApplyDiscount,
   columnVisibility,
   isTrackingAllowed,
+  showDeliveryProofToSeller,
 }: OrderTableRowProps) {
   const t = useTranslations();
   const dt = useTranslations('dashboard.seller.deliveryTracking');
@@ -94,6 +96,19 @@ export default function OrderTableRow({
   }) => {
     toast.success(`Call completed - Status: ${callData.status}`)
     router.refresh()
+  };
+
+  // Check if delivery proof should be shown to current user
+  const shouldShowDeliveryProof = () => {
+    // Always show to admin, moderator, and call center
+    if (userRole === UserRole.ADMIN || userRole === UserRole.MODERATOR || userRole === UserRole.CALL_CENTER) {
+      return true;
+    }
+    // For sellers, check the app setting
+    if (userRole === UserRole.SELLER) {
+      return showDeliveryProofToSeller;
+    }
+    return false;
   };
 
   // Function to view delivery proof
@@ -584,7 +599,7 @@ export default function OrderTableRow({
                 )}
 
                 {/* Delivery Proof */}
-                {order.deliveryTracking.deliveryProof && (
+                {order.deliveryTracking.deliveryProof && shouldShowDeliveryProof() && (
                   <div>
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
                       <Image className="h-3 w-3" />

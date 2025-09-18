@@ -11,11 +11,12 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap, Trophy } from 'lucide-react';
+import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap, Trophy, User } from 'lucide-react';
 import { DeliveryFeeRulesForm } from './_components/delivery-fee-rules-form';
 import { CommissionRulesForm } from './_components/commission-rules-form';
 import { LocationTrackingForm } from './_components/location-tracking-form';
 import { TokenSystemForm } from './_components/token-system-form';
+import { SellerSettingsForm } from '@/components/shared/settings';
 import { getAppSettings, updateAppSettings } from '@/app/actions/app-settings';
 import { getTokenPackages } from '@/app/actions/tokens';
 
@@ -39,6 +40,8 @@ interface AppSettings {
   enableDeliveryFees: boolean;
   defaultDeliveryFee: number;
   enableTokenSystem: boolean;
+  showDeliveryProofToSeller: boolean;
+  canSellerRequestPayments: boolean;
   isActive: boolean;
 }
 
@@ -368,6 +371,26 @@ const AppSettingsPage = () => {
       ) : null
     },
     {
+      id: 'sellers',
+      title: t('sections.sellers.title'),
+      description: t('sections.sellers.description'),
+      icon: <User className="w-5 h-5" />,
+      component: settings ? (
+        <SellerSettingsForm
+          settings={{
+            showDeliveryProofToSeller: settings.showDeliveryProofToSeller,
+            canSellerRequestPayments: settings.canSellerRequestPayments,
+          }}
+          onSettingsChange={(sellerSettings) =>
+            updateSettings({
+              showDeliveryProofToSeller: sellerSettings.showDeliveryProofToSeller,
+              canSellerRequestPayments: sellerSettings.canSellerRequestPayments,
+            })
+          }
+        />
+      ) : null
+    },
+    {
       id: 'tokens',
       title: t('sections.tokens.title'),
       description: t('sections.tokens.description'),
@@ -379,7 +402,7 @@ const AppSettingsPage = () => {
             enabled: settings.enableTokenSystem,
             packages: tokenPackages,
           }}
-          onSettingsChange={(tokenSettings) => 
+          onSettingsChange={(tokenSettings) =>
             updateSettings({ enableTokenSystem: tokenSettings.enabled })
           }
           onPackagesUpdate={refreshTokenPackages}

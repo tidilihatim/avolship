@@ -158,11 +158,12 @@ export default function OrderTable({
   // Customer update state
   const [isUpdatingCustomer, setIsUpdatingCustomer] = useState(false);
 
-  // App settings state for tracking permissions
+  // App settings state for tracking permissions and delivery proof
   const [trackingSettings, setTrackingSettings] = useState<{
     seller: boolean;
     call_center: boolean;
   } | null>(null);
+  const [showDeliveryProofToSeller, setShowDeliveryProofToSeller] = useState<boolean>(false);
 
   // Column visibility management
   const { columnVisibility, setColumnVisibility } = useColumnVisibility();
@@ -185,10 +186,11 @@ export default function OrderTable({
           }
         }
 
-        // Fetch app settings for tracking permissions
+        // Fetch app settings for tracking permissions and delivery proof
         const settingsResult = await getAppSettings();
         if (settingsResult.success) {
           setTrackingSettings(settingsResult.data.showLocationTracking);
+          setShowDeliveryProofToSeller(settingsResult.data.showDeliveryProofToSeller);
         }
       } catch (error) {
         console.error("Error fetching user role:", error);
@@ -658,6 +660,7 @@ export default function OrderTable({
                       onApplyDiscount={openDiscountDialog}
                       columnVisibility={columnVisibility}
                       isTrackingAllowed={isTrackingAllowed()}
+                      showDeliveryProofToSeller={showDeliveryProofToSeller}
                     />
                   ))}
                 </TableBody>

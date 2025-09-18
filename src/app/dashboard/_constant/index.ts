@@ -1,6 +1,6 @@
-import { 
-  BarChart3, CreditCard, LayoutDashboard, 
-  MessageCircle, Package, PlaneIcon, ShoppingCart, 
+import {
+  BarChart3, CreditCard, LayoutDashboard,
+  MessageCircle, Package, PlaneIcon, ShoppingCart,
   Truck, User, Warehouse, Clock, Users, FileText, UserCheck,
   Zap,
   DollarSign,
@@ -8,7 +8,8 @@ import {
   Settings,
   HeadphonesIcon,
   Trophy,
-  Coins
+  Coins,
+  Receipt
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator';
@@ -59,6 +60,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: DollarSign
     },
     {
+      name: "navigation.paymentRequests",
+      href: "/dashboard/admin/payment-requests",
+      icon: Receipt,
+    },
+    {
       name: "navigation.leaderboard",
       href: "/dashboard/admin/leaderboard",
       icon: Trophy
@@ -89,6 +95,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.invoices",
       href:"/dashboard/seller/invoices",
       icon: DollarSign
+    },
+    {
+      name: "navigation.paymentRequests",
+      href: "/dashboard/seller/payment-requests",
+      icon: Receipt,
     },
     {
       name: "navigation.providers",
@@ -219,6 +230,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.invoices",
       href:"/dashboard/moderator/invoices",
       icon: DollarSign
+    },
+    {
+      name: "navigation.paymentRequests",
+      href: "/dashboard/moderator/payment-requests",
+      icon: Receipt,
     },
     {
       name: "navigation.leaderboard",

@@ -1,4 +1,176 @@
 {
+  "paymentRequests": {
+      "title": "Demandes de Paiement",
+      "description": "Demander des retraits de vos revenus d'entrepôt",
+      "loading": "Chargement des demandes de paiement...",
+      "disabledMessage": "Les demandes de paiement sont actuellement désactivées. Veuillez contacter le support pour obtenir de l'aide avec les retraits.",
+      "actions": {
+        "newRequest": "Nouvelle Demande",
+        "viewDetails": "Voir les Détails",
+        "cancel": "Annuler",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "schedule": "Programmer",
+        "refresh": "Actualiser",
+        "processRequest": "Traiter la Demande",
+        "view": "Voir",
+        "process": "Traiter"
+      },
+      "stats": {
+        "totalPending": "Total en Attente",
+        "pendingRequests": "Demandes en Attente",
+        "approved": "Approuvé",
+        "rejectedCancelled": "Rejeté/Annulé",
+        "totalRequests": "Total des Demandes",
+        "currentPage": "Page Actuelle",
+        "totalPages": "Total des Pages"
+      },
+      "list": {
+        "title": "Vos Demandes de Paiement",
+        "description": "Suivez le statut de vos demandes de paiement et consultez les détails"
+      },
+      "tabs": {
+        "all": "Toutes",
+        "pending": "En Attente",
+        "approved": "Approuvées",
+        "scheduled": "Programmées",
+        "processed": "Traitées",
+        "rejected": "Rejetées"
+      },
+      "status": {
+        "pending": "En Attente",
+        "approved": "Approuvé",
+        "scheduled": "Programmé",
+        "processed": "Traité",
+        "rejected": "Rejeté",
+        "cancelled": "Annulé"
+      },
+      "form": {
+        "warehouse": "Entrepôt",
+        "warehousePlaceholder": "Sélectionnez un entrepôt",
+        "amount": "Montant Demandé",
+        "amountPlaceholder": "Entrez le montant",
+        "description": "Description",
+        "descriptionPlaceholder": "Décrivez votre demande de paiement",
+        "fromDate": "Date de Début",
+        "toDate": "Date de Fin",
+        "priority": "Priorité",
+        "priorityPlaceholder": "Sélectionnez la priorité",
+        "priorities": {
+          "low": "Faible",
+          "normal": "Normal",
+          "high": "Élevé",
+          "urgent": "Urgent"
+        }
+      },
+      "dialog": {
+        "create": {
+          "title": "Créer une Demande de Paiement",
+          "description": "Demander un retrait de vos revenus d'entrepôt"
+        },
+        "details": {
+          "title": "Détails de la Demande de Paiement",
+          "description": "Voir tous les détails de votre demande de paiement"
+        }
+      },
+      "messages": {
+        "fetchError": "Échec de la récupération des demandes de paiement",
+        "loadError": "Échec du chargement des demandes de paiement",
+        "createSuccess": "Demande de paiement créée avec succès",
+        "createError": "Échec de la création de la demande de paiement",
+        "cancelSuccess": "Demande de paiement annulée",
+        "cancelError": "Échec de l'annulation de la demande",
+        "updateSuccess": "Demande de paiement mise à jour avec succès",
+        "updateError": "Échec de la mise à jour de la demande de paiement"
+      },
+      "management": {
+        "title": "Gestion des Demandes de Paiement",
+        "description": "Examiner et traiter les demandes de paiement des vendeurs",
+        "listTitle": "Demandes de Paiement",
+        "listDescription": "Gérer les demandes de paiement avec des outils de filtrage et de traitement avancés",
+        "noRequests": "Aucune Demande de Paiement",
+        "noRequestsDescription": "Il n'y a aucune demande de paiement à afficher",
+        "table": {
+          "seller": "Vendeur",
+          "warehouse": "Entrepôt",
+          "amount": "Montant",
+          "status": "Statut",
+          "priority": "Priorité",
+          "dateRange": "Période",
+          "created": "Créé"
+        },
+        "pagination": {
+          "showing": "Affichage de {start} à {end} sur {total} entrées",
+          "previous": "Précédent",
+          "next": "Suivant"
+        },
+        "details": {
+          "title": "Détails de la Demande de Paiement",
+          "description": "Informations complètes sur cette demande de paiement",
+          "overview": "Aperçu de la Demande",
+          "requestedAmount": "Montant Demandé",
+          "priority": "Priorité",
+          "dateRange": "Période Demandée",
+          "createdOn": "Créé le",
+          "sellerInfo": "Informations du Vendeur",
+          "businessName": "Nom de l'Entreprise",
+          "warehouseInfo": "Informations de l'Entrepôt",
+          "currency": "Devise",
+          "reviewInfo": "Informations de Révision",
+          "reviewedBy": "Révisé par",
+          "reviewedOn": "le",
+          "reviewNotes": "Notes de Révision",
+          "rejectionReason": "Raison du Rejet",
+          "importantDates": "Dates Importantes",
+          "scheduledDate": "Date Programmée",
+          "processedDate": "Date de Traitement",
+          "statusTimeline": "Chronologie du Statut",
+          "timeline": {
+            "created": "Créé",
+            "pending": "En Attente de Révision",
+            "approved": "Approuvé",
+            "scheduled": "Programmé",
+            "processed": "Traité",
+            "rejected": "Rejeté",
+            "cancelled": "Annulé"
+          }
+        },
+        "actions": {
+          "title": "Traiter la Demande de Paiement",
+          "description": "Choisissez une action pour traiter cette demande de paiement",
+          "requestSummary": "Résumé de la Demande",
+          "seller": "Vendeur",
+          "warehouse": "Entrepôt",
+          "amount": "Montant",
+          "priority": "Priorité",
+          "dateRange": "Période",
+          "approve": "Approuver",
+          "schedule": "Programmer",
+          "reject": "Rejeter",
+          "approveTitle": "Approuver la Demande de Paiement",
+          "scheduleTitle": "Programmer la Demande de Paiement",
+          "rejectTitle": "Rejeter la Demande de Paiement",
+          "reviewNotes": "Notes de Révision",
+          "reviewNotesPlaceholder": "Ajouter des notes optionnelles sur cette révision...",
+          "reviewNotesDescription": "Notes optionnelles qui seront visibles par le vendeur",
+          "scheduledDate": "Date Programmée",
+          "pickDate": "Choisir la date programmée",
+          "scheduledDateDescription": "Sélectionnez quand ce paiement doit être traité",
+          "rejectionReason": "Raison du Rejet",
+          "rejectionReasonPlaceholder": "Expliquez pourquoi cette demande est rejetée...",
+          "rejectionReasonDescription": "Cette raison sera partagée avec le vendeur",
+          "cancel": "Annuler",
+          "approveRequest": "Approuver la Demande",
+          "scheduleRequest": "Programmer la Demande",
+          "rejectRequest": "Rejeter la Demande"
+        }
+      },
+      "filters": {
+        "searchPlaceholder": "Rechercher par nom du vendeur, entrepôt ou description...",
+        "priority": "Priorité",
+        "allPriorities": "Toutes les Priorités"
+      }
+    },
   "admin": {
     "dashboard": {
       "title": "Aperçu Admin",
@@ -610,6 +782,10 @@
         "title": "Système de Boost par Jetons",
         "description": "Configurer le boost de profil fournisseur basé sur les jetons et la publicité"
       },
+      "sellers": {
+        "title": "Paramètres des Vendeurs",
+        "description": "Configurer les permissions des vendeurs et la visibilité des preuves de livraison"
+      },
       "notifications": {
         "title": "Notifications",
         "description": "Gérer les préférences de notification par email et dans l'application"
@@ -797,6 +973,17 @@
         "archiveFailed": "Échec de l'archivage du paquet de jetons"
       }
     },
+    "seller": {
+      "showDeliveryProof": {
+        "label": "Afficher la Preuve de Livraison au Vendeur",
+        "description": "Permettre aux vendeurs de voir les photos de preuve de livraison et les détails de confirmation"
+      },
+      "canRequestPayments": {
+        "label": "Le Vendeur Peut Demander des Paiements",
+        "description": "Permettre aux vendeurs de demander des paiements pour leurs commandes terminées"
+      }
+    },
+    
     "notifications": {
       "title": "Paramètres de Notification",
       "description": "Configurez comment et quand vous recevez des notifications",
@@ -925,6 +1112,7 @@
     "providers": "Fournisseurs",
     "chat": "Chat",
     "invoices":"Factures",
+    "paymentRequests": "Demandes de Paiement",
     "integrations": "Intégrations",
     "support": "Support",
     "queue": "File d'Attente",

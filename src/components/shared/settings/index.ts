@@ -1,0 +1,1 @@
+export { SellerSettingsForm } from './seller-settings-form';

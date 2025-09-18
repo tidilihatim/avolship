@@ -1,4 +1,179 @@
 {
+  "paymentRequests": {
+      "title": "Payment Requests",
+      "description": "Request withdrawals from your warehouse earnings",
+      "loading": "Loading payment requests...",
+      "disabledMessage": "Payment requests are currently disabled. Please contact support for assistance with withdrawals.",
+      "actions": {
+        "newRequest": "New Request",
+        "viewDetails": "View Details",
+        "cancel": "Cancel",
+        "approve": "Approve",
+        "reject": "Reject",
+        "schedule": "Schedule",
+        "refresh": "Refresh",
+        "processRequest": "Process Request",
+        "view": "View",
+        "process": "Process"
+      },
+      "stats": {
+        "totalPending": "Total Pending",
+        "pendingRequests": "Pending Requests",
+        "approved": "Approved",
+        "rejectedCancelled": "Rejected/Cancelled",
+        "totalRequests": "Total Requests",
+        "currentPage": "Current Page",
+        "totalPages": "Total Pages"
+      },
+      "list": {
+        "title": "Your Payment Requests",
+        "description": "Track the status of your payment requests and view details"
+      },
+      "tabs": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "scheduled": "Scheduled",
+        "processed": "Processed",
+        "rejected": "Rejected"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "scheduled": "Scheduled",
+        "processed": "Processed",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "form": {
+        "warehouse": "Warehouse",
+        "warehousePlaceholder": "Select a warehouse",
+        "amount": "Requested Amount",
+        "amountPlaceholder": "Enter amount",
+        "description": "Description",
+        "descriptionPlaceholder": "Describe your payment request",
+        "fromDate": "From Date",
+        "toDate": "To Date",
+        "priority": "Priority",
+        "priorityPlaceholder": "Select priority",
+        "priorities": {
+          "low": "Low",
+          "normal": "Normal",
+          "high": "High",
+          "urgent": "Urgent"
+        }
+      },
+      "dialog": {
+        "create": {
+          "title": "Create Payment Request",
+          "description": "Request a withdrawal from your warehouse earnings"
+        },
+        "details": {
+          "title": "Payment Request Details",
+          "description": "View complete details of your payment request"
+        }
+      },
+      "messages": {
+        "fetchError": "Failed to fetch payment requests",
+        "loadError": "Failed to load payment requests",
+        "createSuccess": "Payment request created successfully",
+        "createError": "Failed to create payment request",
+        "cancelSuccess": "Payment request cancelled",
+        "cancelError": "Failed to cancel request",
+        "updateSuccess": "Payment request updated successfully",
+        "updateError": "Failed to update payment request"
+      },
+      "management": {
+        "title": "Payment Requests Management",
+        "description": "Review and process payment requests from sellers",
+        "listTitle": "Payment Requests",
+        "listDescription": "Manage payment requests with advanced filtering and processing tools",
+        "noRequests": "No Payment Requests",
+        "noRequestsDescription": "There are no payment requests to display",
+        "table": {
+          "seller": "Seller",
+          "warehouse": "Warehouse",
+          "amount": "Amount",
+          "status": "Status",
+          "priority": "Priority",
+          "dateRange": "Date Range",
+          "created": "Created"
+        },
+        "pagination": {
+          "showing": "Showing {start} to {end} of {total} entries",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "details": {
+          "title": "Payment Request Details",
+          "description": "Complete information about this payment request",
+          "overview": "Request Overview",
+          "requestedAmount": "Requested Amount",
+          "priority": "Priority",
+          "dateRange": "Requested Date Range",
+          "createdOn": "Created On",
+          "sellerInfo": "Seller Information",
+          "businessName": "Business Name",
+          "warehouseInfo": "Warehouse Information",
+          "currency": "Currency",
+          "reviewInfo": "Review Information",
+          "reviewedBy": "Reviewed By",
+          "reviewedOn": "on",
+          "reviewNotes": "Review Notes",
+          "rejectionReason": "Rejection Reason",
+          "importantDates": "Important Dates",
+          "scheduledDate": "Scheduled Date",
+          "processedDate": "Processed Date",
+          "statusTimeline": "Status Timeline",
+          "notFound": "Payment Request Not Found",
+          "notFoundDescription": "The payment request you're looking for doesn't exist or you don't have permission to view it.",
+          "backToList": "Back to Payment Requests",
+          "timeline": {
+            "created": "Created",
+            "pending": "Pending Review",
+            "approved": "Approved",
+            "scheduled": "Scheduled",
+            "processed": "Processed",
+            "rejected": "Rejected",
+            "cancelled": "Cancelled"
+          }
+        },
+        "actions": {
+          "title": "Process Payment Request",
+          "description": "Choose an action to process this payment request",
+          "requestSummary": "Request Summary",
+          "seller": "Seller",
+          "warehouse": "Warehouse",
+          "amount": "Amount",
+          "priority": "Priority",
+          "dateRange": "Date Range",
+          "approve": "Approve",
+          "schedule": "Schedule",
+          "reject": "Reject",
+          "approveTitle": "Approve Payment Request",
+          "scheduleTitle": "Schedule Payment Request",
+          "rejectTitle": "Reject Payment Request",
+          "reviewNotes": "Review Notes",
+          "reviewNotesPlaceholder": "Add optional notes about this review...",
+          "reviewNotesDescription": "Optional notes that will be visible to the seller",
+          "scheduledDate": "Scheduled Date",
+          "pickDate": "Pick scheduled date",
+          "scheduledDateDescription": "Select when this payment should be processed",
+          "rejectionReason": "Rejection Reason",
+          "rejectionReasonPlaceholder": "Explain why this request is being rejected...",
+          "rejectionReasonDescription": "This reason will be shared with the seller",
+          "cancel": "Cancel",
+          "approveRequest": "Approve Request",
+          "scheduleRequest": "Schedule Request",
+          "rejectRequest": "Reject Request"
+        }
+      },
+      "filters": {
+        "searchPlaceholder": "Search by seller name, warehouse, or description...",
+        "priority": "Priority",
+        "allPriorities": "All Priorities"
+      }
+    },
   "admin": {
     "dashboard": {
       "title": "Admin Overview",
@@ -247,6 +422,10 @@
         "title": "Token Boost System",
         "description": "Configure token-based provider profile boosting and advertising"
       },
+      "sellers": {
+        "title": "Seller Settings",
+        "description": "Configure seller permissions and delivery proof visibility"
+      },
       "notifications": {
         "title": "Notifications",
         "description": "Manage email and in-app notification preferences"
@@ -434,6 +613,17 @@
         "archiveFailed": "Failed to archive token package"
       }
     },
+    "seller": {
+      "showDeliveryProof": {
+        "label": "Show Delivery Proof to Seller",
+        "description": "Allow sellers to view delivery proof photos and confirmation details"
+      },
+      "canRequestPayments": {
+        "label": "Can Seller Request Payments",
+        "description": "Enable sellers to request payments for their completed orders"
+      }
+    },
+    
     "notifications": {
       "title": "Notification Settings",
       "description": "Configure how and when you receive notifications",
@@ -562,6 +752,7 @@
     "providers": "Providers",
     "chat": "Chat",
     "invoices":"Invoices",
+    "paymentRequests": "Payment Requests",
     "integrations": "Integrations",
     "support": "Support",
     "queue": "Queue",

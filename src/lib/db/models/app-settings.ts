@@ -29,25 +29,29 @@ export interface IAppSettings extends Document {
   // Delivery Configuration
   deliveryFeeRules: DeliveryFeeRule[];
   commissionRules: CommissionRule[];
-  
+
   // Delivery System Settings
   autoAssignDelivery: boolean; // Auto-assign orders to nearest delivery guy
   maxOrdersPerDeliveryGuy: number; // Maximum orders a delivery guy can have at once
-  
+
   // Real-time Tracking Settings
   showLocationTracking: ShowLocationTracking;
-  
+
   // Leaderboard Settings
   leaderboardSettings: LeaderboardSettings;
-  
+
   // Commission & Fee Settings
   enableCommissionSystem: boolean;
   enableDeliveryFees: boolean;
   defaultDeliveryFee: number; // Fallback delivery fee
-  
+
   // Token System Settings
   enableTokenSystem: boolean; // Enable/disable token boost system
-  
+
+  // Seller Settings
+  showDeliveryProofToSeller: boolean; // Show delivery proof to sellers
+  canSellerRequestPayments: boolean; // Allow sellers to request payments
+
   // Admin Controls
   isActive: boolean;
   lastUpdatedBy: mongoose.Types.ObjectId;
@@ -165,7 +169,17 @@ const AppSettingsSchema = new Schema<IAppSettings>(
       type: Boolean,
       default: false,
     },
-    
+
+    showDeliveryProofToSeller: {
+      type: Boolean,
+      default: true,
+    },
+
+    canSellerRequestPayments: {
+      type: Boolean,
+      default: false,
+    },
+
     isActive: {
       type: Boolean,
       default: true,
