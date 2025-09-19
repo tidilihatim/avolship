@@ -1,4 +1,232 @@
 {
+  "apiDocs": {
+    "title": "Documentation API",
+    "menu": "Menu Documentation API",
+    "introduction": {
+      "title": "Introduction",
+      "description": "Bienvenue dans la documentation de l'API AvolShip. Cette API permet aux vendeurs de créer, mettre à jour et gérer les commandes de manière programmatique. Toutes les requêtes API nécessitent une authentification en utilisant des jetons JWT générés via vos identifiants API."
+    },
+    "baseUrl": {
+      "title": "URL de Base"
+    },
+    "authentication": {
+      "title": "Authentification",
+      "cardTitle": "Flux d'Authentification API",
+      "cardDescription": "AvolShip utilise un processus d'authentification en deux étapes pour l'accès API",
+      "step1": "Générer les Identifiants API",
+      "step1Description": "Créer une clé API et un secret dans votre tableau de bord",
+      "step2": "Demander un Jeton d'Accès",
+      "step2Description": "Échanger les identifiants contre un jeton JWT (expiration 5 minutes)"
+    },
+    "tokenGeneration": {
+      "title": "Génération de Jeton",
+      "cardDescription": "Échanger vos identifiants API contre un jeton d'accès JWT de courte durée",
+      "tokenExpiry": "Expiration du Jeton",
+      "rateLimit": "Limite de Taux",
+      "contentType": "Type de Contenu",
+      "successResponse": "Réponse de Succès (200)"
+    },
+    "tokenUsage": {
+      "title": "Utilisation de Votre Jeton d'Accès",
+      "cardTitle": "En-tête d'Autorisation",
+      "cardDescription": "Incluez le jeton d'accès dans l'en-tête d'autorisation pour toutes les requêtes API",
+      "important": "Important :",
+      "importantNote": "Les jetons expirent après 5 minutes. Générez un nouveau jeton lorsque vous recevez une réponse 401 Non Autorisé."
+    },
+    "rateLimits": {
+      "title": "Limites de Taux",
+      "cardTitle": "Limites de Taux API",
+      "cardDescription": "Limites d'utilisation de l'API pour assurer un accès équitable pour tous les utilisateurs",
+      "globalLimit": "Limite API Globale",
+      "globalLimitDescription": "Tous les points de terminaison API combinés",
+      "tokenLimit": "Limite de Génération de Jeton",
+      "tokenLimitDescription": "Point de terminaison de génération de jeton uniquement"
+    },
+    "createOrder": {
+      "title": "Créer une Commande",
+      "cardDescription": "Créer une nouvelle commande pour traitement",
+      "successResponse": "Réponse de Succès (201)"
+    },
+    "updateOrder": {
+      "title": "Mettre à Jour une Commande",
+      "cardDescription": "Mettre à jour le statut ou les détails d'une commande existante",
+      "successResponse": "Réponse de Succès (200)"
+    },
+    "getOrders": {
+      "title": "Obtenir les Commandes",
+      "cardDescription": "Récupérer une liste de vos commandes avec pagination et filtrage optionnel",
+      "queryParameters": "Paramètres de Requête",
+      "pagination": "Pagination",
+      "filtering": "Filtrage",
+      "paginationLimit": "Enregistrements par page (1-100, défaut : 20)",
+      "paginationSkip": "Enregistrements à ignorer (défaut : 0)",
+      "statusFilter": "Filtre de statut de commande",
+      "countryFilter": "Filtre de pays d'entrepôt",
+      "dateFromFilter": "Date de début (format ISO)",
+      "dateToFilter": "Date de fin (format ISO)",
+      "availableStatuses": "Valeurs de Statut Disponibles",
+      "successResponse": "Réponse de Succès (200)"
+    },
+    "errorCodes": {
+      "title": "Codes d'Erreur",
+      "badRequest": {
+        "title": "Requête Incorrecte",
+        "description": "Paramètres de requête manquants ou invalides"
+      },
+      "unauthorized": {
+        "title": "Non Autorisé",
+        "description": "Identifiants API invalides ou jeton expiré"
+      },
+      "forbidden": {
+        "title": "Interdit",
+        "description": "Restrictions d'accès au compte"
+      },
+      "notFound": {
+        "title": "Non Trouvé",
+        "description": "Ressource non trouvée"
+      },
+      "tooManyRequests": {
+        "title": "Trop de Requêtes",
+        "description": "Limite de taux dépassée"
+      },
+      "internalError": {
+        "title": "Erreur Interne du Serveur",
+        "description": "Erreur côté serveur"
+      },
+      "commonCauses": "Causes Communes :",
+      "exampleResponse": "Exemple de Réponse :"
+    },
+    "sidebar": {
+      "overview": "Aperçu",
+      "auth": "Authentification",
+      "orders": "API Commandes",
+      "errors": "Gestion des Erreurs",
+      "introduction": "Introduction",
+      "baseUrl": "URL de Base",
+      "authentication": "Authentification",
+      "tokenGeneration": "Génération de Jeton",
+      "tokenUsage": "Utilisation des Jetons",
+      "rateLimits": "Limites de Taux",
+      "createOrder": "Créer une Commande",
+      "updateOrder": "Mettre à Jour une Commande",
+      "getOrders": "Obtenir les Commandes",
+      "errorCodes": "Codes d'Erreur",
+      "errorExamples": "Exemples d'Erreurs"
+    }
+  },
+  "apiManagement": {
+    "title": "Gestion API",
+    "description": "Créer et gérer les clés API pour intégrer vos systèmes avec notre plateforme",
+    "loading": "Chargement...",
+    "stats": {
+      "title": "Statistiques API",
+      "totalKeys": "Total des Clés",
+      "totalKeysDescription": "Clés API créées",
+      "activeKeys": "Clés Actives",
+      "activeKeysDescription": "Actuellement actives",
+      "totalUsage": "Utilisation Totale",
+      "totalUsageDescription": "Appels API effectués",
+      "lastUsed": "Dernière Utilisation",
+      "lastUsedDescription": "Appel API le plus récent",
+      "never": "Jamais"
+    },
+    "apiKeys": {
+      "title": "Clés API",
+      "description": "Gérer vos clés API pour l'accès programmatique à vos commandes",
+      "createNew": "Créer une Nouvelle Clé API",
+      "name": "Nom",
+      "status": "Statut",
+      "createdAt": "Créé",
+      "lastUsed": "Dernière Utilisation",
+      "actions": "Actions",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "never": "Jamais",
+      "view": "Voir",
+      "revoke": "Révoquer",
+      "delete": "Supprimer"
+    },
+    "quickLinks": {
+      "documentation": {
+        "title": "Documentation API",
+        "description": "Apprenez à intégrer avec notre API",
+        "button": "Voir la Documentation"
+      },
+      "security": {
+        "title": "Sécurité",
+        "description": "Meilleures pratiques pour la sécurité API",
+        "practices": {
+          "storeSecurely": "Stocker les clés API en sécurité",
+          "useHttps": "Utiliser HTTPS pour toutes les requêtes",
+          "monitorUsage": "Surveiller l'utilisation de l'API régulièrement",
+          "rotateKeys": "Faire la rotation des clés périodiquement"
+        }
+      }
+    },
+    "createDialog": {
+      "title": "Créer une Nouvelle Clé API",
+      "description": "Créer une nouvelle clé API pour l'accès programmatique à vos commandes",
+      "nameLabel": "Nom de la Clé API",
+      "namePlaceholder": "Entrez un nom descriptif pour votre clé API",
+      "nameDescription": "Choisissez un nom qui vous aide à identifier où cette clé sera utilisée",
+      "nameRequired": "Veuillez entrer un nom pour la clé API",
+      "cancel": "Annuler",
+      "create": "Créer la Clé API",
+      "creating": "Création...",
+      "successDescription": "Votre clé API a été créée avec succès. Sauvegardez ces identifiants en sécurité.",
+      "important": "Important :",
+      "credentialsWarning": "Ces identifiants ne seront affichés qu'une seule fois. Assurez-vous de les copier et de les stocker en sécurité avant de fermer cette boîte de dialogue.",
+      "downloadCredentials": "Télécharger le Fichier d'Identifiants",
+      "keyId": "ID de la Clé",
+      "apiKey": "Clé API",
+      "apiSecret": "Secret API",
+      "keyIdDescription": "Identifiant public pour votre clé API",
+      "apiKeyDescription": "Clé secrète pour l'authentification (gardez-la en sécurité)",
+      "apiSecretDescription": "Secret pour la génération de jetons (gardez-le très en sécurité)",
+      "done": "Terminé",
+      "downloadSuccess": "Identifiants téléchargés avec succès",
+      "copySuccess": "copié dans le presse-papiers",
+      "copyFailed": "Échec de la copie dans le presse-papiers"
+    },
+    "editDialog": {
+      "title": "Modifier la Clé API",
+      "description": "Mettre à jour le nom de votre clé API. La clé et le secret ne peuvent pas être modifiés.",
+      "nameLabel": "Nom",
+      "namePlaceholder": "par ex., API Production, API Développement",
+      "nameDescription": "Choisissez un nom descriptif pour aider à identifier cette clé API.",
+      "keyIdLabel": "ID de la Clé (Lecture seule)",
+      "nameRequired": "Veuillez entrer un nom valide",
+      "noChanges": "Aucun changement détecté",
+      "cancel": "Annuler",
+      "update": "Mettre à jour",
+      "updating": "Mise à jour..."
+    },
+    "viewDialog": {
+      "title": "Détails de la Clé API",
+      "warning": "Attention : Gardez ces identifiants en sécurité",
+      "warningDescription": "Ces identifiants donnent accès à votre compte. Ne les partagez jamais publiquement ou ne les committez pas dans le contrôle de version.",
+      "keyId": "ID de la Clé",
+      "apiKey": "Clé API",
+      "apiSecret": "Secret API",
+      "status": "Statut",
+      "createdAt": "Créé le",
+      "lastUsed": "Dernière Utilisation",
+      "copy": "Copier",
+      "copied": "Copié !",
+      "close": "Fermer"
+    },
+    "errors": {
+      "failedToLoad": "Échec du chargement des clés API",
+      "failedToCreate": "Échec de la création de la clé API",
+      "failedToRevoke": "Échec de la révocation de la clé API",
+      "failedToDelete": "Échec de la suppression de la clé API"
+    },
+    "success": {
+      "created": "Clé API créée avec succès",
+      "revoked": "Clé API révoquée avec succès",
+      "deleted": "Clé API supprimée avec succès"
+    }
+  },
   "paymentRequests": {
       "title": "Demandes de Paiement",
       "description": "Demander des retraits de vos revenus d'entrepôt",
@@ -1100,6 +1328,7 @@
     }
   },
   "navigation": {
+    "api":"API",
     "overview": "Aperçu",
     "users": "Utilisateurs",
     "warehouse": "Entrepôt",

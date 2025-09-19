@@ -1,4 +1,232 @@
 {
+  "apiDocs": {
+    "title": "API Documentation",
+    "menu": "API Documentation Menu",
+    "introduction": {
+      "title": "Introduction",
+      "description": "Welcome to the AvolShip API documentation. This API allows sellers to create, update, and manage orders programmatically. All API requests require authentication using JWT tokens generated through your API credentials."
+    },
+    "baseUrl": {
+      "title": "Base URL"
+    },
+    "authentication": {
+      "title": "Authentication",
+      "cardTitle": "API Authentication Flow",
+      "cardDescription": "AvolShip uses a two-step authentication process for API access",
+      "step1": "Generate API Credentials",
+      "step1Description": "Create API key and secret in your dashboard",
+      "step2": "Request Access Token",
+      "step2Description": "Exchange credentials for JWT token (5-minute expiry)"
+    },
+    "tokenGeneration": {
+      "title": "Token Generation",
+      "cardDescription": "Exchange your API credentials for a short-lived JWT access token",
+      "tokenExpiry": "Token Expiry",
+      "rateLimit": "Rate Limit",
+      "contentType": "Content-Type",
+      "successResponse": "Success Response (200)"
+    },
+    "tokenUsage": {
+      "title": "Using Your Access Token",
+      "cardTitle": "Authorization Header",
+      "cardDescription": "Include the access token in the Authorization header for all API requests",
+      "important": "Important:",
+      "importantNote": "Tokens expire after 5 minutes. Generate a new token when you receive a 401 Unauthorized response."
+    },
+    "rateLimits": {
+      "title": "Rate Limits",
+      "cardTitle": "API Rate Limits",
+      "cardDescription": "API usage limits to ensure fair access for all users",
+      "globalLimit": "Global API Limit",
+      "globalLimitDescription": "All API endpoints combined",
+      "tokenLimit": "Token Generation Limit",
+      "tokenLimitDescription": "Token generation endpoint only"
+    },
+    "createOrder": {
+      "title": "Create Order",
+      "cardDescription": "Create a new order for processing",
+      "successResponse": "Success Response (201)"
+    },
+    "updateOrder": {
+      "title": "Update Order",
+      "cardDescription": "Update an existing order's status or details",
+      "successResponse": "Success Response (200)"
+    },
+    "getOrders": {
+      "title": "Get Orders",
+      "cardDescription": "Retrieve a list of your orders with pagination and optional filtering",
+      "queryParameters": "Query Parameters",
+      "pagination": "Pagination",
+      "filtering": "Filtering",
+      "paginationLimit": "Records per page (1-100, default: 20)",
+      "paginationSkip": "Records to skip (default: 0)",
+      "statusFilter": "Order status filter",
+      "countryFilter": "Warehouse country filter",
+      "dateFromFilter": "Start date (ISO format)",
+      "dateToFilter": "End date (ISO format)",
+      "availableStatuses": "Available Status Values",
+      "successResponse": "Success Response (200)"
+    },
+    "errorCodes": {
+      "title": "Error Codes",
+      "badRequest": {
+        "title": "Bad Request",
+        "description": "Missing or invalid request parameters"
+      },
+      "unauthorized": {
+        "title": "Unauthorized",
+        "description": "Invalid API credentials or expired token"
+      },
+      "forbidden": {
+        "title": "Forbidden",
+        "description": "Account access restrictions"
+      },
+      "notFound": {
+        "title": "Not Found",
+        "description": "Resource not found"
+      },
+      "tooManyRequests": {
+        "title": "Too Many Requests",
+        "description": "Rate limit exceeded"
+      },
+      "internalError": {
+        "title": "Internal Server Error",
+        "description": "Server-side error"
+      },
+      "commonCauses": "Common Causes:",
+      "exampleResponse": "Example Response:"
+    },
+    "sidebar": {
+      "overview": "Overview",
+      "auth": "Authentication",
+      "orders": "Orders API",
+      "errors": "Error Handling",
+      "introduction": "Introduction",
+      "baseUrl": "Base URL",
+      "authentication": "Authentication",
+      "tokenGeneration": "Token Generation",
+      "tokenUsage": "Using Tokens",
+      "rateLimits": "Rate Limits",
+      "createOrder": "Create Order",
+      "updateOrder": "Update Order",
+      "getOrders": "Get Orders",
+      "errorCodes": "Error Codes",
+      "errorExamples": "Error Examples"
+    }
+  },
+  "apiManagement": {
+    "title": "API Management",
+    "description": "Create and manage API keys to integrate your systems with our platform",
+    "loading": "Loading...",
+    "stats": {
+      "title": "API Statistics",
+      "totalKeys": "Total Keys",
+      "totalKeysDescription": "API keys created",
+      "activeKeys": "Active Keys",
+      "activeKeysDescription": "Currently active",
+      "totalUsage": "Total Usage",
+      "totalUsageDescription": "API calls made",
+      "lastUsed": "Last Used",
+      "lastUsedDescription": "Most recent API call",
+      "never": "Never"
+    },
+    "apiKeys": {
+      "title": "API Keys",
+      "description": "Manage your API keys for programmatic access to your orders",
+      "createNew": "Create New API Key",
+      "name": "Name",
+      "status": "Status",
+      "createdAt": "Created",
+      "lastUsed": "Last Used",
+      "actions": "Actions",
+      "active": "Active",
+      "inactive": "Inactive",
+      "never": "Never",
+      "view": "View",
+      "revoke": "Revoke",
+      "delete": "Delete"
+    },
+    "quickLinks": {
+      "documentation": {
+        "title": "API Documentation",
+        "description": "Learn how to integrate with our API",
+        "button": "View Documentation"
+      },
+      "security": {
+        "title": "Security",
+        "description": "Best practices for API security",
+        "practices": {
+          "storeSecurely": "Store API keys securely",
+          "useHttps": "Use HTTPS for all requests",
+          "monitorUsage": "Monitor API usage regularly",
+          "rotateKeys": "Rotate keys periodically"
+        }
+      }
+    },
+    "createDialog": {
+      "title": "Create New API Key",
+      "description": "Create a new API key for programmatic access to your orders",
+      "nameLabel": "API Key Name",
+      "namePlaceholder": "Enter a descriptive name for your API key",
+      "nameDescription": "Choose a name that helps you identify where this key will be used",
+      "nameRequired": "Please enter a name for the API key",
+      "cancel": "Cancel",
+      "create": "Create API Key",
+      "creating": "Creating...",
+      "successDescription": "Your API key has been created successfully. Save these credentials securely.",
+      "important": "Important:",
+      "credentialsWarning": "These credentials will only be shown once. Make sure to copy and store them securely before closing this dialog.",
+      "downloadCredentials": "Download Credentials File",
+      "keyId": "Key ID",
+      "apiKey": "API Key",
+      "apiSecret": "API Secret",
+      "keyIdDescription": "Public identifier for your API key",
+      "apiKeyDescription": "Secret key for authentication (keep this secure)",
+      "apiSecretDescription": "Secret for token generation (keep this very secure)",
+      "done": "Done",
+      "downloadSuccess": "Credentials downloaded successfully",
+      "copySuccess": "copied to clipboard",
+      "copyFailed": "Failed to copy to clipboard"
+    },
+    "editDialog": {
+      "title": "Edit API Key",
+      "description": "Update the name of your API key. The key and secret cannot be changed.",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g., Production API, Development API",
+      "nameDescription": "Choose a descriptive name to help identify this API key.",
+      "keyIdLabel": "Key ID (Read-only)",
+      "nameRequired": "Please enter a valid name",
+      "noChanges": "No changes detected",
+      "cancel": "Cancel",
+      "update": "Update",
+      "updating": "Updating..."
+    },
+    "viewDialog": {
+      "title": "API Key Details",
+      "warning": "Warning: Keep these credentials secure",
+      "warningDescription": "These credentials provide access to your account. Never share them publicly or commit them to version control.",
+      "keyId": "Key ID",
+      "apiKey": "API Key",
+      "apiSecret": "API Secret",
+      "status": "Status",
+      "createdAt": "Created At",
+      "lastUsed": "Last Used",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "close": "Close"
+    },
+    "errors": {
+      "failedToLoad": "Failed to load API keys",
+      "failedToCreate": "Failed to create API key",
+      "failedToRevoke": "Failed to revoke API key",
+      "failedToDelete": "Failed to delete API key"
+    },
+    "success": {
+      "created": "API key created successfully",
+      "revoked": "API key revoked successfully",
+      "deleted": "API key deleted successfully"
+    }
+  },
   "paymentRequests": {
       "title": "Payment Requests",
       "description": "Request withdrawals from your warehouse earnings",
@@ -740,6 +968,7 @@
     }
   },
   "navigation": {
+    "api":"API",
     "overview": "Overview",
     "users": "Users",
     "warehouse": "Warehouse",

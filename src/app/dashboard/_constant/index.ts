@@ -9,7 +9,8 @@ import {
   HeadphonesIcon,
   Trophy,
   Coins,
-  Receipt
+  Receipt,
+  Key
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator';
@@ -115,6 +116,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.integrations",
       href: "/dashboard/seller/integrations",
       icon: Zap
+    },
+    {
+      name: "navigation.api",
+      href: "/dashboard/seller/api",
+      icon: Key
     },
     {
       name: "navigation.leaderboard",
