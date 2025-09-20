@@ -8,7 +8,7 @@ const layout = async ({children}: {children: React.ReactNode}) => {
 
   const currentLoginUserRole = await getLoginUserRole();
   const currentLoginUserStatus = await getLoginUserStatus();
-
+  console.log(currentLoginUserStatus)
   if(!currentLoginUserRole) return notFound();
 
   if(currentLoginUserRole!== UserRole.SELLER) return redirect(`/dashboard/${currentLoginUserRole}`);

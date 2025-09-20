@@ -608,6 +608,69 @@
   "settings": {
     "title": "App Settings",
     "description": "Configure system-wide application settings",
+    "notifications": {
+      "title": "Notification Settings",
+      "description": "Manage your notification preferences for different types of alerts and updates",
+      "preferences": {
+        "title": "Notification Preferences",
+        "description": "Control how you receive notifications for each type of event"
+      },
+      "channels": {
+        "inApp": "In-App Notifications",
+        "email": "Email Notifications"
+      },
+      "types": {
+        "info": {
+          "title": "Information",
+          "description": "General information and updates"
+        },
+        "success": {
+          "title": "Success",
+          "description": "Success confirmations and achievements"
+        },
+        "warning": {
+          "title": "Warnings",
+          "description": "Important warnings and alerts"
+        },
+        "error": {
+          "title": "Errors",
+          "description": "Error notifications and failures"
+        },
+        "order": {
+          "title": "Orders",
+          "description": "Order updates and status changes"
+        },
+        "delivery": {
+          "title": "Delivery",
+          "description": "Delivery status and shipping updates"
+        },
+        "payment": {
+          "title": "Payments",
+          "description": "Payment confirmations and issues"
+        },
+        "system": {
+          "title": "System",
+          "description": "System maintenance and updates"
+        },
+        "chat": {
+          "title": "Chat Messages",
+          "description": "New messages and chat notifications"
+        }
+      },
+      "messages": {
+        "settingsSaved": "Notification settings saved successfully",
+        "errorSaving": "Failed to save notification settings",
+        "errorLoading": "Failed to load notification settings",
+        "loadFailed": "Failed to Load Settings",
+        "loadFailedDescription": "We couldn't load your notification settings. Please try refreshing the page."
+      },
+      "summary": {
+        "title": "Settings Summary",
+        "description": "Current status of your notification preferences",
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      }
+    },
     "loading": "Loading settings...",
     "loadFailed": "Failed to load settings",
     "tryAgain": "Try Again",
@@ -849,34 +912,6 @@
       "canRequestPayments": {
         "label": "Can Seller Request Payments",
         "description": "Enable sellers to request payments for their completed orders"
-      }
-    },
-    
-    "notifications": {
-      "title": "Notification Settings",
-      "description": "Configure how and when you receive notifications",
-      "loadFailed": "Failed to Load Settings",
-      "loadFailedDescription": "Unable to load your notification preferences. Please try refreshing the page.",
-      "preferences": {
-        "title": "Notification Preferences",
-        "description": "Choose which types of notifications you want to receive"
-      },
-      "inAppNotifications": {
-        "title": "In-App Notifications",
-        "description": "Receive notifications within the application while you're online"
-      },
-      "emailNotifications": {
-        "title": "Email Notifications",
-        "description": "Receive important updates and alerts via email"
-      },
-      "summary": {
-        "title": "Current Settings",
-        "description": "Overview of your current notification preferences"
-      },
-      "messages": {
-        "errorLoading": "Failed to load notification settings",
-        "settingsSaved": "Notification settings saved successfully",
-        "errorSaving": "Failed to save notification settings"
       }
     },
     "warehouseSelector": {

@@ -1,5 +1,6 @@
 // src/lib/db/models/seller-settings.ts
 import mongoose, { Document, Schema } from 'mongoose';
+import { NotificationType } from '@/lib/constants/notification-types';
 
 /**
  * Discount settings per warehouse
@@ -15,11 +16,20 @@ export interface DiscountSettings {
 }
 
 /**
+ * Individual notification type preference
+ */
+export interface NotificationTypePreference {
+  inApp: boolean;
+  email: boolean;
+}
+
+/**
  * Notification settings for the seller
  */
 export interface NotificationSettings {
-  inAppNotifications: boolean;
-  emailNotifications: boolean;
+  // Detailed notification preferences by type
+  preferences: Record<NotificationType, NotificationTypePreference>;
+
   updatedAt: Date;
 }
 
@@ -139,14 +149,28 @@ const SellerSettingsSchema = new Schema<ISellerSettings>(
     
     // Notification settings
     notificationSettings: {
-      inAppNotifications: {
-        type: Boolean,
-        default: true,
+      // Detailed notification preferences by type
+      preferences: {
+        type: Map,
+        of: new Schema({
+          inApp: {
+            type: Boolean,
+            default: true,
+          },
+          email: {
+            type: Boolean,
+            default: true,
+          }
+        }, { _id: false }),
+        default: () => {
+          const defaultPreferences = new Map();
+          Object.values(NotificationType).forEach(type => {
+            defaultPreferences.set(type, { inApp: true, email: true });
+          });
+          return defaultPreferences;
+        }
       },
-      emailNotifications: {
-        type: Boolean,
-        default: true,
-      },
+
       updatedAt: {
         type: Date,
         default: Date.now,

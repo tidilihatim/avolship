@@ -968,6 +968,69 @@
   "settings": {
     "title": "Paramètres de l'Application",
     "description": "Configurer les paramètres système de l'application",
+    "notifications": {
+      "title": "Paramètres de Notification",
+      "description": "Gérez vos préférences de notification pour différents types d'alertes et de mises à jour",
+      "preferences": {
+        "title": "Préférences de Notification",
+        "description": "Contrôlez comment vous recevez les notifications pour chaque type d'événement"
+      },
+      "channels": {
+        "inApp": "Notifications In-App",
+        "email": "Notifications Email"
+      },
+      "types": {
+        "info": {
+          "title": "Information",
+          "description": "Informations générales et mises à jour"
+        },
+        "success": {
+          "title": "Succès",
+          "description": "Confirmations de succès et réalisations"
+        },
+        "warning": {
+          "title": "Avertissements",
+          "description": "Avertissements importants et alertes"
+        },
+        "error": {
+          "title": "Erreurs",
+          "description": "Notifications d'erreur et échecs"
+        },
+        "order": {
+          "title": "Commandes",
+          "description": "Mises à jour de commandes et changements de statut"
+        },
+        "delivery": {
+          "title": "Livraison",
+          "description": "Statut de livraison et mises à jour d'expédition"
+        },
+        "payment": {
+          "title": "Paiements",
+          "description": "Confirmations de paiement et problèmes"
+        },
+        "system": {
+          "title": "Système",
+          "description": "Maintenance du système et mises à jour"
+        },
+        "chat": {
+          "title": "Messages de Chat",
+          "description": "Nouveaux messages et notifications de chat"
+        }
+      },
+      "messages": {
+        "settingsSaved": "Paramètres de notification sauvegardés avec succès",
+        "errorSaving": "Échec de la sauvegarde des paramètres de notification",
+        "errorLoading": "Échec du chargement des paramètres de notification",
+        "loadFailed": "Échec du Chargement des Paramètres",
+        "loadFailedDescription": "Nous n'avons pas pu charger vos paramètres de notification. Veuillez essayer d'actualiser la page."
+      },
+      "summary": {
+        "title": "Résumé des Paramètres",
+        "description": "Statut actuel de vos préférences de notification",
+        "enabled": "Activé",
+        "disabled": "Désactivé"
+      }
+    },
     "loading": "Chargement des paramètres...",
     "loadFailed": "Échec du chargement des paramètres",
     "tryAgain": "Réessayer",
@@ -1209,34 +1272,6 @@
       "canRequestPayments": {
         "label": "Le Vendeur Peut Demander des Paiements",
         "description": "Permettre aux vendeurs de demander des paiements pour leurs commandes terminées"
-      }
-    },
-    
-    "notifications": {
-      "title": "Paramètres de Notification",
-      "description": "Configurez comment et quand vous recevez des notifications",
-      "loadFailed": "Échec du Chargement des Paramètres",
-      "loadFailedDescription": "Impossible de charger vos préférences de notification. Veuillez rafraîchir la page.",
-      "preferences": {
-        "title": "Préférences de Notification",
-        "description": "Choisissez les types de notifications que vous souhaitez recevoir"
-      },
-      "inAppNotifications": {
-        "title": "Notifications Dans l'Application",
-        "description": "Recevez des notifications dans l'application lorsque vous êtes en ligne"
-      },
-      "emailNotifications": {
-        "title": "Notifications par Email",
-        "description": "Recevez des mises à jour importantes et des alertes par email"
-      },
-      "summary": {
-        "title": "Paramètres Actuels",
-        "description": "Aperçu de vos préférences de notification actuelles"
-      },
-      "messages": {
-        "errorLoading": "Échec du chargement des paramètres de notification",
-        "settingsSaved": "Paramètres de notification enregistrés avec succès",
-        "errorSaving": "Échec de l'enregistrement des paramètres de notification"
       }
     },
     "warehouseSelector": {

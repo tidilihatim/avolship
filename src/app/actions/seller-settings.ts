@@ -5,7 +5,8 @@ import { cookies } from 'next/headers';
 import { withDbConnection } from '@/lib/db/db-connect';
 import { getCurrentUser } from './auth';
 import { UserRole } from '@/lib/db/models/user';
-import SellerSettings, { DiscountSettings, NotificationSettings } from '@/lib/db/models/seller-settings';
+import SellerSettings, { DiscountSettings, NotificationTypePreference } from '@/lib/db/models/seller-settings';
+import { NotificationType } from '@/lib/constants/notification-types';
 import Warehouse from '@/lib/db/models/warehouse';
 import mongoose from 'mongoose';
 
@@ -66,9 +67,14 @@ export const getSellerDiscountSettings = withDbConnection(async (): Promise<ApiR
       success: true,
       message: 'Settings retrieved successfully',
       data: {
-        discountSetting: discountSetting || null,
+        discountSetting: discountSetting ? {
+          ...discountSetting,
+          warehouseId: discountSetting.warehouseId.toString(),
+          _id: discountSetting._id?.toString(),
+          updatedAt: discountSetting.updatedAt.toISOString()
+        } : null,
         warehouse: {
-          _id: warehouse._id,
+          _id: warehouse._id.toString(),
           name: warehouse.name,
           currency: warehouse.currency,
           country: warehouse.country
@@ -206,7 +212,11 @@ export const updateDiscountSettings = withDbConnection(async (
     return {
       success: true,
       message: 'Discount settings updated successfully',
-      data: newSetting
+      data: {
+        ...newSetting,
+        warehouseId: newSetting.warehouseId.toString(),
+        updatedAt: newSetting.updatedAt.toISOString()
+      }
     };
   } catch (error) {
     console.error('Error updating discount settings:', error);
@@ -388,27 +398,61 @@ export const getNotificationSettings = withDbConnection(async (): Promise<ApiRes
     }
 
     const settings = await SellerSettings.findOne({ sellerId: user._id }).lean() as any;
-    
+
     if (!settings || !settings.notificationSettings) {
       // Return default settings if none exist
+      const defaultPreferences = {} as Record<NotificationType, NotificationTypePreference>;
+      Object.values(NotificationType).forEach(type => {
+        defaultPreferences[type] = { inApp: true, email: true };
+      });
+
       return {
         success: true,
         message: 'Default notification settings',
         data: {
           notificationSettings: {
-            inAppNotifications: true,
-            emailNotifications: true,
-            updatedAt: new Date()
+            preferences: defaultPreferences,
+            updatedAt: new Date().toISOString()
           }
         }
       };
+    }
+
+    // Convert Map/Object to plain object for JSON serialization
+    const preferences = {} as Record<NotificationType, NotificationTypePreference>;
+    if (settings.notificationSettings.preferences) {
+      Object.values(NotificationType).forEach(type => {
+        // Handle both Map (from mongoose) and plain object (from lean())
+        let preference;
+        if (typeof settings.notificationSettings.preferences.get === 'function') {
+          // It's a Map
+          preference = settings.notificationSettings.preferences.get(type) || { inApp: true, email: true };
+        } else {
+          // It's a plain object
+          preference = settings.notificationSettings.preferences[type] || { inApp: true, email: true };
+        }
+
+        // Clean up any MongoDB-specific fields
+        preferences[type] = {
+          inApp: preference.inApp,
+          email: preference.email
+        };
+      });
+    } else {
+      // Fallback for existing data without preferences
+      Object.values(NotificationType).forEach(type => {
+        preferences[type] = { inApp: true, email: true };
+      });
     }
 
     return {
       success: true,
       message: 'Notification settings retrieved successfully',
       data: {
-        notificationSettings: settings.notificationSettings
+        notificationSettings: {
+          preferences,
+          updatedAt: settings.notificationSettings.updatedAt.toISOString()
+        }
       }
     };
   } catch (error) {
@@ -421,7 +465,7 @@ export const getNotificationSettings = withDbConnection(async (): Promise<ApiRes
  * Update notification settings for a user (works for any user type)
  */
 export const updateNotificationSettings = withDbConnection(async (
-  notificationSettings: Omit<NotificationSettings, 'updatedAt'>
+  preferences: Record<NotificationType, NotificationTypePreference>
 ): Promise<ApiResponse> => {
   try {
     const user = await getCurrentUser();
@@ -431,20 +475,30 @@ export const updateNotificationSettings = withDbConnection(async (
 
     // Find or create user settings
     let settings = await SellerSettings.findOne({ sellerId: user._id });
-    
+
     if (!settings) {
+      const preferencesMap = new Map();
+      Object.entries(preferences).forEach(([type, preference]) => {
+        preferencesMap.set(type, preference);
+      });
+
       settings = new SellerSettings({
         sellerId: user._id,
         discountSettings: [],
         notificationSettings: {
-          ...notificationSettings,
+          preferences: preferencesMap,
           updatedAt: new Date()
         }
       });
     } else {
       // Update notification settings
+      const preferencesMap = new Map();
+      Object.entries(preferences).forEach(([type, preference]) => {
+        preferencesMap.set(type, preference);
+      });
+
       settings.notificationSettings = {
-        ...notificationSettings,
+        preferences: preferencesMap,
         updatedAt: new Date()
       };
     }
@@ -469,11 +523,34 @@ export const updateNotificationSettings = withDbConnection(async (
       }
     });
 
+    // Convert Map back to object for response
+    const responsePreferences = {} as Record<NotificationType, NotificationTypePreference>;
+    Object.values(NotificationType).forEach(type => {
+      // Handle both Map (from mongoose) and plain object
+      let preference;
+      if (typeof settings!.notificationSettings!.preferences.get === 'function') {
+        // It's a Map
+        preference = settings!.notificationSettings!.preferences.get(type) || { inApp: true, email: true };
+      } else {
+        // It's a plain object
+        preference = settings!.notificationSettings!.preferences[type] || { inApp: true, email: true };
+      }
+
+      // Clean up any MongoDB-specific fields
+      responsePreferences[type] = {
+        inApp: preference.inApp,
+        email: preference.email
+      };
+    });
+
     return {
       success: true,
       message: 'Notification settings updated successfully',
       data: {
-        notificationSettings: settings.notificationSettings
+        notificationSettings: {
+          preferences: responsePreferences,
+          updatedAt: settings.notificationSettings!.updatedAt.toISOString()
+        }
       }
     };
   } catch (error) {

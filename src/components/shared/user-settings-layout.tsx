@@ -6,7 +6,7 @@ import { Bell } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import SharedNotificationSettings from './notification-settings';
+import NotificationSettings from '@/components/settings/notification-settings';
 
 interface UserSettingsLayoutProps {
   userType: 'call_center' | 'delivery' | 'provider' | 'support';
@@ -31,7 +31,7 @@ export default function UserSettingsLayout({ userType }: UserSettingsLayoutProps
       title: t('sections.notifications.title'),
       description: t('sections.notifications.description'),
       icon: <Bell className="w-5 h-5" />,
-      component: <SharedNotificationSettings userType={userType} />
+      component: <NotificationSettings />
     },
   ];
 
