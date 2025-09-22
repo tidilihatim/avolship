@@ -16,6 +16,7 @@ export interface UpdateProfileData {
   country?: string;
   maxDeliveryRadius?: number;
   isAvailableForDelivery?: boolean;
+  twoFactorEnabled?: boolean;
 }
 
 export interface ProfileImageUploadData {
@@ -90,6 +91,11 @@ export const updateUserProfile = withDbConnection(async (profileData: UpdateProf
 
     if (profileData.country !== undefined) {
       updateData.country = profileData.country?.trim() || null;
+    }
+
+    // Two-factor authentication setting
+    if (profileData.twoFactorEnabled !== undefined) {
+      updateData.twoFactorEnabled = profileData.twoFactorEnabled;
     }
 
     // Delivery-specific fields (only for delivery role)

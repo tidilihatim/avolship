@@ -15,12 +15,14 @@ import { updateUserProfile, changePassword, uploadProfileImage } from '@/app/act
 import { UserRole } from '@/lib/db/models/user';
 import { toast } from 'sonner';
 import { COUNTRIES } from '@/constants/countries';
+import { useTranslations } from 'next-intl';
 
 interface ProfileFormProps {
   user: any;
 }
 
 export function ProfileForm({ user }: ProfileFormProps) {
+  const t = useTranslations('profile');
   const [isPending, startTransition] = useTransition();
   const [isPasswordPending, startPasswordTransition] = useTransition();
   const [isImageUploading, startImageTransition] = useTransition();
@@ -38,7 +40,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
     serviceType: user.serviceType || '',
     country: user.country || '',
     maxDeliveryRadius: user.maxDeliveryRadius || 10,
-    isAvailableForDelivery: user.isAvailableForDelivery ?? true
+    isAvailableForDelivery: user.isAvailableForDelivery ?? true,
+    twoFactorEnabled: user.twoFactorEnabled ?? false
   });
 
   // Password form state
@@ -48,8 +51,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
     confirmPassword: ''
   });
 
-  const handleProfileSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleProfileSubmit = async (e?: React.FormEvent | React.MouseEvent) => {
+    e?.preventDefault();
     
     startTransition(async () => {
       // Filter out empty fields
@@ -63,11 +66,11 @@ export function ProfileForm({ user }: ProfileFormProps) {
       );
 
       const result = await updateUserProfile(filteredData);
-      
+
       if (result.success) {
-        toast.success(result.message || 'Profile updated successfully');
+        toast.success(result.message || t('messages.profileUpdated'));
       } else {
-        toast.error(result.message || 'Failed to update profile');
+        toast.error(result.message || t('messages.profileUpdateFailed'));
       }
     });
   };
@@ -76,18 +79,18 @@ export function ProfileForm({ user }: ProfileFormProps) {
     e.preventDefault();
     
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast.error('New passwords do not match');
+      toast.error(t('messages.passwordMismatch'));
       return;
     }
     
     startPasswordTransition(async () => {
       const result = await changePassword(passwordData.currentPassword, passwordData.newPassword);
-      
+
       if (result.success) {
-        toast.success(result.message || 'Password updated successfully');
+        toast.success(result.message || t('messages.passwordUpdated'));
         setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
       } else {
-        toast.error(result.message || 'Failed to update password');
+        toast.error(result.message || t('messages.passwordUpdateFailed'));
       }
     });
   };
@@ -109,24 +112,35 @@ export function ProfileForm({ user }: ProfileFormProps) {
       formData.append('profileImage', file);
 
       const result = await uploadProfileImage(formData);
-      
+
       if (result.success) {
         setProfileImageUrl(result.profileImageUrl || null);
-        toast.success(result.message || 'Profile image updated successfully');
+        toast.success(result.message || t('messages.imageUpdated'));
       } else {
-        toast.error(result.message || 'Failed to upload profile image');
+        toast.error(result.message || t('messages.imageUploadFailed'));
       }
     });
   };
 
   return (
     <div className="space-y-6">
+      {/* Global Save Button */}
+      <div className="flex justify-end">
+        <Button onClick={handleProfileSubmit} disabled={isPending} className="min-w-[140px]">
+          {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Save className="mr-2 h-4 w-4" />
+          {t('saveChanges')}
+        </Button>
+      </div>
+
+      <form onSubmit={handleProfileSubmit} className="space-y-6">
+
       {/* Profile Image Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Profile Image</CardTitle>
+          <CardTitle>{t('sections.profileImage.title')}</CardTitle>
           <CardDescription>
-            Upload a profile picture to personalize your account
+            {t('sections.profileImage.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -162,7 +176,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                       ) : (
                         <Upload className="mr-2 h-4 w-4" />
                       )}
-                      {isImageUploading ? 'Uploading...' : 'Upload Image'}
+                      {isImageUploading ? t('sections.profileImage.uploading') : t('sections.profileImage.uploadButton')}
                     </div>
                   </Button>
                 </div>
@@ -176,7 +190,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 />
               </Label>
               <p className="text-xs text-muted-foreground mt-2">
-                Supported formats: JPEG, PNG, GIF, WebP. Max size: 5MB
+                {t('sections.profileImage.supportedFormats')}
               </p>
             </div>
           </div>
@@ -186,44 +200,44 @@ export function ProfileForm({ user }: ProfileFormProps) {
       {/* Basic Information Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
+          <CardTitle>{t('sections.basicInfo.title')}</CardTitle>
           <CardDescription>
-            Update your personal information and contact details
+            {t('sections.basicInfo.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleProfileSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">{t('sections.basicInfo.fullName')}</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Enter your full name"
+                  placeholder={t('sections.basicInfo.fullNamePlaceholder')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">{t('sections.basicInfo.phoneNumber')}</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="Enter your phone number"
+                  placeholder={t('sections.basicInfo.phoneNumberPlaceholder')}
                   type="tel"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
+              <Label htmlFor="country">{t('sections.basicInfo.country')}</Label>
               <Select
                 value={formData.country}
                 onValueChange={(value) => handleInputChange('country', value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select your country" />
+                  <SelectValue placeholder={t('sections.basicInfo.countryPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {COUNTRIES.map((country) => (
@@ -234,13 +248,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 </SelectContent>
               </Select>
             </div>
-
-            <Button type="submit" disabled={isPending} className="w-full">
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              <Save className="mr-2 h-4 w-4" />
-              Save Changes
-            </Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
 
@@ -248,40 +256,40 @@ export function ProfileForm({ user }: ProfileFormProps) {
       {[UserRole.SELLER, UserRole.PROVIDER].includes(user.role) && (
         <Card>
           <CardHeader>
-            <CardTitle>Business Information</CardTitle>
+            <CardTitle>{t('sections.businessInfo.title')}</CardTitle>
             <CardDescription>
-              Update your business details and service information
+              {t('sections.businessInfo.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="businessName">Business Name</Label>
+                <Label htmlFor="businessName">{t('sections.businessInfo.businessName')}</Label>
                 <Input
                   id="businessName"
                   value={formData.businessName}
                   onChange={(e) => handleInputChange('businessName', e.target.value)}
-                  placeholder="Enter your business name"
+                  placeholder={t('sections.businessInfo.businessNamePlaceholder')}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="businessInfo">Business Description</Label>
+                <Label htmlFor="businessInfo">{t('sections.businessInfo.businessDescription')}</Label>
                 <Textarea
                   id="businessInfo"
                   value={formData.businessInfo}
                   onChange={(e) => handleInputChange('businessInfo', e.target.value)}
-                  placeholder="Describe your business and services"
+                  placeholder={t('sections.businessInfo.businessDescriptionPlaceholder')}
                   rows={3}
                 />
               </div>
               {user.role === UserRole.PROVIDER && (
                 <div className="space-y-2">
-                  <Label htmlFor="serviceType">Service Type</Label>
+                  <Label htmlFor="serviceType">{t('sections.businessInfo.serviceType')}</Label>
                   <Input
                     id="serviceType"
                     value={formData.serviceType}
                     onChange={(e) => handleInputChange('serviceType', e.target.value)}
-                    placeholder="e.g., Logistics, Transportation, Warehousing"
+                    placeholder={t('sections.businessInfo.serviceTypePlaceholder')}
                   />
                 </div>
               )}
@@ -294,18 +302,18 @@ export function ProfileForm({ user }: ProfileFormProps) {
       {user.role === UserRole.DELIVERY && (
         <Card>
           <CardHeader>
-            <CardTitle>Delivery Settings</CardTitle>
+            <CardTitle>{t('sections.deliverySettings.title')}</CardTitle>
             <CardDescription>
-              Configure your delivery preferences and availability
+              {t('sections.deliverySettings.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label htmlFor="availability">Available for Deliveries</Label>
+                  <Label htmlFor="availability">{t('sections.deliverySettings.availability')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    Toggle to accept or decline new delivery requests
+                    {t('sections.deliverySettings.availabilityDescription')}
                   </p>
                 </div>
                 <Switch
@@ -316,7 +324,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               </div>
               <Separator />
               <div className="space-y-2">
-                <Label htmlFor="radius">Maximum Delivery Radius (km)</Label>
+                <Label htmlFor="radius">{t('sections.deliverySettings.maxRadius')}</Label>
                 <Input
                   id="radius"
                   type="number"
@@ -324,10 +332,10 @@ export function ProfileForm({ user }: ProfileFormProps) {
                   max="100"
                   value={formData.maxDeliveryRadius}
                   onChange={(e) => handleInputChange('maxDeliveryRadius', parseInt(e.target.value) || 10)}
-                  placeholder="Enter delivery radius in kilometers"
+                  placeholder={t('sections.deliverySettings.maxRadiusPlaceholder')}
                 />
                 <p className="text-xs text-muted-foreground">
-                  You will only receive delivery requests within this radius
+                  {t('sections.deliverySettings.maxRadiusNote')}
                 </p>
               </div>
             </div>
@@ -335,25 +343,54 @@ export function ProfileForm({ user }: ProfileFormProps) {
         </Card>
       )}
 
+      {/* Security Settings Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('sections.security.title')}</CardTitle>
+          <CardDescription>
+            {t('sections.security.description')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="twoFactorEnabled">{t('sections.security.twoFactorAuth')}</Label>
+                <p className="text-sm text-muted-foreground">
+                  {t('sections.security.twoFactorAuthDescription')}
+                </p>
+              </div>
+              <Switch
+                id="twoFactorEnabled"
+                checked={formData.twoFactorEnabled}
+                onCheckedChange={(checked) => handleInputChange('twoFactorEnabled', checked)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+    </form>
+
       {/* Password Change Card */}
       <Card>
         <CardHeader>
-          <CardTitle>Change Password</CardTitle>
+          <CardTitle>{t('sections.password.title')}</CardTitle>
           <CardDescription>
-            Update your account password for security
+            {t('sections.password.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="currentPassword">Current Password</Label>
+              <Label htmlFor="currentPassword">{t('sections.password.currentPassword')}</Label>
               <div className="relative">
                 <Input
                   id="currentPassword"
                   type={showCurrentPassword ? "text" : "password"}
                   value={passwordData.currentPassword}
                   onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
-                  placeholder="Enter current password"
+                  placeholder={t('sections.password.currentPasswordPlaceholder')}
                   required
                 />
                 <Button
@@ -370,14 +407,14 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
+                <Label htmlFor="newPassword">{t('sections.password.newPassword')}</Label>
                 <div className="relative">
                   <Input
                     id="newPassword"
                     type={showNewPassword ? "text" : "password"}
                     value={passwordData.newPassword}
                     onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-                    placeholder="Enter new password"
+                    placeholder={t('sections.password.newPasswordPlaceholder')}
                     required
                     minLength={8}
                   />
@@ -393,14 +430,14 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Label htmlFor="confirmPassword">{t('sections.password.confirmPassword')}</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     value={passwordData.confirmPassword}
                     onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-                    placeholder="Confirm new password"
+                    placeholder={t('sections.password.confirmPasswordPlaceholder')}
                     required
                     minLength={8}
                   />
@@ -419,7 +456,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
             <Button type="submit" disabled={isPasswordPending} variant="destructive">
               {isPasswordPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Update Password
+              {t('sections.password.updatePassword')}
             </Button>
           </form>
         </CardContent>

@@ -1,4 +1,74 @@
 {
+  "profile": {
+    "title": "Seller Profile",
+    "description": "Update your seller account information and business details",
+    "saveChanges": "Save Changes",
+    "sections": {
+      "profileImage": {
+        "title": "Profile Image",
+        "description": "Upload a profile picture to personalize your account",
+        "uploadButton": "Upload Image",
+        "uploading": "Uploading...",
+        "supportedFormats": "Supported formats: JPEG, PNG, GIF, WebP. Max size: 5MB"
+      },
+      "basicInfo": {
+        "title": "Basic Information",
+        "description": "Update your personal information and contact details",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "Enter your full name",
+        "phoneNumber": "Phone Number",
+        "phoneNumberPlaceholder": "Enter your phone number",
+        "country": "Country",
+        "countryPlaceholder": "Select your country"
+      },
+      "businessInfo": {
+        "title": "Business Information",
+        "description": "Update your business details and service information",
+        "businessName": "Business Name",
+        "businessNamePlaceholder": "Enter your business name",
+        "businessDescription": "Business Description",
+        "businessDescriptionPlaceholder": "Describe your business and services",
+        "serviceType": "Service Type",
+        "serviceTypePlaceholder": "e.g., Logistics, Transportation, Warehousing"
+      },
+      "deliverySettings": {
+        "title": "Delivery Settings",
+        "description": "Configure your delivery preferences and availability",
+        "availability": "Available for Deliveries",
+        "availabilityDescription": "Toggle to accept or decline new delivery requests",
+        "maxRadius": "Maximum Delivery Radius (km)",
+        "maxRadiusPlaceholder": "Enter delivery radius in kilometers",
+        "maxRadiusNote": "You will only receive delivery requests within this radius"
+      },
+      "security": {
+        "title": "Security Settings",
+        "description": "Manage your account security preferences",
+        "twoFactorAuth": "Two-Factor Authentication",
+        "twoFactorAuthDescription": "Add an extra layer of security to your account with 2FA"
+      },
+      "password": {
+        "title": "Change Password",
+        "description": "Update your account password for security",
+        "currentPassword": "Current Password",
+        "currentPasswordPlaceholder": "Enter current password",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter new password",
+        "confirmPassword": "Confirm New Password",
+        "confirmPasswordPlaceholder": "Confirm new password",
+        "updatePassword": "Update Password"
+      }
+    },
+    "messages": {
+      "profileUpdated": "Profile updated successfully",
+      "profileUpdateFailed": "Failed to update profile",
+      "passwordUpdated": "Password updated successfully",
+      "passwordUpdateFailed": "Failed to update password",
+      "passwordMismatch": "New passwords do not match",
+      "imageUpdated": "Profile image updated successfully",
+      "imageUploadFailed": "Failed to upload profile image",
+      "loadProfileFailed": "Unable to load profile data"
+    }
+  },
   "apiDocs": {
     "title": "API Documentation",
     "menu": "API Documentation Menu",
@@ -3318,22 +3388,54 @@
     }
   },
   "login": {
-    "title": "Login to Your Account",
-    "welcome": "Welcome back! Please enter your credentials to sign in.",
-    "email": "Email",
-    "emailPlaceholder": "Enter your email",
-    "password": "Password",
-    "passwordPlaceholder": "Enter your password",
-    "loginButton": "Log In",
-    "loggingIn": "Logging In...",
-    "success": "Login successful!",
-    "redirecting": "Redirecting to dashboard...",
-    "error": {
-      "emptyFields": "Please fill in all fields.",
-      "general": "Could not log in. Please try again."
+    "title": "Sign In",
+    "subtitle": "Welcome back! Please sign in to your account.",
+    "email": {
+      "label": "Email Address",
+      "placeholder": "Enter your email address",
+      "continue": "Continue",
+      "checking": "Checking..."
+    },
+    "verification": {
+      "title": "Verify Your Identity",
+      "subtitle": "We've sent a 6-digit code to",
+      "label": "Verification Code",
+      "placeholder": "000000",
+      "attemptsRemaining": "Attempts remaining:",
+      "maxAttemptsReached": "Max attempts reached",
+      "resendCode": "Resend Code",
+      "resendIn": "Resend in",
+      "requestNewCode": "Request New Code",
+      "verify": "Verify",
+      "back": "Back",
+      "maxAttemptsMessage": "Maximum attempts reached",
+      "maxAttemptsDescription": "Please request a new verification code to continue."
+    },
+    "password": {
+      "title": "Welcome back",
+      "subtitle": "Please enter your password to complete sign in",
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "signIn": "Sign In",
+      "signingIn": "Signing In..."
+    },
+    "messages": {
+      "emailRequired": "Email is required",
+      "userNotFound": "No account found with this email address",
+      "accountNotApproved": "Account is not approved. Please contact support.",
+      "codeSent": "Verification code sent to your email",
+      "codeRequired": "Verification code is required",
+      "emailVerified": "Email verified successfully",
+      "loginSuccessful": "Login successful",
+      "redirecting": "Redirecting to dashboard...",
+      "newCodeSent": "New verification code sent",
+      "resendFailed": "Failed to resend code. Please try again.",
+      "verificationFailed": "Verification failed. Please try again.",
+      "loginFailed": "Login failed. Please try again.",
+      "error": "An error occurred. Please try again."
     },
     "noAccount": "Don't have an account?",
-    "register": "Register"
+    "register": "Sign up"
   },
   "common": {
     "retry":"Retry",

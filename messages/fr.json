@@ -1,4 +1,74 @@
 {
+  "profile": {
+    "title": "Profil Vendeur",
+    "description": "Mettez à jour vos informations de compte vendeur et détails d'entreprise",
+    "saveChanges": "Enregistrer les Modifications",
+    "sections": {
+      "profileImage": {
+        "title": "Image de Profil",
+        "description": "Téléchargez une photo de profil pour personnaliser votre compte",
+        "uploadButton": "Télécharger l'Image",
+        "uploading": "Téléchargement...",
+        "supportedFormats": "Formats supportés : JPEG, PNG, GIF, WebP. Taille max : 5MB"
+      },
+      "basicInfo": {
+        "title": "Informations de Base",
+        "description": "Mettez à jour vos informations personnelles et coordonnées",
+        "fullName": "Nom Complet",
+        "fullNamePlaceholder": "Entrez votre nom complet",
+        "phoneNumber": "Numéro de Téléphone",
+        "phoneNumberPlaceholder": "Entrez votre numéro de téléphone",
+        "country": "Pays",
+        "countryPlaceholder": "Sélectionnez votre pays"
+      },
+      "businessInfo": {
+        "title": "Informations d'Entreprise",
+        "description": "Mettez à jour les détails de votre entreprise et informations de service",
+        "businessName": "Nom de l'Entreprise",
+        "businessNamePlaceholder": "Entrez le nom de votre entreprise",
+        "businessDescription": "Description de l'Entreprise",
+        "businessDescriptionPlaceholder": "Décrivez votre entreprise et services",
+        "serviceType": "Type de Service",
+        "serviceTypePlaceholder": "ex: Logistique, Transport, Entreposage"
+      },
+      "deliverySettings": {
+        "title": "Paramètres de Livraison",
+        "description": "Configurez vos préférences de livraison et disponibilité",
+        "availability": "Disponible pour les Livraisons",
+        "availabilityDescription": "Basculer pour accepter ou refuser les nouvelles demandes de livraison",
+        "maxRadius": "Rayon de Livraison Maximum (km)",
+        "maxRadiusPlaceholder": "Entrez le rayon de livraison en kilomètres",
+        "maxRadiusNote": "Vous ne recevrez que les demandes de livraison dans ce rayon"
+      },
+      "security": {
+        "title": "Paramètres de Sécurité",
+        "description": "Gérez vos préférences de sécurité de compte",
+        "twoFactorAuth": "Authentification à Deux Facteurs",
+        "twoFactorAuthDescription": "Ajoutez une couche de sécurité supplémentaire à votre compte avec 2FA"
+      },
+      "password": {
+        "title": "Changer le Mot de Passe",
+        "description": "Mettez à jour votre mot de passe de compte pour la sécurité",
+        "currentPassword": "Mot de Passe Actuel",
+        "currentPasswordPlaceholder": "Entrez le mot de passe actuel",
+        "newPassword": "Nouveau Mot de Passe",
+        "newPasswordPlaceholder": "Entrez le nouveau mot de passe",
+        "confirmPassword": "Confirmer le Nouveau Mot de Passe",
+        "confirmPasswordPlaceholder": "Confirmez le nouveau mot de passe",
+        "updatePassword": "Mettre à Jour le Mot de Passe"
+      }
+    },
+    "messages": {
+      "profileUpdated": "Profil mis à jour avec succès",
+      "profileUpdateFailed": "Échec de la mise à jour du profil",
+      "passwordUpdated": "Mot de passe mis à jour avec succès",
+      "passwordUpdateFailed": "Échec de la mise à jour du mot de passe",
+      "passwordMismatch": "Les nouveaux mots de passe ne correspondent pas",
+      "imageUpdated": "Image de profil mise à jour avec succès",
+      "imageUploadFailed": "Échec du téléchargement de l'image de profil",
+      "loadProfileFailed": "Impossible de charger les données du profil"
+    }
+  },
   "apiDocs": {
     "title": "Documentation API",
     "menu": "Menu Documentation API",
@@ -3317,19 +3387,51 @@
   },
 
   "login": {
-    "title": "Se connecter à votre compte",
-    "welcome": "Bienvenue ! Veuillez entrer vos identifiants pour vous connecter.",
-    "email": "Courriel",
-    "emailPlaceholder": "Entrez votre courriel",
-    "password": "Mot de passe",
-    "passwordPlaceholder": "Entrez votre mot de passe",
-    "loginButton": "Se connecter",
-    "loggingIn": "Connexion en cours...",
-    "success": "Connexion réussie !",
-    "redirecting": "Redirection vers le tableau de bord...",
-    "error": {
-      "emptyFields": "Veuillez remplir tous les champs.",
-      "general": "Impossible de se connecter. Veuillez réessayer."
+    "title": "Se connecter",
+    "subtitle": "Bienvenue ! Veuillez vous connecter à votre compte.",
+    "email": {
+      "label": "Adresse e-mail",
+      "placeholder": "Entrez votre adresse e-mail",
+      "continue": "Continuer",
+      "checking": "Vérification..."
+    },
+    "verification": {
+      "title": "Vérifiez votre identité",
+      "subtitle": "Nous avons envoyé un code à 6 chiffres à",
+      "label": "Code de vérification",
+      "placeholder": "000000",
+      "attemptsRemaining": "Tentatives restantes :",
+      "maxAttemptsReached": "Nombre maximum de tentatives atteint",
+      "resendCode": "Renvoyer le code",
+      "resendIn": "Renvoyer dans",
+      "requestNewCode": "Demander un nouveau code",
+      "verify": "Vérifier",
+      "back": "Retour",
+      "maxAttemptsMessage": "Nombre maximum de tentatives atteint",
+      "maxAttemptsDescription": "Veuillez demander un nouveau code de vérification pour continuer."
+    },
+    "password": {
+      "title": "Bon retour",
+      "subtitle": "Veuillez entrer votre mot de passe pour terminer la connexion",
+      "label": "Mot de passe",
+      "placeholder": "Entrez votre mot de passe",
+      "signIn": "Se connecter",
+      "signingIn": "Connexion en cours..."
+    },
+    "messages": {
+      "emailRequired": "L'adresse e-mail est requise",
+      "userNotFound": "Aucun compte trouvé avec cette adresse e-mail",
+      "accountNotApproved": "Le compte n'est pas approuvé. Veuillez contacter le support.",
+      "codeSent": "Code de vérification envoyé à votre e-mail",
+      "codeRequired": "Le code de vérification est requis",
+      "emailVerified": "E-mail vérifié avec succès",
+      "loginSuccessful": "Connexion réussie",
+      "redirecting": "Redirection vers le tableau de bord...",
+      "newCodeSent": "Nouveau code de vérification envoyé",
+      "resendFailed": "Échec de l'envoi du code. Veuillez réessayer.",
+      "verificationFailed": "Échec de la vérification. Veuillez réessayer.",
+      "loginFailed": "Échec de la connexion. Veuillez réessayer.",
+      "error": "Une erreur s'est produite. Veuillez réessayer."
     },
     "noAccount": "Vous n'avez pas de compte ?",
     "register": "S'inscrire"

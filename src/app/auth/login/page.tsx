@@ -1,5 +1,5 @@
 import React from "react";
-import LoginForm from "@/components/forms/login-form";
+import MultiStepLoginForm from "@/components/forms/multi-step-login-form";
 import { getServerSession } from "next-auth";
 import { authOptions } from '@/config/auth';
 import { redirect } from "next/navigation";
@@ -16,7 +16,7 @@ const LoginPage: React.FC = async ({searchParams}:any) => {
     // redirect to dashboard in future
     redirect("/dashboard");
   }
-  return <LoginForm />;
+  return <MultiStepLoginForm />;
 };
 
 export default LoginPage;
