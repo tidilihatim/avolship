@@ -69,6 +69,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.leaderboard",
       href: "/dashboard/admin/leaderboard",
       icon: Trophy
+    },
+    {
+      name: "navigation.contacts",
+      href: "/dashboard/admin/contacts",
+      icon: MessageCircle
     }
   ],
   seller: [
@@ -246,6 +251,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.leaderboard",
       href: "/dashboard/moderator/leaderboard",
       icon: Trophy
+    },
+    {
+      name: "navigation.contacts",
+      href: "/dashboard/moderator/contacts",
+      icon: MessageCircle
     }
   ],
 

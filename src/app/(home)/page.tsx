@@ -22,6 +22,7 @@ import {
 
 import CountUp from "./_components/count-up"; // You may need to create this component
 import TestimonialCard from "./_components/testimonial-card"; // You may need to create this component
+import ContactUsForm from "@/components/forms/contact-us-form";
 
 export default function HomePage() {
   const t = useTranslations("home");
@@ -512,7 +513,7 @@ export default function HomePage() {
       {/* Features Section */}
       {/* Features Section - Clean & Modern Alternating Layout */}
       {/* Features Section - Clean & Modern with Subtle Animations */}
-      <section className="py-24 bg-gray-50" ref={featuresRef}>
+      <section id="features" className="py-24 bg-gray-50" ref={featuresRef}>
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <motion.div
@@ -832,6 +833,197 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* About Us Section */}
+      <section id="about" className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          {/* Section Header */}
+          <motion.div
+            className="text-center max-w-3xl mx-auto mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1c2d51] mb-4">
+              {t("aboutTitle")}
+            </h2>
+            <p className="text-lg text-gray-600">{t("aboutSubtitle")}</p>
+          </motion.div>
+
+          {/* Mission & Vision */}
+          <div className="mb-20">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Mission */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="bg-gradient-to-br from-[#1c2d51]/5 to-[#f37922]/5 rounded-2xl p-8"
+              >
+                <div className="mb-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-[#1c2d51] rounded-lg mb-4">
+                    <TruckIcon className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#1c2d51] mb-4">
+                    {t("missionTitle")}
+                  </h3>
+                </div>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  {t("missionDesc")}
+                </p>
+              </motion.div>
+
+              {/* Vision */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="bg-gradient-to-br from-[#f37922]/5 to-[#1c2d51]/5 rounded-2xl p-8"
+              >
+                <div className="mb-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-[#f37922] rounded-lg mb-4">
+                    <Globe className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#1c2d51] mb-4">
+                    {t("visionTitle")}
+                  </h3>
+                </div>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  {t("visionDesc")}
+                </p>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Core Values */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="mb-20"
+          >
+            <div className="text-center mb-12">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#1c2d51] mb-4">
+                {t("valuesTitle")}
+              </h3>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                {t("valuesSubtitle")}
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Value 1 - Innovation */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="text-center group"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1c2d51] to-[#1c2d51]/80 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <BarChart3 className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
+                  {t("value1Title")}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {t("value1Desc")}
+                </p>
+              </motion.div>
+
+              {/* Value 2 - Reliability */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="text-center group"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#f37922] to-[#f37922]/80 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
+                  {t("value2Title")}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {t("value2Desc")}
+                </p>
+              </motion.div>
+
+              {/* Value 3 - Growth */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="text-center group"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1c2d51] to-[#f37922] rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Globe2 className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
+                  {t("value3Title")}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {t("value3Desc")}
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Company Story */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-gray-50 rounded-3xl p-8 md:p-12"
+          >
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="mb-6">
+                <span className="inline-block px-4 py-2 text-sm font-semibold bg-[#f37922]/10 text-[#f37922] rounded-full mb-4">
+                  {t("storyEyebrow")}
+                </span>
+                <h3 className="text-2xl md:text-3xl font-bold text-[#1c2d51] mb-6">
+                  {t("storyTitle")}
+                </h3>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-8 text-left">
+                <div>
+                  <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                    {t("storyParagraph1")}
+                  </p>
+                  <p className="text-gray-600 text-lg leading-relaxed">
+                    {t("storyParagraph2")}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                    {t("storyParagraph3")}
+                  </p>
+                  <div className="bg-white rounded-xl p-6 border border-gray-100">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-2xl font-bold text-[#1c2d51]">2024</h4>
+                        <p className="text-gray-600">{t("foundedYear")}</p>
+                      </div>
+                      <div className="text-right">
+                        <h4 className="text-2xl font-bold text-[#f37922]">15+</h4>
+                        <p className="text-gray-600">{t("countriesServed")}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* How It Works Section */}
       <section className="py-20 bg-white overflow-hidden">
         <div className="container mx-auto px-4">
@@ -922,6 +1114,93 @@ export default function HomePage() {
                 <TestimonialCard testimonial={testimonial} />
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-24 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            {/* Contact Info */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7 }}
+              viewport={{ once: true }}
+            >
+              <div className="mb-8">
+                <h2 className="text-3xl md:text-4xl font-bold text-[#1c2d51] mb-4">
+                  {t("contactTitle")}
+                </h2>
+                <p className="text-lg text-gray-600">
+                  {t("contactSubtitle")}
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                {/* Response Time */}
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-[#f37922]/10 rounded-lg flex items-center justify-center">
+                      <LifeBuoyIcon className="h-6 w-6 text-[#f37922]" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#1c2d51] mb-2">
+                      {t("responseTimeTitle")}
+                    </h3>
+                    <p className="text-gray-600">
+                      {t("responseTimeDesc")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Expert Team */}
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-[#1c2d51]/10 rounded-lg flex items-center justify-center">
+                      <CogIcon className="h-6 w-6 text-[#1c2d51]" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#1c2d51] mb-2">
+                      {t("expertTeamTitle")}
+                    </h3>
+                    <p className="text-gray-600">
+                      {t("expertTeamDesc")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Global Support */}
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Globe className="h-6 w-6 text-green-600" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#1c2d51] mb-2">
+                      {t("globalSupportTitle")}
+                    </h3>
+                    <p className="text-gray-600">
+                      {t("globalSupportDesc")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <ContactUsForm />
+            </motion.div>
           </div>
         </div>
       </section>

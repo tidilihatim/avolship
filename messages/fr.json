@@ -1445,6 +1445,7 @@
     "products": "Produits",
     "providers": "Fournisseurs",
     "chat": "Chat",
+    "contacts": "Contacts",
     "invoices":"Factures",
     "paymentRequests": "Demandes de Paiement",
     "integrations": "Intégrations",
@@ -3436,6 +3437,37 @@
     "noAccount": "Vous n'avez pas de compte ?",
     "register": "S'inscrire"
   },
+  "contact": {
+    "title": "Nous Contacter",
+    "subtitle": "Entrez en contact avec notre équipe. Nous sommes là pour vous aider avec toutes vos questions sur notre plateforme logistique.",
+    "fullName": "Nom Complet",
+    "fullNamePlaceholder": "Entrez votre nom complet",
+    "email": "Adresse E-mail",
+    "emailPlaceholder": "Entrez votre adresse e-mail",
+    "phone": "Numéro de Téléphone",
+    "phonePlaceholder": "Entrez votre numéro de téléphone",
+    "country": "Pays (Entrepôt)",
+    "countryPlaceholder": "Sélectionnez un pays",
+    "message": "Message",
+    "messagePlaceholder": "Parlez-nous de vos besoins logistiques...",
+    "sendMessage": "Envoyer le Message",
+    "sending": "Envoi en cours...",
+    "successTitle": "Message Envoyé !",
+    "successMessage": "Merci de nous avoir contactés. Nous vous répondrons dans les 24 heures.",
+    "sendAnother": "Envoyer un Autre Message",
+    "errors": {
+      "fullNameRequired": "Le nom complet est requis",
+      "emailRequired": "L'adresse e-mail est requise",
+      "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+      "phoneRequired": "Le numéro de téléphone est requis",
+      "phoneInvalid": "Veuillez entrer un numéro de téléphone valide",
+      "countryRequired": "Veuillez sélectionner un pays",
+      "messageRequired": "Le message est requis",
+      "messageMinLength": "Le message doit contenir au moins 10 caractères",
+      "fixErrors": "Veuillez corriger les erreurs ci-dessus",
+      "submitFailed": "Échec de l'envoi du message. Veuillez réessayer."
+    }
+  },
   "common": {
     "retry":"réessayer",
     "refresh":"rafraîchir",
@@ -3564,6 +3596,44 @@
     "ctaSubtitle": "Rejoignez des milliers d'entreprises qui utilisent déjà AvolShip pour optimiser leur logistique à travers l'Afrique.",
     "startToday": "Commencer Aujourd'hui",
     "contactSales": "Contacter les Ventes",
+
+    "aboutTitle": "À Propos d'AvolShip",
+    "aboutSubtitle": "Nous révolutionnons la logistique et le traitement des commandes à travers l'Afrique avec une technologie innovante et un service dévoué.",
+
+    "missionTitle": "Notre Mission",
+    "missionDesc": "Autonomiser les entreprises à travers l'Afrique avec des solutions logistiques fluides, fiables et efficaces qui favorisent la croissance et le succès dans l'économie numérique.",
+
+    "visionTitle": "Notre Vision",
+    "visionDesc": "Devenir la plateforme logistique leader qui connecte chaque coin de l'Afrique, permettant aux entreprises d'atteindre leurs clients plus rapidement et plus efficacement que jamais.",
+
+    "valuesTitle": "Nos Valeurs Fondamentales",
+    "valuesSubtitle": "Les principes qui guident tout ce que nous faisons et motivent notre engagement envers l'excellence.",
+
+    "value1Title": "Innovation",
+    "value1Desc": "Nous repoussons continuellement les limites de la technologie pour créer des solutions de pointe qui transforment la façon dont les entreprises gèrent leur logistique.",
+
+    "value2Title": "Fiabilité",
+    "value2Desc": "La confiance est le fondement de notre service. Nous assurons une performance cohérente et fiable sur laquelle les entreprises peuvent compter chaque jour.",
+
+    "value3Title": "Croissance",
+    "value3Desc": "Nous nous engageons pour la croissance de nos partenaires, clients et l'écosystème commercial africain dans son ensemble grâce à l'innovation stratégique.",
+
+    "storyEyebrow": "Notre Histoire",
+    "storyTitle": "Construire l'Avenir de la Logistique Africaine",
+    "storyParagraph1": "Fondée en 2024, AvolShip est née d'une vision pour résoudre les défis logistiques complexes auxquels font face les entreprises opérant dans plusieurs pays africains.",
+    "storyParagraph2": "Notre équipe de professionnels expérimentés combine une connaissance approfondie des marchés locaux avec une technologie de pointe pour créer des solutions qui comprennent vraiment les besoins uniques des entreprises africaines.",
+    "storyParagraph3": "Aujourd'hui, nous sommes fiers de servir des entreprises dans plus de 15 pays, traitant des milliers de livraisons quotidiennement tout en maintenant notre engagement envers l'excellence et l'innovation dans chaque aspect de notre service.",
+    "foundedYear": "Fondée",
+    "countriesServed": "Pays Desservis",
+
+    "contactTitle": "Nous Contacter",
+    "contactSubtitle": "Prêt à transformer vos opérations logistiques ? Nous sommes là pour vous aider à commencer et répondre à toutes vos questions.",
+    "responseTimeTitle": "Support 24/7",
+    "responseTimeDesc": "Notre équipe de support dédiée est disponible 24h/24 pour vous aider avec toutes vos questions ou problèmes.",
+    "expertTeamTitle": "Équipe d'Experts",
+    "expertTeamDesc": "Travaillez avec nos professionnels expérimentés en logistique qui comprennent les défis uniques des marchés africains.",
+    "globalSupportTitle": "Support Multi-Pays",
+    "globalSupportDesc": "Obtenez un support dans plusieurs langues et fuseaux horaires dans tous les pays que nous desservons.",
 
     "footerTagline": "Optimisation des opérations logistiques et de traitement des commandes à travers l'Afrique.",
     "quickLinks": "Liens Rapides",
@@ -4111,6 +4181,76 @@
       "copyEmail": "Copier l'email",
       "copyPhone": "Copier le numéro de téléphone",
       "copyLocation": "Copier la localisation"
+    }
+  },
+
+  "contactManagement": {
+    "title": "Gestion des Contacts",
+    "subtitle": "Gérer {count} soumissions de formulaire de contact",
+    "refresh": "Actualiser",
+    "export": "Exporter",
+    "filters": "Filtres",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher par nom, email ou message...",
+    "statusFilter": "Statut",
+    "allStatuses": "Tous les Statuts",
+    "priorityFilter": "Priorité",
+    "allPriorities": "Toutes les Priorités",
+    "countryFilter": "Pays",
+    "filterByCountry": "Filtrer par pays...",
+    "clearFilters": "Effacer les Filtres",
+    "contact": "Contact",
+    "message": "Message",
+    "statusHeader": "Statut",
+    "priorityHeader": "Priorité",
+    "status": {
+      "new": "Nouveau",
+      "in_progress": "En Cours",
+      "resolved": "Résolu",
+      "closed": "Fermé"
+    },
+    "priority": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "urgent": "Urgent"
+    },
+    "country": "Pays",
+    "date": "Date",
+    "actions": "Actions",
+    "noContacts": "Aucune soumission de contact trouvée",
+    "viewDetails": "Voir les Détails",
+    "addNote": "Ajouter une Note",
+    "markInProgress": "Marquer En Cours",
+    "markResolved": "Marquer Résolu",
+    "markClosed": "Marquer Fermé",
+    "contactDetails": "Détails du Contact",
+    "contactDetailsSubtitle": "Voir les informations de contact complètes et l'historique",
+    "contactInfo": "Informations de Contact",
+    "fullName": "Nom Complet",
+    "email": "Email",
+    "phone": "Téléphone",
+    "technicalInfo": "Informations Techniques",
+    "ipAddress": "Adresse IP",
+    "platform": "Plateforme",
+    "detectedLocation": "Localisation Détectée",
+    "adminNotes": "Notes d'Administration",
+    "noteBy": "Note par {name}",
+    "timestamps": "Horodatages",
+    "submittedAt": "Soumis le",
+    "lastUpdated": "Dernière Mise à Jour",
+    "addNoteSubtitle": "Ajouter une note interne pour {name}",
+    "note": "Note",
+    "notePlaceholder": "Entrez votre note ici...",
+    "cancel": "Annuler",
+    "adding": "Ajout...",
+    "statusUpdated": "Statut mis à jour avec succès",
+    "noteAdded": "Note ajoutée avec succès",
+    "errors": {
+      "loadFailed": "Échec du chargement des contacts",
+      "updateFailed": "Échec de la mise à jour du statut",
+      "noteFailed": "Échec de l'ajout de la note",
+      "contactNotFound": "Contact non trouvé"
     }
   }
 }

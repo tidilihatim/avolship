@@ -1085,6 +1085,7 @@
     "products": "Products",
     "providers": "Providers",
     "chat": "Chat",
+    "contacts": "Contacts",
     "invoices":"Invoices",
     "paymentRequests": "Payment Requests",
     "integrations": "Integrations",
@@ -3437,6 +3438,37 @@
     "noAccount": "Don't have an account?",
     "register": "Sign up"
   },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team. We're here to help you with any questions about our logistics platform.",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Enter your full name",
+    "email": "Email Address",
+    "emailPlaceholder": "Enter your email address",
+    "phone": "Phone Number",
+    "phonePlaceholder": "Enter your phone number",
+    "country": "Country (Warehouse)",
+    "countryPlaceholder": "Select a country",
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your logistics needs...",
+    "sendMessage": "Send Message",
+    "sending": "Sending...",
+    "successTitle": "Message Sent!",
+    "successMessage": "Thank you for contacting us. We'll get back to you within 24 hours.",
+    "sendAnother": "Send Another Message",
+    "errors": {
+      "fullNameRequired": "Full name is required",
+      "emailRequired": "Email address is required",
+      "emailInvalid": "Please enter a valid email address",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Please enter a valid phone number",
+      "countryRequired": "Please select a country",
+      "messageRequired": "Message is required",
+      "messageMinLength": "Message must be at least 10 characters long",
+      "fixErrors": "Please fix the errors above",
+      "submitFailed": "Failed to send message. Please try again."
+    }
+  },
   "common": {
     "retry":"Retry",
     "refresh":"Refresh",
@@ -3566,6 +3598,44 @@
     "ctaSubtitle": "Join thousands of businesses already using AvolShip to streamline their fulfillment across Africa.",
     "startToday": "Start Today",
     "contactSales": "Contact Sales",
+
+    "aboutTitle": "About AvolShip",
+    "aboutSubtitle": "We're revolutionizing logistics and fulfillment across Africa with innovative technology and dedicated service.",
+
+    "missionTitle": "Our Mission",
+    "missionDesc": "To empower businesses across Africa with seamless, reliable, and efficient logistics solutions that drive growth and success in the digital economy.",
+
+    "visionTitle": "Our Vision",
+    "visionDesc": "To become the leading logistics platform that connects every corner of Africa, enabling businesses to reach customers faster and more efficiently than ever before.",
+
+    "valuesTitle": "Our Core Values",
+    "valuesSubtitle": "The principles that guide everything we do and drive our commitment to excellence.",
+
+    "value1Title": "Innovation",
+    "value1Desc": "We continuously push the boundaries of technology to create cutting-edge solutions that transform how businesses manage their logistics.",
+
+    "value2Title": "Reliability",
+    "value2Desc": "Trust is the foundation of our service. We ensure consistent, dependable performance that businesses can count on every single day.",
+
+    "value3Title": "Growth",
+    "value3Desc": "We're committed to the growth of our partners, customers, and the African business ecosystem as a whole through strategic innovation.",
+
+    "storyEyebrow": "Our Story",
+    "storyTitle": "Building the Future of African Logistics",
+    "storyParagraph1": "Founded in 2024, AvolShip emerged from a vision to solve the complex logistics challenges that businesses face when operating across multiple African countries.",
+    "storyParagraph2": "Our team of experienced professionals combines deep local market knowledge with cutting-edge technology to create solutions that truly understand the unique needs of African businesses.",
+    "storyParagraph3": "Today, we're proud to serve businesses across 15+ countries, processing thousands of deliveries daily while maintaining our commitment to excellence and innovation in every aspect of our service.",
+    "foundedYear": "Founded",
+    "countriesServed": "Countries Served",
+
+    "contactTitle": "Get in Touch",
+    "contactSubtitle": "Ready to transform your logistics operations? We're here to help you get started and answer any questions you might have.",
+    "responseTimeTitle": "24/7 Support",
+    "responseTimeDesc": "Our dedicated support team is available around the clock to assist you with any questions or issues.",
+    "expertTeamTitle": "Expert Team",
+    "expertTeamDesc": "Work with our experienced logistics professionals who understand the unique challenges of African markets.",
+    "globalSupportTitle": "Multi-Country Support",
+    "globalSupportDesc": "Get support in multiple languages and time zones across all the countries we serve.",
 
     "footerTagline": "Streamlining logistics and fulfillment operations across Africa.",
     "quickLinks": "Quick Links",
@@ -4145,6 +4215,76 @@
       "copyEmail": "Copy email",
       "copyPhone": "Copy phone number",
       "copyLocation": "Copy location"
+    }
+  },
+
+  "contactManagement": {
+    "title": "Contact Management",
+    "subtitle": "Manage {count} contact form submissions",
+    "refresh": "Refresh",
+    "export": "Export",
+    "filters": "Filters",
+    "search": "Search",
+    "searchPlaceholder": "Search by name, email, or message...",
+    "statusFilter": "Status",
+    "allStatuses": "All Statuses",
+    "priorityFilter": "Priority",
+    "allPriorities": "All Priorities",
+    "countryFilter": "Country",
+    "filterByCountry": "Filter by country...",
+    "clearFilters": "Clear Filters",
+    "contact": "Contact",
+    "message": "Message",
+    "statusHeader": "Status",
+    "priorityHeader": "Priority",
+    "status": {
+      "new": "New",
+      "in_progress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "country": "Country",
+    "date": "Date",
+    "actions": "Actions",
+    "noContacts": "No contact submissions found",
+    "viewDetails": "View Details",
+    "addNote": "Add Note",
+    "markInProgress": "Mark In Progress",
+    "markResolved": "Mark Resolved",
+    "markClosed": "Mark Closed",
+    "contactDetails": "Contact Details",
+    "contactDetailsSubtitle": "View complete contact information and history",
+    "contactInfo": "Contact Information",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "technicalInfo": "Technical Information",
+    "ipAddress": "IP Address",
+    "platform": "Platform",
+    "detectedLocation": "Detected Location",
+    "adminNotes": "Admin Notes",
+    "noteBy": "Note by {name}",
+    "timestamps": "Timestamps",
+    "submittedAt": "Submitted At",
+    "lastUpdated": "Last Updated",
+    "addNoteSubtitle": "Add an internal note for {name}",
+    "note": "Note",
+    "notePlaceholder": "Enter your note here...",
+    "cancel": "Cancel",
+    "adding": "Adding...",
+    "statusUpdated": "Status updated successfully",
+    "noteAdded": "Note added successfully",
+    "errors": {
+      "loadFailed": "Failed to load contacts",
+      "updateFailed": "Failed to update status",
+      "noteFailed": "Failed to add note",
+      "contactNotFound": "Contact not found"
     }
   }
 }

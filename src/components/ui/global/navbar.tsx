@@ -52,10 +52,9 @@ export default function Navbar({ currentLocale }: NavbarProps) {
 
   const menuItems = [
     { name: t('home'), href: '/' },
-    { name: t('features'), href: '/features' },
-    { name: t('pricing'), href: '/pricing' },
-    { name: t('about'), href: '/about' },
-    { name: t('contact'), href: '/contact' },
+    { name: t('features'), href: '#features' },
+    { name: t('about'), href: '#about' },
+    { name: t('contact'), href: '#contact' },
   ];
 
   return (
@@ -163,6 +162,14 @@ export default function Navbar({ currentLocale }: NavbarProps) {
                   )}
                 </div>
 
+                {/* Login Button */}
+                <Link
+                  href="/auth/login"
+                  className="inline-flex items-center justify-center px-5 py-2.5 border border-[#f37922] text-[#f37922] hover:bg-[#f37922] hover:text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  {t('login')}
+                </Link>
+
                 {/* Get Started Button */}
                 <Link
                   href="/dashboard"
@@ -252,14 +259,23 @@ export default function Navbar({ currentLocale }: NavbarProps) {
                   </div>
                 </div>
                 
-                {/* Get Started Button (Mobile) */}
-                <Link
-                  href="/auth/register"
-                  className="mt-6 flex items-center justify-center px-4 py-3 bg-[#f37922] hover:bg-[#f37922]/90 text-white font-medium rounded-lg transition-colors shadow-sm"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('getStarted')}
-                </Link>
+                {/* Action Buttons (Mobile) */}
+                <div className="mt-6 flex flex-col space-y-3">
+                  <Link
+                    href="/auth/login"
+                    className="flex items-center justify-center px-4 py-3 border border-[#f37922] text-[#f37922] hover:bg-[#f37922] hover:text-white font-medium rounded-lg transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {t('login')}
+                  </Link>
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center justify-center px-4 py-3 bg-[#f37922] hover:bg-[#f37922]/90 text-white font-medium rounded-lg transition-colors shadow-sm"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {t('getStarted')}
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
