@@ -13,7 +13,7 @@ import {
   Key
 } from "lucide-react";
 
-type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator';
+type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator' | 'super_admin';
 
 // Define the structure of a navigation item
 interface NavigationItem {
@@ -24,6 +24,18 @@ interface NavigationItem {
 
 // Map navigation items to each user type
 export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
+  "super_admin": [
+    {
+      name: "navigation.overview",
+      href: "/dashboard/super_admin",
+      icon: LayoutDashboard,
+    },
+    {
+      name: "navigation.users",
+      href: "/dashboard/super_admin/users",
+      icon: User
+    },
+  ],
   admin: [
     {
       name: "navigation.overview",
@@ -41,6 +53,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: Warehouse,
     },
     {
+      name: "navigation.products",
+      href: "/dashboard/admin/products",
+      icon: Package,
+    },
+    {
       name: "navigation.orders",
       href: "/dashboard/admin/orders",
       icon: ShoppingCart
@@ -52,12 +69,12 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
     },
     {
       name: "navigation.deliveryRiders",
-      href:"/dashboard/admin/delivery-riders",
+      href: "/dashboard/admin/delivery-riders",
       icon: MapPin
     },
     {
       name: "navigation.invoices",
-      href:"/dashboard/admin/invoices",
+      href: "/dashboard/admin/invoices",
       icon: DollarSign
     },
     {
@@ -99,7 +116,7 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
     },
     {
       name: "navigation.invoices",
-      href:"/dashboard/seller/invoices",
+      href: "/dashboard/seller/invoices",
       icon: DollarSign
     },
     {
@@ -202,8 +219,8 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
     },
     {
       name: "navigation.expeditions",
-      href:"/dashboard/provider/expeditions",
-      icon:PlaneIcon
+      href: "/dashboard/provider/expeditions",
+      icon: PlaneIcon
     },
     {
       name: "navigation.leaderboard",
@@ -211,7 +228,7 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: Trophy
     }
   ],
-  moderator:[
+  moderator: [
     {
       name: "navigation.overview",
       href: "/dashboard/moderator",
@@ -221,6 +238,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.warehouse",
       href: "/dashboard/moderator/warehouse",
       icon: Warehouse,
+    },
+    {
+      name: "navigation.products",
+      href: "/dashboard/moderator/products",
+      icon: Package,
     },
     {
       name: "navigation.orders",
@@ -234,12 +256,12 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
     },
     {
       name: "navigation.deliveryRiders",
-      href:"/dashboard/moderator/delivery-riders",
+      href: "/dashboard/moderator/delivery-riders",
       icon: MapPin
     },
     {
       name: "navigation.invoices",
-      href:"/dashboard/moderator/invoices",
+      href: "/dashboard/moderator/invoices",
       icon: DollarSign
     },
     {
@@ -285,7 +307,7 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   'Cameroon': 'https://img.icons8.com/?size=96&id=GfqZsWUlvnOA&format=png',
   'Cape Verde': 'https://img.icons8.com/?size=96&id=9UF5HjJxrQoy&format=png',
   'Central African Republic': 'https://img.icons8.com/?size=96&id=4i5gL6USK6VC&format=png',
-  "China":"https://img.icons8.com/?size=100&id=17962&format=png&color=000000",
+  "China": "https://img.icons8.com/?size=100&id=17962&format=png&color=000000",
   'Chad': 'https://img.icons8.com/?size=96&id=nVHJ7oF0ybvK&format=png',
   'Comoros': 'https://img.icons8.com/?size=96&id=VBQmkWOg0i14&format=png',
   'Democratic Republic of the Congo': 'https://img.icons8.com/?size=96&id=GEWyMWLxV6Pl&format=png',

@@ -25,7 +25,7 @@ export function ProvidersListContainer() {
   useEffect(() => {
     const fetchProviders = async () => {
       try {
-        const result = await getUsers(1, 100, { role: UserRole.PROVIDER });
+        const result = await getUsers(1, 100, { role: UserRole.PROVIDER  });
         
         if (result.success && result.users) {
           setProviders(result.users);

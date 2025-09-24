@@ -109,9 +109,13 @@ async function saveYouCanTokens(userId: string, warehouseId: string, tokenData: 
     const UserIntegration = (await import('@/lib/db/models/user-integration')).default;
     const { IntegrationMethod, IntegrationStatus } = await import('@/lib/db/models/user-integration');
     
-    // Calculate expiration date (1 year from now)
-    const expiresAt = new Date(Date.now() + (tokenData.expires_in * 1000));
-    
+    // Calculate expiration date based on YouCan documentation
+    // YouCan docs state token lifetime is 1 year, but expires_in might show different value
+    // Setting to 1 year as per their documentation
+    const oneYearInMs = 365 * 24 * 60 * 60 * 1000; // 1 year in milliseconds
+    const expiresAt = new Date(Date.now() + oneYearInMs);
+
+
     // Prepare connection data
     const connectionData = {
       accessToken: tokenData.access_token,

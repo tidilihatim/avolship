@@ -5,9 +5,10 @@ import { revalidatePath } from 'next/cache';
 import { UserFormData, UserApiResponse, UserFilters, PaginationData } from '@/types/user';
 import { withDbConnection } from '@/lib/db/db-connect';
 import { sanitizeUserData, validateUserFilters, validateUserForm } from '@/lib/validations/user';
-import User, { UserStatus } from '@/lib/db/models/user';
+import User, { UserRole, UserStatus } from '@/lib/db/models/user';
 import { sendNotification } from '@/lib/notifications/send-notification';
 import { NotificationType } from '@/types/notification';
+import { getCurrentUser } from './auth';
 
 /**
  * Create a new user
@@ -18,7 +19,7 @@ export const createUser = withDbConnection(async (formData: UserFormData): Promi
   try {
     // Sanitize input data
     const sanitizedData = sanitizeUserData(formData);
-    
+
     // Validate form data
     const validation = validateUserForm(sanitizedData, false);
     if (!validation.isValid) {
@@ -83,14 +84,25 @@ export const createUser = withDbConnection(async (formData: UserFormData): Promi
 export const getUsers = withDbConnection(async (
   page: number = 1,
   limit: number = 10,
-  filters: UserFilters = {}
-): Promise<{ 
-  users: any[]; 
-  pagination: PaginationData; 
-  success: boolean; 
+  filters: any = {}
+): Promise<{
+  users: any[];
+  pagination: PaginationData;
+  success: boolean;
   message: string;
 }> => {
   try {
+    // Get current user and check permissions
+    const currentUser = await getCurrentUser();
+    if (!currentUser || ![UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(currentUser.role)) {
+      return {
+        users: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 0 },
+        success: false,
+        message: 'Unauthorized - Admin or Super Admin access required'
+      };
+    }
+
     // Validate filters
     const filterValidation = validateUserFilters(filters.search, filters.role, filters.status);
     if (!filterValidation.isValid) {
@@ -104,7 +116,12 @@ export const getUsers = withDbConnection(async (
 
     // Build query
     const query: any = {};
-    
+
+    // Role-based filtering: Admin cannot see Super Admin users
+
+    query.role = { $ne: UserRole.SUPER_ADMIN };
+    // Super Admin can see all users (no additional role restriction)
+
     if (filters.search) {
       query.$or = [
         { name: { $regex: filters.search, $options: 'i' } },
@@ -112,15 +129,15 @@ export const getUsers = withDbConnection(async (
         { businessName: { $regex: filters.search, $options: 'i' } }
       ];
     }
-    
+
     if (filters.role) {
       query.role = filters.role;
     }
-    
+
     if (filters.status) {
       query.status = filters.status;
     }
-    
+
     if (filters.country) {
       query.country = { $regex: filters.country, $options: 'i' };
     }
@@ -219,7 +236,7 @@ export const updateUser = withDbConnection(async (userId: string, formData: User
 
     // Sanitize input data
     const sanitizedData = sanitizeUserData(formData);
-    
+
     // Validate form data (isUpdate = true)
     const validation = validateUserForm(sanitizedData, true);
     if (!validation.isValid) {
@@ -241,9 +258,9 @@ export const updateUser = withDbConnection(async (userId: string, formData: User
 
     // Check if email is already taken by another user
     if (sanitizedData.email !== existingUser.email) {
-      const emailExists = await User.findOne({ 
-        email: sanitizedData.email, 
-        _id: { $ne: userId } 
+      const emailExists = await User.findOne({
+        email: sanitizedData.email,
+        _id: { $ne: userId }
       });
       if (emailExists) {
         return {
@@ -370,7 +387,7 @@ export const updateUserStatus = withDbConnection(async (userId: string, status: 
       title: status === UserStatus.APPROVED ? "Account Approved" : status === UserStatus.REJECTED ? "Account Rejected" : "Account Pending",
       message: status === UserStatus.APPROVED ? "Your account has been approved and is now active for business operations and shipping services Thank you for choosing AvolShip" : status === UserStatus.REJECTED ? "Your account has been rejected and cannot be used for business operations and shipping services we are sorry for the inconvenience" : "Your account is pending approval and is currently under review. We'll notify you once it's approved",
       type: status === UserStatus.APPROVED ? NotificationType.SUCCESS : status === UserStatus.REJECTED ? NotificationType.ERROR : NotificationType.WARNING,
-      icon: status === UserStatus.APPROVED ? "check-circle" : status === UserStatus.REJECTED ? "x-circle": "alert-triangle"
+      icon: status === UserStatus.APPROVED ? "check-circle" : status === UserStatus.REJECTED ? "x-circle" : "alert-triangle"
     })
 
     // Revalidate the users page
@@ -427,13 +444,13 @@ export const bulkDeleteUsers = withDbConnection(async (userIds: string[]): Promi
  */
 export const getCallCenterAgents = withDbConnection(async () => {
   try {
-    const agents = await User.find({ 
+    const agents = await User.find({
       role: 'call_center',
       status: { $ne: 'inactive' }
     })
-    .select('name email')
-    .sort({ name: 1 })
-    .lean();
+      .select('name email')
+      .sort({ name: 1 })
+      .lean();
 
     return {
       success: true,
@@ -460,7 +477,7 @@ export const getCallCenterAgents = withDbConnection(async () => {
  * @returns API response
  */
 export const assignSellerToAgent = withDbConnection(async (
-  sellerId: string, 
+  sellerId: string,
   agentId: string | null
 ): Promise<UserApiResponse> => {
   try {
@@ -539,8 +556,8 @@ export const assignSellerToAgent = withDbConnection(async (
 
     return {
       success: true,
-      message: agentId 
-        ? 'Seller successfully assigned to call center agent' 
+      message: agentId
+        ? 'Seller successfully assigned to call center agent'
         : 'Seller successfully unassigned from call center agent'
     };
   } catch (error) {
@@ -563,9 +580,9 @@ export const getAssignedSellers = withDbConnection(async (agentId: string) => {
       role: 'seller',
       assignedCallCenterAgent: agentId
     })
-    .select('name email businessName createdAt')
-    .sort({ name: 1 })
-    .lean();
+      .select('name email businessName createdAt')
+      .sort({ name: 1 })
+      .lean();
 
     return {
       success: true,

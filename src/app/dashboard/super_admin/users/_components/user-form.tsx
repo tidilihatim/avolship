@@ -199,7 +199,7 @@ export default function UserForm({ user, isEdit = false }: UserFormProps) {
         toast.error(result.message);
       } else {
         toast.success(isEdit ? t("users.userUpdated") : t("users.userCreated"));
-        router.push("/dashboard/admin/users");
+        router.push("/dashboard/super_admin/users");
       }
     } catch (error) {
       toast.error("An unexpected error occurred");
@@ -582,7 +582,7 @@ export default function UserForm({ user, isEdit = false }: UserFormProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push("/dashboard/admin/users")}
+              onClick={() => router.push("/dashboard/super_admin/users")}
               disabled={isSubmitting}
             >
               {t("common.cancel")}

@@ -344,123 +344,127 @@ export function ProfileForm({ user }: ProfileFormProps) {
       )}
 
       {/* Security Settings Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('sections.security.title')}</CardTitle>
-          <CardDescription>
-            {t('sections.security.description')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="twoFactorEnabled">{t('sections.security.twoFactorAuth')}</Label>
-                <p className="text-sm text-muted-foreground">
-                  {t('sections.security.twoFactorAuthDescription')}
-                </p>
+      {[UserRole.ADMIN, UserRole.SELLER, UserRole.PROVIDER].includes(user.role) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('sections.security.title')}</CardTitle>
+            <CardDescription>
+              {t('sections.security.description')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="twoFactorEnabled">{t('sections.security.twoFactorAuth')}</Label>
+                  <p className="text-sm text-muted-foreground">
+                    {t('sections.security.twoFactorAuthDescription')}
+                  </p>
+                </div>
+                <Switch
+                  id="twoFactorEnabled"
+                  checked={formData.twoFactorEnabled}
+                  onCheckedChange={(checked) => handleInputChange('twoFactorEnabled', checked)}
+                />
               </div>
-              <Switch
-                id="twoFactorEnabled"
-                checked={formData.twoFactorEnabled}
-                onCheckedChange={(checked) => handleInputChange('twoFactorEnabled', checked)}
-              />
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
     </form>
 
       {/* Password Change Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('sections.password.title')}</CardTitle>
-          <CardDescription>
-            {t('sections.password.description')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">{t('sections.password.currentPassword')}</Label>
-              <div className="relative">
-                <Input
-                  id="currentPassword"
-                  type={showCurrentPassword ? "text" : "password"}
-                  value={passwordData.currentPassword}
-                  onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
-                  placeholder={t('sections.password.currentPasswordPlaceholder')}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                >
-                  {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {[UserRole.ADMIN, UserRole.SELLER, UserRole.PROVIDER].includes(user.role) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('sections.password.title')}</CardTitle>
+            <CardDescription>
+              {t('sections.password.description')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="newPassword">{t('sections.password.newPassword')}</Label>
+                <Label htmlFor="currentPassword">{t('sections.password.currentPassword')}</Label>
                 <div className="relative">
                   <Input
-                    id="newPassword"
-                    type={showNewPassword ? "text" : "password"}
-                    value={passwordData.newPassword}
-                    onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-                    placeholder={t('sections.password.newPasswordPlaceholder')}
+                    id="currentPassword"
+                    type={showCurrentPassword ? "text" : "password"}
+                    value={passwordData.currentPassword}
+                    onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
+                    placeholder={t('sections.password.currentPasswordPlaceholder')}
                     required
-                    minLength={8}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   >
-                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">{t('sections.password.confirmPassword')}</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={passwordData.confirmPassword}
-                    onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-                    placeholder={t('sections.password.confirmPasswordPlaceholder')}
-                    required
-                    minLength={8}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-            </div>
 
-            <Button type="submit" disabled={isPasswordPending} variant="destructive">
-              {isPasswordPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('sections.password.updatePassword')}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">{t('sections.password.newPassword')}</Label>
+                  <div className="relative">
+                    <Input
+                      id="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      value={passwordData.newPassword}
+                      onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                      placeholder={t('sections.password.newPasswordPlaceholder')}
+                      required
+                      minLength={8}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                    >
+                      {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">{t('sections.password.confirmPassword')}</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                      placeholder={t('sections.password.confirmPasswordPlaceholder')}
+                      required
+                      minLength={8}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <Button type="submit" disabled={isPasswordPending} variant="destructive">
+                {isPasswordPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {t('sections.password.updatePassword')}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

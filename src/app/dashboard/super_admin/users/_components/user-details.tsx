@@ -61,11 +61,11 @@ export default function UserDetails({ user }: UserDetailsProps) {
 
   const roleConfig = getRoleConfig(user.role);
   const statusConfig = getStatusConfig(user.status);
-
+  
   // Handle status update
   const handleStatusUpdate = async (newStatus: UserStatus) => {
     const result = await updateUserStatus(user._id, newStatus);
-
+    
     if (result.success) {
       toast.success(t('users.userUpdated'));
       router.refresh();
@@ -73,7 +73,7 @@ export default function UserDetails({ user }: UserDetailsProps) {
       toast.error(result.message || 'Failed to update status');
     }
   };
-
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -81,7 +81,7 @@ export default function UserDetails({ user }: UserDetailsProps) {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => router.push('/dashboard/admin/users')}
+            onClick={() => router.push('/dashboard/super_admin/users')}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -120,7 +120,7 @@ export default function UserDetails({ user }: UserDetailsProps) {
           <Button
             variant="outline"
             className="flex items-center gap-2"
-            onClick={() => router.push(`/dashboard/admin/users/${user._id}/edit`)}
+            onClick={() => router.push(`/dashboard/super_admin/users/${user._id}/edit`)}
           >
             <Edit className="h-4 w-4" />
             {t('common.edit')}
@@ -274,7 +274,7 @@ export default function UserDetails({ user }: UserDetailsProps) {
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {user.twoFactorEnabled
+                  {user.twoFactorEnabled 
                     ? t('users.messages.twoFactorEnabled')
                     : t('users.messages.twoFactorDisabled')
                   }
@@ -303,7 +303,7 @@ export default function UserDetails({ user }: UserDetailsProps) {
                     <p className="text-base font-medium">{user.businessName}</p>
                   </div>
                 )}
-
+                
                 {user.serviceType && (
                   <>
                     <Separator />
@@ -315,7 +315,7 @@ export default function UserDetails({ user }: UserDetailsProps) {
                     </div>
                   </>
                 )}
-
+                
                 {user.businessInfo && (
                   <>
                     <Separator />

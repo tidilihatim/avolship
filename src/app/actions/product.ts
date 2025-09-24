@@ -19,7 +19,7 @@ import { getCurrentUser } from './auth';
 
 
 /**
- * Get products with pagination and filtering
+ * Get products with pagination and filtering (for sellers - their own products)
  */
 async function getProductsImpl(
   page: number = 1,
@@ -171,6 +171,160 @@ async function getProductsImpl(
     };
   } catch (error: any) {
     console.error('Error fetching products:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to fetch products',
+    };
+  }
+}
+
+/**
+ * Get all products for admin/moderator with pagination and filtering
+ */
+async function getAllProductsForAdminImpl(
+  page: number = 1,
+  limit: number = 10,
+  filters: ProductFilters = {}
+): Promise<ProductResponse> {
+  try {
+    // Get the current user
+    const user = await getCurrentUser();
+    if (!user || ![UserRole.ADMIN, UserRole.MODERATOR].includes(user.role)) {
+      return {
+        success: false,
+        message: 'Unauthorized - Admin/Moderator access required',
+      };
+    }
+
+    // Build query based on filters
+    const query: Record<string, any> = {};
+
+    // Apply seller filter if provided
+    if (filters.sellerId) {
+      query.sellerId = new mongoose.Types.ObjectId(filters.sellerId);
+    }
+
+    // Apply warehouse filter if provided
+    if (filters.warehouseId) {
+      query['warehouses.warehouseId'] = new mongoose.Types.ObjectId(filters.warehouseId);
+    }
+
+    // Apply status filter if provided
+    if (filters.status) {
+      query.status = filters.status;
+    }
+
+    // Apply stock range filters if provided
+    if (filters.minStock !== undefined) {
+      query.totalStock = { $gte: filters.minStock };
+    }
+
+    if (filters.maxStock !== undefined) {
+      query.totalStock = { ...(query.totalStock || {}), $lte: filters.maxStock };
+    }
+
+    // Apply search filter if provided
+    if (filters.search) {
+      const searchRegex = new RegExp(filters.search, 'i');
+      query.$or = [
+        { name: searchRegex },
+        { code: searchRegex },
+        { variantCode: searchRegex },
+        { description: searchRegex },
+      ];
+    }
+
+    // Calculate pagination
+    const skip = (page - 1) * limit;
+
+    // Execute query with pagination
+    const products: any[] = await Product.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // Count total results for pagination
+    const total = await Product.countDocuments(query);
+
+    // Get unique warehouseIds and sellerIds for populating names
+    const warehouseIds = products.flatMap(p => p.warehouses.map((w: any) => w.warehouseId));
+    const sellerIds = [...new Set(products.map(p => p.sellerId))];
+
+    // Fetch warehouses and sellers in parallel
+    const warehouses: any[] = await Warehouse.find({ _id: { $in: warehouseIds } }).lean();
+    const sellers: any[] = await User.find({ _id: { $in: sellerIds } }).lean();
+
+    // Create lookup maps for efficient access
+    const warehouseMap = new Map<string, any>();
+    for (const w of warehouses) {
+      warehouseMap.set(w._id.toString(), w);
+    }
+
+    const sellerMap = new Map<string, any>();
+    for (const s of sellers) {
+      sellerMap.set(s._id.toString(), s);
+    }
+
+    // Map products to include warehouse and seller names
+    const productsWithNames: ProductTableData[] = [];
+
+    for (const product of products) {
+      const sellerId = product.sellerId.toString();
+
+      // Map warehouses with names
+      const warehousesWithNames: WarehouseData[] = [];
+
+      for (const warehouse of product.warehouses) {
+        const warehouseId = warehouse.warehouseId.toString();
+        const warehouseData = warehouseMap.get(warehouseId);
+
+        warehousesWithNames.push({
+          warehouseId,
+          warehouseName: warehouseData?.name || 'Unknown Warehouse',
+          stock: warehouse.stock,
+          country: warehouseData?.country,
+        });
+      }
+
+      // Get primary warehouse (first one for display purposes)
+      const primaryWarehouse = warehousesWithNames[0] || null;
+
+      productsWithNames.push({
+        _id: product._id.toString(),
+        name: product.name,
+        description: product.description,
+        code: product.code,
+        variantCode: product.variantCode,
+        verificationLink: product.verificationLink,
+        warehouses: warehousesWithNames,
+        primaryWarehouseId: primaryWarehouse?.warehouseId,
+        primaryWarehouseName: primaryWarehouse?.warehouseName,
+        sellerId,
+        sellerName: sellerMap.get(sellerId)?.name || 'Unknown Seller',
+        image: product.image,
+        totalStock: product.totalStock,
+        status: product.status,
+        createdAt: product.createdAt,
+        updatedAt: product.updatedAt
+      });
+    }
+
+    // Calculate pagination data
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      success: true,
+      products: productsWithNames,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    };
+  } catch (error: any) {
+    console.error('Error fetching products for admin:', error);
     return {
       success: false,
       message: error.message || 'Failed to fetch products',
@@ -782,6 +936,7 @@ async function updateProductStatusImpl(id: string, status: ProductStatus): Promi
 
 // Export the wrapped server actions
 export const getProducts = withDbConnection(getProductsImpl);
+export const getAllProductsForAdmin = withDbConnection(getAllProductsForAdminImpl);
 export const getProductById = withDbConnection(getProductByIdImpl);
 export const getAllWarehouses = withDbConnection(getAllWarehousesImpl);
 export const getAllSellers = withDbConnection(getAllSellersImpl);

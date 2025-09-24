@@ -11,6 +11,7 @@ export enum UserRole {
   PROVIDER = 'provider',
   DELIVERY = 'delivery',
   SUPPORT = 'support',
+  SUPPER_ADMIN = "super_admin"
 }
 
 /**

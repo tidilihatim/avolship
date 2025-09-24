@@ -26,7 +26,7 @@ const PHONE_REGEX = /^[\+]?[1-9][\d]{0,15}$/;
  * @param isUpdate - Whether this is an update operation (password optional)
  * @returns Validation result with errors if any
  */
-export function validateUserForm(data: UserFormData, isUpdate: boolean = false): ValidationResult {
+export function validateUserForm(data: any, isUpdate: boolean = false): ValidationResult {
   const errors: Record<string, string> = {};
 
   // Name validation

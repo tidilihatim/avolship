@@ -33,13 +33,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetDescription, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetTrigger, 
   SheetClose
 } from '@/components/ui/sheet';
 import {
@@ -93,7 +93,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-
+  
   // State for search and filters
   const [search, setSearch] = useState(filters.search || '');
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -101,15 +101,15 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
   const [statusFilter, setStatusFilter] = useState(filters.status || ALL_STATUSES);
   const [countryFilter, setCountryFilter] = useState(filters.country || ALL_COUNTRIES);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
-
+  
   // Use the passed call center agents (available on all pages)
   // This ensures assignment dropdown works correctly on all pages
-
+  
   // Use countries provided from the database, or fallback to extracting from current users
-  const countries = allCountries.length > 0
-    ? allCountries
+  const countries = allCountries.length > 0 
+    ? allCountries 
     : Array.from(new Set(users.map(user => user.country).filter(Boolean))).sort();
-
+  
   // Handle search submit
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,7 +122,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       limit: itemsPerPage
     });
   };
-
+  
   // Apply filters
   const applyFilters = () => {
     navigateWithFilters({
@@ -135,7 +135,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
     });
     setIsFiltersOpen(false);
   };
-
+  
   // Clear all filters
   const clearFilters = () => {
     setSearch('');
@@ -148,7 +148,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
     });
     setIsFiltersOpen(false);
   };
-
+  
   // Change page
   const handlePageChange = (page: number) => {
     navigateWithFilters({
@@ -156,7 +156,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       page
     });
   };
-
+  
   // Change items per page
   const handleItemsPerPageChange = (value: string) => {
     const limit = parseInt(value);
@@ -167,34 +167,34 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       limit
     });
   };
-
+  
   // Helper function to navigate with filters
   const navigateWithFilters = (newFilters: any) => {
     const params = new URLSearchParams();
-
+    
     if (newFilters.search) params.append('search', newFilters.search);
     if (newFilters.role) params.append('role', newFilters.role);
     if (newFilters.status) params.append('status', newFilters.status);
     if (newFilters.country) params.append('country', newFilters.country);
     if (newFilters.page) params.append('page', newFilters.page.toString());
     if (newFilters.limit) params.append('limit', newFilters.limit.toString());
-
+    
     router.push(`${pathname}?${params.toString()}`);
   };
-
+  
   // Handle user deletion
   const handleDelete = async (id: string) => {
     startTransition(async () => {
       const result = await deleteUser(id);
-
+      
       if (result.success) {
         toast(t('users.userDeleted'));
-
+        
         // If we're on the last page and delete the last item, go to previous page
-        if (pagination &&
-          pagination.page > 1 &&
-          users.length === 1 &&
-          pagination.page === pagination.totalPages) {
+        if (pagination && 
+            pagination.page > 1 && 
+            users.length === 1 && 
+            pagination.page === pagination.totalPages) {
           handlePageChange(pagination.page - 1);
         } else {
           // Otherwise just refresh the current page
@@ -205,12 +205,12 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       }
     });
   };
-
+  
   // Handle status toggle
   const handleStatusUpdate = async (id: string, status: UserStatus) => {
     startTransition(async () => {
       const result = await updateUserStatus(id, status);
-
+      
       if (result.success) {
         toast(t('users.userUpdated'));
         router.refresh();
@@ -219,19 +219,19 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       }
     });
   };
-
+  
   // Generate pagination items
   const renderPaginationItems = () => {
     if (!pagination) return null;
-
+    
     const { page, totalPages } = pagination;
     const items = [];
-
+    
     // Previous button
     items.push(
       <PaginationItem key="prev">
-        <PaginationPrevious
-          href="#"
+        <PaginationPrevious 
+          href="#" 
           onClick={(e) => {
             e.preventDefault();
             if (page > 1) handlePageChange(page - 1);
@@ -240,12 +240,12 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
         />
       </PaginationItem>
     );
-
+    
     // First page
     items.push(
       <PaginationItem key="page-1">
-        <PaginationLink
-          href="#"
+        <PaginationLink 
+          href="#" 
           onClick={(e) => {
             e.preventDefault();
             handlePageChange(1);
@@ -256,7 +256,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
         </PaginationLink>
       </PaginationItem>
     );
-
+    
     // Ellipsis if needed
     if (page > 3) {
       items.push(
@@ -265,15 +265,15 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
         </PaginationItem>
       );
     }
-
+    
     // Pages around current page
     for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) {
       if (i <= 1 || i >= totalPages) continue; // Skip first and last page as they're handled separately
-
+      
       items.push(
         <PaginationItem key={`page-${i}`}>
-          <PaginationLink
-            href="#"
+          <PaginationLink 
+            href="#" 
             onClick={(e) => {
               e.preventDefault();
               handlePageChange(i);
@@ -285,7 +285,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
         </PaginationItem>
       );
     }
-
+    
     // Ellipsis if needed
     if (page < totalPages - 2) {
       items.push(
@@ -294,13 +294,13 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
         </PaginationItem>
       );
     }
-
+    
     // Last page (if more than one page)
     if (totalPages > 1) {
       items.push(
         <PaginationItem key={`page-${totalPages}`}>
-          <PaginationLink
-            href="#"
+          <PaginationLink 
+            href="#" 
             onClick={(e) => {
               e.preventDefault();
               handlePageChange(totalPages);
@@ -312,12 +312,12 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
         </PaginationItem>
       );
     }
-
+    
     // Next button
     items.push(
       <PaginationItem key="next">
-        <PaginationNext
-          href="#"
+        <PaginationNext 
+          href="#" 
           onClick={(e) => {
             e.preventDefault();
             if (page < totalPages) handlePageChange(page + 1);
@@ -326,7 +326,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
         />
       </PaginationItem>
     );
-
+    
     return items;
   };
 
@@ -340,10 +340,10 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       [UserRole.DELIVERY]: { label: t('users.roles.delivery'), className: 'bg-cyan-50 text-cyan-700 hover:bg-cyan-50 border-cyan-200' },
       [UserRole.SUPPORT]: { label: t('users.roles.support'), className: 'bg-pink-50 text-pink-700 hover:bg-pink-50 border-pink-200' },
       [UserRole.CALL_CENTER]: { label: t('users.roles.call_center'), className: 'bg-indigo-50 text-indigo-700 hover:bg-indigo-50 border-indigo-200' },
-      [UserRole.SUPPER_ADMIN]: { label: "super_admin", className: 'bg-purple-50 text-purple-700 hover:bg-purple-50 border-purple-200' },
+      [UserRole.SUPPER_ADMIN]: { label:"super_admin", className: 'bg-purple-50 text-purple-700 hover:bg-purple-50 border-purple-200' },
 
     };
-
+    
     return roleConfig[role] || { label: 'Unknown', className: 'bg-gray-50 text-gray-700 hover:bg-gray-50 border-gray-200' };
   };
 
@@ -354,7 +354,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       [UserStatus.PENDING]: { label: t('users.statuses.pending'), className: 'bg-yellow-50 text-yellow-700 hover:bg-yellow-50 border-yellow-200' },
       [UserStatus.REJECTED]: { label: t('users.statuses.rejected'), className: 'bg-red-50 text-red-700 hover:bg-red-50 border-red-200' }
     };
-
+    
     return statusConfig[status] || { label: 'Unknown', className: 'bg-gray-50 text-gray-700 hover:bg-gray-50 border-gray-200' };
   };
 
@@ -366,7 +366,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       day: 'numeric'
     }).format(new Date(date));
   };
-
+  
   if (error) {
     return (
       <Card>
@@ -377,7 +377,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
       </Card>
     );
   }
-
+  
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
@@ -412,7 +412,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
                   {t('users.applyFilters')}
                 </SheetDescription>
               </SheetHeader>
-
+              
               <div className="py-8 space-y-8">
                 {/* Role Filter */}
                 <div className="space-y-3">
@@ -436,7 +436,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
                     </SelectContent>
                   </Select>
                 </div>
-
+                
                 {/* Status Filter */}
                 <div className="space-y-3">
                   <h3 className="text-sm font-medium leading-tight">
@@ -485,7 +485,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
                   </div>
                 )}
               </div>
-
+              
               {/* Actions */}
               <div className="absolute bottom-0 left-0 right-0 p-6 bg-background border-t">
                 <div className="flex flex-col gap-3">
@@ -494,9 +494,9 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
                       {t('users.applyFilters')}
                     </Button>
                   </SheetClose>
-                  <Button
-                    type="button"
-                    variant="outline"
+                  <Button 
+                    type="button" 
+                    variant="outline" 
                     onClick={clearFilters}
                     className="flex items-center gap-2"
                   >
@@ -508,7 +508,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
             </SheetContent>
           </Sheet>
 
-          <Link href="/dashboard/admin/users/create" passHref>
+          <Link href="/dashboard/super_admin/users/create" passHref>
             <Button className="flex gap-2">
               <PlusCircle className="h-4 w-4" />
               {t('users.createUser')}
@@ -521,7 +521,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
         <CardHeader>
           <CardTitle>{t('users.title')}</CardTitle>
           <CardDescription>
-            {pagination?.total
+            {pagination?.total 
               ? `${pagination.total} ${pagination.total === 1 ? 'user' : 'users'} found`
               : t('users.noUsersFound')}
           </CardDescription>
@@ -595,33 +595,33 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+                          <DropdownMenuContent  align="end">
                             <DropdownMenuLabel>{t('common.actions')}</DropdownMenuLabel>
                             <DropdownMenuItem className='cursor-pointer' asChild>
-                              <Link href={`/dashboard/admin/users/${user._id}`}>
+                              <Link href={`/dashboard/super_admin/users/${user._id}`}>
                                 <Eye className="mr-2 h-4 w-4" />
                                 {t('common.view')}
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
-                              <Link href={`/dashboard/admin/users/${user._id}/edit`}>
+                              <Link href={`/dashboard/super_admin/users/${user._id}/edit`}>
                                 <Edit className="mr-2 h-4 w-4" />
                                 {t('common.edit')}
                               </Link>
                             </DropdownMenuItem>
-
+                            
                             {/* Generate Invoice for Sellers */}
                             {user.role === UserRole.SELLER && user.status === UserStatus.APPROVED && (
                               <DropdownMenuItem asChild>
-                                <Link href={`/dashboard/admin/users/${user._id}/invoice/generate`}>
+                                <Link href={`/dashboard/super_admin/users/${user._id}/invoice/generate`}>
                                   <FileText className="mr-2 h-4 w-4" />
                                   Generate Invoice
                                 </Link>
                               </DropdownMenuItem>
                             )}
-
+                            
                             <DropdownMenuSeparator />
-
+                            
                             {/* Status Actions */}
                             {user.status !== UserStatus.APPROVED && (
                               <DropdownMenuItem
@@ -644,11 +644,11 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
                                 Set Pending
                               </DropdownMenuItem>
                             )}
-
+                            
                             <DropdownMenuSeparator />
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <DropdownMenuItem
+                                <DropdownMenuItem 
                                   className="text-red-600 focus:text-red-600 focus:bg-red-50"
                                   onSelect={(e) => e.preventDefault()}
                                 >
@@ -688,7 +688,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
               <p className="text-muted-foreground text-center">
                 {t('users.noUsersFound')}
               </p>
-              <Link href="/dashboard/admin/users/create" passHref>
+              <Link href="/dashboard/super_admin/users/create" passHref>
                 <Button variant="outline">{t('users.createUser')}</Button>
               </Link>
             </div>
@@ -715,13 +715,13 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
                 </SelectContent>
               </Select>
             </div>
-
+            
             <Pagination>
               <PaginationContent>
                 {renderPaginationItems()}
               </PaginationContent>
             </Pagination>
-
+            
             <div className="text-sm text-muted-foreground">
               Showing {(pagination.page - 1) * pagination.limit + 1}-
               {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}

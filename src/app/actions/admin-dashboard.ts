@@ -120,7 +120,7 @@ export const getAdminDashboardStats = withDbConnection(async (filters?: AdminFil
   try {
     const user = await getCurrentUser();
     
-    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
+    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR && user.role!== UserRole.SUPER_ADMIN)) {
       return { success: false, message: 'Unauthorized. Admin access required.' };
     }
 
@@ -235,7 +235,7 @@ export const getUsersByRole = withDbConnection(async (filters?: AdminFilters): P
 }> => {
   try {
     const user = await getCurrentUser();
-    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
+    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR && user.role!== UserRole.SUPER_ADMIN)) {
       return { success: false, message: 'Unauthorized. Admin access required.' };
     }
 
@@ -296,7 +296,7 @@ export const getOrderStatusChart = withDbConnection(async (filters?: AdminFilter
 }> => {
   try {
     const user = await getCurrentUser();
-    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
+    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR && user.role!== UserRole.SUPER_ADMIN)) {
       return { success: false, message: 'Unauthorized. Admin access required.' };
     }
 
@@ -379,7 +379,7 @@ export const getRevenueChart = withDbConnection(async (filters: AdminFilters): P
 }> => {
   try {
     const user = await getCurrentUser();
-    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
+    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR && user.role!== UserRole.SUPER_ADMIN)) {
       return { success: false, message: 'Unauthorized. Admin access required.' };
     }
 
@@ -560,7 +560,7 @@ export const getTopPerformers = withDbConnection(async (): Promise<{
 }> => {
   try {
     const user = await getCurrentUser();
-    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
+    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR && user.role!== UserRole.SUPER_ADMIN)) {
       return { success: false, message: 'Unauthorized. Admin access required.' };
     }
 
@@ -646,7 +646,7 @@ export const getRecentActivity = withDbConnection(async (limit: number = 10): Pr
 }> => {
   try {
     const user = await getCurrentUser();
-    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
+    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR && user.role!== UserRole.SUPER_ADMIN)) {
       return { success: false, message: 'Unauthorized. Admin access required.' };
     }
 
