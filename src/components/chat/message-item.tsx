@@ -36,17 +36,17 @@ export function MessageItem({
       return (
         <div key={index} className="relative group">
           <img
-            src={attachment.cloudinaryUrl}
+            src={attachment.s3Url}
             alt={attachment.originalName}
             className="max-w-xs rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-            onClick={() => window.open(attachment.cloudinaryUrl, '_blank')}
+            onClick={() => window.open(attachment.s3Url, '_blank')}
           />
           <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button
               size="sm"
               variant="secondary"
               className="h-8 w-8 p-0"
-              onClick={() => window.open(attachment.cloudinaryUrl, '_blank')}
+              onClick={() => window.open(attachment.s3Url, '_blank')}
             >
               <Eye className="h-4 w-4" />
             </Button>
@@ -59,7 +59,7 @@ export function MessageItem({
       <div
         key={index}
         className="flex items-center space-x-3 p-3 rounded-lg border bg-card transition-colors cursor-pointer"
-        onClick={() => window.open(attachment.cloudinaryUrl, '_blank')}
+        onClick={() => window.open(attachment.s3Url, '_blank')}
       >
         <div className="flex-shrink-0">
           {attachment.fileType === 'application/pdf' ? (

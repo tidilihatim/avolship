@@ -10,8 +10,8 @@ export enum MessageType {
 export interface IAttachment {
   filename: string;
   originalName: string;
-  cloudinaryUrl: string;
-  publicId: string;
+  s3Url: string;
+  s3Key: string;
   fileType: string;
   fileSize: number;
 }
@@ -31,8 +31,8 @@ export interface IChatMessage extends Document {
 const AttachmentSchema = new Schema<IAttachment>({
   filename: { type: String, required: true },
   originalName: { type: String, required: true },
-  cloudinaryUrl: { type: String, required: true },
-  publicId: { type: String, required: true },
+  s3Url: { type: String, required: true },
+  s3Key: { type: String, required: true },
   fileType: { type: String, required: true },
   fileSize: { type: Number, required: true }
 });

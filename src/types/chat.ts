@@ -42,8 +42,8 @@ export interface ChatMessage {
 export interface MessageAttachment {
   filename: string;
   originalName: string;
-  cloudinaryUrl: string;
-  publicId: string;
+  s3Url: string;
+  s3Key: string;
   fileType: string;
   fileSize: number;
 }
