@@ -5,7 +5,9 @@ import { withDbConnection } from '@/lib/db/db-connect';
 
 // Email service configuration
 const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || 'gmail',
+  host: process.env.EMAIL_SERVICE,
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
@@ -356,7 +358,7 @@ export class EmailVerificationService {
         const code = generateVerificationCode();
 
         // Create verification record in database
-        const verificationRecord:any = new VerificationCode({
+        const verificationRecord: any = new VerificationCode({
           email: email.toLowerCase(),
           code,
           action,
