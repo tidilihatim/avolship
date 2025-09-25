@@ -37,23 +37,10 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { getCountryNames } from "@/constants/countries";
 
-// List of countries with calling codes
-const countries = [
-  { name: "Algeria", code: "DZ", callingCode: "+213" },
-  { name: "Egypt", code: "EG", callingCode: "+20" },
-  { name: "Ghana", code: "GH", callingCode: "+233" },
-  { name: "Kenya", code: "KE", callingCode: "+254" },
-  { name: "Morocco", code: "MA", callingCode: "+212" },
-  { name: "Nigeria", code: "NG", callingCode: "+234" },
-  { name: "Rwanda", code: "RW", callingCode: "+250" },
-  { name: "Senegal", code: "SN", callingCode: "+221" },
-  { name: "South Africa", code: "ZA", callingCode: "+27" },
-  { name: "Tanzania", code: "TZ", callingCode: "+255" },
-  { name: "Tunisia", code: "TN", callingCode: "+216" },
-  { name: "Uganda", code: "UG", callingCode: "+256" },
-  { name: "Other", code: "OT", callingCode: "" },
-];
+// Get all countries from the constants file
+const allCountries = getCountryNames();
 
 // Create a common base type that can work with conditional fields
 type CommonFormValues = {
@@ -142,10 +129,9 @@ export default function RegisterPage() {
   // Update country code when country changes
   useEffect(() => {
     if (selectedCountry) {
-      const country = countries.find((c) => c.name === selectedCountry);
-      if (country) {
-        form.setValue("countryCode", country.callingCode);
-      }
+      // For now, clear the country code since we don't have calling codes
+      // You may want to add a separate calling codes mapping if needed
+      form.setValue("countryCode", "");
     }
   }, [selectedCountry, form]);
 
@@ -337,12 +323,12 @@ export default function RegisterPage() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {countries.map((country) => (
+                              {allCountries.map((country) => (
                                 <SelectItem
-                                  key={country.code}
-                                  value={country.name}
+                                  key={country}
+                                  value={country}
                                 >
-                                  {country.name}
+                                  {country}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -368,10 +354,7 @@ export default function RegisterPage() {
                                   placeholder="+123"
                                   className="rounded-md shadow-sm border-[#d1d5db]"
                                   {...field}
-                                  disabled={
-                                    !selectedCountry ||
-                                    selectedCountry === "Other"
-                                  }
+                                  disabled={!selectedCountry}
                                 />
                               </FormControl>
                             )}

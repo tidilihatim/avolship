@@ -406,12 +406,14 @@ export default function UserForm({ user, isEdit = false }: UserFormProps) {
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.values(UserRole).map((role) => (
-                      <SelectItem key={role} value={role}>
-                        {t(`users.roles.${role}`)} -{" "}
-                        {t(`users.roles.descriptions.${role}`)}
-                      </SelectItem>
-                    ))}
+                    {Object.values(UserRole)
+                      .filter((role) => role !== UserRole.SUPER_ADMIN)
+                      .map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {t(`users.roles.${role}`)} -{" "}
+                          {t(`users.roles.descriptions.${role}`)}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-muted-foreground">
