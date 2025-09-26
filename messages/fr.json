@@ -2796,6 +2796,7 @@
       "countryMaxLength": "Le pays doit contenir moins de 100 caractères"
     },
     "roles": {
+      "super_admin": "Super Administrateur",
       "admin": "Administrateur",
       "moderator": "Modérateur",
       "seller": "Vendeur",
@@ -2804,6 +2805,7 @@
       "support": "Équipe de support",
       "call_center": "Centre d'appel",
       "descriptions": {
+        "super_admin": "Contrôle ultime du système",
         "admin": "Accès complet au système",
         "moderator": "Accès administrateur limité",
         "seller": "Gestion des produits",
