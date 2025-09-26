@@ -12,13 +12,14 @@ interface UsersByRoleChartProps {
 
 const getRoleColor = (role: string, index: number): string => {
   const roleColors: Record<string, string> = {
-    'ADMIN': `hsl(var(--chart-1))`,
-    'SELLER': `hsl(var(--chart-2))`,
-    'DELIVERY': `hsl(var(--chart-3))`,
-    'PROVIDER': `hsl(var(--chart-4))`,
-    'SUPPORT': `hsl(var(--chart-5))`,
-    'CALL_CENTER': `hsl(var(--chart-1))`,
-    'MODERATOR': `hsl(var(--chart-2))`
+    'SUPER_ADMIN': `hsl(var(--chart-1))`,
+    'ADMIN': `hsl(var(--chart-2))`,
+    'SELLER': `hsl(var(--chart-3))`,
+    'DELIVERY': `hsl(var(--chart-4))`,
+    'PROVIDER': `hsl(var(--chart-5))`,
+    'SUPPORT': `hsl(var(--chart-1))`,
+    'CALL_CENTER': `hsl(var(--chart-2))`,
+    'MODERATOR': `hsl(var(--chart-3))`
   };
   
   // Fallback to index-based colors if role mapping fails

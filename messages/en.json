@@ -578,6 +578,7 @@
         }
       },
       "roles": {
+        "SUPER_ADMIN": "Super Admin",
         "ADMIN": "Admin",
         "SELLER": "Seller",
         "DELIVERY": "Delivery",

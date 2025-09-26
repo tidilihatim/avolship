@@ -272,12 +272,17 @@ export const getUsersByRole = withDbConnection(async (filters?: AdminFilters): P
 
     const usersByRole = await User.aggregate(pipeline);
 
-    const totalUsers = usersByRole.reduce((sum, item) => sum + item.count, 0);
+    // Filter out SUPER_ADMIN role data unless current user is SUPER_ADMIN
+    const filteredUsersByRole = user.role === UserRole.SUPER_ADMIN
+      ? usersByRole
+      : usersByRole.filter(item => item._id !== UserRole.SUPER_ADMIN);
 
-    const data: UsersByRole[] = usersByRole.map(item => ({
+    const filteredTotalUsers = filteredUsersByRole.reduce((sum, item) => sum + item.count, 0);
+
+    const data: UsersByRole[] = filteredUsersByRole.map(item => ({
       role: item._id,
       count: item.count,
-      percentage: totalUsers > 0 ? Math.round((item.count / totalUsers) * 100) : 0
+      percentage: filteredTotalUsers > 0 ? Math.round((item.count / filteredTotalUsers) * 100) : 0
     }));
 
     return { success: true, data };
