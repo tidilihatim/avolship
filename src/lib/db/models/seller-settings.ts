@@ -115,8 +115,7 @@ const SellerSettingsSchema = new Schema<ISellerSettings>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: [true, 'Seller ID is required'],
-      unique: true,
-      index: true,
+      unique: true, // This automatically creates an index
     },
     
     // Discount settings per warehouse
@@ -182,8 +181,7 @@ const SellerSettingsSchema = new Schema<ISellerSettings>(
   }
 );
 
-// Indexes for better performance
-SellerSettingsSchema.index({ sellerId: 1 });
+// Indexes for better performance (sellerId already indexed via unique: true)
 SellerSettingsSchema.index({ 'discountSettings.warehouseId': 1 });
 
 // Pre-save middleware to update nested timestamps

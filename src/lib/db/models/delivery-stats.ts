@@ -120,8 +120,7 @@ const DeliveryStatsSchema = new Schema<IDeliveryStats>(
   }
 );
 
-// Create indexes for better performance
-DeliveryStatsSchema.index({ deliveryGuyId: 1 });
+// Create indexes for better performance (deliveryGuyId already indexed via unique: true)
 DeliveryStatsSchema.index({ 'deliveryHistory.deliveryDate': -1 });
 DeliveryStatsSchema.index({ 'deliveryHistory.orderId': 1 });
 DeliveryStatsSchema.index({ 'deliveryHistory.warehouseId': 1 });

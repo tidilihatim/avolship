@@ -17,7 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProductInput } from "@/types/product";
 import { ProductStatus } from "@/lib/db/models/product";
 import { createProduct, updateProduct } from "@/app/actions/product";
-import { uploadToCloudinary, validateImageFile } from "@/lib/cloudinary";
+import { uploadImageToS3, validateImageFile } from "@/lib/s3-upload";
 import { COUNTRY_FLAGS } from "@/app/dashboard/_constant";
 
 interface ProductFormProps {
@@ -146,7 +146,7 @@ export default function ProductForm({
     if (fileInput) fileInput.value = '';
   };
 
-  // Upload image to Cloudinary
+  // Upload image to S3
   const uploadImage = async (): Promise<{url: string; publicId: string} | null> => {
     if (!imageFile) {
       // If no new image and we're editing, return the existing image
@@ -158,8 +158,8 @@ export default function ProductForm({
 
     try {
       setIsUploading(true);
-      // Use our cloudinary utility to upload
-      const imageData = await uploadToCloudinary(imageFile);
+      // Use our S3 utility to upload
+      const imageData = await uploadImageToS3(imageFile);
       return imageData;
     } catch (error) {
       console.error('Error uploading image:', error);

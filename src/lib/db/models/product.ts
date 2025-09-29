@@ -21,12 +21,12 @@ export interface WarehouseInventory {
 }
 
 /**
- * Cloudinary image interface
- * Stores both URL and public ID for easy management
+ * Image data interface
+ * Stores both URL and public ID for easy management (works with both Cloudinary and S3)
  */
-export interface CloudinaryImage {
+export interface ImageData {
   url: string;
-  publicId: string;
+  publicId: string; // For Cloudinary: cloudinary public ID, For S3: S3 key
 }
 
 /**
@@ -40,7 +40,7 @@ export interface IProduct extends Document {
   verificationLink?: string;
   warehouses: WarehouseInventory[]; // Multiple warehouses
   sellerId: mongoose.Types.ObjectId; // Link to seller user
-  image?: CloudinaryImage; // Cloudinary image with public ID
+  image?: ImageData; // Image data with URL and public ID (supports both Cloudinary and S3)
   totalStock: number; // Calculated from warehouses
   status: ProductStatus;
   createdAt: Date;

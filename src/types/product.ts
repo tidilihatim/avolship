@@ -1,6 +1,6 @@
 // src/types/product.ts
 import { PaginationData } from './user';
-import { CloudinaryImage, ProductStatus, WarehouseInventory } from '@/lib/db/models/product';
+import { ImageData, ProductStatus, WarehouseInventory } from '@/lib/db/models/product';
 import mongoose from 'mongoose';
 
 /**
