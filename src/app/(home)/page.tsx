@@ -155,7 +155,7 @@ export default function HomePage() {
                 </Link>
 
                 <Link
-                  href="/features"
+                  href="#features"
                   className="inline-flex items-center justify-center px-6 py-3 border border-[#1c2d51]/20 hover:border-[#1c2d51]/40 text-[#1c2d51] font-medium rounded-lg transition-all hover:bg-[#1c2d51]/5"
                 >
                   {t("learnMoreBtn")}
@@ -465,7 +465,7 @@ export default function HomePage() {
       </motion.section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white" ref={statsRef}>
+      {/* <section className="py-16 bg-white" ref={statsRef}>
         <div className="container mx-auto px-4">
           <motion.div
             className="grid grid-cols-2 md:grid-cols-4 gap-8"
@@ -508,7 +508,7 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Features Section */}
       {/* Features Section - Clean & Modern Alternating Layout */}
@@ -812,7 +812,7 @@ export default function HomePage() {
           </div>
 
           {/* CTA Button */}
-          <motion.div
+          {/* <motion.div
             className="text-center mt-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -829,7 +829,7 @@ export default function HomePage() {
             <p className="mt-3 text-gray-500 text-sm">
               {t("featuresExploreHint")}
             </p>
-          </motion.div>
+          </motion.div> */}
         </div>
       </section>
 
@@ -1236,7 +1236,7 @@ export default function HomePage() {
               </Link>
 
               <Link
-                href="/contact"
+                href="#contact"
                 className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-white/90 text-[#1c2d51] font-medium rounded-lg transition-colors shadow-md hover:shadow-lg"
               >
                 {t("contactSales")}

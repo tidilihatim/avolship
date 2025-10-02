@@ -591,4 +591,5 @@
 html {
   scrollbar-width: thin;
   scrollbar-color: var(--primary) var(--muted);
+  scroll-behavior: smooth;
 }
