@@ -1,4 +1,260 @@
 {
+  "deliveryDashboard": {
+    "title": "Tableau de Bord Livraison",
+    "description": "Suivez vos livraisons, revenus et mesures de performance",
+    "errorMessage": "Certaines données du tableau de bord n'ont pas pu être chargées",
+    "stats": {
+      "todayDeliveries": "Livraisons d'Aujourd'hui",
+      "totalDeliveries": "livraisons au total",
+      "todayEarnings": "Revenus d'Aujourd'hui",
+      "totalEarned": "total gagné",
+      "pendingPickups": "Enlèvements en Attente",
+      "inTransit": "en transit",
+      "successRate": "Taux de Réussite",
+      "successfulDeliveries": "Livraisons réussies",
+      "totalDistance": "Distance Totale",
+      "kilometersTraveled": "kilomètres parcourus",
+      "activeDeliveries": "Livraisons Actives",
+      "currentlyDelivering": "en cours de livraison"
+    },
+    "activeDeliveries": {
+      "title": "Livraisons Actives",
+      "order": "Commande:",
+      "fee": "Frais:",
+      "commission": "Commission:",
+      "overdue": "EN RETARD",
+      "noActiveDeliveries": "Aucune livraison active",
+      "checkBackMessage": "Revenez pour de nouvelles assignations",
+      "viewAllActive": "Voir Toutes les Actives"
+    },
+    "recentDeliveries": {
+      "title": "Livraisons Récentes",
+      "tracking": "Suivi:",
+      "noRecentDeliveries": "Aucune livraison récente"
+    },
+    "status": {
+      "assigned": "Assigné",
+      "accepted": "Accepté",
+      "inTransit": "En Transit",
+      "outForDelivery": "En Cours de Livraison",
+      "delivered": "Livré",
+      "failed": "Échoué",
+      "pending": "En Attente",
+      "confirmed": "Confirmé"
+    },
+    "charts": {
+      "deliveryStatus": {
+        "title": "Distribution des Statuts de Livraison",
+        "noData": "Aucune donnée de livraison disponible",
+        "noDeliveries": "Aucune livraison assignée pour le moment",
+        "dataWillAppear": "La distribution des statuts apparaîtra ici",
+        "distribution": "Distribution de {total} livraisons au total"
+      },
+      "deliveryTime": {
+        "title": "Analyse du Temps de Livraison",
+        "noData": "Aucune donnée de temps de livraison disponible",
+        "noCompletedDeliveries": "Aucune livraison terminée pour le moment",
+        "dataWillAppear": "L'analyse du temps de livraison apparaîtra ici",
+        "deliveriesCompleted": "livraisons terminées",
+        "avg": "moy",
+        "minDeliveryTime": "min temps de livraison",
+        "deliveries": "livraisons",
+        "minAvg": "min moy",
+        "deliveriesLabel": "Livraisons",
+        "avgTimeLabel": "Temps Moy",
+        "timeSlot": "Créneau Horaire:"
+      },
+      "performanceOverview": {
+        "title": "Aperçu des Performances",
+        "noData": "Aucune donnée de performance disponible",
+        "noData2": "Aucune donnée de performance disponible",
+        "dataWillAppear": "Vos tendances de performance quotidiennes apparaîtront ici",
+        "totalEarnings": "revenus totaux",
+        "deliveries": "livraisons",
+        "avgPerDay": "moy/jour",
+        "earningsLabel": "Revenus",
+        "deliveriesLabel": "Livraisons",
+        "date": "Date:"
+      },
+      "earnings": {
+        "title": "Tendances des Revenus",
+        "noData": "Aucune donnée de revenus disponible",
+        "noEarnings": "Aucun revenu enregistré pour le moment",
+        "dataWillAppear": "Vos tendances de revenus apparaîtront ici",
+        "totalEarnings": "revenus totaux de",
+        "deliveries": "livraisons",
+        "avgPerDelivery": "moy/livraison",
+        "earningsLabel": "Revenus",
+        "deliveriesLabel": "Livraisons",
+        "date": "Date:"
+      }
+    }
+  },
+  "callCenterDashboard": {
+    "metrics": {
+      "myAssignedOrders": "Mes Commandes Assignées",
+      "pendingCalls": "appels en attente",
+      "callsMade": "Appels Effectués",
+      "avg": "Moy",
+      "perCall": "m par appel",
+      "confirmed": "Confirmé",
+      "successRate": "taux de réussite",
+      "priorityQueue": "File d'Attente Prioritaire",
+      "ordersNeedCalling": "Commandes à appeler"
+    },
+    "dateRange": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "thisWeek": "Cette Semaine",
+      "thisMonth": "Ce Mois",
+      "last3Days": "3 Derniers Jours",
+      "last7Days": "7 Derniers Jours",
+      "last30Days": "30 Derniers Jours"
+    },
+    "priorityOrders": {
+      "title": "Commandes Prioritaires - À Appeler",
+      "order": "Commande:",
+      "waiting": "En attente:",
+      "previousAttempts": "tentatives précédentes",
+      "callNow": "Appeler Maintenant",
+      "noPendingCalls": "Excellent travail ! Aucun appel en attente pour le moment.",
+      "viewAllOrders": "Voir Toutes les Commandes"
+    },
+    "recentActivity": {
+      "title": "Mon Activité Récente",
+      "noActivity": "Aucune activité récente"
+    },
+    "charts": {
+      "callOutcomes": {
+        "title": "Résultats des Appels",
+        "noData": "Aucune donnée d'appel disponible",
+        "noCalls": "Aucun appel effectué",
+        "dataWillAppear": "Les données des résultats d'appels apparaîtront ici",
+        "distribution": "Distribution de {total} appels au total",
+        "calls": "Appels",
+        "answered": "Répondu",
+        "noAnswer": "Sans Réponse",
+        "busy": "Occupé",
+        "invalidNumber": "Numéro Invalide"
+      },
+      "hourlyActivity": {
+        "title": "Activité des Appels par Heure",
+        "noData": "Aucune donnée d'appels horaires disponible",
+        "noCallsToday": "Aucun appel enregistré aujourd'hui",
+        "dataWillAppear": "L'activité horaire apparaîtra ici",
+        "totalCalls": "appels au total",
+        "confirmedToday": "confirmés aujourd'hui",
+        "totalCallsLabel": "Total des Appels",
+        "confirmedLabel": "Confirmé",
+        "time": "Heure:",
+        "callsUnit": "appels"
+      },
+      "performanceTrends": {
+        "title": "Tendances de Performance",
+        "noData": "Aucune donnée de performance disponible",
+        "dataWillAppear": "Les tendances apparaîtront au fur et à mesure de vos appels",
+        "calls": "appels",
+        "answered": "répondus",
+        "avgSuccessRate": "taux de réussite moy",
+        "totalCallsLabel": "Total des Appels",
+        "answeredLabel": "Répondus",
+        "confirmedLabel": "Confirmés",
+        "date": "Date:"
+      },
+      "priorityDistribution": {
+        "title": "Distribution des Priorités",
+        "noData": "Aucune commande en attente",
+        "dataWillAppear": "La distribution des priorités apparaîtra ici",
+        "pendingOrders": "commandes en attente par niveau de priorité",
+        "orders": "Commandes",
+        "ordersUnit": "commandes",
+        "count": "Compte",
+        "priority": "Priorité:",
+        "urgent": "Urgent",
+        "high": "Élevé",
+        "normal": "Normal"
+      }
+    },
+    "dateFilter": {
+      "title": "Filtre de Plage de Dates",
+      "selectRange": "Sélectionner la plage de dates",
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "last3Days": "3 Derniers Jours",
+      "last7Days": "7 Derniers Jours",
+      "last30Days": "30 Derniers Jours",
+      "thisWeek": "Cette Semaine",
+      "thisMonth": "Ce Mois",
+      "customRange": "Plage Personnalisée",
+      "refresh": "Actualiser",
+      "selectCustomRange": "Sélectionner une Plage de Dates Personnalisée",
+      "startDate": "Date de Début",
+      "endDate": "Date de Fin",
+      "pickStartDate": "Choisir la date de début",
+      "pickEndDate": "Choisir la date de fin",
+      "cancel": "Annuler",
+      "applyRange": "Appliquer la Plage"
+    }
+  },
+  "callCenterSupport": {
+    "title": "Support du Centre d'Appels",
+    "description": "Signalez des problèmes techniques et obtenez de l'aide avec les opérations du centre d'appels",
+    "createTicket": "Créer un Ticket",
+    "myTickets": "Mes Tickets de Support",
+    "noTickets": "Aucun ticket pour le moment",
+    "noTicketsDescription": "Lorsque vous créerez des tickets de support, ils apparaîtront ici.",
+    "created": "Créé",
+    "updated": "Mis à jour",
+    "assignedTo": "Assigné à",
+    "viewDetails": "Voir les Détails",
+    "dialog": {
+      "title": "Créer un Ticket de Support",
+      "description": "Décrivez votre problème et nous vous aiderons à le résoudre le plus rapidement possible.",
+      "titleLabel": "Titre",
+      "titlePlaceholder": "Brève description de votre problème",
+      "categoryLabel": "Catégorie",
+      "categoryPlaceholder": "Sélectionner une catégorie",
+      "priorityLabel": "Priorité",
+      "priorityPlaceholder": "Sélectionner une priorité",
+      "relatedOrderLabel": "ID de Commande Associée (Optionnel)",
+      "relatedOrderPlaceholder": "ID de commande si ce ticket concerne une commande spécifique",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Veuillez fournir des informations détaillées sur votre problème...",
+      "tagsLabel": "Étiquettes",
+      "tagsPlaceholder": "Ajouter des étiquettes (appuyez sur Entrée)",
+      "addButton": "Ajouter",
+      "cancel": "Annuler",
+      "submit": "Créer un Ticket",
+      "errors": {
+        "titleMin": "Le titre doit contenir au moins 5 caractères",
+        "descriptionMin": "La description doit contenir au moins 10 caractères",
+        "categoryRequired": "Veuillez sélectionner une catégorie",
+        "priorityRequired": "Veuillez sélectionner une priorité"
+      },
+      "success": "Ticket créé avec succès",
+      "error": "Échec de la création du ticket"
+    },
+    "status": {
+      "open": "Ouvert",
+      "assigned": "Assigné",
+      "in_progress": "En Cours",
+      "resolved": "Résolu",
+      "closed": "Fermé"
+    },
+    "priority": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "critical": "Critique"
+    },
+    "category": {
+      "technical": "Technique",
+      "billing": "Facturation",
+      "account": "Compte",
+      "order": "Commande",
+      "general": "Général"
+    }
+  },
   "profile": {
     "title": "Profil Vendeur",
     "description": "Mettez à jour vos informations de compte vendeur et détails d'entreprise",

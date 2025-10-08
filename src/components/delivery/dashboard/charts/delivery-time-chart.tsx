@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
@@ -32,17 +33,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function DeliveryTimeChart({ data }: DeliveryTimeChartProps) {
+  const t = useTranslations('deliveryDashboard.charts.deliveryTime');
+
   if (!data || data.length === 0) {
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Delivery Time Analysis</CardTitle>
-          <CardDescription>No delivery time data available</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No completed deliveries yet</p>
-            <p className="text-xs mt-1">Delivery time analysis will appear here</p>
+            <p className="text-sm">{t('noCompletedDeliveries')}</p>
+            <p className="text-xs mt-1">{t('dataWillAppear')}</p>
           </div>
         </CardContent>
       </Card>
@@ -50,15 +53,15 @@ export function DeliveryTimeChart({ data }: DeliveryTimeChartProps) {
   }
 
   const totalDeliveries = data.reduce((sum, item) => sum + item.deliveries, 0);
-  const avgTime = totalDeliveries > 0 ? 
+  const avgTime = totalDeliveries > 0 ?
     Math.round(data.reduce((sum, item) => sum + (item.averageTime * item.deliveries), 0) / totalDeliveries) : 0;
 
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Delivery Time Analysis</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          {totalDeliveries} deliveries completed {totalDeliveries > 0 ? `(avg ${avgTime} min delivery time)` : ''}
+          {totalDeliveries} {t('deliveriesCompleted')} {totalDeliveries > 0 ? `(${t('avg')} ${avgTime} ${t('minDeliveryTime')})` : ''}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -89,14 +92,14 @@ export function DeliveryTimeChart({ data }: DeliveryTimeChartProps) {
                 <ChartTooltipContent
                   formatter={(value, name) => [
                     name === 'averageTime' ? `${value} min` : `${value}`,
-                    name === 'deliveries' ? 'Deliveries' : 'Avg Time'
+                    name === 'deliveries' ? t('deliveriesLabel') : t('avgTimeLabel')
                   ]}
-                  labelFormatter={(label) => `Time Slot: ${label}`}
+                  labelFormatter={(label) => `${t('timeSlot')} ${label}`}
                 />
               }
             />
-            <Bar 
-              dataKey="deliveries" 
+            <Bar
+              dataKey="deliveries"
               fill="var(--color-deliveries)"
               radius={[4, 4, 0, 0]}
               name="deliveries"
@@ -108,7 +111,7 @@ export function DeliveryTimeChart({ data }: DeliveryTimeChartProps) {
             <div key={index} className="text-center">
               <div className="text-sm font-medium">{item.timeSlot}</div>
               <div className="text-xs text-muted-foreground">
-                {item.deliveries} deliveries • {item.averageTime}min avg
+                {item.deliveries} {t('deliveries')} • {item.averageTime}{t('minAvg')}
               </div>
             </div>
           ))}

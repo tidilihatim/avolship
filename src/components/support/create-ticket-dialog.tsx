@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,6 +35,7 @@ interface CreateTicketDialogProps {
 }
 
 export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDialogProps) {
+  const t = useTranslations("callCenterSupport");
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<File[]>([]);
@@ -51,16 +53,16 @@ export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDia
     const priority = formData.get("priority") as string;
 
     if (!title || title.length < 5) {
-      newErrors.title = "Title must be at least 5 characters";
+      newErrors.title = t("dialog.errors.titleMin");
     }
     if (!description || description.length < 10) {
-      newErrors.description = "Description must be at least 10 characters";
+      newErrors.description = t("dialog.errors.descriptionMin");
     }
     if (!category) {
-      newErrors.category = "Please select a category";
+      newErrors.category = t("dialog.errors.categoryRequired");
     }
     if (!priority) {
-      newErrors.priority = "Please select a priority";
+      newErrors.priority = t("dialog.errors.priorityRequired");
     }
 
     setErrors(newErrors);
@@ -100,18 +102,18 @@ export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDia
       const priority = formData.get("priority") as string;
 
       const newErrors: Record<string, string> = {};
-      
+
       if (!title || title.length < 5) {
-        newErrors.title = "Title must be at least 5 characters";
+        newErrors.title = t("dialog.errors.titleMin");
       }
       if (!description || description.length < 10) {
-        newErrors.description = "Description must be at least 10 characters";
+        newErrors.description = t("dialog.errors.descriptionMin");
       }
       if (!category) {
-        newErrors.category = "Please select a category";
+        newErrors.category = t("dialog.errors.categoryRequired");
       }
       if (!priority) {
-        newErrors.priority = "Please select a priority";
+        newErrors.priority = t("dialog.errors.priorityRequired");
       }
 
       if (Object.keys(newErrors).length > 0) {
@@ -134,7 +136,7 @@ export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDia
       });
       
       if (result.success) {
-        toast.success("Ticket created successfully");
+        toast.success(t("dialog.success"));
         setOpen(false);
         // Reset form
         const form = document.getElementById("create-ticket-form") as HTMLFormElement;
@@ -147,7 +149,7 @@ export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDia
       }
     } catch (error: any) {
       console.error("Error creating ticket:", error);
-      toast.error(error.message || "Failed to create ticket");
+      toast.error(error.message || t("dialog.error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -159,25 +161,25 @@ export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDia
         {trigger || (
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Create Ticket
+            {t("createTicket")}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Support Ticket</DialogTitle>
+          <DialogTitle>{t("dialog.title")}</DialogTitle>
           <DialogDescription>
-            Describe your issue and we'll help you resolve it as quickly as possible.
+            {t("dialog.description")}
           </DialogDescription>
         </DialogHeader>
         
         <form id="create-ticket-form" onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input 
+            <Label htmlFor="title">{t("dialog.titleLabel")}</Label>
+            <Input
               id="title"
               name="title"
-              placeholder="Brief description of your issue"
+              placeholder={t("dialog.titlePlaceholder")}
               className={errors.title ? "border-destructive" : ""}
             />
             {errors.title && <p className="text-sm text-destructive">{errors.title}</p>}
@@ -185,33 +187,33 @@ export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDia
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">{t("dialog.categoryLabel")}</Label>
               <Select name="category">
                 <SelectTrigger className={errors.category ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t("dialog.categoryPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="technical">Technical</SelectItem>
-                  <SelectItem value="billing">Billing</SelectItem>
-                  <SelectItem value="account">Account</SelectItem>
-                  <SelectItem value="order">Order</SelectItem>
-                  <SelectItem value="general">General</SelectItem>
+                  <SelectItem value="technical">{t("category.technical")}</SelectItem>
+                  <SelectItem value="billing">{t("category.billing")}</SelectItem>
+                  <SelectItem value="account">{t("category.account")}</SelectItem>
+                  <SelectItem value="order">{t("category.order")}</SelectItem>
+                  <SelectItem value="general">{t("category.general")}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="priority">Priority</Label>
+              <Label htmlFor="priority">{t("dialog.priorityLabel")}</Label>
               <Select name="priority">
                 <SelectTrigger className={errors.priority ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Select priority" />
+                  <SelectValue placeholder={t("dialog.priorityPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
+                  <SelectItem value="low">{t("priority.low")}</SelectItem>
+                  <SelectItem value="medium">{t("priority.medium")}</SelectItem>
+                  <SelectItem value="high">{t("priority.high")}</SelectItem>
+                  <SelectItem value="critical">{t("priority.critical")}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.priority && <p className="text-sm text-destructive">{errors.priority}</p>}
@@ -219,37 +221,37 @@ export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDia
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="relatedOrderId">Related Order ID (Optional)</Label>
-            <Input 
+            <Label htmlFor="relatedOrderId">{t("dialog.relatedOrderLabel")}</Label>
+            <Input
               id="relatedOrderId"
               name="relatedOrderId"
-              placeholder="Order ID if this ticket relates to a specific order"
+              placeholder={t("dialog.relatedOrderPlaceholder")}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea 
+            <Label htmlFor="description">{t("dialog.descriptionLabel")}</Label>
+            <Textarea
               id="description"
               name="description"
-              placeholder="Please provide detailed information about your issue..."
+              placeholder={t("dialog.descriptionPlaceholder")}
               className={`min-h-[100px] ${errors.description ? "border-destructive" : ""}`}
             />
             {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label>Tags</Label>
+            <Label>{t("dialog.tagsLabel")}</Label>
             <div className="flex gap-2">
               <Input
-                placeholder="Add tags (press Enter)"
+                placeholder={t("dialog.tagsPlaceholder")}
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 className="flex-1"
               />
               <Button type="button" onClick={addTag} variant="outline" size="sm">
-                Add
+                {t("dialog.addButton")}
               </Button>
             </div>
             {tags.length > 0 && (
@@ -283,16 +285,16 @@ export function CreateTicketDialog({ trigger, onTicketCreated }: CreateTicketDia
           </div>
 
           <DialogFooter>
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setOpen(false)}
             >
-              Cancel
+              {t("dialog.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Create Ticket
+              {t("dialog.submit")}
             </Button>
           </DialogFooter>
         </form>

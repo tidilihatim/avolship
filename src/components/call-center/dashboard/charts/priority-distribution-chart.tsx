@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
@@ -32,17 +33,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function PriorityDistributionChart({ data, total }: PriorityDistributionChartProps) {
+  const t = useTranslations('callCenterDashboard.charts.priorityDistribution');
+
   if (!data || data.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Priority Distribution</CardTitle>
-          <CardDescription>No pending orders</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No pending orders</p>
-            <p className="text-xs mt-1">Priority distribution will appear here</p>
+            <p className="text-sm">{t('noData')}</p>
+            <p className="text-xs mt-1">{t('dataWillAppear')}</p>
           </div>
         </CardContent>
       </Card>
@@ -59,9 +62,9 @@ export function PriorityDistributionChart({ data, total }: PriorityDistributionC
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Priority Distribution</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          {total} pending orders by priority level
+          {total} {t('pendingOrders')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -87,10 +90,10 @@ export function PriorityDistributionChart({ data, total }: PriorityDistributionC
               content={
                 <ChartTooltipContent
                   formatter={(value, name) => [
-                    `${value} orders`,
-                    'Count'
+                    `${value} ${t('ordersUnit')}`,
+                    t('count')
                   ]}
-                  labelFormatter={(label) => `Priority: ${label}`}
+                  labelFormatter={(label) => `${t('priority')} ${label}`}
                 />
               }
             />

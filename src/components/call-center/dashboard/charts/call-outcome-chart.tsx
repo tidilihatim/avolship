@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
@@ -34,17 +35,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function CallOutcomeChart({ data, total }: CallOutcomeChartProps) {
+  const t = useTranslations('callCenterDashboard.charts.callOutcomes');
+
   if (!data || data.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Call Outcomes</CardTitle>
-          <CardDescription>No call data available</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No calls made yet</p>
-            <p className="text-xs mt-1">Call outcome data will appear here</p>
+            <p className="text-sm">{t('noCalls')}</p>
+            <p className="text-xs mt-1">{t('dataWillAppear')}</p>
           </div>
         </CardContent>
       </Card>
@@ -61,9 +64,9 @@ export function CallOutcomeChart({ data, total }: CallOutcomeChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Call Outcomes</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          Distribution of {total.toLocaleString()} total calls
+          {t('distribution', { total: total.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>

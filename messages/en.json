@@ -1,4 +1,260 @@
 {
+  "deliveryDashboard": {
+    "title": "Delivery Dashboard",
+    "description": "Track your deliveries, earnings, and performance metrics",
+    "errorMessage": "Some dashboard data failed to load",
+    "stats": {
+      "todayDeliveries": "Today's Deliveries",
+      "totalDeliveries": "total deliveries",
+      "todayEarnings": "Today's Earnings",
+      "totalEarned": "total earned",
+      "pendingPickups": "Pending Pickups",
+      "inTransit": "in transit",
+      "successRate": "Success Rate",
+      "successfulDeliveries": "Successful deliveries",
+      "totalDistance": "Total Distance",
+      "kilometersTraveled": "kilometers traveled",
+      "activeDeliveries": "Active Deliveries",
+      "currentlyDelivering": "currently delivering"
+    },
+    "activeDeliveries": {
+      "title": "Active Deliveries",
+      "order": "Order:",
+      "fee": "Fee:",
+      "commission": "Commission:",
+      "overdue": "OVERDUE",
+      "noActiveDeliveries": "No active deliveries",
+      "checkBackMessage": "Check back for new assignments",
+      "viewAllActive": "View All Active"
+    },
+    "recentDeliveries": {
+      "title": "Recent Deliveries",
+      "tracking": "Tracking:",
+      "noRecentDeliveries": "No recent deliveries"
+    },
+    "status": {
+      "assigned": "Assigned",
+      "accepted": "Accepted",
+      "inTransit": "In Transit",
+      "outForDelivery": "Out for Delivery",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "pending": "Pending",
+      "confirmed": "Confirmed"
+    },
+    "charts": {
+      "deliveryStatus": {
+        "title": "Delivery Status Distribution",
+        "noData": "No delivery data available",
+        "noDeliveries": "No deliveries assigned yet",
+        "dataWillAppear": "Status distribution will appear here",
+        "distribution": "Distribution of {total} total deliveries"
+      },
+      "deliveryTime": {
+        "title": "Delivery Time Analysis",
+        "noData": "No delivery time data available",
+        "noCompletedDeliveries": "No completed deliveries yet",
+        "dataWillAppear": "Delivery time analysis will appear here",
+        "deliveriesCompleted": "deliveries completed",
+        "avg": "avg",
+        "minDeliveryTime": "min delivery time",
+        "deliveries": "deliveries",
+        "minAvg": "min avg",
+        "deliveriesLabel": "Deliveries",
+        "avgTimeLabel": "Avg Time",
+        "timeSlot": "Time Slot:"
+      },
+      "performanceOverview": {
+        "title": "Performance Overview",
+        "noData": "No performance data available",
+        "noData2": "No performance data available",
+        "dataWillAppear": "Your daily performance trends will appear here",
+        "totalEarnings": "total earnings",
+        "deliveries": "deliveries",
+        "avgPerDay": "avg/day",
+        "earningsLabel": "Earnings",
+        "deliveriesLabel": "Deliveries",
+        "date": "Date:"
+      },
+      "earnings": {
+        "title": "Earnings Trends",
+        "noData": "No earnings data available",
+        "noEarnings": "No earnings recorded yet",
+        "dataWillAppear": "Your earnings trends will appear here",
+        "totalEarnings": "total earnings from",
+        "deliveries": "deliveries",
+        "avgPerDelivery": "avg/delivery",
+        "earningsLabel": "Earnings",
+        "deliveriesLabel": "Deliveries",
+        "date": "Date:"
+      }
+    }
+  },
+  "callCenterDashboard": {
+    "metrics": {
+      "myAssignedOrders": "My Assigned Orders",
+      "pendingCalls": "pending calls",
+      "callsMade": "Calls Made",
+      "avg": "Avg",
+      "perCall": "m per call",
+      "confirmed": "Confirmed",
+      "successRate": "success rate",
+      "priorityQueue": "Priority Queue",
+      "ordersNeedCalling": "Orders need calling"
+    },
+    "dateRange": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "last3Days": "Last 3 Days",
+      "last7Days": "Last 7 Days",
+      "last30Days": "Last 30 Days"
+    },
+    "priorityOrders": {
+      "title": "Priority Orders - Need Calling",
+      "order": "Order:",
+      "waiting": "Waiting:",
+      "previousAttempts": "previous attempts",
+      "callNow": "Call Now",
+      "noPendingCalls": "Great job! No pending calls right now.",
+      "viewAllOrders": "View All Orders"
+    },
+    "recentActivity": {
+      "title": "My Recent Activity",
+      "noActivity": "No recent activity"
+    },
+    "charts": {
+      "callOutcomes": {
+        "title": "Call Outcomes",
+        "noData": "No call data available",
+        "noCalls": "No calls made yet",
+        "dataWillAppear": "Call outcome data will appear here",
+        "distribution": "Distribution of {total} total calls",
+        "calls": "Calls",
+        "answered": "Answered",
+        "noAnswer": "No Answer",
+        "busy": "Busy",
+        "invalidNumber": "Invalid Number"
+      },
+      "hourlyActivity": {
+        "title": "Hourly Call Activity",
+        "noData": "No hourly call data available",
+        "noCallsToday": "No calls recorded today",
+        "dataWillAppear": "Hourly activity will appear here",
+        "totalCalls": "total calls",
+        "confirmedToday": "confirmed today",
+        "totalCallsLabel": "Total Calls",
+        "confirmedLabel": "Confirmed",
+        "time": "Time:",
+        "callsUnit": "calls"
+      },
+      "performanceTrends": {
+        "title": "Performance Trends",
+        "noData": "No performance data available",
+        "dataWillAppear": "Trends will appear as you make calls",
+        "calls": "calls",
+        "answered": "answered",
+        "avgSuccessRate": "avg success rate",
+        "totalCallsLabel": "Total Calls",
+        "answeredLabel": "Answered",
+        "confirmedLabel": "Confirmed",
+        "date": "Date:"
+      },
+      "priorityDistribution": {
+        "title": "Priority Distribution",
+        "noData": "No pending orders",
+        "dataWillAppear": "Priority distribution will appear here",
+        "pendingOrders": "pending orders by priority level",
+        "orders": "Orders",
+        "ordersUnit": "orders",
+        "count": "Count",
+        "priority": "Priority:",
+        "urgent": "Urgent",
+        "high": "High",
+        "normal": "Normal"
+      }
+    },
+    "dateFilter": {
+      "title": "Date Range Filter",
+      "selectRange": "Select date range",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "last3Days": "Last 3 Days",
+      "last7Days": "Last 7 Days",
+      "last30Days": "Last 30 Days",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "customRange": "Custom Range",
+      "refresh": "Refresh",
+      "selectCustomRange": "Select Custom Date Range",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "pickStartDate": "Pick start date",
+      "pickEndDate": "Pick end date",
+      "cancel": "Cancel",
+      "applyRange": "Apply Range"
+    }
+  },
+  "callCenterSupport": {
+    "title": "Call Center Support",
+    "description": "Report technical issues and get assistance with call center operations",
+    "createTicket": "Create Ticket",
+    "myTickets": "My Support Tickets",
+    "noTickets": "No tickets yet",
+    "noTicketsDescription": "When you create support tickets, they will appear here.",
+    "created": "Created",
+    "updated": "Updated",
+    "assignedTo": "Assigned to",
+    "viewDetails": "View Details",
+    "dialog": {
+      "title": "Create Support Ticket",
+      "description": "Describe your issue and we'll help you resolve it as quickly as possible.",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Brief description of your issue",
+      "categoryLabel": "Category",
+      "categoryPlaceholder": "Select category",
+      "priorityLabel": "Priority",
+      "priorityPlaceholder": "Select priority",
+      "relatedOrderLabel": "Related Order ID (Optional)",
+      "relatedOrderPlaceholder": "Order ID if this ticket relates to a specific order",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Please provide detailed information about your issue...",
+      "tagsLabel": "Tags",
+      "tagsPlaceholder": "Add tags (press Enter)",
+      "addButton": "Add",
+      "cancel": "Cancel",
+      "submit": "Create Ticket",
+      "errors": {
+        "titleMin": "Title must be at least 5 characters",
+        "descriptionMin": "Description must be at least 10 characters",
+        "categoryRequired": "Please select a category",
+        "priorityRequired": "Please select a priority"
+      },
+      "success": "Ticket created successfully",
+      "error": "Failed to create ticket"
+    },
+    "status": {
+      "open": "Open",
+      "assigned": "Assigned",
+      "in_progress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "category": {
+      "technical": "Technical",
+      "billing": "Billing",
+      "account": "Account",
+      "order": "Order",
+      "general": "General"
+    }
+  },
   "profile": {
     "title": "Seller Profile",
     "description": "Update your seller account information and business details",

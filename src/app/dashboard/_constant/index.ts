@@ -196,6 +196,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
   ],
   'delivery': [
     {
+      name: "navigation.overview",
+      href: "/dashboard/delivery",
+      icon: LayoutDashboard,
+    },
+    {
       name: "navigation.leaderboard",
       href: "/dashboard/delivery/leaderboard",
       icon: Trophy

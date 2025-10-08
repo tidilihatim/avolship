@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -14,10 +15,11 @@ interface DateRangeFilterProps {
   defaultRange?: string
 }
 
-export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ 
-  onDateRangeChange, 
-  defaultRange = 'today' 
+export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
+  onDateRangeChange,
+  defaultRange = 'today'
 }) => {
+  const t = useTranslations('callCenterDashboard.dateFilter')
   const [selectedRange, setSelectedRange] = useState(defaultRange)
   const [customStartDate, setCustomStartDate] = useState<Date>()
   const [customEndDate, setCustomEndDate] = useState<Date>()
@@ -131,7 +133,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <CalendarDays className="w-5 h-5" />
-          Date Range Filter
+          {t('title')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -139,32 +141,32 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
           <div className="flex-1">
             <Select value={selectedRange} onValueChange={handleRangeChange}>
               <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder="Select date range" />
+                <SelectValue placeholder={t('selectRange')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="today">Today</SelectItem>
-                <SelectItem value="yesterday">Yesterday</SelectItem>
-                <SelectItem value="last3days">Last 3 Days</SelectItem>
-                <SelectItem value="last7days">Last 7 Days</SelectItem>
-                <SelectItem value="last30days">Last 30 Days</SelectItem>
-                <SelectItem value="thisweek">This Week</SelectItem>
-                <SelectItem value="thismonth">This Month</SelectItem>
-                <SelectItem value="custom">Custom Range</SelectItem>
+                <SelectItem value="today">{t('today')}</SelectItem>
+                <SelectItem value="yesterday">{t('yesterday')}</SelectItem>
+                <SelectItem value="last3days">{t('last3Days')}</SelectItem>
+                <SelectItem value="last7days">{t('last7Days')}</SelectItem>
+                <SelectItem value="last30days">{t('last30Days')}</SelectItem>
+                <SelectItem value="thisweek">{t('thisWeek')}</SelectItem>
+                <SelectItem value="thismonth">{t('thisMonth')}</SelectItem>
+                <SelectItem value="custom">{t('customRange')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="w-4 h-4" />
             <span>{formatDateRange(selectedRange)}</span>
           </div>
-          
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => handleRangeChange(selectedRange)}
           >
-            Refresh
+            {t('refresh')}
           </Button>
         </div>
 
@@ -174,13 +176,13 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
             <div className="flex flex-col gap-4">
               <h4 className="font-medium flex items-center gap-2">
                 <CalendarRange className="w-4 h-4" />
-                Select Custom Date Range
+                {t('selectCustomRange')}
               </h4>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Start Date */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Start Date</label>
+                  <label className="text-sm font-medium">{t('startDate')}</label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -188,7 +190,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                         className="w-full justify-start text-left font-normal"
                       >
                         <Calendar className="mr-2 h-4 w-4" />
-                        {customStartDate ? format(customStartDate, 'PPP') : 'Pick start date'}
+                        {customStartDate ? format(customStartDate, 'PPP') : t('pickStartDate')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
@@ -209,7 +211,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
 
                 {/* End Date */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">End Date</label>
+                  <label className="text-sm font-medium">{t('endDate')}</label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -217,7 +219,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                         className="w-full justify-start text-left font-normal"
                       >
                         <Calendar className="mr-2 h-4 w-4" />
-                        {customEndDate ? format(customEndDate, 'PPP') : 'Pick end date'}
+                        {customEndDate ? format(customEndDate, 'PPP') : t('pickEndDate')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
@@ -239,22 +241,22 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
 
               {/* Action Buttons */}
               <div className="flex gap-2 justify-end">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => {
                     setShowCustomDatePicker(false)
                     setSelectedRange('today')
                   }}
                 >
-                  Cancel
+                  {t('cancel')}
                 </Button>
-                <Button 
+                <Button
                   size="sm"
                   onClick={handleCustomDateApply}
                   disabled={!customStartDate || !customEndDate}
                 >
-                  Apply Range
+                  {t('applyRange')}
                 </Button>
               </div>
             </div>

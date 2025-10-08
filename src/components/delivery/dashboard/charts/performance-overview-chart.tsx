@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
@@ -32,17 +33,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function PerformanceOverviewChart({ data }: PerformanceOverviewChartProps) {
+  const t = useTranslations('deliveryDashboard.charts.performanceOverview');
+
   if (!data || data.length === 0) {
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Performance Overview</CardTitle>
-          <CardDescription>No performance data available</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No performance data available</p>
-            <p className="text-xs mt-1">Your daily performance trends will appear here</p>
+            <p className="text-sm">{t('noData2')}</p>
+            <p className="text-xs mt-1">{t('dataWillAppear')}</p>
           </div>
         </CardContent>
       </Card>
@@ -56,9 +59,9 @@ export function PerformanceOverviewChart({ data }: PerformanceOverviewChartProps
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Performance Overview</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          ${totalEarnings.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} total earnings • {totalDeliveries.toLocaleString()} deliveries (${avgDailyEarnings.toFixed(2)} avg/day)
+          ${totalEarnings.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {t('totalEarnings')} • {totalDeliveries.toLocaleString()} {t('deliveries')} (${avgDailyEarnings.toFixed(2)} {t('avgPerDay')})
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -89,9 +92,9 @@ export function PerformanceOverviewChart({ data }: PerformanceOverviewChartProps
                 <ChartTooltipContent
                   formatter={(value, name) => [
                     name === 'earnings' ? `$${Number(value).toFixed(2)}` : `${value}`,
-                    name === 'earnings' ? 'Earnings' : 'Deliveries'
+                    name === 'earnings' ? t('earningsLabel') : t('deliveriesLabel')
                   ]}
-                  labelFormatter={(label) => `Date: ${label}`}
+                  labelFormatter={(label) => `${t('date')} ${label}`}
                 />
               }
             />

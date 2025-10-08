@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,8 @@ const categoryColors = {
 
 export function MyTicketList({ tickets }: MyTicketListProps) {
   const pathname = usePathname();
-  
+  const t = useTranslations("callCenterSupport");
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -71,9 +73,9 @@ export function MyTicketList({ tickets }: MyTicketListProps) {
     return (
       <Card className="p-8 text-center">
         <MessageCircle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">No tickets yet</h3>
+        <h3 className="text-lg font-medium mb-2">{t("noTickets")}</h3>
         <p className="text-muted-foreground">
-          When you create support tickets, they will appear here.
+          {t("noTicketsDescription")}
         </p>
       </Card>
     );
@@ -81,7 +83,7 @@ export function MyTicketList({ tickets }: MyTicketListProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">My Support Tickets</h2>
+      <h2 className="text-xl font-semibold">{t("myTickets")}</h2>
       <div className="space-y-4">
         {tickets.map((ticket) => (
           <Card key={ticket._id} className="p-6">
@@ -90,13 +92,13 @@ export function MyTicketList({ tickets }: MyTicketListProps) {
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-lg font-medium">{ticket.title}</h3>
                   <Badge className={statusColors[ticket.status as keyof typeof statusColors]}>
-                    {ticket.status.replace('_', ' ')}
+                    {t(`status.${ticket.status}`)}
                   </Badge>
                   <Badge className={priorityColors[ticket.priority as keyof typeof priorityColors]}>
-                    {ticket.priority}
+                    {t(`priority.${ticket.priority}`)}
                   </Badge>
                   <Badge className={categoryColors[ticket.category as keyof typeof categoryColors]}>
-                    {ticket.category}
+                    {t(`category.${ticket.category}`)}
                   </Badge>
                 </div>
                 <p className="text-muted-foreground line-clamp-2 mb-3">
@@ -116,16 +118,16 @@ export function MyTicketList({ tickets }: MyTicketListProps) {
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    Created {formatDate(ticket.createdAt)}
+                    {t("created")} {formatDate(ticket.createdAt)}
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
-                    Updated {formatDate(ticket.updatedAt)}
+                    {t("updated")} {formatDate(ticket.updatedAt)}
                   </div>
                   {ticket.assignedTo && (
                     <div className="flex items-center gap-1">
                       <User className="h-4 w-4" />
-                      Assigned to {ticket.assignedTo.name}
+                      {t("assignedTo")} {ticket.assignedTo.name}
                     </div>
                   )}
                 </div>
@@ -134,7 +136,7 @@ export function MyTicketList({ tickets }: MyTicketListProps) {
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" asChild>
                   <Link href={getTicketDetailUrl(ticket._id)}>
-                    View Details
+                    {t("viewDetails")}
                   </Link>
                 </Button>
               </div>

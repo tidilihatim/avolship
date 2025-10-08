@@ -1,12 +1,13 @@
 import React from 'react';
+import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Truck, 
-  MapPin, 
-  Clock, 
+import {
+  Truck,
+  MapPin,
+  Clock,
   Package,
   DollarSign,
   AlertCircle,
@@ -32,6 +33,8 @@ import { DeliveryDashboardClient } from '@/components/delivery/dashboard/deliver
 
 const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ startDate?: string; endDate?: string }> }) => {
   const { startDate, endDate } = await searchParams;
+  const t = await getTranslations('deliveryDashboard');
+
   // Fetch data for the dashboard
   const [
     statsResult,
@@ -67,9 +70,9 @@ const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ sta
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Delivery Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Track your deliveries, earnings, and performance metrics
+            {t('description')}
           </p>
         </div>
       </div>
@@ -79,7 +82,7 @@ const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ sta
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {errorMessage || 'Some dashboard data failed to load'}
+            {errorMessage || t('errorMessage')}
           </AlertDescription>
         </Alert>
       )}
@@ -109,7 +112,7 @@ const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ sta
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Truck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              Active Deliveries
+              {t('activeDeliveries.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -119,9 +122,9 @@ const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ sta
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold">{delivery.customerName}</span>
-                      <Badge 
+                      <Badge
                         variant={
-                          delivery.status === 'out_for_delivery' ? 'default' : 
+                          delivery.status === 'out_for_delivery' ? 'default' :
                           delivery.status === 'in_transit' ? 'secondary' : 'outline'
                         }
                         className="text-xs"
@@ -130,36 +133,36 @@ const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ sta
                       </Badge>
                       {delivery.isOverdue && (
                         <Badge variant="destructive" className="text-xs">
-                          OVERDUE
+                          {t('activeDeliveries.overdue')}
                         </Badge>
                       )}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Order: {delivery.orderId} • ${delivery.totalPrice}
+                      {t('activeDeliveries.order')} {delivery.orderId} • ${delivery.totalPrice}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       📍 {delivery.deliveryAddress}
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">
-                      Fee: ${delivery.deliveryFee} • Commission: ${delivery.commission}
+                      {t('activeDeliveries.fee')} ${delivery.deliveryFee} • {t('activeDeliveries.commission')} ${delivery.commission}
                     </div>
                   </div>
                 </div>
               ))}
-              
+
               {activeDeliveries?.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   <Package className="w-12 h-12 mx-auto mb-2 text-green-500" />
-                  <p>No active deliveries</p>
-                  <p className="text-xs mt-1">Check back for new assignments</p>
+                  <p>{t('activeDeliveries.noActiveDeliveries')}</p>
+                  <p className="text-xs mt-1">{t('activeDeliveries.checkBackMessage')}</p>
                 </div>
               )}
-              
+
               {activeDeliveries && activeDeliveries?.length > 4 && (
                 <div className="text-center pt-4">
                   <Button variant="outline" asChild>
                     <Link href="/dashboard/delivery/orders">
-                      View All Active ({activeDeliveries?.length})
+                      {t('activeDeliveries.viewAllActive')} ({activeDeliveries?.length})
                     </Link>
                   </Button>
                 </div>
@@ -173,7 +176,7 @@ const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ sta
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5" />
-              Recent Deliveries
+              {t('recentDeliveries.title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -181,7 +184,7 @@ const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ sta
               {recentDeliveries?.map((delivery: any, index: number) => (
                 <div key={index} className="flex items-start gap-3 text-sm">
                   <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                    delivery.status === 'delivered' ? 'bg-green-500' : 
+                    delivery.status === 'delivered' ? 'bg-green-500' :
                     delivery.status === 'delivery_failed' ? 'bg-red-500' :
                     delivery.status === 'in_transit' ? 'bg-blue-500' : 'bg-orange-500'
                   }`} />
@@ -190,25 +193,25 @@ const DeliveryDashboard = async ({ searchParams }: { searchParams: Promise<{ sta
                     <div className="text-xs text-muted-foreground">{delivery.description}</div>
                     {delivery.trackingNumber && (
                       <div className="text-xs text-muted-foreground">
-                        Tracking: {delivery.trackingNumber}
+                        {t('recentDeliveries.tracking')} {delivery.trackingNumber}
                       </div>
                     )}
                     <div className="text-xs text-muted-foreground">
-                      {new Date(delivery.date).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric', 
-                        hour: '2-digit', 
+                      {new Date(delivery.date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
                         minute: '2-digit'
                       })}
                     </div>
                   </div>
                 </div>
               ))}
-              
+
               {recentDeliveries?.length === 0 && (
                 <div className="text-center py-6 text-muted-foreground">
                   <Timer className="w-8 h-8 mx-auto mb-2" />
-                  <p>No recent deliveries</p>
+                  <p>{t('recentDeliveries.noRecentDeliveries')}</p>
                 </div>
               )}
             </div>

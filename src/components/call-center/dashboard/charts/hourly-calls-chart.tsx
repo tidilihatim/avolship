@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
@@ -32,17 +33,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function HourlyCallsChart({ data }: HourlyCallsChartProps) {
+  const t = useTranslations('callCenterDashboard.charts.hourlyActivity');
+
   if (!data || data.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Hourly Call Activity</CardTitle>
-          <CardDescription>No hourly call data available</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No calls recorded today</p>
-            <p className="text-xs mt-1">Hourly activity will appear here</p>
+            <p className="text-sm">{t('noCallsToday')}</p>
+            <p className="text-xs mt-1">{t('dataWillAppear')}</p>
           </div>
         </CardContent>
       </Card>
@@ -55,9 +58,9 @@ export function HourlyCallsChart({ data }: HourlyCallsChartProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Hourly Call Activity</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          {totalCalls} total calls, {totalConfirmed} confirmed today
+          {totalCalls} {t('totalCalls')}, {totalConfirmed} {t('confirmedToday')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -84,10 +87,10 @@ export function HourlyCallsChart({ data }: HourlyCallsChartProps) {
               content={
                 <ChartTooltipContent
                   formatter={(value, name) => [
-                    `${value} calls`,
-                    name === 'calls' ? 'Total Calls' : 'Confirmed'
+                    `${value} ${t('callsUnit')}`,
+                    name === 'calls' ? t('totalCallsLabel') : t('confirmedLabel')
                   ]}
-                  labelFormatter={(label) => `Time: ${label}`}
+                  labelFormatter={(label) => `${t('time')} ${label}`}
                 />
               }
             />

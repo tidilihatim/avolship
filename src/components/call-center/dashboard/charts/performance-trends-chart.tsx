@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
@@ -41,17 +42,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function PerformanceTrendsChart({ data }: PerformanceTrendsChartProps) {
+  const t = useTranslations('callCenterDashboard.charts.performanceTrends');
+
   if (!data || data.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Performance Trends</CardTitle>
-          <CardDescription>No performance data available</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No performance data available</p>
-            <p className="text-xs mt-1">Trends will appear as you make calls</p>
+            <p className="text-sm">{t('noData')}</p>
+            <p className="text-xs mt-1">{t('dataWillAppear')}</p>
           </div>
         </CardContent>
       </Card>
@@ -61,23 +64,23 @@ export function PerformanceTrendsChart({ data }: PerformanceTrendsChartProps) {
   // Format dates for display
   const chartData = data.map(item => ({
     ...item,
-    formattedDate: new Date(item.date).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
+    formattedDate: new Date(item.date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
     })
   }));
 
   const totalCalls = data.reduce((sum, item) => sum + item.calls, 0);
   const totalAnswered = data.reduce((sum, item) => sum + item.answered, 0);
-  const avgSuccessRate = data.length > 0 ? 
+  const avgSuccessRate = data.length > 0 ?
     Math.round(data.reduce((sum, item) => sum + item.successRate, 0) / data.length) : 0;
 
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Performance Trends</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          {totalCalls} calls, {totalAnswered} answered ({avgSuccessRate}% avg success rate)
+          {totalCalls} {t('calls')}, {totalAnswered} {t('answered')} ({avgSuccessRate}% {t('avgSuccessRate')})
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -108,10 +111,10 @@ export function PerformanceTrendsChart({ data }: PerformanceTrendsChartProps) {
                 <ChartTooltipContent
                   formatter={(value, name) => [
                     `${value}`,
-                    name === 'calls' ? 'Total Calls' : 
-                    name === 'answered' ? 'Answered' : 'Confirmed'
+                    name === 'calls' ? t('totalCallsLabel') :
+                    name === 'answered' ? t('answeredLabel') : t('confirmedLabel')
                   ]}
-                  labelFormatter={(label) => `Date: ${label}`}
+                  labelFormatter={(label) => `${t('date')} ${label}`}
                 />
               }
             />
