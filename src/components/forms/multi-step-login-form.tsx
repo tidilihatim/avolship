@@ -22,6 +22,7 @@ import {
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { checkUserEmail, send2FACode, verify2FACode, resend2FACode } from '@/app/actions/auth-verification';
+import ForgotPasswordForm from './forgot-password-form';
 
 enum LoginStep {
   EMAIL = 'email',
@@ -40,6 +41,7 @@ const MultiStepLoginForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   // User info
   const [userName, setUserName] = useState<string>('');
@@ -333,6 +335,16 @@ const MultiStepLoginForm: React.FC = () => {
                   </>
                 )}
               </Button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-[#1c2d51] hover:text-[#f37922] dark:text-[#f37922] dark:hover:text-[#e3e438] font-medium transition-colors"
+                >
+                  {t('password.forgotPassword') || 'Forgot Password?'}
+                </button>
+              </div>
             </form>
           </motion.div>
         );
@@ -507,13 +519,22 @@ const MultiStepLoginForm: React.FC = () => {
 
             <form onSubmit={handlePasswordSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-1.5"
-                >
-                  <Lock className="h-4 w-4" />
-                  {t('password.label')}
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label
+                    htmlFor="password"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-1.5"
+                  >
+                    <Lock className="h-4 w-4" />
+                    {t('password.label')}
+                  </Label>
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-sm text-[#1c2d51] hover:text-[#f37922] dark:text-[#f37922] dark:hover:text-[#e3e438] font-medium transition-colors"
+                  >
+                    {t('password.forgotPassword') || 'Forgot Password?'}
+                  </button>
+                </div>
                 <Input
                   type="password"
                   id="password"
@@ -611,20 +632,35 @@ const MultiStepLoginForm: React.FC = () => {
         )}
 
         <AnimatePresence mode="wait">
-          {renderStepContent()}
+          {showForgotPassword ? (
+            <ForgotPasswordForm
+              onBackToLogin={() => setShowForgotPassword(false)}
+              onSuccess={() => {
+                setShowForgotPassword(false);
+                setCurrentStep(LoginStep.EMAIL);
+                setEmail('');
+                setPassword('');
+                setError(null);
+              }}
+            />
+          ) : (
+            renderStepContent()
+          )}
         </AnimatePresence>
 
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            {t('noAccount')}
-            <a
-              href="/auth/register"
-              className="ml-1 font-semibold text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-            >
-              {t('register')}
-            </a>
-          </p>
-        </div>
+        {!showForgotPassword && (
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              {t('noAccount')}
+              <a
+                href="/auth/register"
+                className="ml-1 font-semibold text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+              >
+                {t('register')}
+              </a>
+            </p>
+          </div>
+        )}
       </motion.div>
     </div>
   );
