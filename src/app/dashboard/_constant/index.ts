@@ -10,7 +10,8 @@ import {
   Trophy,
   Coins,
   Receipt,
-  Key
+  Key,
+  Ticket
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator' | 'super_admin';
@@ -91,6 +92,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.contacts",
       href: "/dashboard/admin/contacts",
       icon: MessageCircle
+    },
+    {
+      name:"navigation.tickets",
+      href:"/dashboard/admin/tickets",
+      icon:Ticket
     }
   ],
   seller: [

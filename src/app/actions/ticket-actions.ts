@@ -119,7 +119,7 @@ export async function getAllTickets() {
 
   const user = session.user as any;
   const role = await getLoginUserRole()
-  if (role!==UserRole.SUPPORT) {
+  if (role!==UserRole.SUPPORT && role!==UserRole.ADMIN) {
     throw new Error("Access denied");
   }
 

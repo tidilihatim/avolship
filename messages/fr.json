@@ -1690,6 +1690,7 @@
     }
   },
   "navigation": {
+    "tickets":"Billets",
     "api":"API",
     "overview": "Aperçu",
     "users": "Utilisateurs",

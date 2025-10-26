@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Calendar, Clock, MessageCircle, User, Search, Filter } from "lucide-react";
 import Link from "next/link";
+import { UserRole } from "@/app/dashboard/_constant/user";
 
 interface TicketUser {
   _id: string;
@@ -38,6 +39,7 @@ interface Ticket {
 
 interface TicketListProps {
   tickets: Ticket[];
+  userRole?:string
 }
 
 const statusColors = {
@@ -63,7 +65,7 @@ const categoryColors = {
   general: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
 };
 
-export function TicketList({ tickets }: TicketListProps) {
+export function TicketList({ tickets,userRole=UserRole.SUPPORT }: TicketListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
@@ -253,7 +255,7 @@ export function TicketList({ tickets }: TicketListProps) {
               
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" asChild>
-                  <Link href={`/dashboard/support/tickets/${ticket._id}`}>
+                  <Link href={`/dashboard/${userRole}/tickets/${ticket._id}`}>
                     View & Reply
                   </Link>
                 </Button>
