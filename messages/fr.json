@@ -173,6 +173,82 @@
         "urgent": "Urgent",
         "high": "Élevé",
         "normal": "Normal"
+      },
+      "totalCallsMade": {
+        "title": "Total des Appels Effectués",
+        "noData": "Aucune donnée d'appel disponible",
+        "noCallsYet": "Aucun appel effectué",
+        "dataWillAppear": "Les données d'appel apparaîtront ici",
+        "totalCalls": "total des appels",
+        "answered": "répondus",
+        "unreached": "non répondus",
+        "answerRate": "taux de réponse",
+        "totalCallsLabel": "Total des Appels",
+        "answeredLabel": "Répondus",
+        "unreachedLabel": "Non Répondus",
+        "date": "Date:",
+        "time": "Heure:",
+        "callsUnit": "appels",
+        "period": {
+          "today": "Aujourd'hui",
+          "yesterday": "Hier",
+          "thisWeek": "Cette Semaine",
+          "thisMonth": "Ce Mois",
+          "thisYear": "Cette Année",
+          "custom": "Plage Personnalisée"
+        }
+      },
+      "confirmationRate": {
+        "title": "Taux de Confirmation de l'Agent",
+        "noData": "Aucune donnée de confirmation disponible",
+        "noDataYet": "Aucune confirmation encore",
+        "dataWillAppear": "Les données de taux de confirmation apparaîtront ici",
+        "overallRate": "taux global",
+        "confirmed": "confirmés",
+        "confirmationRateLabel": "Taux de Confirmation",
+        "date": "Date:",
+        "time": "Heure:"
+      },
+      "averageCallDuration": {
+        "title": "Durée Moyenne des Appels",
+        "noData": "Aucune donnée de durée d'appel disponible",
+        "noDataYet": "Aucun appel avec durée encore",
+        "dataWillAppear": "Les données de durée moyenne des appels apparaîtront ici",
+        "averageTime": "temps moyen",
+        "totalCalls": "total d'appels",
+        "avgDurationLabel": "Durée Moyenne",
+        "date": "Date:",
+        "time": "Heure:"
+      },
+      "agentPerformanceRanking": {
+        "title": "Classement des Performances des Agents",
+        "noData": "Aucune donnée de performance disponible",
+        "noAgentsYet": "Aucun agent avec commandes encore",
+        "dataWillAppear": "Le classement des performances apparaîtra ici",
+        "yourRank": "Votre rang: #{rank} sur {total} agents",
+        "performanceScore": "Score de Performance",
+        "confirmationRate": "Taux de Confirmation",
+        "deliveryRate": "Taux de Livraison",
+        "orders": "commandes",
+        "totalOrders": "total commandes",
+        "weight": "Poids",
+        "formula": "Formule",
+        "showingTopAgents": "Affichage des {count} meilleurs sur {total} agents"
+      },
+      "followUpCalls": {
+        "title": "Appels de Suivi Nécessaires",
+        "noData": "Aucune donnée d'appels de suivi disponible",
+        "noDataYet": "Aucun appel de suivi encore",
+        "dataWillAppear": "Les données d'appels de suivi apparaîtront ici",
+        "description": "Commandes nécessitant 2+ appels (occupé, injoignable, reporté, sans réponse) - indique la qualité des prospects et la difficulté du processus",
+        "followUpRate": "taux de suivi",
+        "ordersRequiringFollowUp": "commandes nécessitant un suivi",
+        "followUpCallsLabel": "Appels de Suivi",
+        "followUpRateLabel": "Taux de Suivi",
+        "calls": "Appels",
+        "rate": "Taux (%)",
+        "date": "Date:",
+        "time": "Heure:"
       }
     },
     "dateFilter": {
@@ -185,6 +261,7 @@
       "last30Days": "30 Derniers Jours",
       "thisWeek": "Cette Semaine",
       "thisMonth": "Ce Mois",
+      "thisYear": "Cette Année",
       "customRange": "Plage Personnalisée",
       "refresh": "Actualiser",
       "selectCustomRange": "Sélectionner une Plage de Dates Personnalisée",
@@ -1966,6 +2043,7 @@
     }
   },
   "navigation": {
+    "callcenter":"Présentation du fonctionnement du centre d'appels",
     "tickets":"Billets",
     "api":"API",
     "overview": "Aperçu",

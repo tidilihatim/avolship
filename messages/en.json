@@ -173,6 +173,82 @@
         "urgent": "Urgent",
         "high": "High",
         "normal": "Normal"
+      },
+      "totalCallsMade": {
+        "title": "Total Calls Made",
+        "noData": "No call data available",
+        "noCallsYet": "No calls made yet",
+        "dataWillAppear": "Call data will appear here",
+        "totalCalls": "total calls",
+        "answered": "answered",
+        "unreached": "unreached",
+        "answerRate": "answer rate",
+        "totalCallsLabel": "Total Calls",
+        "answeredLabel": "Answered",
+        "unreachedLabel": "Unreached",
+        "date": "Date:",
+        "time": "Time:",
+        "callsUnit": "calls",
+        "period": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "thisWeek": "This Week",
+          "thisMonth": "This Month",
+          "thisYear": "This Year",
+          "custom": "Custom Range"
+        }
+      },
+      "confirmationRate": {
+        "title": "Agent Confirmation Rate",
+        "noData": "No confirmation data available",
+        "noDataYet": "No confirmations yet",
+        "dataWillAppear": "Confirmation rate data will appear here",
+        "overallRate": "overall rate",
+        "confirmed": "confirmed",
+        "confirmationRateLabel": "Confirmation Rate",
+        "date": "Date:",
+        "time": "Time:"
+      },
+      "averageCallDuration": {
+        "title": "Average Call Duration",
+        "noData": "No call duration data available",
+        "noDataYet": "No calls with duration yet",
+        "dataWillAppear": "Average call duration data will appear here",
+        "averageTime": "average time",
+        "totalCalls": "total calls",
+        "avgDurationLabel": "Average Duration",
+        "date": "Date:",
+        "time": "Time:"
+      },
+      "agentPerformanceRanking": {
+        "title": "Agent Performance Ranking",
+        "noData": "No performance data available",
+        "noAgentsYet": "No agents with orders yet",
+        "dataWillAppear": "Performance ranking will appear here",
+        "yourRank": "Your rank: #{rank} out of {total} agents",
+        "performanceScore": "Performance Score",
+        "confirmationRate": "Confirmation Rate",
+        "deliveryRate": "Delivery Rate",
+        "orders": "orders",
+        "totalOrders": "total orders",
+        "weight": "Weight",
+        "formula": "Formula",
+        "showingTopAgents": "Showing top {count} of {total} agents"
+      },
+      "followUpCalls": {
+        "title": "Follow-up Calls Required",
+        "noData": "No follow-up calls data available",
+        "noDataYet": "No follow-up calls yet",
+        "dataWillAppear": "Follow-up calls data will appear here",
+        "description": "Orders requiring 2+ calls (busy, unreachable, postponed, no answer) - indicates lead quality and process difficulty",
+        "followUpRate": "follow-up rate",
+        "ordersRequiringFollowUp": "orders requiring follow-up",
+        "followUpCallsLabel": "Follow-up Calls",
+        "followUpRateLabel": "Follow-up Rate",
+        "calls": "Calls",
+        "rate": "Rate (%)",
+        "date": "Date:",
+        "time": "Time:"
       }
     },
     "dateFilter": {
@@ -185,6 +261,7 @@
       "last30Days": "Last 30 Days",
       "thisWeek": "This Week",
       "thisMonth": "This Month",
+      "thisYear": "This Year",
       "customRange": "Custom Range",
       "refresh": "Refresh",
       "selectCustomRange": "Select Custom Date Range",
@@ -1606,6 +1683,7 @@
     }
   },
   "navigation": {
+    "callcenter":"Call center operation overview",
     "api":"API",
     "overview": "Overview",
     "users": "Users",

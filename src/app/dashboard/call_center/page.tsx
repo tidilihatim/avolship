@@ -27,6 +27,11 @@ import { CallOutcomeChart } from '@/components/call-center/dashboard/charts/call
 import { HourlyCallsChart } from '@/components/call-center/dashboard/charts/hourly-calls-chart'
 import { PerformanceTrendsChart } from '@/components/call-center/dashboard/charts/performance-trends-chart'
 import { PriorityDistributionChart } from '@/components/call-center/dashboard/charts/priority-distribution-chart'
+import { TotalCallsMadeWrapper } from '@/components/call-center/dashboard/charts/total-calls-made-wrapper'
+import { ConfirmationRateWrapper } from '@/components/call-center/dashboard/charts/confirmation-rate-wrapper'
+import { AverageCallDurationWrapper } from '@/components/call-center/dashboard/charts/average-call-duration-wrapper'
+import { AgentPerformanceRankingWrapper } from '@/components/call-center/dashboard/charts/agent-performance-ranking-wrapper'
+import { FollowUpCallsWrapper } from '@/components/call-center/dashboard/charts/follow-up-calls-wrapper'
 
 const CallCenterDashboard = async ({ searchParams }: { searchParams: Promise<{ startDate?: string; endDate?: string }> }) => {
   const { startDate, endDate } = await searchParams
@@ -186,11 +191,26 @@ const CallCenterDashboard = async ({ searchParams }: { searchParams: Promise<{ s
 
       {/* Charts Section */}
       <div className="space-y-6">
-        {/* Top Charts Row */}
+        {/* Agent Performance Ranking - Full Width */}
+        <AgentPerformanceRankingWrapper startDate={startDate} endDate={endDate} />
+
+        {/* Top Row - Total Calls & Confirmation Rate */}
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 xl:grid-cols-2">
+          <TotalCallsMadeWrapper startDate={startDate} endDate={endDate} />
+          <ConfirmationRateWrapper startDate={startDate} endDate={endDate} />
+        </div>
+
+        {/* Second Row - Call Outcomes & Priority Distribution */}
         <div className="grid gap-4 sm:gap-6 grid-cols-1 xl:grid-cols-2">
           <CallOutcomeChart data={callOutcomes.data} total={callOutcomes.total} />
           <PriorityDistributionChart data={priorityDistribution.data} total={priorityDistribution.total} />
         </div>
+
+        {/* Third Row - Average Call Duration */}
+        <AverageCallDurationWrapper startDate={startDate} endDate={endDate} />
+
+        {/* Fourth Row - Follow-up Calls Required */}
+        <FollowUpCallsWrapper startDate={startDate} endDate={endDate} />
 
         {/* Performance Trends - Full Width */}
         <PerformanceTrendsChart data={performanceTrends} />

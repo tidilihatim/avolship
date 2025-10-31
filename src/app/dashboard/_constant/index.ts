@@ -11,7 +11,8 @@ import {
   Coins,
   Receipt,
   Key,
-  Ticket
+  Ticket,
+  ChartArea
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator' | 'super_admin';
@@ -42,6 +43,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.overview",
       href: "/dashboard/admin",
       icon: LayoutDashboard,
+    },
+    {
+      name:"navigation.callcenter",
+      href:"/dashboard/admin/call_center",
+      icon:ChartArea
     },
     {
       name: "navigation.users",

@@ -74,6 +74,12 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
         endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
         endDate.setHours(23, 59, 59, 999)
         break
+      case 'thisyear':
+        startDate = new Date(now.getFullYear(), 0, 1)
+        startDate.setHours(0, 0, 0, 0)
+        endDate = new Date(now.getFullYear(), 11, 31)
+        endDate.setHours(23, 59, 59, 999)
+        break
       default:
         startDate = new Date(now)
         startDate.setHours(0, 0, 0, 0)
@@ -151,6 +157,7 @@ export const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
                 <SelectItem value="last30days">{t('last30Days')}</SelectItem>
                 <SelectItem value="thisweek">{t('thisWeek')}</SelectItem>
                 <SelectItem value="thismonth">{t('thisMonth')}</SelectItem>
+                <SelectItem value="thisyear">{t('thisYear')}</SelectItem>
                 <SelectItem value="custom">{t('customRange')}</SelectItem>
               </SelectContent>
             </Select>
