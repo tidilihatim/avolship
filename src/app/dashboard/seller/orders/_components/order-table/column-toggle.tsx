@@ -24,6 +24,7 @@ export interface ColumnVisibility {
   assignedRider: boolean;
   products: boolean;
   totalPrice: boolean;
+  callCenterCommission: boolean;
   status: boolean;
   callAttempts: boolean;
   orderDate: boolean;
@@ -46,6 +47,7 @@ const DEFAULT_COLUMN_VISIBILITY: ColumnVisibility = {
   assignedRider: true,
   products: true,
   totalPrice: true,
+  callCenterCommission: true,
   status: true,
   callAttempts: true,
   orderDate: true,
@@ -68,6 +70,7 @@ export default function ColumnToggle({
     { key: 'assignedRider', label: 'Assigned Rider', alwaysVisible: false },
     { key: 'products', label: t("orders.fields.products"), alwaysVisible: false },
     { key: 'totalPrice', label: t("orders.fields.totalPrice"), alwaysVisible: false },
+    { key: 'callCenterCommission', label: t("orders.fields.callCenterCommission"), alwaysVisible: false, adminOnly: true },
     { key: 'status', label: t("orders.fields.status"), alwaysVisible: false },
     { key: 'callAttempts', label: t("orders.fields.callAttempts"), alwaysVisible: false },
     { key: 'orderDate', label: t("orders.fields.orderDate"), alwaysVisible: false },

@@ -1741,6 +1741,10 @@
         "title": "Configuration des Commissions",
         "description": "Configurer les règles de commission et les taux pour le personnel de livraison"
       },
+      "callCenterCommission": {
+        "title": "Configuration des Commissions du Centre d'Appels",
+        "description": "Configurer les paliers de commission quotidiens pour les agents du centre d'appels basés sur les livraisons"
+      },
       "tracking": {
         "title": "Paramètres de Suivi de Localisation",
         "description": "Configurer la visibilité du suivi de localisation pour différents rôles d'utilisateurs"
@@ -1875,6 +1879,31 @@
       },
       "addNew": {
         "title": "Ajouter une Nouvelle Règle de Commission"
+      }
+    },
+    "callCenterCommissionRules": {
+      "title": "Règles de Commission des Agents du Centre d'Appels",
+      "description": "Configurer les paliers de commission quotidiens basés sur le nombre de livraisons effectuées par jour par les agents",
+      "labels": {
+        "warehouse": "Entrepôt",
+        "minDeliveries": "Livraisons Min",
+        "maxDeliveries": "Livraisons Max",
+        "commission": "Commission"
+      },
+      "placeholders": {
+        "selectWarehouse": "Sélectionner un entrepôt"
+      },
+      "actions": {
+        "addRule": "Ajouter une Règle"
+      },
+      "addNew": {
+        "title": "Ajouter une Nouvelle Règle de Commission du Centre d'Appels"
+      }
+    },
+    "callCenterCommission": {
+      "enableCommission": {
+        "label": "Activer le Système de Commission du Centre d'Appels",
+        "description": "Activer les paliers de commission quotidiens pour les agents du centre d'appels basés sur les livraisons effectuées par jour"
       }
     },
     "tokens": {
@@ -2155,6 +2184,7 @@
       "deliveryTracking": "Suivi de livraison",
       "products": "Produits",
       "totalPrice": "Prix total",
+      "callCenterCommission": "Commission du Centre d'Appels",
       "status": "Statut",
       "callAttempts": "Tentatives d'appel", 
       "orderDate": "Date de commande",
@@ -2522,6 +2552,11 @@
       "originalPrice": "Original",
       "newPrice": "Nouveau Prix",
       "savingsMessage": "Vous avez économisé {percentage}% sur cette commande"
+    },
+
+    "commission": {
+      "paid": "Payé",
+      "unpaid": "Non payé"
     },
 
     "statusUpdate": {

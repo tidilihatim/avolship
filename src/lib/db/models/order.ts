@@ -118,6 +118,17 @@ export interface DeliveryTracking {
 }
 
 /**
+ * Call center commission tracking interface for agent commissions
+ */
+export interface CallCenterCommission {
+  commission: number; // Commission amount in warehouse currency
+  calculatedAt: Date; // When the commission was calculated
+  isPaid: boolean; // Whether commission has been paid
+  paidAt?: Date; // When commission was paid
+  notes?: string; // Additional notes
+}
+
+/**
  * Discount tracking interface for price adjustments during confirmation
  */
 export interface PriceAdjustment {
@@ -182,7 +193,10 @@ export interface IOrder extends Document {
     longitude?: number;
     address: string;
   };
-  
+
+  // Call Center Commission Tracking
+  callCenterCommission?: CallCenterCommission;
+
   // Timestamps
   orderDate: Date; // For double order detection (same day logic)
   createdAt: Date;
@@ -534,8 +548,30 @@ const OrderSchema = new Schema<IOrder>(
       },
     },
 
-    
-    
+    // Call Center Commission Tracking
+    callCenterCommission: {
+      commission: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+      calculatedAt: {
+        type: Date,
+      },
+      isPaid: {
+        type: Boolean,
+        default: false,
+        index: true, // For querying unpaid commissions
+      },
+      paidAt: {
+        type: Date,
+      },
+      notes: {
+        type: String,
+        trim: true,
+      },
+    },
+
     // Timestamps
     orderDate: {
       type: Date,
@@ -614,6 +650,8 @@ OrderSchema.index({ 'customer.name': 1, 'customer.phoneNumbers': 1, orderDate: 1
 OrderSchema.index({ orderDate: 1, sellerId: 1 });
 OrderSchema.index({ 'deliveryTracking.deliveryGuyId': 1 }); // For delivery guy queries
 OrderSchema.index({ isDeliveryRequired: 1, status: 1 }); // For delivery assignment queries
+OrderSchema.index({ assignedAgent: 1, status: 1, orderDate: -1 }); // For call center agent commission queries
+OrderSchema.index({ 'callCenterCommission.isPaid': 1, assignedAgent: 1 }); // For unpaid commission queries
 
 // Pre-save middleware to auto-generate order ID and tracking number
 OrderSchema.pre('save', async function (next) {

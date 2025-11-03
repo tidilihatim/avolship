@@ -13,6 +13,13 @@ export interface CommissionRule {
   commission: number; // commission amount in warehouse currency
 }
 
+export interface CallCenterCommissionRule {
+  warehouseId: mongoose.Types.ObjectId;
+  minDeliveries: number; // minimum deliveries per day
+  maxDeliveries: number; // maximum deliveries per day
+  commission: number; // commission amount in warehouse currency
+}
+
 export interface ShowLocationTracking {
   seller: boolean;
   call_center: boolean;
@@ -29,6 +36,7 @@ export interface IAppSettings extends Document {
   // Delivery Configuration
   deliveryFeeRules: DeliveryFeeRule[];
   commissionRules: CommissionRule[];
+  callCenterCommissionRules: CallCenterCommissionRule[];
 
   // Delivery System Settings
   autoAssignDelivery: boolean; // Auto-assign orders to nearest delivery guy
@@ -107,7 +115,30 @@ const AppSettingsSchema = new Schema<IAppSettings>(
         min: 0,
       },
     }],
-    
+
+    callCenterCommissionRules: [{
+      warehouseId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Warehouse',
+        required: true,
+      },
+      minDeliveries: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+      maxDeliveries: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+      commission: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+    }],
+
     autoAssignDelivery: {
       type: Boolean,
       default: false,
@@ -202,6 +233,7 @@ AppSettingsSchema.index({ isActive: 1 }, { unique: true, partialFilterExpression
 // Compound indexes for better performance when querying rules by warehouse
 AppSettingsSchema.index({ 'deliveryFeeRules.warehouseId': 1, isActive: 1 });
 AppSettingsSchema.index({ 'commissionRules.warehouseId': 1, isActive: 1 });
+AppSettingsSchema.index({ 'callCenterCommissionRules.warehouseId': 1, isActive: 1 });
 
 // Static method to get active settings
 AppSettingsSchema.statics.getActiveSettings = async function() {
@@ -226,6 +258,11 @@ AppSettingsSchema.statics.getActiveSettings = async function() {
         { warehouseId: defaultWarehouseId, minDeliveries: 5, commission: 10000 },
         { warehouseId: defaultWarehouseId, minDeliveries: 8, commission: 15000 },
         { warehouseId: defaultWarehouseId, minDeliveries: 12, commission: 20000 },
+      ] : [],
+      callCenterCommissionRules: firstWarehouse ? [
+        { warehouseId: defaultWarehouseId, minDeliveries: 1, maxDeliveries: 5, commission: 20000 },
+        { warehouseId: defaultWarehouseId, minDeliveries: 6, maxDeliveries: 10, commission: 40000 },
+        { warehouseId: defaultWarehouseId, minDeliveries: 11, maxDeliveries: 20, commission: 80000 },
       ] : [],
       isActive: true,
       lastUpdatedBy: new mongoose.Types.ObjectId(), // Will be updated when admin saves
@@ -280,6 +317,29 @@ AppSettingsSchema.statics.calculateCommission = async function(deliveriesCount: 
   }
   
   return totalCommission;
+};
+
+// Static method to calculate call center commission based on deliveries per day and warehouse
+AppSettingsSchema.statics.calculateCallCenterCommission = async function(deliveriesPerDay: number, warehouseId: mongoose.Types.ObjectId) {
+  const settings = await (this as any).getActiveSettings();
+
+  if (!settings.enableCommissionSystem) {
+    return 0;
+  }
+
+  // Find rules for the specific warehouse
+  const warehouseRules = settings.callCenterCommissionRules.filter(
+    (rule: CallCenterCommissionRule) => rule.warehouseId.toString() === warehouseId.toString()
+  );
+
+  // Find the matching tier for the deliveries per day
+  for (const rule of warehouseRules) {
+    if (deliveriesPerDay >= rule.minDeliveries && deliveriesPerDay <= rule.maxDeliveries) {
+      return rule.commission;
+    }
+  }
+
+  return 0;
 };
 
 const AppSettings = (mongoose.models?.AppSettings || mongoose.model<IAppSettings, IAppSettingsModel>('AppSettings', AppSettingsSchema)) as IAppSettingsModel;

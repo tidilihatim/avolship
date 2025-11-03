@@ -160,6 +160,14 @@ export interface DeliveryTracking {
   };
 }
 
+export interface CallCenterCommission {
+  commission: number;
+  calculatedAt: Date;
+  isPaid: boolean;
+  paidAt?: Date;
+  notes?: string;
+}
+
 export interface OrderTableData {
   _id: string;
   orderId: string;
@@ -203,6 +211,8 @@ export interface OrderTableData {
   // Delivery tracking information
   deliveryTracking?: DeliveryTracking;
   isDeliveryRequired: boolean;
+  // Call center commission tracking
+  callCenterCommission?: CallCenterCommission;
   // Discount tracking fields
   priceAdjustments?: PriceAdjustment[];
   finalTotalPrice?: number;

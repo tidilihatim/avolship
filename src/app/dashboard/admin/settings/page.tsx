@@ -11,9 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap, Trophy, User } from 'lucide-react';
+import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap, Trophy, User, Headphones } from 'lucide-react';
 import { DeliveryFeeRulesForm } from './_components/delivery-fee-rules-form';
 import { CommissionRulesForm } from './_components/commission-rules-form';
+import { CallCenterCommissionRulesForm } from './_components/call-center-commission-rules-form';
 import { LocationTrackingForm } from './_components/location-tracking-form';
 import { TokenSystemForm } from './_components/token-system-form';
 import { SellerSettingsForm } from '@/components/shared/settings';
@@ -24,6 +25,7 @@ interface AppSettings {
   _id?: string;
   deliveryFeeRules: any[];
   commissionRules: any[];
+  callCenterCommissionRules: any[];
   autoAssignDelivery: boolean;
   maxOrdersPerDeliveryGuy: number;
   showLocationTracking: {
@@ -219,7 +221,7 @@ const AppSettingsPage = () => {
             <Switch
               id="enable-commission"
               checked={settings.enableCommissionSystem}
-              onCheckedChange={(checked) => 
+              onCheckedChange={(checked) =>
                 updateSettings({ enableCommissionSystem: checked })
               }
             />
@@ -230,6 +232,38 @@ const AppSettingsPage = () => {
           <CommissionRulesForm
             rules={settings.commissionRules}
             onRulesChange={(rules) => updateSettings({ commissionRules: rules })}
+          />
+        </div>
+      ) : null
+    },
+    {
+      id: 'callCenterCommission',
+      title: t('sections.callCenterCommission.title'),
+      description: t('sections.callCenterCommission.description'),
+      icon: <Headphones className="w-5 h-5" />,
+      component: settings ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="enable-callcenter-commission">{t('callCenterCommission.enableCommission.label')}</Label>
+              <p className="text-sm text-muted-foreground">
+                {t('callCenterCommission.enableCommission.description')}
+              </p>
+            </div>
+            <Switch
+              id="enable-callcenter-commission"
+              checked={settings.enableCommissionSystem}
+              onCheckedChange={(checked) =>
+                updateSettings({ enableCommissionSystem: checked })
+              }
+            />
+          </div>
+
+          <Separator />
+
+          <CallCenterCommissionRulesForm
+            rules={settings.callCenterCommissionRules}
+            onRulesChange={(rules) => updateSettings({ callCenterCommissionRules: rules })}
           />
         </div>
       ) : null

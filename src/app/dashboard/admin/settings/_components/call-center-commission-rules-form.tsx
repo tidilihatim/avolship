@@ -11,41 +11,49 @@ import { Trash2, Plus } from 'lucide-react';
 import { WarehouseSelector } from './warehouse-selector';
 import { formatPrice } from '@/lib/utils';
 
-interface CommissionRule {
+interface CallCenterCommissionRule {
   warehouseId: string;
   minDeliveries: number;
+  maxDeliveries: number;
   commission: number;
   currency?: string; // For display purposes
 }
 
-interface CommissionRulesFormProps {
-  rules: CommissionRule[];
-  onRulesChange: (rules: CommissionRule[]) => void;
+interface CallCenterCommissionRulesFormProps {
+  rules: CallCenterCommissionRule[];
+  onRulesChange: (rules: CallCenterCommissionRule[]) => void;
 }
 
-export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFormProps) {
-  const t = useTranslations('settings.commissionRules');
-  const [newRule, setNewRule] = useState<Partial<CommissionRule>>({
+export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCenterCommissionRulesFormProps) {
+  const t = useTranslations('settings.callCenterCommissionRules');
+  const [newRule, setNewRule] = useState<Partial<CallCenterCommissionRule>>({
     minDeliveries: 1,
+    maxDeliveries: 5,
     commission: 0,
   });
 
   const addRule = () => {
-    if (!newRule.warehouseId || !newRule.minDeliveries || !newRule.commission) {
+    if (!newRule.warehouseId || !newRule.minDeliveries || !newRule.maxDeliveries || !newRule.commission) {
       return;
     }
 
-    const ruleToAdd: CommissionRule = {
+    if (newRule.minDeliveries >= newRule.maxDeliveries) {
+      return;
+    }
+
+    const ruleToAdd: CallCenterCommissionRule = {
       warehouseId: newRule.warehouseId,
       minDeliveries: newRule.minDeliveries,
+      maxDeliveries: newRule.maxDeliveries,
       commission: newRule.commission,
       currency: newRule.currency,
     };
 
     onRulesChange([...rules, ruleToAdd]);
-    
+
     setNewRule({
       minDeliveries: 1,
+      maxDeliveries: 5,
       commission: 0,
     });
   };
@@ -55,7 +63,7 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
     onRulesChange(updatedRules);
   };
 
-  const updateRule = (index: number, field: keyof CommissionRule, value: any) => {
+  const updateRule = (index: number, field: keyof CallCenterCommissionRule, value: any) => {
     const updatedRules = rules.map((rule, i) =>
       i === index ? { ...rule, [field]: value } : rule
     );
@@ -92,7 +100,7 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
             return (
               <Card key={originalIndex}>
                 <CardContent className="pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                     <div>
                       <Label>{t('labels.warehouse')}</Label>
                       <WarehouseSelector
@@ -110,10 +118,23 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                       <Input
                         id={`min-deliveries-${originalIndex}`}
                         type="number"
-                        min="1"
+                        min="0"
                         value={rule.minDeliveries}
                         onChange={(e) =>
-                          updateRule(originalIndex, 'minDeliveries', parseInt(e.target.value) || 1)
+                          updateRule(originalIndex, 'minDeliveries', parseInt(e.target.value) || 0)
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor={`max-deliveries-${originalIndex}`}>{t('labels.maxDeliveries')}</Label>
+                      <Input
+                        id={`max-deliveries-${originalIndex}`}
+                        type="number"
+                        min="1"
+                        value={rule.maxDeliveries}
+                        onChange={(e) =>
+                          updateRule(originalIndex, 'maxDeliveries', parseInt(e.target.value) || 1)
                         }
                       />
                     </div>
@@ -164,9 +185,9 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
           <CardTitle className="text-sm">{t('addNew.title')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
             <div>
-              <Label>Warehouse</Label>
+              <Label>{t('labels.warehouse')}</Label>
               <WarehouseSelector
                 value={newRule.warehouseId}
                 onValueChange={(warehouseId, currency) => {
@@ -175,23 +196,39 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                 placeholder={t('placeholders.selectWarehouse')}
               />
             </div>
-            
+
             <div>
               <Label htmlFor="new-min-deliveries">{t('labels.minDeliveries')}</Label>
               <Input
                 id="new-min-deliveries"
                 type="number"
-                min="1"
+                min="0"
                 value={newRule.minDeliveries || ''}
-                onChange={(e) => 
-                  setNewRule(prev => ({ 
-                    ...prev, 
-                    minDeliveries: parseInt(e.target.value) || 1 
+                onChange={(e) =>
+                  setNewRule(prev => ({
+                    ...prev,
+                    minDeliveries: parseInt(e.target.value) || 0
                   }))
                 }
               />
             </div>
-            
+
+            <div>
+              <Label htmlFor="new-max-deliveries">{t('labels.maxDeliveries')}</Label>
+              <Input
+                id="new-max-deliveries"
+                type="number"
+                min="1"
+                value={newRule.maxDeliveries || ''}
+                onChange={(e) =>
+                  setNewRule(prev => ({
+                    ...prev,
+                    maxDeliveries: parseInt(e.target.value) || 1
+                  }))
+                }
+              />
+            </div>
+
             <div>
               <Label htmlFor="new-commission">{t('labels.commission')}</Label>
               <div className="space-y-1">
@@ -201,10 +238,10 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                   min="0"
                   step="0.01"
                   value={newRule.commission || ''}
-                  onChange={(e) => 
-                    setNewRule(prev => ({ 
-                      ...prev, 
-                      commission: parseFloat(e.target.value) || 0 
+                  onChange={(e) =>
+                    setNewRule(prev => ({
+                      ...prev,
+                      commission: parseFloat(e.target.value) || 0
                     }))
                   }
                 />
@@ -215,12 +252,12 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                 )}
               </div>
             </div>
-            
+
             <div>
-              <Button 
+              <Button
                 onClick={addRule}
                 className="w-full"
-                disabled={!newRule.warehouseId || !newRule.minDeliveries || !newRule.commission}
+                disabled={!newRule.warehouseId || !newRule.minDeliveries || !newRule.maxDeliveries || !newRule.commission || (newRule.minDeliveries >= newRule.maxDeliveries)}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 {t('actions.addRule')}

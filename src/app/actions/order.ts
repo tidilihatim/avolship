@@ -110,6 +110,7 @@ export const getOrderById = withDbConnection(async (orderId: string) => {
       } : null,
       callAttempts: order.callAttempts || [],
       doubleOrderReferences: order.doubleOrderReferences || [],
+      callCenterCommission: order.callCenterCommission,
       statusHistory: statusHistory || [], // Add status history to the response
     };
 
@@ -536,6 +537,8 @@ export const getOrders = withDbConnection(async (
           name: assignedRiderData.name,
           email: assignedRiderData.email,
         } : undefined,
+        // Include call center commission tracking
+        callCenterCommission: order.callCenterCommission,
         // Include discount tracking fields
         priceAdjustments: order.priceAdjustments || [],
         finalTotalPrice: order.finalTotalPrice,

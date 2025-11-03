@@ -57,6 +57,11 @@ export default function OrderTableHeader({
         {columnVisibility.totalPrice && (
           <TableHead>{t("orders.fields.totalPrice")}</TableHead>
         )}
+        {isAdminOrModerator && columnVisibility.callCenterCommission && (
+          <TableHead className="table-cell">
+            {t("orders.fields.callCenterCommission")}
+          </TableHead>
+        )}
         {columnVisibility.status && (
           <TableHead>{t("orders.fields.status")}</TableHead>
         )}

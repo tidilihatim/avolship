@@ -1381,6 +1381,10 @@
         "title": "Commission Configuration",
         "description": "Configure commission rules and rates for delivery personnel"
       },
+      "callCenterCommission": {
+        "title": "Call Center Commission Configuration",
+        "description": "Configure daily commission tiers for call center agents based on deliveries"
+      },
       "tracking": {
         "title": "Location Tracking Settings",
         "description": "Configure location tracking visibility for different user roles"
@@ -1515,6 +1519,31 @@
       },
       "addNew": {
         "title": "Add New Commission Rule"
+      }
+    },
+    "callCenterCommissionRules": {
+      "title": "Call Center Agent Commission Rules",
+      "description": "Configure daily commission tiers based on number of deliveries agents make per day",
+      "labels": {
+        "warehouse": "Warehouse",
+        "minDeliveries": "Min Deliveries",
+        "maxDeliveries": "Max Deliveries",
+        "commission": "Commission"
+      },
+      "placeholders": {
+        "selectWarehouse": "Select warehouse"
+      },
+      "actions": {
+        "addRule": "Add Rule"
+      },
+      "addNew": {
+        "title": "Add New Call Center Commission Rule"
+      }
+    },
+    "callCenterCommission": {
+      "enableCommission": {
+        "label": "Enable Call Center Commission System",
+        "description": "Enable daily commission tiers for call center agents based on deliveries completed per day"
       }
     },
     "tokens": {
@@ -2180,8 +2209,9 @@
       "deliveryTracking": "Delivery Tracking",
       "products": "Products",
       "totalPrice": "Total Price",
+      "callCenterCommission": "Call Center Commission",
       "status": "Status",
-      "callAttempts": "Call Attempts", 
+      "callAttempts": "Call Attempts",
       "orderDate": "Order Date",
       "customerName": "Customer Name",
       "phoneNumbers": "Phone Numbers",
@@ -2556,6 +2586,11 @@
       "originalPrice": "Original",
       "newPrice": "New Price",
       "savingsMessage": "You saved {percentage}% on this order"
+    },
+
+    "commission": {
+      "paid": "Paid",
+      "unpaid": "Unpaid"
     },
 
     "statusUpdate": {

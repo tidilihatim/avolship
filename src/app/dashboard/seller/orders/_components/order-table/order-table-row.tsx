@@ -850,6 +850,18 @@ export default function OrderTableRow({
         </TableCell>
       )}
 
+      {isAdminOrModerator && columnVisibility.callCenterCommission && (
+        <TableCell>
+          {order.callCenterCommission && order.callCenterCommission.commission > 0 ? (
+            <div className="font-medium">
+              {formatPrice(order.callCenterCommission.commission, order.warehouseId)}
+            </div>
+          ) : (
+            <div className="text-muted-foreground text-sm">—</div>
+          )}
+        </TableCell>
+      )}
+
       {columnVisibility.status && (
         <TableCell>
         <div className="space-y-2">
