@@ -2072,6 +2072,8 @@
     }
   },
   "navigation": {
+    "delivery":"Aperçu de la livraison",
+    "performanceTracking":"Suivi des performances",
     "callcenter":"Présentation du fonctionnement du centre d'appels",
     "tickets":"Billets",
     "api":"API",
@@ -4962,6 +4964,52 @@
       "updateFailed": "Échec de la mise à jour du statut",
       "noteFailed": "Échec de l'ajout de la note",
       "contactNotFound": "Contact non trouvé"
+    }
+  },
+  "adminDeliveryDashboard": {
+    "riderFilter": {
+      "title": "Filtrer par Livreur",
+      "selectRider": "Sélectionner un livreur",
+      "allRiders": "Tous les Livreurs",
+      "showingAll": "Affichage de tous les {count} livreurs",
+      "showingOne": "Affichage des livraisons pour {name}"
+    },
+    "activeDeliveries": {
+      "title": "Commandes en Cours de Livraison",
+      "ordersOutForDelivery": "Commandes en cours de livraison en ce moment",
+      "loading": "Chargement des livraisons..."
+    },
+    "charts": {
+      "averageDeliveryTime": {
+        "title": "Temps de Livraison Moyen",
+        "description": "Temps de confirmation de commande à la livraison",
+        "daily": "Quotidien",
+        "monthly": "Mensuel",
+        "yearly": "Annuel",
+        "yAxisLabel": "Heures",
+        "avgTime": "Temps Moyen",
+        "hours": "heures",
+        "noData": "Aucune donnée de livraison disponible pour la période sélectionnée",
+        "totalDeliveries": "Total de {count} livraisons terminées"
+      },
+      "successfulDeliveries": {
+        "title": "Livraisons Réussies (%)",
+        "description": "Pourcentage de livraisons terminées avec succès",
+        "yAxisLabel": "Taux de Réussite (%)",
+        "successRate": "Taux de Réussite",
+        "noData": "Aucune donnée de livraison disponible pour la période sélectionnée",
+        "totalAttempts": "{successful} réussies sur {total} tentatives de livraison au total"
+      },
+      "returnsPerZone": {
+        "title": "Retours par Zone (%)",
+        "description": "Pourcentage de livraisons échouées dans chaque région géographique",
+        "noData": "Aucune donnée de localisation de livraison disponible pour la période sélectionnée",
+        "legend": "Taux d'Échec",
+        "totalZones": "Zones Totales",
+        "totalDeliveries": "Livraisons Totales",
+        "totalFailed": "Total Échoué",
+        "overallFailureRate": "Taux d'Échec Global"
+      }
     }
   }
 }

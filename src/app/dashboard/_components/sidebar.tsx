@@ -8,7 +8,9 @@ import {
   Settings,
   HelpCircle,
   X,
+  ChevronDown,
 } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -19,6 +21,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import Logo from "@/components/ui/global/logo";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -36,8 +43,13 @@ interface SidebarProps {
 interface NavItemProps {
   item: {
     name: string;
-    href: string;
+    href?: string;
     icon: React.ComponentType<{ className?: string }>;
+    children?: Array<{
+      name: string;
+      href: string;
+      icon: React.ComponentType<{ className?: string }>;
+    }>;
   };
   collapsed: boolean;
   isActive: boolean;
@@ -46,9 +58,152 @@ interface NavItemProps {
 
 function NavItem({ item, collapsed, isActive, onClick }: NavItemProps) {
   const t = useTranslations();
+  const pathname = usePathname();
+  const [isExpanded, setIsExpanded] = useState(false);
 
+  // Check if any child is active
+  const hasActiveChild = item.children?.some(
+    (child) => pathname === child.href || pathname.startsWith(child.href + "/")
+  );
+
+  // If item has children, render as expandable parent
+  if (item.children && item.children.length > 0) {
+    const parentContent = (
+      <div>
+        <div
+          className={cn(
+            "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative cursor-pointer",
+            hasActiveChild
+              ? "bg-primary/10 text-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent",
+            collapsed && "justify-center px-2"
+          )}
+          onClick={() => !collapsed && setIsExpanded(!isExpanded)}
+        >
+          <item.icon
+            className={cn(
+              "h-5 w-5 transition-colors flex-shrink-0",
+              hasActiveChild
+                ? "text-foreground"
+                : "text-muted-foreground group-hover:text-foreground"
+            )}
+          />
+          {!collapsed && (
+            <>
+              <span className="font-medium text-sm truncate flex-1">{t(item.name)}</span>
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 transition-transform",
+                  isExpanded && "rotate-180"
+                )}
+              />
+            </>
+          )}
+        </div>
+
+        {/* Children */}
+        {!collapsed && isExpanded && (
+          <div className="ml-8 mt-1 space-y-1">
+            {item.children.map((child) => {
+              const isChildActive =
+                pathname === child.href || pathname.startsWith(child.href + "/");
+              return (
+                <Link key={child.name} href={child.href} onClick={onClick}>
+                  <div
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group",
+                      isChildActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                    )}
+                  >
+                    <child.icon
+                      className={cn(
+                        "h-4 w-4 transition-colors flex-shrink-0",
+                        isChildActive
+                          ? "text-primary-foreground"
+                          : "text-muted-foreground group-hover:text-foreground"
+                      )}
+                    />
+                    <span className="font-medium text-sm truncate">
+                      {t(child.name)}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+
+    if (collapsed) {
+      return (
+        <Popover>
+          <PopoverTrigger asChild>
+            <div
+              className={cn(
+                "flex items-center justify-center px-2 py-3 rounded-lg transition-all duration-200 group relative cursor-pointer",
+                hasActiveChild
+                  ? "bg-primary/10 text-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
+            >
+              <item.icon
+                className={cn(
+                  "h-5 w-5 transition-colors flex-shrink-0",
+                  hasActiveChild
+                    ? "text-foreground"
+                    : "text-muted-foreground group-hover:text-foreground"
+                )}
+              />
+            </div>
+          </PopoverTrigger>
+          <PopoverContent side="right" className="ml-2 w-56 p-2" align="start">
+            <div className="space-y-1">
+              <div className="px-3 py-2 font-semibold text-sm">
+                {t(item.name)}
+              </div>
+              {item.children.map((child) => {
+                const isChildActive =
+                  pathname === child.href || pathname.startsWith(child.href + "/");
+                return (
+                  <Link key={child.name} href={child.href} onClick={onClick}>
+                    <div
+                      className={cn(
+                        "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group cursor-pointer",
+                        isChildActive
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                      )}
+                    >
+                      <child.icon
+                        className={cn(
+                          "h-4 w-4 transition-colors flex-shrink-0",
+                          isChildActive
+                            ? "text-primary-foreground"
+                            : "text-muted-foreground group-hover:text-foreground"
+                        )}
+                      />
+                      <span className="font-medium text-sm truncate">
+                        {t(child.name)}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </PopoverContent>
+        </Popover>
+      );
+    }
+
+    return parentContent;
+  }
+
+  // Regular item without children
   const content = (
-    <Link href={item.href} onClick={onClick}>
+    <Link href={item.href!} onClick={onClick}>
       <div
         className={cn(
           "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative",
@@ -132,8 +287,10 @@ export default function Sidebar({
       <ScrollArea className="flex-1 px-4 py-6">
         <nav className="space-y-1">
           {navigation.map((item: any) => {
-            const isActive =
-              pathname === item.href 
+            const isActive = item.href
+              ? pathname === item.href ||
+                (item.href !== `/dashboard/${userType}` && pathname.startsWith(item.href))
+              : false;
 
             return (
               <NavItem
@@ -247,10 +404,11 @@ export default function Sidebar({
               <WarehouseSelector />
             </div>
             {navigation.map((item: any) => {
-              const isActive =
-                pathname === item.href ||
-                (item.href !== `/dashboard/${userType}` &&
-                  pathname.startsWith(item.href));
+              const isActive = item.href
+                ? pathname === item.href ||
+                  (item.href !== `/dashboard/${userType}` &&
+                    pathname.startsWith(item.href))
+                : false;
 
               return (
                 <NavItem

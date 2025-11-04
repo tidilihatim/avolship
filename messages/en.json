@@ -1712,7 +1712,9 @@
     }
   },
   "navigation": {
-    "callcenter":"Call center operation overview",
+    "performanceTracking":"Performance Tracking",
+    "delivery":"Delivery Overview",
+    "callcenter":"Call center overview",
     "api":"API",
     "overview": "Overview",
     "users": "Users",
@@ -4996,6 +4998,52 @@
       "updateFailed": "Failed to update status",
       "noteFailed": "Failed to add note",
       "contactNotFound": "Contact not found"
+    }
+  },
+  "adminDeliveryDashboard": {
+    "riderFilter": {
+      "title": "Filter by Rider",
+      "selectRider": "Select a delivery rider",
+      "allRiders": "All Riders",
+      "showingAll": "Showing all {count} riders",
+      "showingOne": "Showing deliveries for {name}"
+    },
+    "activeDeliveries": {
+      "title": "Orders Out for Delivery",
+      "ordersOutForDelivery": "Orders out for delivery right now",
+      "loading": "Loading deliveries..."
+    },
+    "charts": {
+      "averageDeliveryTime": {
+        "title": "Average Delivery Time",
+        "description": "Time from order confirmation to delivery",
+        "daily": "Daily",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "yAxisLabel": "Hours",
+        "avgTime": "Avg Time",
+        "hours": "hours",
+        "noData": "No delivery data available for the selected period",
+        "totalDeliveries": "Total {count} deliveries completed"
+      },
+      "successfulDeliveries": {
+        "title": "Successful Deliveries (%)",
+        "description": "Percentage of deliveries completed successfully",
+        "yAxisLabel": "Success Rate (%)",
+        "successRate": "Success Rate",
+        "noData": "No delivery data available for the selected period",
+        "totalAttempts": "{successful} successful out of {total} total delivery attempts"
+      },
+      "returnsPerZone": {
+        "title": "Returns per Zone (%)",
+        "description": "Percentage of failed deliveries in each geographic region",
+        "noData": "No delivery location data available for the selected period",
+        "legend": "Failure Rate",
+        "totalZones": "Total Zones",
+        "totalDeliveries": "Total Deliveries",
+        "totalFailed": "Total Failed",
+        "overallFailureRate": "Overall Failure Rate"
+      }
     }
   }
 }

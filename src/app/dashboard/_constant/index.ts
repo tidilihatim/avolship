@@ -12,7 +12,8 @@ import {
   Receipt,
   Key,
   Ticket,
-  ChartArea
+  ChartArea,
+  ChartBar
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator' | 'super_admin';
@@ -20,8 +21,9 @@ type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call
 // Define the structure of a navigation item
 interface NavigationItem {
   name: string;
-  href: string;
+  href?: string;
   icon: React.ElementType;
+  children?: NavigationItem[];
 }
 
 // Map navigation items to each user type
@@ -45,9 +47,20 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: LayoutDashboard,
     },
     {
-      name:"navigation.callcenter",
-      href:"/dashboard/admin/call_center",
-      icon:ChartArea
+      name: "navigation.performanceTracking",
+      icon: BarChart3,
+      children: [
+        {
+          name: "navigation.callcenter",
+          href: "/dashboard/admin/call_center",
+          icon: ChartArea
+        },
+        {
+          name: "navigation.delivery",
+          href: "/dashboard/admin/delivery",
+          icon: ChartBar
+        }
+      ]
     },
     {
       name: "navigation.users",
