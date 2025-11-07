@@ -13,7 +13,9 @@ import {
   Key,
   Ticket,
   ChartArea,
-  ChartBar
+  ChartBar,
+  DollarSignIcon,
+  User2
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator' | 'super_admin';
@@ -59,7 +61,17 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
           name: "navigation.delivery",
           href: "/dashboard/admin/delivery",
           icon: ChartBar
-        }
+        },
+        {
+          name:"navigation.finance",
+          href:"/dashboard/admin/finance",
+          icon:DollarSignIcon
+        },
+        {
+          name:"navigation.seller",
+          href:"/dashboard/admin/seller-analytics",
+          icon:User2
+        },
       ]
     },
     {

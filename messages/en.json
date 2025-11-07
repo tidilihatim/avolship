@@ -1712,6 +1712,8 @@
     }
   },
   "navigation": {
+    "seller":"Seller Analytics",
+    "finance":"Finance",
     "performanceTracking":"Performance Tracking",
     "delivery":"Delivery Overview",
     "callcenter":"Call center overview",
@@ -5043,6 +5045,225 @@
         "totalDeliveries": "Total Deliveries",
         "totalFailed": "Total Failed",
         "overallFailureRate": "Overall Failure Rate"
+      }
+    }
+  },
+  "adminFinanceDashboard": {
+    "title": "Finance Dashboard",
+    "description": "Track financial metrics and COD collections",
+    "warehouseFilter": {
+      "title": "Select Warehouse",
+      "selectWarehouse": "Choose a warehouse",
+      "selectedWarehouse": "{name} ({currency})"
+    },
+    "charts": {
+      "totalCODCollected": {
+        "title": "Total COD Collected",
+        "description": "Cash collected from delivered orders",
+        "yAxisLabel": "Amount",
+        "amount": "Amount",
+        "noData": "No COD collection data available for the selected period",
+        "totalCollected": "Total Collected in Period"
+      },
+      "averageOrderValue": {
+        "title": "Average Order Value (AOV)",
+        "description": "Average revenue per order",
+        "yAxisLabel": "AOV",
+        "aov": "AOV",
+        "noData": "No order data available for the selected period",
+        "overallAOV": "Overall AOV in Period",
+        "totalOrders": "Total {count} orders"
+      },
+      "payoutsToSellers": {
+        "title": "Payouts to Sellers",
+        "description": "Total amount paid out to merchants after fees",
+        "yAxisLabel": "Payout Amount",
+        "payout": "Payout",
+        "noData": "No payout data available for the selected period",
+        "totalPayouts": "Total Payouts in Period"
+      }
+    }
+  },
+  "adminSellerAnalytics": {
+    "title": "Seller Analytics",
+    "description": "Track seller activity and engagement metrics",
+    "warehouseFilter": {
+      "title": "Select Warehouse",
+      "selectWarehouse": "Choose a warehouse",
+      "selectedWarehouse": "Viewing analytics for {name}"
+    },
+    "newSellersCard": {
+      "title": "New Sellers This Week",
+      "description": "Sellers who placed their first order this week",
+      "newSellers": "{count} new seller(s)",
+      "sellersList": "New Sellers",
+      "noNewSellers": "No new sellers this week"
+    },
+    "charts": {
+      "activeSellers": {
+        "title": "Active Sellers",
+        "description": "Number of sellers with at least 1 expedition per period",
+        "yAxisLabel": "Number of Sellers",
+        "sellers": "sellers",
+        "activeSellers": "Active Sellers",
+        "noData": "No active seller data available for the selected period",
+        "peakSellers": "Peak Sellers",
+        "avgSellers": "Avg. Sellers",
+        "sellersList": "Active Sellers List"
+      },
+      "inactiveSellers": {
+        "title": "Inactive Sellers",
+        "description": "Number of sellers with no expeditions in the period",
+        "yAxisLabel": "Number of Sellers",
+        "sellers": "sellers",
+        "inactiveSellers": "Inactive Sellers",
+        "noData": "No inactive seller data available for the selected period",
+        "peakSellers": "Peak Inactive",
+        "avgSellers": "Avg. Inactive",
+        "sellersList": "Inactive Sellers List"
+      },
+      "ordersPerSeller": {
+        "title": "Orders per Seller",
+        "description": "Track order volume by seller over time",
+        "yAxisLabel": "Number of Orders",
+        "orders": "orders",
+        "count": "Orders",
+        "noData": "No order data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "totalOrders": "Total Orders in Period"
+      },
+      "confirmationRate": {
+        "title": "Seller Confirmation Rate",
+        "description": "Track confirmation success rate by seller over time",
+        "yAxisLabel": "Confirmation Rate (%)",
+        "rate": "Rate",
+        "confirmed": "Confirmed",
+        "orders": "orders",
+        "noData": "No confirmation data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "overallRate": "Overall Rate",
+        "totalOrders": "Total Orders",
+        "confirmedOrders": "Confirmed"
+      },
+      "deliveryRate": {
+        "title": "Seller Delivery Rate",
+        "description": "Track delivery success rate by seller over time",
+        "yAxisLabel": "Delivery Rate (%)",
+        "rate": "Rate",
+        "delivered": "Delivered",
+        "orders": "orders",
+        "noData": "No delivery data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "overallRate": "Overall Rate",
+        "totalOrders": "Total Orders",
+        "deliveredOrders": "Delivered"
+      },
+      "returnRate": {
+        "title": "Seller Return Rate",
+        "description": "Track return orders rate by seller over time",
+        "yAxisLabel": "Return Rate (%)",
+        "rate": "Rate",
+        "returned": "Returned",
+        "orders": "orders",
+        "noData": "No return data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "overallRate": "Overall Rate",
+        "totalOrders": "Total Orders",
+        "returnedOrders": "Returned"
+      },
+      "processedOrders": {
+        "title": "Processed Orders",
+        "description": "Track invoiced orders by seller over time",
+        "yAxisLabel": "Processed Orders",
+        "count": "Count",
+        "orders": "orders",
+        "noData": "No processed orders data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "statusFilter": "Filter by Invoice Status",
+        "allStatuses": "All Statuses",
+        "statusPaid": "Paid",
+        "statusGenerated": "Generated",
+        "statusDraft": "Draft",
+        "statusOverdue": "Overdue",
+        "statusCancelled": "Cancelled",
+        "showingStatus": "Showing status",
+        "showingAllStatuses": "Showing all invoice statuses",
+        "totalProcessed": "Total Processed Orders"
+      },
+      "revenue": {
+        "title": "Seller Revenue (Processed Amount)",
+        "description": "Track total revenue per seller after all fees and deductions",
+        "yAxisLabel": "Revenue",
+        "revenue": "Revenue",
+        "noData": "No revenue data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "statusFilter": "Filter by Invoice Status",
+        "allStatuses": "All Statuses",
+        "statusPaid": "Paid",
+        "statusGenerated": "Generated",
+        "statusDraft": "Draft",
+        "statusOverdue": "Overdue",
+        "statusCancelled": "Cancelled",
+        "showingStatus": "Showing status",
+        "showingAllStatuses": "Showing all invoice statuses",
+        "totalRevenue": "Total Revenue"
+      },
+      "refundedOrders": {
+        "title": "Refunded Orders",
+        "description": "Track refunded orders count by seller over time",
+        "yAxisLabel": "Refunded Orders",
+        "count": "Count",
+        "orders": "orders",
+        "noData": "No refunded orders data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "totalRefunded": "Total Refunded Orders"
+      },
+      "refundAmount": {
+        "title": "Refund Amount (Seller)",
+        "description": "Track the total refund value deducted from sellers over time",
+        "yAxisLabel": "Refund Amount",
+        "amount": "Amount",
+        "noData": "No refund amount data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "totalRefundAmount": "Total Refund Amount"
+      },
+      "refundRate": {
+        "title": "Refund Rate %",
+        "description": "Track the percentage of orders that were refunded by seller over time",
+        "yAxisLabel": "Refund Rate (%)",
+        "rate": "Rate",
+        "noData": "No refund rate data available for the selected period",
+        "sellerFilter": "Filter by Seller",
+        "allSellers": "All Sellers",
+        "showing": "Showing data for",
+        "showingAll": "Showing all sellers ({count} total)",
+        "overallRate": "Overall Refund Rate",
+        "totalOrders": "Total Orders",
+        "refundedOrders": "Refunded Orders"
       }
     }
   }
