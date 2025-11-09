@@ -70,7 +70,14 @@ export default function StatusUpdateDialog({
       OrderStatus.DELIVERY_FAILED,
       OrderStatus.REFUNDED,
       OrderStatus.UNREACHED,
-      OrderStatus.CANCELLED
+      OrderStatus.CANCELLED,
+      OrderStatus.CANCELLED_AT_DELIVERY,
+      OrderStatus.UNREACHABLE,
+      OrderStatus.MISTAKEN_ORDER,
+      OrderStatus.OUT_OF_DELIVERY_ZONE,
+      OrderStatus.ALREADY_RECEIVED,
+      OrderStatus.RETURNED,
+      OrderStatus.REFUND_IN_PROGRESS
     ].includes(status);
   };
 
@@ -173,6 +180,70 @@ export default function StatusUpdateDialog({
       [OrderStatus.EXPIRED]: {
         label: t("statuses.expired"),
         className: "bg-slate-50 text-slate-700 border-slate-200",
+      },
+      [OrderStatus.CANCELLED_AT_DELIVERY]: {
+        label: t("statuses.cancelled_at_delivery"),
+        className: "bg-red-50 text-red-700 border-red-200",
+      },
+      [OrderStatus.BUSY]: {
+        label: t("statuses.busy"),
+        className: "bg-yellow-50 text-yellow-700 border-yellow-200",
+      },
+      [OrderStatus.UNREACHABLE]: {
+        label: t("statuses.unreachable"),
+        className: "bg-gray-50 text-gray-700 border-gray-200",
+      },
+      [OrderStatus.NO_ANSWER]: {
+        label: t("statuses.no_answer"),
+        className: "bg-gray-50 text-gray-700 border-gray-200",
+      },
+      [OrderStatus.ASKING_FOR_DISCOUNT]: {
+        label: t("statuses.asking_for_discount"),
+        className: "bg-amber-50 text-amber-700 border-amber-200",
+      },
+      [OrderStatus.NOT_READY]: {
+        label: t("statuses.not_ready"),
+        className: "bg-orange-50 text-orange-700 border-orange-200",
+      },
+      [OrderStatus.MISTAKEN_ORDER]: {
+        label: t("statuses.mistaken_order"),
+        className: "bg-red-50 text-red-700 border-red-200",
+      },
+      [OrderStatus.OUT_OF_DELIVERY_ZONE]: {
+        label: t("statuses.out_of_delivery_zone"),
+        className: "bg-rose-50 text-rose-700 border-rose-200",
+      },
+      [OrderStatus.IN_PREPARATION]: {
+        label: t("statuses.in_preparation"),
+        className: "bg-blue-50 text-blue-700 border-blue-200",
+      },
+      [OrderStatus.AWAITING_DISPATCH]: {
+        label: t("statuses.awaiting_dispatch"),
+        className: "bg-indigo-50 text-indigo-700 border-indigo-200",
+      },
+      [OrderStatus.PAID]: {
+        label: t("statuses.paid"),
+        className: "bg-green-50 text-green-700 border-green-200",
+      },
+      [OrderStatus.ALREADY_RECEIVED]: {
+        label: t("statuses.already_received"),
+        className: "bg-purple-50 text-purple-700 border-purple-200",
+      },
+      [OrderStatus.RETURN_IN_PROGRESS]: {
+        label: t("statuses.return_in_progress"),
+        className: "bg-orange-50 text-orange-700 border-orange-200",
+      },
+      [OrderStatus.RETURNED]: {
+        label: t("statuses.returned"),
+        className: "bg-red-50 text-red-700 border-red-200",
+      },
+      [OrderStatus.PROCESSED]: {
+        label: t("statuses.processed"),
+        className: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      },
+      [OrderStatus.REFUND_IN_PROGRESS]: {
+        label: t("statuses.refund_in_progress"),
+        className: "bg-amber-50 text-amber-700 border-amber-200",
       },
     };
 

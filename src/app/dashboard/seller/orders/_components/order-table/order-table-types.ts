@@ -145,6 +145,7 @@ export interface OrderFilters {
   dateFrom?: string;
   dateTo?: string;
   showDoubleOnly?: boolean;
+  phase?: 'confirmation' | 'shipping';
   page?: number;
   limit?: number;
 }

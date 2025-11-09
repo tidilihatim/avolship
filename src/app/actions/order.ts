@@ -321,6 +321,54 @@ export const getOrders = withDbConnection(async (
       query.status = filters.status;
     }
 
+    // Apply phase filter if provided (overrides status filter)
+    if (filters.phase) {
+      if (filters.phase === 'confirmation') {
+        // Confirmation phase statuses - order confirmation and customer contact phase
+        query.status = {
+          $in: [
+            OrderStatus.PENDING,
+            OrderStatus.CONFIRMED,
+            OrderStatus.CANCELLED,
+            OrderStatus.BUSY,
+            OrderStatus.UNREACHABLE,
+            OrderStatus.UNREACHED,
+            OrderStatus.NO_ANSWER,
+            OrderStatus.ASKING_FOR_DISCOUNT,
+            OrderStatus.NOT_READY,
+            OrderStatus.MISTAKEN_ORDER,
+            OrderStatus.OUT_OF_DELIVERY_ZONE,
+            OrderStatus.WRONG_NUMBER,
+            OrderStatus.DOUBLE,
+            OrderStatus.EXPIRED
+          ]
+        };
+      } else if (filters.phase === 'shipping') {
+        // Shipping phase statuses - order fulfillment and delivery phase
+        query.status = {
+          $in: [
+            OrderStatus.IN_PREPARATION,
+            OrderStatus.AWAITING_DISPATCH,
+            OrderStatus.SHIPPED,
+            OrderStatus.ASSIGNED_TO_DELIVERY,
+            OrderStatus.ACCEPTED_BY_DELIVERY,
+            OrderStatus.IN_TRANSIT,
+            OrderStatus.OUT_FOR_DELIVERY,
+            OrderStatus.DELIVERED,
+            OrderStatus.PAID,
+            OrderStatus.DELIVERY_FAILED,
+            OrderStatus.CANCELLED_AT_DELIVERY,
+            OrderStatus.RETURN_IN_PROGRESS,
+            OrderStatus.RETURNED,
+            OrderStatus.PROCESSED,
+            OrderStatus.REFUND_IN_PROGRESS,
+            OrderStatus.REFUNDED,
+            OrderStatus.ALREADY_RECEIVED
+          ]
+        };
+      }
+    }
+
     // Apply call status filter if provided
     if (filters.callStatus) {
       if (user.role === UserRole.CALL_CENTER) {

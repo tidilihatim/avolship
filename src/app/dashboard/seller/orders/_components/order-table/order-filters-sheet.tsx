@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import {
   Sheet,
   SheetContent,
@@ -46,6 +47,8 @@ interface OrderFiltersSheetProps {
   onDateToFilterChange: (value: string) => void;
   showDoubleOnly: boolean;
   onShowDoubleOnlyChange: (value: boolean) => void;
+  phaseFilter?: 'confirmation' | 'shipping';
+  onPhaseFilterChange: (value: 'confirmation' | 'shipping' | undefined) => void;
   dateRangePreset: string;
   onDateRangePresetChange: (value: string) => void;
   allSellers: SellerOption[];
@@ -69,6 +72,8 @@ export default function OrderFiltersSheet({
   onDateToFilterChange,
   showDoubleOnly,
   onShowDoubleOnlyChange,
+  phaseFilter,
+  onPhaseFilterChange,
   dateRangePreset,
   onDateRangePresetChange,
   allSellers,
@@ -126,6 +131,54 @@ export default function OrderFiltersSheet({
       [OrderStatus.EXPIRED]: {
         label: t("orders.statuses.expired"),
       },
+      [OrderStatus.CANCELLED_AT_DELIVERY]: {
+        label: t("orders.statuses.cancelled_at_delivery"),
+      },
+      [OrderStatus.BUSY]: {
+        label: t("orders.statuses.busy"),
+      },
+      [OrderStatus.UNREACHABLE]: {
+        label: t("orders.statuses.unreachable"),
+      },
+      [OrderStatus.NO_ANSWER]: {
+        label: t("orders.statuses.no_answer"),
+      },
+      [OrderStatus.ASKING_FOR_DISCOUNT]: {
+        label: t("orders.statuses.asking_for_discount"),
+      },
+      [OrderStatus.NOT_READY]: {
+        label: t("orders.statuses.not_ready"),
+      },
+      [OrderStatus.MISTAKEN_ORDER]: {
+        label: t("orders.statuses.mistaken_order"),
+      },
+      [OrderStatus.OUT_OF_DELIVERY_ZONE]: {
+        label: t("orders.statuses.out_of_delivery_zone"),
+      },
+      [OrderStatus.IN_PREPARATION]: {
+        label: t("orders.statuses.in_preparation"),
+      },
+      [OrderStatus.AWAITING_DISPATCH]: {
+        label: t("orders.statuses.awaiting_dispatch"),
+      },
+      [OrderStatus.PAID]: {
+        label: t("orders.statuses.paid"),
+      },
+      [OrderStatus.ALREADY_RECEIVED]: {
+        label: t("orders.statuses.already_received"),
+      },
+      [OrderStatus.RETURN_IN_PROGRESS]: {
+        label: t("orders.statuses.return_in_progress"),
+      },
+      [OrderStatus.RETURNED]: {
+        label: t("orders.statuses.returned"),
+      },
+      [OrderStatus.PROCESSED]: {
+        label: t("orders.statuses.processed"),
+      },
+      [OrderStatus.REFUND_IN_PROGRESS]: {
+        label: t("orders.statuses.refund_in_progress"),
+      },
     };
 
     return (
@@ -133,6 +186,17 @@ export default function OrderFiltersSheet({
         label: t("common.unknown"),
       }
     );
+  };
+
+  // Handle phase toggle - only one can be active at a time
+  const handlePhaseToggle = (phase: 'confirmation' | 'shipping') => {
+    if (phaseFilter === phase) {
+      // If clicking the same phase that's already active, turn it off
+      onPhaseFilterChange(undefined);
+    } else {
+      // Otherwise, set the new phase
+      onPhaseFilterChange(phase);
+    }
   };
 
   return (
@@ -174,6 +238,51 @@ export default function OrderFiltersSheet({
                   ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Phase Filter */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium leading-tight">
+              {t("orders.phaseFilter.title")}
+            </h3>
+            <div className="flex flex-col gap-4 p-4 border rounded-lg bg-muted/20">
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="confirmation-phase"
+                  className="cursor-pointer font-medium"
+                >
+                  {t("orders.phaseFilter.confirmationPhase")}
+                </Label>
+                <Switch
+                  id="confirmation-phase"
+                  checked={phaseFilter === 'confirmation'}
+                  onCheckedChange={() => handlePhaseToggle('confirmation')}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Label
+                  htmlFor="shipping-phase"
+                  className="cursor-pointer font-medium"
+                >
+                  {t("orders.phaseFilter.shippingPhase")}
+                </Label>
+                <Switch
+                  id="shipping-phase"
+                  checked={phaseFilter === 'shipping'}
+                  onCheckedChange={() => handlePhaseToggle('shipping')}
+                />
+              </div>
+
+              {phaseFilter && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  {phaseFilter === 'confirmation'
+                    ? t("orders.phaseFilter.confirmationDescription")
+                    : t("orders.phaseFilter.shippingDescription")
+                  }
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Seller Filter (Admin/Moderator only) */}

@@ -20,6 +20,22 @@ export enum OrderStatus {
   DOUBLE = 'double',
   UNREACHED = 'unreached',
   EXPIRED = 'expired',
+  CANCELLED_AT_DELIVERY = 'cancelled_at_delivery',
+  BUSY = 'busy',
+  UNREACHABLE = 'unreachable',
+  NO_ANSWER = 'no_answer',
+  ASKING_FOR_DISCOUNT = 'asking_for_discount',
+  NOT_READY = 'not_ready',
+  MISTAKEN_ORDER = 'mistaken_order',
+  OUT_OF_DELIVERY_ZONE = 'out_of_delivery_zone',
+  IN_PREPARATION = 'in_preparation',
+  AWAITING_DISPATCH = 'awaiting_dispatch',
+  PAID = 'paid',
+  ALREADY_RECEIVED = 'already_received',
+  RETURN_IN_PROGRESS = 'return_in_progress',
+  RETURNED = 'returned',
+  PROCESSED = 'processed',
+  REFUND_IN_PROGRESS = 'refund_in_progress',
 }
 
 /**

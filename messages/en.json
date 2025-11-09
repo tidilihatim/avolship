@@ -2453,7 +2453,23 @@
       "wrong_number": "Wrong Number",
       "double": "Double",
       "unreached": "Unreached",
-      "expired": "Expired"
+      "expired": "Expired",
+      "cancelled_at_delivery": "Cancelled at Delivery",
+      "busy": "Busy",
+      "unreachable": "Unreachable",
+      "no_answer": "No Answer",
+      "asking_for_discount": "Asking for Discount",
+      "not_ready": "Not Ready",
+      "mistaken_order": "Mistaken Order",
+      "out_of_delivery_zone": "Out of Delivery Zone",
+      "in_preparation": "In Preparation",
+      "awaiting_dispatch": "Awaiting Dispatch",
+      "paid": "Paid",
+      "already_received": "Already Received",
+      "return_in_progress": "Return in Progress",
+      "returned": "Returned",
+      "processed": "Processed",
+      "refund_in_progress": "Refund in Progress"
     },
 
     "statusDescriptions": {
@@ -2471,13 +2487,37 @@
       "wrong_number": "Customer phone number is incorrect",
       "double": "Duplicate order detected",
       "unreached": "Unable to reach customer",
-      "expired": "Order has expired"
+      "expired": "Order has expired",
+      "cancelled_at_delivery": "Order was cancelled during delivery",
+      "busy": "Customer line is busy",
+      "unreachable": "Unable to reach customer",
+      "no_answer": "Customer did not answer",
+      "asking_for_discount": "Customer is requesting a discount",
+      "not_ready": "Customer is not ready to receive order",
+      "mistaken_order": "Order was placed by mistake",
+      "out_of_delivery_zone": "Delivery address is outside service area",
+      "in_preparation": "Order is being prepared",
+      "awaiting_dispatch": "Order is waiting to be dispatched",
+      "paid": "Order has been paid",
+      "already_received": "Customer already received the order",
+      "return_in_progress": "Return process is in progress",
+      "returned": "Order has been returned",
+      "processed": "Order has been processed",
+      "refund_in_progress": "Refund is being processed"
     },
     "callStatuses": {
       "answered": "Answered",
-      "unreached": "Unreached", 
+      "unreached": "Unreached",
       "busy": "Busy",
       "invalid": "Invalid"
+    },
+
+    "phaseFilter": {
+      "title": "Order Phase",
+      "confirmationPhase": "Confirmation Phase",
+      "shippingPhase": "Shipping Phase",
+      "confirmationDescription": "Shows orders in confirmation stage (confirmed, cancelled, busy, unreachable, etc.)",
+      "shippingDescription": "Shows orders in shipping stage (in preparation, shipped, delivered, returned, etc.)"
     },
     
     "products": {

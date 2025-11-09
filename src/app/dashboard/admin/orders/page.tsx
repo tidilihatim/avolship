@@ -68,6 +68,13 @@ async function parseSearchParams(searchParams: {
     filters.showDoubleOnly = searchParams.showDoubleOnly === "true";
   }
 
+  // Handle phase filter
+  if (searchParams.phase && typeof searchParams.phase === "string") {
+    if (searchParams.phase === "confirmation" || searchParams.phase === "shipping") {
+      filters.phase = searchParams.phase;
+    }
+  }
+
   // Handle pagination params
   if (searchParams.page && typeof searchParams.page === "string") {
     const page = parseInt(searchParams.page);
@@ -149,6 +156,9 @@ export default async function OrdersPage({
       : undefined,
     showDoubleOnly: searchParamsPlain.showDoubleOnly && typeof searchParamsPlain.showDoubleOnly === "string"
       ? searchParamsPlain.showDoubleOnly === "true"
+      : undefined,
+    phase: searchParamsPlain.phase && typeof searchParamsPlain.phase === "string"
+      ? (searchParamsPlain.phase as 'confirmation' | 'shipping')
       : undefined,
   };
 

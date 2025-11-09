@@ -2458,7 +2458,23 @@
       "wrong_number": "Mauvais Numéro",
       "double": "Doublée",
       "unreached": "Injoignable",
-      "expired": "Expirée"
+      "expired": "Expirée",
+      "cancelled_at_delivery": "Annulée à la Livraison",
+      "busy": "Occupé",
+      "unreachable": "Injoignable",
+      "no_answer": "Pas de Réponse",
+      "asking_for_discount": "Demande de Réduction",
+      "not_ready": "Pas Prêt",
+      "mistaken_order": "Commande Erronée",
+      "out_of_delivery_zone": "Hors Zone de Livraison",
+      "in_preparation": "En Préparation",
+      "awaiting_dispatch": "En Attente d'Expédition",
+      "paid": "Payée",
+      "already_received": "Déjà Reçue",
+      "return_in_progress": "Retour en Cours",
+      "returned": "Retournée",
+      "processed": "Traitée",
+      "refund_in_progress": "Remboursement en Cours"
     },
 
     "callStatuses": {
@@ -2466,6 +2482,14 @@
       "unreached": "Injoignable",
       "busy": "Occupé",
       "invalid": "Invalide"
+    },
+
+    "phaseFilter": {
+      "title": "Phase de Commande",
+      "confirmationPhase": "Phase de Confirmation",
+      "shippingPhase": "Phase de Livraison",
+      "confirmationDescription": "Affiche les commandes en phase de confirmation (confirmée, annulée, occupé, injoignable, etc.)",
+      "shippingDescription": "Affiche les commandes en phase de livraison (en préparation, expédiée, livrée, retournée, etc.)"
     },
 
     "statusDescriptions": {
@@ -2483,7 +2507,23 @@
       "wrong_number": "Le numéro de téléphone du client est incorrect",
       "double": "Commande dupliquée détectée",
       "unreached": "Impossible de joindre le client",
-      "expired": "La commande a expiré"
+      "expired": "La commande a expiré",
+      "cancelled_at_delivery": "La commande a été annulée pendant la livraison",
+      "busy": "La ligne du client est occupée",
+      "unreachable": "Impossible de joindre le client",
+      "no_answer": "Le client n'a pas répondu",
+      "asking_for_discount": "Le client demande une réduction",
+      "not_ready": "Le client n'est pas prêt à recevoir la commande",
+      "mistaken_order": "La commande a été passée par erreur",
+      "out_of_delivery_zone": "L'adresse de livraison est hors de la zone de service",
+      "in_preparation": "La commande est en cours de préparation",
+      "awaiting_dispatch": "La commande attend d'être expédiée",
+      "paid": "La commande a été payée",
+      "already_received": "Le client a déjà reçu la commande",
+      "return_in_progress": "Le processus de retour est en cours",
+      "returned": "La commande a été retournée",
+      "processed": "La commande a été traitée",
+      "refund_in_progress": "Le remboursement est en cours de traitement"
     },
 
     "products": {

@@ -219,6 +219,80 @@ export default function OrderTableRow({
         className:
           "bg-slate-50 text-slate-700 hover:bg-slate-50 border-slate-200",
       },
+      [OrderStatus.CANCELLED_AT_DELIVERY]: {
+        label: t("orders.statuses.cancelled_at_delivery"),
+        className: "bg-red-50 text-red-700 hover:bg-red-50 border-red-200",
+      },
+      [OrderStatus.BUSY]: {
+        label: t("orders.statuses.busy"),
+        className:
+          "bg-yellow-50 text-yellow-700 hover:bg-yellow-50 border-yellow-200",
+      },
+      [OrderStatus.UNREACHABLE]: {
+        label: t("orders.statuses.unreachable"),
+        className: "bg-gray-50 text-gray-700 hover:bg-gray-50 border-gray-200",
+      },
+      [OrderStatus.NO_ANSWER]: {
+        label: t("orders.statuses.no_answer"),
+        className: "bg-gray-50 text-gray-700 hover:bg-gray-50 border-gray-200",
+      },
+      [OrderStatus.ASKING_FOR_DISCOUNT]: {
+        label: t("orders.statuses.asking_for_discount"),
+        className:
+          "bg-amber-50 text-amber-700 hover:bg-amber-50 border-amber-200",
+      },
+      [OrderStatus.NOT_READY]: {
+        label: t("orders.statuses.not_ready"),
+        className:
+          "bg-orange-50 text-orange-700 hover:bg-orange-50 border-orange-200",
+      },
+      [OrderStatus.MISTAKEN_ORDER]: {
+        label: t("orders.statuses.mistaken_order"),
+        className: "bg-red-50 text-red-700 hover:bg-red-50 border-red-200",
+      },
+      [OrderStatus.OUT_OF_DELIVERY_ZONE]: {
+        label: t("orders.statuses.out_of_delivery_zone"),
+        className: "bg-rose-50 text-rose-700 hover:bg-rose-50 border-rose-200",
+      },
+      [OrderStatus.IN_PREPARATION]: {
+        label: t("orders.statuses.in_preparation"),
+        className:
+          "bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-200",
+      },
+      [OrderStatus.AWAITING_DISPATCH]: {
+        label: t("orders.statuses.awaiting_dispatch"),
+        className:
+          "bg-indigo-50 text-indigo-700 hover:bg-indigo-50 border-indigo-200",
+      },
+      [OrderStatus.PAID]: {
+        label: t("orders.statuses.paid"),
+        className:
+          "bg-green-50 text-green-700 hover:bg-green-50 border-green-200",
+      },
+      [OrderStatus.ALREADY_RECEIVED]: {
+        label: t("orders.statuses.already_received"),
+        className:
+          "bg-purple-50 text-purple-700 hover:bg-purple-50 border-purple-200",
+      },
+      [OrderStatus.RETURN_IN_PROGRESS]: {
+        label: t("orders.statuses.return_in_progress"),
+        className:
+          "bg-orange-50 text-orange-700 hover:bg-orange-50 border-orange-200",
+      },
+      [OrderStatus.RETURNED]: {
+        label: t("orders.statuses.returned"),
+        className: "bg-red-50 text-red-700 hover:bg-red-50 border-red-200",
+      },
+      [OrderStatus.PROCESSED]: {
+        label: t("orders.statuses.processed"),
+        className:
+          "bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-emerald-200",
+      },
+      [OrderStatus.REFUND_IN_PROGRESS]: {
+        label: t("orders.statuses.refund_in_progress"),
+        className:
+          "bg-amber-50 text-amber-700 hover:bg-amber-50 border-amber-200",
+      },
     };
 
     return (

@@ -84,6 +84,9 @@ export default function OrderTable({
   const [showDoubleOnly, setShowDoubleOnly] = useState(
     filters.showDoubleOnly || false
   );
+  const [phaseFilter, setPhaseFilter] = useState<'confirmation' | 'shipping' | undefined>(
+    filters.phase
+  );
   const [dateRangePreset, setDateRangePreset] = useState(
     filters.dateRange || CUSTOM_DATE_RANGE
   );
@@ -278,6 +281,7 @@ export default function OrderTable({
       dateFrom: dateFromFilter || undefined,
       dateTo: dateToFilter || undefined,
       showDoubleOnly: showDoubleOnly || undefined,
+      phase: phaseFilter || undefined,
       page: 1,
       limit: itemsPerPage,
     });
@@ -294,6 +298,7 @@ export default function OrderTable({
     setDateFromFilter("");
     setDateToFilter("");
     setShowDoubleOnly(false);
+    setPhaseFilter(undefined);
     setDateRangePreset(CUSTOM_DATE_RANGE);
     setDateRangePreset("");
     navigateWithFilters({
@@ -372,6 +377,7 @@ export default function OrderTable({
     if (newFilters.dateFrom) params.append("dateFrom", newFilters.dateFrom);
     if (newFilters.dateTo) params.append("dateTo", newFilters.dateTo);
     if (newFilters.showDoubleOnly) params.append("showDoubleOnly", "true");
+    if (newFilters.phase) params.append("phase", newFilters.phase);
     if (newFilters.page) params.append("page", newFilters.page.toString());
     if (newFilters.limit) params.append("limit", newFilters.limit.toString());
 
@@ -597,6 +603,8 @@ export default function OrderTable({
             onDateToFilterChange={setDateToFilter}
             showDoubleOnly={showDoubleOnly}
             onShowDoubleOnlyChange={setShowDoubleOnly}
+            phaseFilter={phaseFilter}
+            onPhaseFilterChange={setPhaseFilter}
             dateRangePreset={dateRangePreset}
             onDateRangePresetChange={handleDateRangePreset}
             allSellers={allSellers}

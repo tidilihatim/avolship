@@ -137,15 +137,111 @@ export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
         className: 'border-muted-foreground bg-muted/10',
         icon: PhoneCall
       },
-      [OrderStatus.EXPIRED]: { 
-        label: t('statuses.expired'), 
+      [OrderStatus.EXPIRED]: {
+        label: t('statuses.expired'),
         description: t('statusDescriptions.expired'),
         className: 'border-muted bg-muted/10',
         icon: AlertTriangle
+      },
+      [OrderStatus.CANCELLED_AT_DELIVERY]: {
+        label: t('statuses.cancelled_at_delivery'),
+        description: t('statusDescriptions.cancelled_at_delivery'),
+        className: 'border-red-500 bg-red-500/10',
+        icon: XCircle
+      },
+      [OrderStatus.BUSY]: {
+        label: t('statuses.busy'),
+        description: t('statusDescriptions.busy'),
+        className: 'border-yellow-500 bg-yellow-500/10',
+        icon: Phone
+      },
+      [OrderStatus.UNREACHABLE]: {
+        label: t('statuses.unreachable'),
+        description: t('statusDescriptions.unreachable'),
+        className: 'border-muted-foreground bg-muted/10',
+        icon: PhoneCall
+      },
+      [OrderStatus.NO_ANSWER]: {
+        label: t('statuses.no_answer'),
+        description: t('statusDescriptions.no_answer'),
+        className: 'border-muted-foreground bg-muted/10',
+        icon: PhoneCall
+      },
+      [OrderStatus.ASKING_FOR_DISCOUNT]: {
+        label: t('statuses.asking_for_discount'),
+        description: t('statusDescriptions.asking_for_discount'),
+        className: 'border-amber-500 bg-amber-500/10',
+        icon: AlertTriangle
+      },
+      [OrderStatus.NOT_READY]: {
+        label: t('statuses.not_ready'),
+        description: t('statusDescriptions.not_ready'),
+        className: 'border-orange-500 bg-orange-500/10',
+        icon: Clock3
+      },
+      [OrderStatus.MISTAKEN_ORDER]: {
+        label: t('statuses.mistaken_order'),
+        description: t('statusDescriptions.mistaken_order'),
+        className: 'border-red-500 bg-red-500/10',
+        icon: XCircle
+      },
+      [OrderStatus.OUT_OF_DELIVERY_ZONE]: {
+        label: t('statuses.out_of_delivery_zone'),
+        description: t('statusDescriptions.out_of_delivery_zone'),
+        className: 'border-rose-500 bg-rose-500/10',
+        icon: MapPin
+      },
+      [OrderStatus.IN_PREPARATION]: {
+        label: t('statuses.in_preparation'),
+        description: t('statusDescriptions.in_preparation'),
+        className: 'border-blue-500 bg-blue-500/10',
+        icon: Clock3
+      },
+      [OrderStatus.AWAITING_DISPATCH]: {
+        label: t('statuses.awaiting_dispatch'),
+        description: t('statusDescriptions.awaiting_dispatch'),
+        className: 'border-indigo-500 bg-indigo-500/10',
+        icon: Clock3
+      },
+      [OrderStatus.PAID]: {
+        label: t('statuses.paid'),
+        description: t('statusDescriptions.paid'),
+        className: 'border-green-500 bg-green-500/10',
+        icon: CheckCircle
+      },
+      [OrderStatus.ALREADY_RECEIVED]: {
+        label: t('statuses.already_received'),
+        description: t('statusDescriptions.already_received'),
+        className: 'border-purple-500 bg-purple-500/10',
+        icon: CheckCircle
+      },
+      [OrderStatus.RETURN_IN_PROGRESS]: {
+        label: t('statuses.return_in_progress'),
+        description: t('statusDescriptions.return_in_progress'),
+        className: 'border-orange-500 bg-orange-500/10',
+        icon: PackageX
+      },
+      [OrderStatus.RETURNED]: {
+        label: t('statuses.returned'),
+        description: t('statusDescriptions.returned'),
+        className: 'border-red-500 bg-red-500/10',
+        icon: PackageX
+      },
+      [OrderStatus.PROCESSED]: {
+        label: t('statuses.processed'),
+        description: t('statusDescriptions.processed'),
+        className: 'border-emerald-500 bg-emerald-500/10',
+        icon: CheckCircle
+      },
+      [OrderStatus.REFUND_IN_PROGRESS]: {
+        label: t('statuses.refund_in_progress'),
+        description: t('statusDescriptions.refund_in_progress'),
+        className: 'border-amber-500 bg-amber-500/10',
+        icon: AlertTriangle
       }
     };
-    return statusConfigs[status] || { 
-      label: t('misc.unknown'), 
+    return statusConfigs[status] || {
+      label: t('misc.unknown'),
       description: t('misc.unknown'),
       className: 'border-muted bg-muted/10',
       icon: AlertTriangle
