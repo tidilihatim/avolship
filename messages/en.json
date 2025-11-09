@@ -1712,6 +1712,7 @@
     }
   },
   "navigation": {
+    "system":"System Analytics",
     "seller":"Seller Analytics",
     "finance":"Finance",
     "performanceTracking":"Performance Tracking",
@@ -5264,6 +5265,47 @@
         "overallRate": "Overall Refund Rate",
         "totalOrders": "Total Orders",
         "refundedOrders": "Refunded Orders"
+      }
+    }
+  },
+  "adminSystemAnalytics": {
+    "title": "System Analytics",
+    "description": "Monitor system health, alerts, and key performance indicators",
+    "selectWarehouse": "Select Warehouse",
+    "selectWarehousePlaceholder": "Choose a warehouse",
+    "selectedWarehouse": "Selected warehouse",
+    "charts": {
+      "delayedOrders": {
+        "title": "Delayed Orders (48h+)",
+        "description": "Orders taking more than 48 hours since confirmation but not yet delivered",
+        "delayedCount": "Delayed Orders",
+        "noDelayedOrders": "No Delayed Orders!",
+        "allOrdersOnTime": "All orders are being processed within 48 hours",
+        "orderId": "Order ID",
+        "customer": "Customer",
+        "seller": "Seller",
+        "status": "Status",
+        "confirmedAt": "Confirmed At",
+        "delay": "Delay",
+        "days": "days",
+        "rowsPerPage": "Rows per page",
+        "showing": "Showing {start}-{end} of {total}",
+        "page": "Page {current} of {total}"
+      },
+      "highReturnSellers": {
+        "title": "High Return Sellers",
+        "description": "Sellers with more than 20% return rate (minimum 5 orders)",
+        "sellersCount": "High Return Sellers",
+        "noHighReturnSellers": "No High Return Sellers!",
+        "allSellersGood": "All sellers have return rates below 20%",
+        "seller": "Seller",
+        "email": "Email",
+        "totalOrders": "Total Orders",
+        "refundedOrders": "Refunded Orders",
+        "returnRate": "Return Rate",
+        "rowsPerPage": "Rows per page",
+        "showing": "Showing {start}-{end} of {total}",
+        "page": "Page {current} of {total}"
       }
     }
   }

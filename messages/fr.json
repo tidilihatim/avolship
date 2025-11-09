@@ -2072,6 +2072,7 @@
     }
   },
   "navigation": {
+    "system":"Analyse du système",
     "seller":"Analyse des vendeurs",
     "finance":"Finance",
     "delivery":"Aperçu de la livraison",
@@ -5230,6 +5231,47 @@
         "overallRate": "Taux de Remboursement Global",
         "totalOrders": "Commandes Totales",
         "refundedOrders": "Commandes Remboursées"
+      }
+    }
+  },
+  "adminSystemAnalytics": {
+    "title": "Analyses du Système",
+    "description": "Surveiller la santé du système, les alertes et les indicateurs clés de performance",
+    "selectWarehouse": "Sélectionner un Entrepôt",
+    "selectWarehousePlaceholder": "Choisir un entrepôt",
+    "selectedWarehouse": "Entrepôt sélectionné",
+    "charts": {
+      "delayedOrders": {
+        "title": "Commandes Retardées (48h+)",
+        "description": "Commandes prenant plus de 48 heures depuis la confirmation mais pas encore livrées",
+        "delayedCount": "Commandes Retardées",
+        "noDelayedOrders": "Aucune Commande Retardée !",
+        "allOrdersOnTime": "Toutes les commandes sont traitées dans les 48 heures",
+        "orderId": "ID Commande",
+        "customer": "Client",
+        "seller": "Vendeur",
+        "status": "Statut",
+        "confirmedAt": "Confirmé le",
+        "delay": "Retard",
+        "days": "jours",
+        "rowsPerPage": "Lignes par page",
+        "showing": "Affichage de {start}-{end} sur {total}",
+        "page": "Page {current} sur {total}"
+      },
+      "highReturnSellers": {
+        "title": "Vendeurs à Taux de Retour Élevé",
+        "description": "Vendeurs avec un taux de retour supérieur à 20% (minimum 5 commandes)",
+        "sellersCount": "Vendeurs à Taux Élevé",
+        "noHighReturnSellers": "Aucun Vendeur à Taux de Retour Élevé !",
+        "allSellersGood": "Tous les vendeurs ont des taux de retour inférieurs à 20%",
+        "seller": "Vendeur",
+        "email": "Email",
+        "totalOrders": "Commandes Totales",
+        "refundedOrders": "Commandes Remboursées",
+        "returnRate": "Taux de Retour",
+        "rowsPerPage": "Lignes par page",
+        "showing": "Affichage de {start}-{end} sur {total}",
+        "page": "Page {current} sur {total}"
       }
     }
   }
