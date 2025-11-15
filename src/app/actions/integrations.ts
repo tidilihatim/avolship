@@ -196,7 +196,7 @@ export async function getPlatformIntegrationMethods(platformId: string) {
 export async function getUserIntegrations(userId: string, warehouseId: string) {
   try {
     await connectToDatabase();
-    
+
     const integrations = await UserIntegration.find({
       userId,
       warehouseId,
@@ -205,12 +205,61 @@ export async function getUserIntegrations(userId: string, warehouseId: string) {
         { status: 'paused' }
       ]
     }).sort({ createdAt: -1 }).lean();
-    
+
     // Convert to plain objects using JSON serialization
     return JSON.parse(JSON.stringify(integrations));
   } catch (error) {
     console.error('Error fetching user integrations:', error);
     return [];
+  }
+}
+
+// Check if user has Shopify connected for the selected warehouse
+export async function checkShopifyIntegration() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        isConnected: false,
+        error: 'Unauthorized'
+      };
+    }
+
+    // Get selected warehouse from cookies
+    const { cookies: cookiesFn } = await import('next/headers');
+    const cookiesStore = await cookiesFn();
+    const selectedWarehouseId = cookiesStore.get('selectedWarehouse')?.value;
+
+    if (!selectedWarehouseId) {
+      return {
+        success: false,
+        isConnected: false,
+        error: 'No warehouse selected'
+      };
+    }
+
+    await connectToDatabase();
+
+    const integration = await UserIntegration.findOne({
+      userId: session.user.id,
+      warehouseId: selectedWarehouseId,
+      platformId: 'shopify',
+      // status: IntegrationStatus.CONNECTED,
+      // isActive: true
+    });
+
+    return {
+      success: true,
+      isConnected: !!integration
+    };
+  } catch (error) {
+    console.error('Error checking Shopify integration:', error);
+    return {
+      success: false,
+      isConnected: false,
+      error: 'Failed to check integration status'
+    };
   }
 }
 

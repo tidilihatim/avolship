@@ -10,6 +10,7 @@ export interface WarehouseData {
   warehouseId: string;
   warehouseName: string;
   stock: number;
+  defectiveQuantity?: number;
   country?: string;
 }
 
@@ -33,6 +34,8 @@ export interface ProductTableData {
     publicId: string;
   };
   totalStock: number;
+  totalDefectiveQuantity?: number;
+  availableStock?: number; // totalStock - confirmed orders quantity
   status: ProductStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -57,6 +60,7 @@ export interface ProductInput {
     publicId: string;
   };
   status?: ProductStatus;
+  syncToShopify?: boolean;
 }
 
 /**

@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache';
 import Product, { ProductStatus } from '@/lib/db/models/product';
 import User, { UserRole } from '@/lib/db/models/user';
 import Warehouse from '@/lib/db/models/warehouse';
+import UserIntegration from '@/lib/db/models/user-integration';
+import Order, { OrderStatus } from '@/lib/db/models/order';
 import { ProductFilters, ProductInput, ProductResponse, ProductTableData, WarehouseData } from '@/types/product';
 import mongoose from 'mongoose';
 import { withDbConnection } from '@/lib/db/db-connect';
@@ -14,7 +16,118 @@ import { cookies } from 'next/headers';
 import { deleteFromCloudinary, uploadToCloudinary } from '@/lib/cloudinary';
 import { getCurrentUser } from './auth';
 
+/**
+ * Helper function to sync product to Shopify
+ */
+async function syncProductToShopify(
+  productData: {
+    name: string;
+    description: string;
+    code: string;
+    image?: { url: string; publicId: string };
+  },
+  userId: string,
+  warehouseId: string
+): Promise<{ success: boolean; shopifyProductId?: string; error?: string }> {
+  try {
+    // Get Shopify integration for the warehouse
+    const integration = await UserIntegration.findOne({
+      userId,
+      warehouseId,
+      platformId: 'shopify',
+      // status: IntegrationStatus.CONNECTED,
+      // isActive: true
+    });
 
+    if (!integration) {
+      return {
+        success: false,
+        error: 'Shopify integration not found or not active'
+      };
+    }
+
+    const { accessToken, storeUrl } = integration.connectionData;
+
+    if (!accessToken || !storeUrl) {
+      return {
+        success: false,
+        error: 'Shopify integration missing credentials'
+      };
+    }
+
+    // Clean up storeUrl - remove any protocol if present
+    const cleanStoreUrl = storeUrl.replace(/^https?:\/\//, '');
+    const apiUrl = `https://${cleanStoreUrl}/admin/api/2024-01/products.json`;
+
+    // Prepare Shopify product data
+    const shopifyProductData = {
+      product: {
+        title: productData.name,
+        body_html: productData.description,
+        vendor: 'Avolship',
+        product_type: 'Default',
+        tags: [`code:${productData.code}`],
+        status: 'active',
+        ...(productData.image ? {
+          images: [
+            {
+              src: productData.image.url
+            }
+          ]
+        } : {})
+      }
+    };
+
+    // Make API call to Shopify with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'X-Shopify-Access-Token': accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(shopifyProductData),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Shopify API error:', errorData);
+      return {
+        success: false,
+        error: `Shopify API error: ${response.status} ${response.statusText}`
+      };
+    }
+
+    const result = await response.json();
+
+    return {
+      success: true,
+      shopifyProductId: result.product?.id?.toString()
+    };
+  } catch (error: any) {
+    console.error('Error syncing product to Shopify:', error);
+
+    // Provide more specific error messages
+    let errorMessage = 'Failed to sync to Shopify';
+    if (error.name === 'AbortError') {
+      errorMessage = 'Shopify API request timed out after 30 seconds';
+    } else if (error.cause?.code === 'ETIMEDOUT') {
+      errorMessage = 'Connection to Shopify timed out - please check network connectivity';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    return {
+      success: false,
+      error: errorMessage
+    };
+  }
+}
 
 
 
@@ -112,32 +225,85 @@ async function getProductsImpl(
       sellerMap.set(s._id.toString(), s);
     }
     
+    // Get confirmed orders for all products to calculate available stock
+    // Only count orders for the selected warehouse
+    const productIds = products.map(p => p._id);
+    const confirmedOrdersMatch: any = {
+      status: OrderStatus.CONFIRMED,
+      'products.productId': { $in: productIds }
+    };
+
+    // Only count confirmed orders for the selected warehouse
+    if (selectedWarehouseId) {
+      confirmedOrdersMatch.warehouseId = new mongoose.Types.ObjectId(selectedWarehouseId);
+    }
+
+    const confirmedOrders = await Order.aggregate([
+      {
+        $match: confirmedOrdersMatch
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalConfirmedQuantity: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Create a map of product ID to confirmed quantity
+    const confirmedOrdersMap = new Map<string, number>();
+    for (const order of confirmedOrders) {
+      confirmedOrdersMap.set(order._id.toString(), order.totalConfirmedQuantity);
+    }
+
     // Map products to include warehouse and seller names
     const productsWithNames: ProductTableData[] = [];
-    
+
     for (const product of products) {
       const sellerId = product.sellerId.toString();
-      
+      const productId = product._id.toString();
+
+      // Calculate total defective quantity from all warehouses
+      let totalDefectiveQuantity = 0;
+
       // Map warehouses with names
       const warehousesWithNames: WarehouseData[] = [];
-      
+
       for (const warehouse of product.warehouses) {
         const warehouseId = warehouse.warehouseId.toString();
         const warehouseData = warehouseMap.get(warehouseId);
-        
+
+        const defectiveQty = warehouse.defectiveQuantity || 0;
+        totalDefectiveQuantity += defectiveQty;
+
         warehousesWithNames.push({
           warehouseId,
           warehouseName: warehouseData?.name || 'Unknown Warehouse',
           stock: warehouse.stock,
+          defectiveQuantity: defectiveQty,
           country: warehouseData?.country,
         });
       }
-      
+
+      // Get confirmed orders quantity for this product
+      const confirmedQuantity = confirmedOrdersMap.get(productId) || 0;
+
+      // Calculate available stock (totalStock - confirmed orders)
+      const availableStock = product.totalStock - confirmedQuantity;
+
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
-      
+
       productsWithNames.push({
-        _id: product._id.toString(),
+        _id: productId,
         name: product.name,
         description: product.description,
         code: product.code,
@@ -150,6 +316,8 @@ async function getProductsImpl(
         sellerName: sellerMap.get(sellerId)?.name || 'Unknown Seller',
         image: product.image,
         totalStock: product.totalStock,
+        totalDefectiveQuantity,
+        availableStock,
         status: product.status,
         createdAt: product.createdAt,
         updatedAt: product.updatedAt
@@ -612,6 +780,31 @@ async function createProductImpl(productData: ProductInput): Promise<ProductResp
 
     await newProduct.save();
 
+    // Sync to Shopify if requested
+    if (productData.syncToShopify) {
+      // Get selected warehouse from cookies
+      const cookiesStore = await cookies();
+      const selectedWarehouseId = cookiesStore.get('selectedWarehouse')?.value;
+
+      if (selectedWarehouseId) {
+        const shopifySync = await syncProductToShopify(
+          {
+            name: productData.name,
+            description: productData.description,
+            code: productData.code,
+            image: productData.image
+          },
+          user._id.toString(),
+          selectedWarehouseId
+        );
+
+        if (!shopifySync.success) {
+          console.error('Failed to sync product to Shopify:', shopifySync.error);
+          // Don't fail the product creation, just log the error
+        }
+      }
+    }
+
     // Revalidate the products path
     revalidatePath('/dashboard/products');
 
@@ -769,11 +962,36 @@ async function updateProductImpl(id: string, productData: ProductInput): Promise
 
     await product.save();
 
+    // Sync to Shopify if requested
+    if (productData.syncToShopify) {
+      // Get selected warehouse from cookies
+      const cookiesStore = await cookies();
+      const selectedWarehouseId = cookiesStore.get('selectedWarehouse')?.value;
+
+      if (selectedWarehouseId) {
+        const shopifySync = await syncProductToShopify(
+          {
+            name: productData.name,
+            description: productData.description,
+            code: productData.code,
+            image: productData.image
+          },
+          user._id.toString(),
+          selectedWarehouseId
+        );
+
+        if (!shopifySync.success) {
+          console.error('Failed to sync product to Shopify:', shopifySync.error);
+          // Don't fail the product update, just log the error
+        }
+      }
+    }
+
     // Delete old image from Cloudinary if needed
     if (shouldDeleteOldImage && oldImagePublicId) {
       try {
         // Asynchronously delete the old image, but don't wait for it
-        deleteFromCloudinary(oldImagePublicId).catch(err => 
+        deleteFromCloudinary(oldImagePublicId).catch(err =>
           console.error('Error deleting old Cloudinary image:', err)
         );
       } catch (error) {

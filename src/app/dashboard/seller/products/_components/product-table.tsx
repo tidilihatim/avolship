@@ -663,7 +663,9 @@ export default function ProductTable({
                         {t("common.seller")}
                       </TableHead>
                     )}
-                    <TableHead>{t("common.stock")}</TableHead>
+                    <TableHead>{t("products.table.totalStock")}</TableHead>
+                    <TableHead className="hidden lg:table-cell">{t("products.table.availableStock")}</TableHead>
+                    <TableHead className="hidden lg:table-cell">{t("products.table.defectiveQuantity")}</TableHead>
                     <TableHead className="hidden md:table-cell">
                       {t("common.status")}
                     </TableHead>
@@ -782,6 +784,30 @@ export default function ProductTable({
                             </TooltipProvider>
                           )}
                         </div>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <div className="flex items-center gap-1">
+                          <span
+                            className={`${
+                              (product.availableStock || 0) === 0
+                                ? "text-red-600"
+                                : (product.availableStock || 0) < 10
+                                ? "text-amber-600"
+                                : "text-green-600"
+                            }`}
+                          >
+                            {product.availableStock ?? 0}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <span className={`${
+                          (product.totalDefectiveQuantity || 0) > 0
+                            ? "text-red-600"
+                            : "text-muted-foreground"
+                        }`}>
+                          {product.totalDefectiveQuantity || 0}
+                        </span>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
                         <Badge

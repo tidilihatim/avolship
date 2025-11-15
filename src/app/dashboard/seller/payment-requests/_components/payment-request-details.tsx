@@ -15,7 +15,6 @@ import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
 import {
   MapPin,
-  DollarSign,
   Calendar,
   Clock,
   User,
@@ -25,7 +24,6 @@ import {
   XCircle,
 } from 'lucide-react';
 import { PaymentRequestStatus } from '@/lib/db/models/payment-request';
-import { formatPrice } from '@/lib/utils';
 
 interface PaymentRequest {
   _id: string;
@@ -36,7 +34,6 @@ interface PaymentRequest {
     city: string;
     currency: string;
   };
-  requestedAmount: number;
   description: string;
   requestedFromDate: string;
   requestedToDate: string;
@@ -195,16 +192,7 @@ export const PaymentRequestDetails: React.FC<PaymentRequestDetailsProps> = ({
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <DollarSign className="w-4 h-4" />
-                    <span>Requested Amount</span>
-                  </div>
-                  <div className="text-2xl font-bold">
-                    {formatPrice(request.requestedAmount, request.warehouseId.currency)}
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <AlertCircle className="w-4 h-4" />

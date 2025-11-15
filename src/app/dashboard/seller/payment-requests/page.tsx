@@ -28,7 +28,6 @@ interface PaymentRequest {
     city: string;
     currency: string;
   };
-  requestedAmount: number;
   description: string;
   requestedFromDate: string;
   requestedToDate: string;
@@ -232,9 +231,6 @@ const PaymentRequestsPage = () => {
         return <Clock className="w-3 h-3" />;
     }
   };
-
-  // Stats will be calculated server-side based on current filters
-  const currentCount = pagination.totalItems;
 
   // Show initial loading screen
   if (initialLoading) {

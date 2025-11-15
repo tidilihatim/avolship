@@ -11,12 +11,13 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap, Trophy, User, Headphones } from 'lucide-react';
+import { Settings, MapPin, DollarSign, Package, Users, Cog, Zap, Trophy, User, Headphones, Coins } from 'lucide-react';
 import { DeliveryFeeRulesForm } from './_components/delivery-fee-rules-form';
 import { CommissionRulesForm } from './_components/commission-rules-form';
 import { CallCenterCommissionRulesForm } from './_components/call-center-commission-rules-form';
 import { LocationTrackingForm } from './_components/location-tracking-form';
 import { TokenSystemForm } from './_components/token-system-form';
+import { CurrencyManagementForm } from './_components/currency-management-form';
 import { SellerSettingsForm } from '@/components/shared/settings';
 import { getAppSettings, updateAppSettings } from '@/app/actions/app-settings';
 import { getTokenPackages } from '@/app/actions/tokens';
@@ -38,6 +39,13 @@ interface AppSettings {
     enableDeliveryLeaderboard: boolean;
     enableCallCenterLeaderboard: boolean;
   };
+  currencies: {
+    code: string;
+    name: string;
+    symbol: string;
+    rates: { [currencyCode: string]: number };
+    isActive: boolean;
+  }[];
   enableCommissionSystem: boolean;
   enableDeliveryFees: boolean;
   defaultDeliveryFee: number;
@@ -170,6 +178,18 @@ const AppSettingsPage = () => {
             </p>
           </div>
         </div>
+      ) : null
+    },
+    {
+      id: 'currencies',
+      title: t('sections.currencies.title'),
+      description: t('sections.currencies.description'),
+      icon: <Coins className="w-5 h-5" />,
+      component: settings ? (
+        <CurrencyManagementForm
+          currencies={settings.currencies || []}
+          onCurrenciesChange={(currencies) => updateSettings({ currencies })}
+        />
       ) : null
     },
     {

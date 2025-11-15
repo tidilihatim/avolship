@@ -1389,6 +1389,10 @@
         "title": "Location Tracking Settings",
         "description": "Configure location tracking visibility for different user roles"
       },
+      "currencies": {
+        "title": "Currency Management",
+        "description": "Configure currencies and exchange rates for the platform"
+      },
       "leaderboards": {
         "title": "Leaderboard Settings",
         "description": "Configure leaderboard visibility for different user roles"
@@ -1450,6 +1454,43 @@
         "label": "Enable for Call Center",
         "switchDescription": "Call center staff will be able to see delivery personnel locations for customer support"
       }
+    },
+    "currencies": {
+      "addNew": {
+        "title": "Add New Currency",
+        "description": "Add a new currency to the platform",
+        "button": "Add Currency",
+        "cancel": "Cancel",
+        "add": "Add Currency"
+      },
+      "fields": {
+        "code": "Currency Code",
+        "name": "Currency Name",
+        "symbol": "Currency Symbol"
+      },
+      "exchangeRates": {
+        "title": "Exchange Rates",
+        "to": "To",
+        "noRates": "No exchange rates configured. Add another currency to set up exchange rates.",
+        "note": "Note: Set exchange rates for both directions manually (e.g., GNF→MAD and MAD→GNF)"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "validation": {
+        "allFieldsRequired": "All fields are required",
+        "currencyExists": "Currency with this code already exists"
+      },
+      "messages": {
+        "currencyAdded": "Currency added successfully",
+        "currencyRemoved": "Currency removed successfully"
+      },
+      "preview": {
+        "title": "Exchange Rate Preview",
+        "description": "Preview of all active currency conversions"
+      },
+      "noCurrencies": "No currencies configured. Click 'Add Currency' to get started."
     },
     "leaderboards": {
       "seller": {
@@ -3342,13 +3383,20 @@
       "stock": "Stock"
     },
 
+    "table": {
+      "totalStock": "Total Stock",
+      "availableStock": "Available Stock",
+      "defectiveQuantity": "Defective"
+    },
+
     "sections": {
       "basicInfo": "Basic Information",
       "pricingStock": "Pricing & Stock",
       "productImage": "Product Image",
       "warehouseDistribution": "Warehouse Distribution",
       "sellerInfo": "Seller Information",
-      "additionalInfo": "Additional Information"
+      "additionalInfo": "Additional Information",
+      "shopifyIntegration": "Shopify Integration"
     },
 
     "deleteDialog": {
@@ -3378,7 +3426,8 @@
       "sellerName": "Seller Name",
       "sellerEmail": "Seller Email",
       "businessName": "Business Name",
-      "verificationLink": "Verification Link"
+      "verificationLink": "Verification Link",
+      "syncToShopify": "Sync to Shopify"
     },
     "actions": {
       "markAsActive": "Mark as Active",
@@ -3386,7 +3435,8 @@
       "markAsOutOfStock": "Mark as Out of Stock"
     },
     "messages": {
-      "noWarehousesConfigured": "No warehouses configured for this product"
+      "noWarehousesConfigured": "No warehouses configured for this product",
+      "shopifyNotConnected": "Connect your Shopify store to enable product syncing"
     },
 
     "placeholders": {
@@ -3404,7 +3454,8 @@
       "optionalVariant": "Optional code for product variants",
       "price": "Product price (optional)",
       "verificationLink": "Link to product verification page",
-      "imageRequirements": "Image must be less than 5MB and in JPG, PNG, or WEBP format"
+      "imageRequirements": "Image must be less than 5MB and in JPG, PNG, or WEBP format",
+      "shopifySync": "Enable to automatically sync this product to your connected Shopify store"
     },
 
     "statuses": {
@@ -5122,6 +5173,14 @@
         "payout": "Payout",
         "noData": "No payout data available for the selected period",
         "totalPayouts": "Total Payouts in Period"
+      },
+      "cashInTransit": {
+        "title": "Cash in Transit",
+        "description": "Total value from delivered orders pending collection",
+        "yAxisLabel": "Amount",
+        "amount": "Amount",
+        "noData": "No cash in transit data available for the selected period",
+        "totalCashInTransit": "Total Cash in Transit"
       }
     }
   },

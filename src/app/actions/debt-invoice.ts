@@ -706,18 +706,40 @@ export const updateDebtInvoiceStatus = withDbConnection(async (invoiceId: string
       return { success: false, message: 'Insufficient permissions' };
     }
 
-    const invoice = await DebtInvoice.findByIdAndUpdate(
-      invoiceId,
-      {
-        status,
-        ...(status === InvoiceStatus.PAID && { paidDate: new Date() })
-      },
-      { new: true }
-    );
-
+    const invoice = await DebtInvoice.findById(invoiceId);
     if (!invoice) {
       return { success: false, message: 'Invoice not found' };
     }
+
+    // Update invoice status
+    invoice.status = status;
+
+    if (status === InvoiceStatus.PAID) {
+      invoice.paidDate = new Date();
+
+      // Update all orders to PROCESSED status
+      // 1. Update regular orders from orderIds array
+      if (invoice.orderIds && invoice.orderIds.length > 0) {
+        await Order.updateMany(
+          { _id: { $in: invoice.orderIds } },
+          { $set: { status: OrderStatus.PROCESSED } }
+        );
+      }
+
+      // 2. Update manual orders that are included
+      const includedManualOrderIds = invoice.manualOrders
+        ?.filter((mo: any) => mo.include)
+        .map((mo: any) => mo.orderId) || [];
+
+      if (includedManualOrderIds.length > 0) {
+        await Order.updateMany(
+          { _id: { $in: includedManualOrderIds } },
+          { $set: { status: OrderStatus.PROCESSED } }
+        );
+      }
+    }
+
+    await invoice.save();
 
     return { success: true, message: 'Invoice status updated successfully' };
 

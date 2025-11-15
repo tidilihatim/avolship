@@ -1749,6 +1749,10 @@
         "title": "Paramètres de Suivi de Localisation",
         "description": "Configurer la visibilité du suivi de localisation pour différents rôles d'utilisateurs"
       },
+      "currencies": {
+        "title": "Gestion des Devises",
+        "description": "Configurer les devises et les taux de change pour la plateforme"
+      },
       "leaderboards": {
         "title": "Paramètres des Classements",
         "description": "Configurer la visibilité des classements pour différents rôles d'utilisateurs"
@@ -1810,6 +1814,43 @@
         "label": "Activer pour le Centre d'Appels",
         "switchDescription": "Le personnel du centre d'appels pourra voir les emplacements du personnel de livraison pour le support client"
       }
+    },
+    "currencies": {
+      "addNew": {
+        "title": "Ajouter une Nouvelle Devise",
+        "description": "Ajouter une nouvelle devise à la plateforme",
+        "button": "Ajouter une Devise",
+        "cancel": "Annuler",
+        "add": "Ajouter la Devise"
+      },
+      "fields": {
+        "code": "Code de la Devise",
+        "name": "Nom de la Devise",
+        "symbol": "Symbole de la Devise"
+      },
+      "exchangeRates": {
+        "title": "Taux de Change",
+        "to": "Vers",
+        "noRates": "Aucun taux de change configuré. Ajoutez une autre devise pour configurer les taux de change.",
+        "note": "Note: Définissez les taux de change pour les deux directions manuellement (ex: GNF→MAD et MAD→GNF)"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "validation": {
+        "allFieldsRequired": "Tous les champs sont requis",
+        "currencyExists": "Une devise avec ce code existe déjà"
+      },
+      "messages": {
+        "currencyAdded": "Devise ajoutée avec succès",
+        "currencyRemoved": "Devise supprimée avec succès"
+      },
+      "preview": {
+        "title": "Aperçu des Taux de Change",
+        "description": "Aperçu de toutes les conversions de devises actives"
+      },
+      "noCurrencies": "Aucune devise configurée. Cliquez sur 'Ajouter une Devise' pour commencer."
     },
     "leaderboards": {
       "seller": {
@@ -3309,6 +3350,12 @@
       "stock": "Stock"
     },
 
+    "table": {
+      "totalStock": "Stock Total",
+      "availableStock": "Stock Disponible",
+      "defectiveQuantity": "Défectueux"
+    },
+
     "deleteDialog": {
       "title": "Supprimer le Produit",
       "description": "Êtes-vous sûr de vouloir supprimer ce produit ? Cette action ne peut pas être annulée.",
@@ -3322,7 +3369,8 @@
       "productImage": "Image du Produit",
       "warehouseDistribution": "Distribution des Entrepôts",
       "sellerInfo": "Informations du Vendeur",
-      "additionalInfo": "Informations Supplémentaires"
+      "additionalInfo": "Informations Supplémentaires",
+      "shopifyIntegration": "Intégration Shopify"
     },
 
     "fields": {
@@ -3343,7 +3391,8 @@
       "sellerName": "Nom du Vendeur",
       "sellerEmail": "Email du Vendeur",
       "businessName": "Nom de l'Entreprise",
-      "verificationLink": "Lien de Vérification"
+      "verificationLink": "Lien de Vérification",
+      "syncToShopify": "Synchroniser avec Shopify"
     },
 
     "actions": {
@@ -3353,7 +3402,8 @@
     },
 
     "messages": {
-      "noWarehousesConfigured": "Aucun entrepôt configuré pour ce produit"
+      "noWarehousesConfigured": "Aucun entrepôt configuré pour ce produit",
+      "shopifyNotConnected": "Connectez votre boutique Shopify pour activer la synchronisation des produits"
     },
 
     "placeholders": {
@@ -3371,7 +3421,8 @@
       "optionalVariant": "Code optionnel pour les variantes de produit",
       "price": "Prix du produit (optionnel)",
       "verificationLink": "Lien vers la page de vérification du produit",
-      "imageRequirements": "L'image doit faire moins de 5 Mo et être au format JPG, PNG ou WEBP"
+      "imageRequirements": "L'image doit faire moins de 5 Mo et être au format JPG, PNG ou WEBP",
+      "shopifySync": "Activez pour synchroniser automatiquement ce produit avec votre boutique Shopify connectée"
     },
 
     "statuses": {
@@ -5088,6 +5139,14 @@
         "payout": "Paiement",
         "noData": "Aucune donnée de paiement disponible pour la période sélectionnée",
         "totalPayouts": "Total des Paiements dans la Période"
+      },
+      "cashInTransit": {
+        "title": "Espèces en Transit",
+        "description": "Valeur totale des commandes livrées en attente de collecte",
+        "yAxisLabel": "Montant",
+        "amount": "Montant",
+        "noData": "Aucune donnée d'espèces en transit disponible pour la période sélectionnée",
+        "totalCashInTransit": "Total des Espèces en Transit"
       }
     }
   },

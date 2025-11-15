@@ -36,11 +36,10 @@ import {
   X,
   Calendar,
   MapPin,
-  DollarSign,
-  Clock
+  Clock,
+  FileText
 } from 'lucide-react';
 import { PaymentRequestStatus } from '@/lib/db/models/payment-request';
-import { formatPrice } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface PaymentRequest {
@@ -52,7 +51,6 @@ interface PaymentRequest {
     city: string;
     currency: string;
   };
-  requestedAmount: number;
   description: string;
   requestedFromDate: string;
   requestedToDate: string;
@@ -137,7 +135,7 @@ export const PaymentRequestsList: React.FC<PaymentRequestsListProps> = ({
   if (requests.length === 0) {
     return (
       <Card className="p-12 text-center">
-        <DollarSign className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+        <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
         <h3 className="text-lg font-medium mb-2">No Payment Requests</h3>
         <p className="text-muted-foreground mb-4">
           You haven't created any payment requests yet.
@@ -155,7 +153,6 @@ export const PaymentRequestsList: React.FC<PaymentRequestsListProps> = ({
             <TableHeader>
               <TableRow>
                 <TableHead>Warehouse</TableHead>
-                <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead>Date Range</TableHead>
@@ -176,9 +173,6 @@ export const PaymentRequestsList: React.FC<PaymentRequestsListProps> = ({
                           <Skeleton className="h-3 w-24" />
                         </div>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-20" />
                     </TableCell>
                     <TableCell>
                       <Skeleton className="h-6 w-16" />
@@ -212,13 +206,6 @@ export const PaymentRequestsList: React.FC<PaymentRequestsListProps> = ({
                             {request.warehouseId.city}, {request.warehouseId.country}
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-1">
-                        <span className="font-medium">
-                          {formatPrice(request.requestedAmount, request.warehouseId.currency)}
-                        </span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -294,11 +281,7 @@ export const PaymentRequestsList: React.FC<PaymentRequestsListProps> = ({
                 </div>
                 <Skeleton className="h-6 w-16" />
               </div>
-              <div className="grid grid-cols-2 gap-2 text-sm mb-3">
-                <div>
-                  <Skeleton className="h-3 w-12 mb-1" />
-                  <Skeleton className="h-4 w-20" />
-                </div>
+              <div className="grid grid-cols-1 gap-2 text-sm mb-3">
                 <div>
                   <Skeleton className="h-3 w-12 mb-1" />
                   <Skeleton className="h-4 w-16" />
@@ -336,13 +319,7 @@ export const PaymentRequestsList: React.FC<PaymentRequestsListProps> = ({
                 </Badge>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-sm mb-3">
-                <div>
-                  <div className="text-muted-foreground">Amount</div>
-                  <div className="font-medium">
-                    {formatPrice(request.requestedAmount, request.warehouseId.currency)}
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 gap-2 text-sm mb-3">
                 <div>
                   <div className="text-muted-foreground">Priority</div>
                   <div className={getPriorityColor(request.priority)}>

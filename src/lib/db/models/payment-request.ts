@@ -19,7 +19,6 @@ export enum PaymentRequestPriority {
 export interface IPaymentRequest extends Document {
   sellerId: mongoose.Types.ObjectId;
   warehouseId: mongoose.Types.ObjectId;
-  requestedAmount: number;
   description: string;
   requestedFromDate: Date;
   requestedToDate: Date;
@@ -89,11 +88,6 @@ const PaymentRequestSchema = new Schema<IPaymentRequest>(
       ref: 'Warehouse',
       required: true,
       index: true,
-    },
-    requestedAmount: {
-      type: Number,
-      required: true,
-      min: 0,
     },
     description: {
       type: String,

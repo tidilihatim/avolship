@@ -12,11 +12,9 @@ import { UserRole } from '@/lib/db/models/user';
 import { sendNotification, sendNotificationToUserType } from '@/lib/notifications/send-notification';
 import { NotificationType } from '@/types/notification';
 import { NotificationIcon } from '@/lib/db/models/notification';
-import { formatPrice } from '@/lib/utils';
 
 interface CreatePaymentRequestData {
   warehouseId: string;
-  requestedAmount: number;
   description: string;
   requestedFromDate: string;
   requestedToDate: string;
@@ -92,7 +90,6 @@ export const createPaymentRequest = withDbConnection(async (data: CreatePaymentR
     const paymentRequest = await PaymentRequest.createRequest({
       sellerId: new mongoose.Types.ObjectId(session.user.id),
       warehouseId: new mongoose.Types.ObjectId(data.warehouseId),
-      requestedAmount: data.requestedAmount,
       description: data.description,
       requestedFromDate: fromDate,
       requestedToDate: toDate,
@@ -108,28 +105,26 @@ export const createPaymentRequest = withDbConnection(async (data: CreatePaymentR
     // Send notifications to admins and moderators
     sendNotificationToUserType(UserRole.ADMIN, {
       title: "New Payment Request",
-      message: `${session.user.name} has requested a payment of ${data.requestedAmount} ${warehouse?.currency} from ${warehouse?.name}`,
+      message: `${session.user.name} has requested a payment from ${warehouse?.name}`,
       type: NotificationType.PAYMENT,
       icon: NotificationIcon.CREDIT_CARD,
       actionLink: `/dashboard/admin/payment-requests/${paymentRequest._id}`,
       metadata: {
         sellerId: session.user.id,
         warehouseId: data.warehouseId,
-        amount: data.requestedAmount,
         currency: warehouse?.currency
       }
     });
 
     sendNotificationToUserType(UserRole.MODERATOR, {
       title: "New Payment Request",
-      message: `${session.user.name} has requested a payment of ${data.requestedAmount} ${warehouse?.currency} from ${warehouse?.name}`,
+      message: `${session.user.name} has requested a payment from ${warehouse?.name}`,
       type: NotificationType.PAYMENT,
       icon: NotificationIcon.CREDIT_CARD,
       actionLink: `/dashboard/moderator/payment-requests/${paymentRequest._id}`,
       metadata: {
         sellerId: session.user.id,
         warehouseId: data.warehouseId,
-        amount: data.requestedAmount,
         currency: warehouse?.currency
       }
     });
@@ -282,10 +277,10 @@ export const updatePaymentRequestStatus = withDbConnection(async (data: UpdatePa
 
     // Send notification to seller about status update
     const statusMessages:any = {
-      [PaymentRequestStatus.APPROVED]: `Your payment request for ${formatPrice(updatedRequest.requestedAmount, updatedRequest.warehouseId.currency)} has been approved`,
-      [PaymentRequestStatus.REJECTED]: `Your payment request for ${formatPrice(updatedRequest.requestedAmount, updatedRequest.warehouseId.currency)} has been rejected`,
-      [PaymentRequestStatus.SCHEDULED]: `Your payment request for ${formatPrice(updatedRequest.requestedAmount, updatedRequest.warehouseId.currency)} has been scheduled`,
-      [PaymentRequestStatus.PROCESSED]: `Your payment request for ${formatPrice(updatedRequest.requestedAmount, updatedRequest.warehouseId.currency)} has been processed`
+      [PaymentRequestStatus.APPROVED]: `Your payment request has been approved`,
+      [PaymentRequestStatus.REJECTED]: `Your payment request has been rejected`,
+      [PaymentRequestStatus.SCHEDULED]: `Your payment request has been scheduled`,
+      [PaymentRequestStatus.PROCESSED]: `Your payment request has been processed`
     };
 
     if (statusMessages[data.status]) {
@@ -348,27 +343,25 @@ export const cancelPaymentRequest = withDbConnection(async (requestId: string) =
     // Send notifications to admins and moderators about cancellation
     sendNotificationToUserType(UserRole.ADMIN, {
       title: "Payment Request Cancelled",
-      message: `${session.user.name} has cancelled a payment request of ${request.requestedAmount} ${request.warehouseId?.currency} from ${request.warehouseId.name}`,
+      message: `${session.user.name} has cancelled a payment request from ${request.warehouseId.name}`,
       type: NotificationType.WARNING,
       icon: NotificationIcon.X_CIRCLE,
       actionLink: `/dashboard/admin/payment-requests/${request._id}`,
       metadata: {
         sellerId: session.user.id,
         warehouseId: request.warehouseId._id.toString(),
-        amount: request.requestedAmount,
       }
     });
 
     sendNotificationToUserType(UserRole.MODERATOR, {
       title: "Payment Request Cancelled",
-      message: `${session.user.name} has cancelled a payment request of ${request.requestedAmount} ${request.warehouseId.currency} from ${request.warehouseId.name}`,
+      message: `${session.user.name} has cancelled a payment request from ${request.warehouseId.name}`,
       type: NotificationType.WARNING,
       icon: NotificationIcon.X_CIRCLE,
       actionLink: `/dashboard/moderator/payment-requests/${request._id}`,
       metadata: {
         sellerId: session.user.id,
         warehouseId: request.warehouseId._id.toString(),
-        amount: request.requestedAmount,
       }
     });
 

@@ -1,9 +1,10 @@
 import React from 'react';
-import { getWarehouses, getTotalCODCollected, getAverageOrderValue, getPayoutsToSellers } from '@/app/actions/admin-finance';
+import { getWarehouses, getTotalCODCollected, getAverageOrderValue, getPayoutsToSellers, getCashInTransit } from '@/app/actions/admin-finance';
 import { AdminFinanceDashboardClient } from '@/components/admin/finance/admin-finance-dashboard-client';
 import { TotalCODCollectedChart } from '@/components/admin/finance/charts/total-cod-collected-chart';
 import { AverageOrderValueChart } from '@/components/admin/finance/charts/average-order-value-chart';
 import { PayoutsToSellersChart } from '@/components/admin/finance/charts/payouts-to-sellers-chart';
+import { CashInTransitChart } from '@/components/admin/finance/charts/cash-in-transit-chart';
 import { redirect } from 'next/navigation';
 
 const AdminFinanceDashboard = async ({
@@ -49,13 +50,15 @@ const AdminFinanceDashboard = async ({
   let codCollectedData: any[] = [];
   let aovData: any[] = [];
   let payoutsData: any[] = [];
+  let cashInTransitData: any[] = [];
   let currency = '';
 
   if (warehouseId) {
-    const [codResult, aovResult, payoutsResult] = await Promise.all([
+    const [codResult, aovResult, payoutsResult, cashInTransitResult] = await Promise.all([
       getTotalCODCollected(warehouseId, startDate, endDate, period),
       getAverageOrderValue(warehouseId, startDate, endDate, period),
       getPayoutsToSellers(warehouseId, startDate, endDate, period),
+      getCashInTransit(warehouseId, startDate, endDate, period),
     ]);
 
     if (codResult.success) {
@@ -70,12 +73,19 @@ const AdminFinanceDashboard = async ({
     if (payoutsResult.success) {
       payoutsData = payoutsResult.data || [];
     }
+
+    if (cashInTransitResult.success) {
+      cashInTransitData = cashInTransitResult.data || [];
+    }
   }
 
   return (
     <AdminFinanceDashboardClient warehouses={warehouses} selectedWarehouseId={warehouseId}>
       {warehouseId ? (
         <>
+          {/* Cash in Transit Chart */}
+          <CashInTransitChart data={cashInTransitData} currency={currency} />
+
           {/* Total COD Collected Chart */}
           <TotalCODCollectedChart data={codCollectedData} currency={currency} />
 

@@ -8,17 +8,17 @@ import { Loader2, Upload, X, ImageIcon, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
 
 import { ProductInput } from "@/types/product";
-import { ProductStatus } from "@/lib/db/models/product";
 import { createProduct, updateProduct } from "@/app/actions/product";
 import { uploadImageToS3, validateImageFile } from "@/lib/s3-upload";
 import { COUNTRY_FLAGS } from "@/app/dashboard/_constant";
+import { checkShopifyIntegration } from "@/app/actions/integrations";
 
 interface ProductFormProps {
   product?: any;
@@ -43,15 +43,40 @@ export default function ProductForm({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isShopifyConnected, setIsShopifyConnected] = useState(false);
+  const [syncToShopify, setSyncToShopify] = useState(false);
+
+  // Generate unique product code
+  const generateProductCode = () => {
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `PRD-${timestamp}-${randomStr}`;
+  };
 
   // Form state
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    code: "",
+    code: generateProductCode(),
     variantCode: "",
     verificationLink: "",
   });
+
+  // Check Shopify integration status
+  useEffect(() => {
+    const checkShopify = async () => {
+      try {
+        const result = await checkShopifyIntegration();
+        if (result.success && result.isConnected) {
+          setIsShopifyConnected(true);
+        }
+      } catch (error) {
+        console.error('Error checking Shopify integration:', error);
+      }
+    };
+
+    checkShopify();
+  }, []);
 
   // Populate form values when editing
   useEffect(() => {
@@ -73,6 +98,11 @@ export default function ProductForm({
       // Set image preview if exists
       if (product.image && product.image.url) {
         setImagePreview(product.image.url);
+      }
+
+      // Set Shopify sync status if exists
+      if (product.syncToShopify !== undefined) {
+        setSyncToShopify(product.syncToShopify);
       }
     }
   }, [product, isEdit]);
@@ -179,10 +209,6 @@ export default function ProductForm({
       newErrors.name = t('products.validation.nameRequired');
     }
 
-    if (!formData.description.trim()) {
-      newErrors.description = t('products.validation.descriptionRequired');
-    }
-
     if (!formData.code.trim()) {
       newErrors.code = t('products.validation.codeRequired');
     }
@@ -223,11 +249,12 @@ export default function ProductForm({
       // Prepare product data
       const productData: ProductInput = {
         name: formData.name,
-        description: formData.description,
+        description: formData.name, // Auto-set description to product name
         code: formData.code,
         variantCode: formData.variantCode,
         verificationLink: formData.verificationLink,
         warehouses: warehousesData,
+        syncToShopify: isShopifyConnected ? syncToShopify : false,
       };
 
       // Add image if available
@@ -315,16 +342,10 @@ export default function ProductForm({
                   id="code"
                   name="code"
                   value={formData.code}
-                  onChange={handleChange}
-                  placeholder={t('products.placeholders.enterCode')}
-                  className={errors.code ? "border-destructive" : ""}
+                  readOnly
+                  disabled
+                  className="bg-muted cursor-not-allowed"
                 />
-                <p className="text-sm text-muted-foreground">
-                  {t('products.help.uniqueCode')}
-                </p>
-                {errors.code && (
-                  <p className="text-sm text-destructive">{errors.code}</p>
-                )}
               </div>
             </div>
 
@@ -344,40 +365,22 @@ export default function ProductForm({
                   {t('products.help.optionalVariant')}
                 </p>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description" className="text-sm font-medium">
-                {t('products.fields.description')} <span className="text-red-500">*</span>
-              </Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder={t('products.placeholders.enterDescription')}
-                className={errors.description ? "border-destructive resize-none" : "resize-none"}
-                rows={3}
-              />
-              {errors.description && (
-                <p className="text-sm text-destructive">{errors.description}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="verificationLink" className="text-sm font-medium">
-                {t('products.fields.verificationLink')}
-              </Label>
-              <Input
-                id="verificationLink"
-                name="verificationLink"
-                value={formData.verificationLink}
-                onChange={handleChange}
-                placeholder={t('products.placeholders.enterVerificationLink')}
-              />
-              <p className="text-sm text-muted-foreground">
-                {t('products.help.verificationLink')}
-              </p>
+              <div className="space-y-2">
+                <Label htmlFor="verificationLink" className="text-sm font-medium">
+                  {t('products.fields.verificationLink')}
+                </Label>
+                <Input
+                  id="verificationLink"
+                  name="verificationLink"
+                  value={formData.verificationLink}
+                  onChange={handleChange}
+                  placeholder={t('products.placeholders.enterVerificationLink')}
+                />
+                <p className="text-sm text-muted-foreground">
+                  {t('products.help.verificationLink')}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -506,6 +509,33 @@ export default function ProductForm({
               </div>
             </div>
           </div>
+
+          {/* Shopify Integration */}
+          {isShopifyConnected && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">
+                {t('products.sections.shopifyIntegration')}
+              </h3>
+              <Separator />
+
+              <div className="flex items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <Label htmlFor="sync-shopify" className="text-base">
+                    {t('products.fields.syncToShopify')}
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    {t('products.help.shopifySync')}
+                  </p>
+                </div>
+                <Switch
+                  id="sync-shopify"
+                  checked={syncToShopify}
+                  onCheckedChange={setSyncToShopify}
+                  disabled={isProcessing}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Form Actions */}
           <div className="flex justify-end space-x-4">

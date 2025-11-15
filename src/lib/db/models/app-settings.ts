@@ -32,6 +32,18 @@ export interface LeaderboardSettings {
   enableCallCenterLeaderboard: boolean;
 }
 
+export interface CurrencyRate {
+  [currencyCode: string]: number; // e.g., { 'MAD': 0.001, 'USD': 0.0001 }
+}
+
+export interface Currency {
+  code: string; // e.g., 'GNF', 'MAD'
+  name: string; // e.g., 'Guinean Franc', 'Moroccan Dirham'
+  symbol: string; // e.g., 'Fr', 'DH'
+  rates: CurrencyRate; // Exchange rates to other currencies
+  isActive: boolean; // Whether this currency is active in the system
+}
+
 export interface IAppSettings extends Document {
   // Delivery Configuration
   deliveryFeeRules: DeliveryFeeRule[];
@@ -47,6 +59,9 @@ export interface IAppSettings extends Document {
 
   // Leaderboard Settings
   leaderboardSettings: LeaderboardSettings;
+
+  // Currency Settings
+  currencies: Currency[]; // Available currencies and their exchange rates
 
   // Commission & Fee Settings
   enableCommissionSystem: boolean;
@@ -179,7 +194,35 @@ const AppSettingsSchema = new Schema<IAppSettings>(
         default: true,
       },
     },
-    
+
+    currencies: [{
+      code: {
+        type: String,
+        required: true,
+        uppercase: true,
+        trim: true,
+      },
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      symbol: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      rates: {
+        type: Map,
+        of: Number,
+        default: {},
+      },
+      isActive: {
+        type: Boolean,
+        default: true,
+      },
+    }],
+
     enableCommissionSystem: {
       type: Boolean,
       default: true,
@@ -264,6 +307,22 @@ AppSettingsSchema.statics.getActiveSettings = async function() {
         { warehouseId: defaultWarehouseId, minDeliveries: 6, maxDeliveries: 10, commission: 40000 },
         { warehouseId: defaultWarehouseId, minDeliveries: 11, maxDeliveries: 20, commission: 80000 },
       ] : [],
+      currencies: [
+        {
+          code: 'GNF',
+          name: 'Guinean Franc',
+          symbol: 'Fr',
+          rates: { MAD: 0.001 }, // 1 GNF = 0.001 MAD
+          isActive: true,
+        },
+        {
+          code: 'MAD',
+          name: 'Moroccan Dirham',
+          symbol: 'DH',
+          rates: { GNF: 1000 }, // 1 MAD = 1000 GNF
+          isActive: true,
+        },
+      ],
       isActive: true,
       lastUpdatedBy: new mongoose.Types.ObjectId(), // Will be updated when admin saves
     });

@@ -57,7 +57,6 @@ interface CreatePaymentRequestDialogProps {
 
 const createPaymentRequestSchema = z.object({
   warehouseId: z.string().min(1, 'Warehouse is required'),
-  requestedAmount: z.number().min(0.01, 'Amount must be greater than 0'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   requestedFromDate: z.date({
     required_error: 'From date is required',
@@ -87,13 +86,11 @@ export const CreatePaymentRequestDialog: React.FC<CreatePaymentRequestDialogProp
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingWarehouses, setLoadingWarehouses] = useState(true);
-  const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse | null>(null);
 
   const form = useForm<CreatePaymentRequestForm>({
     resolver: zodResolver(createPaymentRequestSchema),
     defaultValues: {
       warehouseId: '',
-      requestedAmount: 0,
       description: '',
       requestedFromDate: undefined,
       requestedToDate: undefined,
@@ -105,7 +102,6 @@ export const CreatePaymentRequestDialog: React.FC<CreatePaymentRequestDialogProp
     if (open) {
       fetchWarehouses();
       form.reset();
-      setSelectedWarehouse(null);
     }
   }, [open, form]);
 
@@ -132,7 +128,6 @@ export const CreatePaymentRequestDialog: React.FC<CreatePaymentRequestDialogProp
 
       const result = await createPaymentRequest({
         warehouseId: data.warehouseId,
-        requestedAmount: data.requestedAmount,
         description: data.description,
         requestedFromDate: data.requestedFromDate.toISOString(),
         requestedToDate: data.requestedToDate.toISOString(),
@@ -158,8 +153,6 @@ export const CreatePaymentRequestDialog: React.FC<CreatePaymentRequestDialogProp
   };
 
   const handleWarehouseChange = (warehouseId: string) => {
-    const warehouse = warehouses.find(w => w._id === warehouseId);
-    setSelectedWarehouse(warehouse || null);
     form.setValue('warehouseId', warehouseId);
   };
 
@@ -246,37 +239,6 @@ export const CreatePaymentRequestDialog: React.FC<CreatePaymentRequestDialogProp
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Requested Amount */}
-              <FormField
-                control={form.control}
-                name="requestedAmount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('form.amount')}</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          type="number"
-                          step="0.01"
-                          placeholder={t('form.amountPlaceholder')}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                        />
-                        {selectedWarehouse && (
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                            {selectedWarehouse.currency}
-                          </div>
-                        )}
-                      </div>
-                    </FormControl>
-                    <FormDescription>
-                      {selectedWarehouse && `Currency: ${selectedWarehouse.currency}`}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* From Date */}
               <FormField
                 control={form.control}

@@ -89,6 +89,11 @@ const ProductSchema = new Schema<IProduct>(
           default: 0,
           min: [0, 'Stock cannot be negative'],
         },
+        defectiveQuantity: {
+          type: Number,
+          default: 0,
+          min: [0, 'Defective quantity cannot be negative'],
+        },
       },
     ],
     sellerId: {
