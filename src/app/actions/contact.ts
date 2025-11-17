@@ -152,13 +152,6 @@ export const submitContactForm = withDbConnection(async (data: ContactFormData) 
       priority: 'medium'
     });
 
-    console.log('Contact form submitted:', {
-      id: contact._id.toString(),
-      email: contact.email,
-      country: contact.country,
-      ipAddress: contact.ipAddress
-    });
-
     // Send notifications to admins and moderators about new contact submission
     sendNotificationToUserType(UserRole.ADMIN, {
       title: "New Contact Form Submission",

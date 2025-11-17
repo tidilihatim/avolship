@@ -310,7 +310,9 @@ export default function ProductTable({
                   <TableHead>Code</TableHead>
                   {showSellerFilter && <TableHead>Seller</TableHead>}
                   <TableHead>Warehouse</TableHead>
-                  <TableHead>Stock</TableHead>
+                  <TableHead>Total Stock</TableHead>
+                  <TableHead className="hidden lg:table-cell">Available</TableHead>
+                  <TableHead className="hidden lg:table-cell">Defective</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -319,7 +321,7 @@ export default function ProductTable({
               <TableBody>
                 {products.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={showSellerFilter ? 8 : 7} className="text-center py-8">
+                    <TableCell colSpan={showSellerFilter ? 10 : 9} className="text-center py-8">
                       No products found
                     </TableCell>
                   </TableRow>
@@ -378,6 +380,28 @@ export default function ProductTable({
                       </TableCell>
                       <TableCell>
                         {getStockBadge(product.totalStock)}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <span
+                          className={`${
+                            (product.availableStock || 0) === 0
+                              ? "text-red-600"
+                              : (product.availableStock || 0) < 10
+                              ? "text-amber-600"
+                              : "text-green-600"
+                          }`}
+                        >
+                          {product.availableStock ?? 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <span className={`${
+                          (product.totalDefectiveQuantity || 0) > 0
+                            ? "text-red-600"
+                            : "text-muted-foreground"
+                        }`}>
+                          {product.totalDefectiveQuantity || 0}
+                        </span>
                       </TableCell>
                       <TableCell>
                         {getStatusBadge(product.status)}

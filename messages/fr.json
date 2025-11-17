@@ -3416,6 +3416,58 @@
       "selectStatus": "Sélectionner le statut"
     },
 
+    "editForm": {
+      "basicInfo": {
+        "title": "Informations de Base",
+        "description": "Mettre à jour les détails de base du produit"
+      },
+      "warehouseInventory": {
+        "title": "Inventaire de l'Entrepôt",
+        "description": "Gérer les niveaux de stock dans les entrepôts"
+      },
+      "productImage": {
+        "title": "Image du Produit",
+        "description": "Image actuelle du produit"
+      },
+      "labels": {
+        "productName": "Nom du Produit *",
+        "description": "Description *",
+        "productCode": "Code du Produit *",
+        "variantCode": "Code de Variante",
+        "verificationLink": "Lien de Vérification",
+        "status": "Statut",
+        "stock": "Stock",
+        "defectiveQty": "Qté Défectueuse",
+        "addWarehouse": "Ajouter un Entrepôt"
+      },
+      "placeholders": {
+        "productName": "Saisir le nom du produit",
+        "description": "Saisir la description du produit",
+        "productCode": "Saisir le code du produit",
+        "variantCode": "Saisir le code de variante",
+        "verificationLink": "https://exemple.com/verifier",
+        "selectStatus": "Sélectionner le statut",
+        "stock": "Stock",
+        "defective": "Défectueux",
+        "selectWarehouse": "Sélectionner un entrepôt à ajouter"
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif",
+        "outOfStock": "Rupture de Stock"
+      },
+      "messages": {
+        "noWarehouses": "Aucun entrepôt sélectionné. Ajoutez au moins un entrepôt.",
+        "currentImage": "Image Actuelle",
+        "noImage": "Aucune image téléchargée"
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "updating": "Mise à jour...",
+        "update": "Mettre à Jour le Produit"
+      }
+    },
+
     "help": {
       "uniqueCode": "Doit être unique pour chaque produit que vous créez",
       "optionalVariant": "Code optionnel pour les variantes de produit",

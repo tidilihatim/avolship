@@ -53,6 +53,7 @@ export interface ProductInput {
   warehouses: {
     warehouseId: string;
     stock: number;
+    defectiveQuantity?: number;
   }[];
   sellerId?: string; // Optional as it can be set from session for sellers
   image?: {

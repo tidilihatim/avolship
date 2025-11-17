@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Save, Loader2, Plus, Trash2, Upload } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,10 +33,12 @@ interface ProductEditFormProps {
 interface WarehouseStock {
   warehouseId: string;
   stock: number;
+  defectiveQuantity: number;
 }
 
 export default function ProductEditForm({ product, warehouses, productId }: ProductEditFormProps) {
   const router = useRouter();
+  const t = useTranslations("products.editForm");
   const [isLoading, setIsLoading] = useState(false);
 
   // Form state
@@ -51,7 +54,8 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
   const [warehouseStocks, setWarehouseStocks] = useState<WarehouseStock[]>(
     product.warehouses.map(w => ({
       warehouseId: w.warehouseId,
-      stock: w.stock
+      stock: w.stock,
+      defectiveQuantity: w.defectiveQuantity || 0
     }))
   );
 
@@ -76,10 +80,20 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
     );
   };
 
+  // Handle defective quantity changes
+  const handleDefectiveQuantityChange = (warehouseId: string, quantity: string) => {
+    const quantityNumber = parseInt(quantity) || 0;
+    setWarehouseStocks(prev =>
+      prev.map(w =>
+        w.warehouseId === warehouseId ? { ...w, defectiveQuantity: quantityNumber } : w
+      )
+    );
+  };
+
   // Add warehouse
   const addWarehouse = (warehouseId: string) => {
     if (!warehouseStocks.find(w => w.warehouseId === warehouseId)) {
-      setWarehouseStocks(prev => [...prev, { warehouseId, stock: 0 }]);
+      setWarehouseStocks(prev => [...prev, { warehouseId, stock: 0, defectiveQuantity: 0 }]);
     }
   };
 
@@ -162,19 +176,19 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
         {/* Basic Information */}
         <Card>
           <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+            <CardTitle>{t("basicInfo.title")}</CardTitle>
             <CardDescription>
-              Update the basic product details
+              {t("basicInfo.description")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Product Name *</Label>
+              <Label htmlFor="name">{t("labels.productName")}</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Enter product name"
+                placeholder={t("placeholders.productName")}
                 className={errors.name ? "border-destructive" : ""}
               />
               {errors.name && (
@@ -183,12 +197,12 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
+              <Label htmlFor="description">{t("labels.description")}</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Enter product description"
+                placeholder={t("placeholders.description")}
                 rows={3}
                 className={errors.description ? "border-destructive" : ""}
               />
@@ -199,12 +213,12 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="code">Product Code *</Label>
+                <Label htmlFor="code">{t("labels.productCode")}</Label>
                 <Input
                   id="code"
                   value={formData.code}
                   onChange={(e) => handleInputChange('code', e.target.value)}
-                  placeholder="Enter product code"
+                  placeholder={t("placeholders.productCode")}
                   className={errors.code ? "border-destructive" : ""}
                 />
                 {errors.code && (
@@ -213,37 +227,37 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="variantCode">Variant Code</Label>
+                <Label htmlFor="variantCode">{t("labels.variantCode")}</Label>
                 <Input
                   id="variantCode"
                   value={formData.variantCode}
                   onChange={(e) => handleInputChange('variantCode', e.target.value)}
-                  placeholder="Enter variant code"
+                  placeholder={t("placeholders.variantCode")}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="verificationLink">Verification Link</Label>
+              <Label htmlFor="verificationLink">{t("labels.verificationLink")}</Label>
               <Input
                 id="verificationLink"
                 type="url"
                 value={formData.verificationLink}
                 onChange={(e) => handleInputChange('verificationLink', e.target.value)}
-                placeholder="https://example.com/verify"
+                placeholder={t("placeholders.verificationLink")}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">{t("labels.status")}</Label>
               <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
+                  <SelectValue placeholder={t("placeholders.selectStatus")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={ProductStatus.ACTIVE}>Active</SelectItem>
-                  <SelectItem value={ProductStatus.INACTIVE}>Inactive</SelectItem>
-                  <SelectItem value={ProductStatus.OUT_OF_STOCK}>Out of Stock</SelectItem>
+                  <SelectItem value={ProductStatus.ACTIVE}>{t("status.active")}</SelectItem>
+                  <SelectItem value={ProductStatus.INACTIVE}>{t("status.inactive")}</SelectItem>
+                  <SelectItem value={ProductStatus.OUT_OF_STOCK}>{t("status.outOfStock")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -253,48 +267,63 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
         {/* Warehouse Inventory */}
         <Card>
           <CardHeader>
-            <CardTitle>Warehouse Inventory</CardTitle>
+            <CardTitle>{t("warehouseInventory.title")}</CardTitle>
             <CardDescription>
-              Manage stock levels across warehouses
+              {t("warehouseInventory.description")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Current Warehouses */}
             {warehouseStocks.map((warehouseStock, index) => (
-              <div key={warehouseStock.warehouseId} className="flex items-center gap-3 p-3 border rounded-lg">
-                <div className="flex-1">
-                  <p className="font-medium text-sm">
-                    {getWarehouseName(warehouseStock.warehouseId)}
-                  </p>
+              <div key={warehouseStock.warehouseId} className="space-y-2 p-3 border rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">
+                      {getWarehouseName(warehouseStock.warehouseId)}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeWarehouse(warehouseStock.warehouseId)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
-                <div className="w-24">
-                  <Input
-                    type="number"
-                    min="0"
-                    value={warehouseStock.stock}
-                    onChange={(e) => handleStockChange(warehouseStock.warehouseId, e.target.value)}
-                    placeholder="Stock"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">{t("labels.stock")}</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={warehouseStock.stock}
+                      onChange={(e) => handleStockChange(warehouseStock.warehouseId, e.target.value)}
+                      placeholder={t("placeholders.stock")}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-muted-foreground">{t("labels.defectiveQty")}</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={warehouseStock.defectiveQuantity}
+                      onChange={(e) => handleDefectiveQuantityChange(warehouseStock.warehouseId, e.target.value)}
+                      placeholder={t("placeholders.defective")}
+                    />
+                  </div>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeWarehouse(warehouseStock.warehouseId)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
               </div>
             ))}
 
             {/* Add Warehouse */}
             {availableWarehouses.length > 0 && (
               <div className="space-y-2">
-                <Label>Add Warehouse</Label>
+                <Label>{t("labels.addWarehouse")}</Label>
                 <Select onValueChange={addWarehouse}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select warehouse to add" />
+                    <SelectValue placeholder={t("placeholders.selectWarehouse")} />
                   </SelectTrigger>
                   <SelectContent>
                     {availableWarehouses.map((warehouse) => (
@@ -313,7 +342,7 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
 
             {warehouseStocks.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
-                No warehouses selected. Add at least one warehouse.
+                {t("messages.noWarehouses")}
               </p>
             )}
           </CardContent>
@@ -323,9 +352,9 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
       {/* Product Image */}
       <Card>
         <CardHeader>
-          <CardTitle>Product Image</CardTitle>
+          <CardTitle>{t("productImage.title")}</CardTitle>
           <CardDescription>
-            Current product image
+            {t("productImage.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -337,14 +366,14 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
                 className="w-24 h-24 rounded-lg object-cover border"
               />
               <div>
-                <p className="text-sm font-medium">Current Image</p>
+                <p className="text-sm font-medium">{t("messages.currentImage")}</p>
               </div>
             </div>
           ) : (
             <div className="flex items-center justify-center p-8 border-2 border-dashed rounded-lg">
               <div className="text-center">
                 <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">No image uploaded</p>
+                <p className="text-sm text-muted-foreground">{t("messages.noImage")}</p>
               </div>
             </div>
           )}
@@ -358,18 +387,18 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
           variant="outline"
           onClick={() => router.back()}
         >
-          Cancel
+          {t("buttons.cancel")}
         </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Updating...
+              {t("buttons.updating")}
             </>
           ) : (
             <>
               <Save className="h-4 w-4 mr-2" />
-              Update Product
+              {t("buttons.update")}
             </>
           )}
         </Button>

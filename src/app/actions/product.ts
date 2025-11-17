@@ -434,11 +434,54 @@ async function getAllProductsForAdminImpl(
       sellerMap.set(s._id.toString(), s);
     }
 
+    // Get confirmed orders for all products to calculate available stock
+    // Only count orders for the selected warehouse if provided
+    const productIds = products.map(p => p._id);
+    const confirmedOrdersMatch: any = {
+      status: OrderStatus.CONFIRMED,
+      'products.productId': { $in: productIds }
+    };
+
+    // Only count confirmed orders for the selected warehouse if filtered
+    if (filters.warehouseId) {
+      confirmedOrdersMatch.warehouseId = new mongoose.Types.ObjectId(filters.warehouseId);
+    }
+
+    const confirmedOrders = await Order.aggregate([
+      {
+        $match: confirmedOrdersMatch
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalConfirmedQuantity: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Create a map of product ID to confirmed quantity
+    const confirmedOrdersMap = new Map<string, number>();
+    for (const order of confirmedOrders) {
+      confirmedOrdersMap.set(order._id.toString(), order.totalConfirmedQuantity);
+    }
+
     // Map products to include warehouse and seller names
     const productsWithNames: ProductTableData[] = [];
 
     for (const product of products) {
       const sellerId = product.sellerId.toString();
+      const productId = product._id.toString();
+
+      // Calculate total defective quantity from all warehouses
+      let totalDefectiveQuantity = 0;
 
       // Map warehouses with names
       const warehousesWithNames: WarehouseData[] = [];
@@ -447,19 +490,39 @@ async function getAllProductsForAdminImpl(
         const warehouseId = warehouse.warehouseId.toString();
         const warehouseData = warehouseMap.get(warehouseId);
 
+        const defectiveQty = warehouse.defectiveQuantity || 0;
+        totalDefectiveQuantity += defectiveQty;
+
         warehousesWithNames.push({
           warehouseId,
           warehouseName: warehouseData?.name || 'Unknown Warehouse',
           stock: warehouse.stock,
+          defectiveQuantity: defectiveQty,
           country: warehouseData?.country,
         });
       }
+
+      // Get confirmed orders quantity for this product
+      const confirmedQuantity = confirmedOrdersMap.get(productId) || 0;
+
+      // Calculate available stock
+      // If a warehouse is filtered, use that warehouse's stock only
+      // Otherwise use total stock
+      let warehouseStock = product.totalStock;
+      if (filters.warehouseId) {
+        const selectedWarehouse = product.warehouses.find(
+          (wh: any) => wh.warehouseId.toString() === filters.warehouseId
+        );
+        warehouseStock = selectedWarehouse?.stock || 0;
+      }
+
+      const availableStock = warehouseStock - confirmedQuantity;
 
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
 
       productsWithNames.push({
-        _id: product._id.toString(),
+        _id: productId,
         name: product.name,
         description: product.description,
         code: product.code,
@@ -472,6 +535,8 @@ async function getAllProductsForAdminImpl(
         sellerName: sellerMap.get(sellerId)?.name || 'Unknown Seller',
         image: product.image,
         totalStock: product.totalStock,
+        totalDefectiveQuantity,
+        availableStock,
         status: product.status,
         createdAt: product.createdAt,
         updatedAt: product.updatedAt
@@ -944,6 +1009,7 @@ async function updateProductImpl(id: string, productData: ProductInput): Promise
     product.warehouses = productData.warehouses.map(w => ({
       warehouseId: new mongoose.Types.ObjectId(w.warehouseId),
       stock: w.stock,
+      defectiveQuantity: w.defectiveQuantity || 0,
     }));
     
     // Only update image if provided

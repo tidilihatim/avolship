@@ -3449,6 +3449,58 @@
       "selectStatus": "Select status"
     },
 
+    "editForm": {
+      "basicInfo": {
+        "title": "Basic Information",
+        "description": "Update the basic product details"
+      },
+      "warehouseInventory": {
+        "title": "Warehouse Inventory",
+        "description": "Manage stock levels across warehouses"
+      },
+      "productImage": {
+        "title": "Product Image",
+        "description": "Current product image"
+      },
+      "labels": {
+        "productName": "Product Name *",
+        "description": "Description *",
+        "productCode": "Product Code *",
+        "variantCode": "Variant Code",
+        "verificationLink": "Verification Link",
+        "status": "Status",
+        "stock": "Stock",
+        "defectiveQty": "Defective Qty",
+        "addWarehouse": "Add Warehouse"
+      },
+      "placeholders": {
+        "productName": "Enter product name",
+        "description": "Enter product description",
+        "productCode": "Enter product code",
+        "variantCode": "Enter variant code",
+        "verificationLink": "https://example.com/verify",
+        "selectStatus": "Select status",
+        "stock": "Stock",
+        "defective": "Defective",
+        "selectWarehouse": "Select warehouse to add"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "outOfStock": "Out of Stock"
+      },
+      "messages": {
+        "noWarehouses": "No warehouses selected. Add at least one warehouse.",
+        "currentImage": "Current Image",
+        "noImage": "No image uploaded"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "updating": "Updating...",
+        "update": "Update Product"
+      }
+    },
+
     "help": {
       "uniqueCode": "Must be unique for each product you create",
       "optionalVariant": "Optional code for product variants",
