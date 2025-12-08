@@ -52,28 +52,47 @@ export async function POST(request: NextRequest) {
       isActive: true
     });
 
+    let finalIntegration;
+
     if (existingIntegration) {
-      return NextResponse.json({ error: 'User already has an active Shopify integration for this warehouse' }, { status: 400 });
+      // User is reinstalling - update existing integration with new credentials
+      console.log('Updating existing Shopify integration with new credentials:', existingIntegration._id);
+
+      // Replace connectionData entirely with new credentials (new access token, webhooks, etc.)
+      existingIntegration.connectionData = pendingIntegration.connectionData;
+      existingIntegration.connectionData.pendingClaim = false;
+      existingIntegration.status = IntegrationStatus.CONNECTED;
+      existingIntegration.isActive = true;
+      existingIntegration.lastSyncAt = new Date();
+      existingIntegration.updatedAt = new Date();
+
+      await existingIntegration.save();
+
+      // Delete the pending integration as it's been merged
+      await UserIntegration.findByIdAndDelete(integrationId);
+
+      finalIntegration = existingIntegration;
+    } else {
+      // New installation - claim the pending integration
+      pendingIntegration.userId = userId;
+      pendingIntegration.warehouseId = warehouseId;
+      pendingIntegration.status = IntegrationStatus.CONNECTED;
+      pendingIntegration.connectionData.pendingClaim = false;
+      pendingIntegration.lastSyncAt = new Date();
+      pendingIntegration.updatedAt = new Date();
+
+      await pendingIntegration.save();
+
+      finalIntegration = pendingIntegration;
     }
 
-    // Claim the integration - update with user and warehouse info
-    pendingIntegration.userId = userId;
-    pendingIntegration.warehouseId = warehouseId;
-    pendingIntegration.status = IntegrationStatus.CONNECTED;
-    pendingIntegration.connectionData.pendingClaim = false;
-    pendingIntegration.lastSyncAt = new Date();
-    pendingIntegration.updatedAt = new Date();
-
-    // Save the updated integration
-    await pendingIntegration.save();
-
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Integration claimed successfully',
+    return NextResponse.json({
+      success: true,
+      message: existingIntegration ? 'Integration updated successfully' : 'Integration claimed successfully',
       integration: {
-        id: pendingIntegration._id,
-        shop: pendingIntegration.connectionData.shop,
-        storeName: pendingIntegration.connectionData.storeInfo?.name
+        id: finalIntegration._id,
+        shop: finalIntegration.connectionData.shop,
+        storeName: finalIntegration.connectionData.storeInfo?.name
       }
     });
 
