@@ -16,7 +16,9 @@ import {
   ChartBar,
   DollarSignIcon,
   User2,
-  AlertCircle
+  AlertCircle,
+  PhoneCall,
+  ShipIcon
 } from "lucide-react";
 
 type UserType = 'admin' | 'seller' | 'support' | 'delivery' | 'provider' | 'call_center' | 'moderator' | 'super_admin';
@@ -151,6 +153,18 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       name: "navigation.orders",
       href: "/dashboard/seller/orders",
       icon: ShoppingCart,
+      children: [
+        {
+          name: "navigation.orders_confirmation",
+          href: "/dashboard/seller/orders?phase=confirmation&page=1&limit=10",
+          icon: PhoneCall
+        },
+        {
+          name: "navigation.orders_shipping",
+          href: "/dashboard/seller/orders?phase=shipping&page=1&limit=10",
+          icon: ShipIcon
+        },
+      ]
     },
     {
       name: "navigation.expeditions",

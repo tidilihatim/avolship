@@ -60,6 +60,7 @@ function NavItem({ item, collapsed, isActive, onClick }: NavItemProps) {
   const t = useTranslations();
   const pathname = usePathname();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   // Check if any child is active
   const hasActiveChild = item.children?.some(
@@ -72,32 +73,45 @@ function NavItem({ item, collapsed, isActive, onClick }: NavItemProps) {
       <div>
         <div
           className={cn(
-            "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative cursor-pointer",
+            "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative",
             hasActiveChild
               ? "bg-primary/10 text-foreground"
               : "text-muted-foreground hover:text-foreground hover:bg-accent",
             collapsed && "justify-center px-2"
           )}
-          onClick={() => !collapsed && setIsExpanded(!isExpanded)}
         >
-          <item.icon
-            className={cn(
-              "h-5 w-5 transition-colors flex-shrink-0",
-              hasActiveChild
-                ? "text-foreground"
-                : "text-muted-foreground group-hover:text-foreground"
-            )}
-          />
-          {!collapsed && (
-            <>
+          {/* Parent link - clickable to navigate */}
+          <Link
+            href={item.href || "#"}
+            className="flex items-center gap-3 flex-1 min-w-0"
+            onClick={onClick}
+          >
+            <item.icon
+              className={cn(
+                "h-5 w-5 transition-colors flex-shrink-0",
+                hasActiveChild
+                  ? "text-foreground"
+                  : "text-muted-foreground group-hover:text-foreground"
+              )}
+            />
+            {!collapsed && (
               <span className="font-medium text-sm truncate flex-1">{t(item.name)}</span>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  isExpanded && "rotate-180"
-                )}
-              />
-            </>
+            )}
+          </Link>
+
+          {/* Chevron - clickable to toggle children */}
+          {!collapsed && (
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 transition-transform cursor-pointer hover:text-foreground",
+                isExpanded && "rotate-180"
+              )}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+            />
           )}
         </div>
 
@@ -139,27 +153,41 @@ function NavItem({ item, collapsed, isActive, onClick }: NavItemProps) {
 
     if (collapsed) {
       return (
-        <Popover>
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <div
-              className={cn(
-                "flex items-center justify-center px-2 py-3 rounded-lg transition-all duration-200 group relative cursor-pointer",
-                hasActiveChild
-                  ? "bg-primary/10 text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
-              )}
+              onMouseEnter={() => setIsPopoverOpen(true)}
+              onMouseLeave={() => setIsPopoverOpen(false)}
             >
-              <item.icon
-                className={cn(
-                  "h-5 w-5 transition-colors flex-shrink-0",
-                  hasActiveChild
-                    ? "text-foreground"
-                    : "text-muted-foreground group-hover:text-foreground"
-                )}
-              />
+              {/* Parent link - clickable to navigate */}
+              <Link href={item.href || "#"} onClick={onClick}>
+                <div
+                  className={cn(
+                    "flex items-center justify-center px-2 py-3 rounded-lg transition-all duration-200 group relative cursor-pointer",
+                    hasActiveChild
+                      ? "bg-primary/10 text-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  )}
+                >
+                  <item.icon
+                    className={cn(
+                      "h-5 w-5 transition-colors flex-shrink-0",
+                      hasActiveChild
+                        ? "text-foreground"
+                        : "text-muted-foreground group-hover:text-foreground"
+                    )}
+                  />
+                </div>
+              </Link>
             </div>
           </PopoverTrigger>
-          <PopoverContent side="right" className="ml-2 w-56 p-2" align="start">
+          <PopoverContent
+            side="right"
+            className="ml-2 w-56 p-2"
+            align="start"
+            onMouseEnter={() => setIsPopoverOpen(true)}
+            onMouseLeave={() => setIsPopoverOpen(false)}
+          >
             <div className="space-y-1">
               <div className="px-3 py-2 font-semibold text-sm">
                 {t(item.name)}

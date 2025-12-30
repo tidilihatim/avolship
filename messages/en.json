@@ -1753,6 +1753,8 @@
     }
   },
   "navigation": {
+    "orders_confirmation":"Confirmation Phase",
+    "orders_shipping":"Shipping Phase",
     "system":"System Analytics",
     "seller":"Seller Analytics",
     "finance":"Finance",

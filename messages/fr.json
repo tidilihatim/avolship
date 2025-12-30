@@ -2113,6 +2113,8 @@
     }
   },
   "navigation": {
+    "orders_confirmation":"Phase de confirmation",
+    "orders_shipping":"Phase d'expédition",
     "system":"Analyse du système",
     "seller":"Analyse des vendeurs",
     "finance":"Finance",
