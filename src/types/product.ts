@@ -1,6 +1,6 @@
 // src/types/product.ts
 import { PaginationData } from './user';
-import { ImageData, ProductStatus, WarehouseInventory } from '@/lib/db/models/product';
+import { ImageData, ProductStatus, WarehouseInventory, StockNotificationLevel } from '@/lib/db/models/product';
 import mongoose from 'mongoose';
 
 /**
@@ -37,6 +37,7 @@ export interface ProductTableData {
   totalDefectiveQuantity?: number;
   availableStock?: number; // totalStock - confirmed orders quantity
   status: ProductStatus;
+  stockNotificationLevels?: StockNotificationLevel[];
   createdAt: Date;
   updatedAt: Date;
 }

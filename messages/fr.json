@@ -3355,7 +3355,12 @@
     "table": {
       "totalStock": "Stock Total",
       "availableStock": "Stock Disponible",
-      "defectiveQuantity": "Défectueux"
+      "defectiveQuantity": "Défectueux",
+      "notifications": "Notifications",
+      "active": "actif",
+      "notificationLevels": "Niveaux de Notification",
+      "atStock": "À {stock} articles",
+      "noActiveNotifications": "Aucune notification active"
     },
 
     "deleteDialog": {
@@ -3512,6 +3517,25 @@
       "saveFailed": "Échec de la sauvegarde du produit",
       "unexpectedError": "Une erreur inattendue s'est produite",
       "imageUploadFailed": "Échec du téléchargement de l'image"
+    },
+
+    "stockNotifications": {
+      "setupNotifications": "Notifications de stock",
+      "title": "Paramètres de notification de stock",
+      "description": "Configurez les notifications pour {productName} lorsque le stock atteint des niveaux spécifiques",
+      "level": "Niveau",
+      "thresholdPlaceholder": "Entrez le niveau de stock",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "addLevel": "Ajouter un niveau de notification",
+      "maxLevelsReached": "Maximum 5 niveaux de notification autorisés",
+      "duplicateThresholds": "Impossible d'avoir des valeurs de seuil en double",
+      "updateSuccess": "Niveaux de notification de stock mis à jour avec succès",
+      "updateError": "Échec de la mise à jour des niveaux de notification de stock",
+      "hint": "Vous serez averti lorsque le stock de votre produit atteindra l'un des niveaux de seuil activés.",
+      "cancel": "Annuler",
+      "save": "Enregistrer les paramètres",
+      "saving": "Enregistrement..."
     }
   },
   "users": {

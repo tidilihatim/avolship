@@ -3388,7 +3388,12 @@
     "table": {
       "totalStock": "Total Stock",
       "availableStock": "Available Stock",
-      "defectiveQuantity": "Defective"
+      "defectiveQuantity": "Defective",
+      "notifications": "Notifications",
+      "active": "active",
+      "notificationLevels": "Notification Levels",
+      "atStock": "At {stock} items",
+      "noActiveNotifications": "No active notifications"
     },
 
     "sections": {
@@ -3545,6 +3550,25 @@
       "saveFailed": "Failed to save product",
       "unexpectedError": "An unexpected error occurred",
       "imageUploadFailed": "Failed to upload image"
+    },
+
+    "stockNotifications": {
+      "setupNotifications": "Stock Notifications",
+      "title": "Stock Notification Settings",
+      "description": "Set up notifications for {productName} when stock reaches specific levels",
+      "level": "Level",
+      "thresholdPlaceholder": "Enter stock level",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "addLevel": "Add Notification Level",
+      "maxLevelsReached": "Maximum 5 notification levels allowed",
+      "duplicateThresholds": "Cannot have duplicate threshold values",
+      "updateSuccess": "Stock notification levels updated successfully",
+      "updateError": "Failed to update stock notification levels",
+      "hint": "You will be notified when your product stock reaches any of the enabled threshold levels.",
+      "cancel": "Cancel",
+      "save": "Save Settings",
+      "saving": "Saving..."
     }
   },
   "users": {

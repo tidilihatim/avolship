@@ -302,6 +302,14 @@ async function getProductsImpl(
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
 
+      // Clean stockNotificationLevels to remove MongoDB _id fields
+      const cleanedNotificationLevels = product.stockNotificationLevels
+        ? product.stockNotificationLevels.map((level: any) => ({
+            threshold: level.threshold,
+            enabled: level.enabled
+          }))
+        : [];
+
       productsWithNames.push({
         _id: productId,
         name: product.name,
@@ -319,11 +327,12 @@ async function getProductsImpl(
         totalDefectiveQuantity,
         availableStock,
         status: product.status,
+        stockNotificationLevels: cleanedNotificationLevels,
         createdAt: product.createdAt,
         updatedAt: product.updatedAt
       });
     }
-    
+
     // Calculate pagination data
     const totalPages = Math.ceil(total / limit);
     
@@ -521,6 +530,14 @@ async function getAllProductsForAdminImpl(
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
 
+      // Clean stockNotificationLevels to remove MongoDB _id fields
+      const cleanedNotificationLevels = product.stockNotificationLevels
+        ? product.stockNotificationLevels.map((level: any) => ({
+            threshold: level.threshold,
+            enabled: level.enabled
+          }))
+        : [];
+
       productsWithNames.push({
         _id: productId,
         name: product.name,
@@ -538,6 +555,7 @@ async function getAllProductsForAdminImpl(
         totalDefectiveQuantity,
         availableStock,
         status: product.status,
+        stockNotificationLevels: cleanedNotificationLevels,
         createdAt: product.createdAt,
         updatedAt: product.updatedAt
       });
@@ -1218,6 +1236,79 @@ async function updateProductStatusImpl(id: string, status: ProductStatus): Promi
   }
 }
 
+/**
+ * Update product stock notification levels
+ */
+async function updateProductStockNotificationsImpl(
+  id: string,
+  stockNotificationLevels: Array<{ threshold: number; enabled: boolean }>
+): Promise<ProductResponse> {
+  try {
+    // Get the current user
+    const user = await getCurrentUser();
+    if (!user) {
+      return {
+        success: false,
+        message: 'Unauthorized',
+      };
+    }
+
+    // Find the product
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return {
+        success: false,
+        message: 'Product not found',
+      };
+    }
+
+    // Check if user is a seller and is the owner of the product
+    if (user.role === UserRole.SELLER && product.sellerId.toString() !== user._id.toString()) {
+      return {
+        success: false,
+        message: 'Unauthorized to update this product',
+      };
+    }
+
+    // Validate that we don't have more than 5 levels
+    if (stockNotificationLevels.length > 5) {
+      return {
+        success: false,
+        message: 'Cannot have more than 5 notification levels',
+      };
+    }
+
+    // Validate that all thresholds are non-negative
+    const hasNegativeThreshold = stockNotificationLevels.some(level => level.threshold < 0);
+    if (hasNegativeThreshold) {
+      return {
+        success: false,
+        message: 'Notification thresholds cannot be negative',
+      };
+    }
+
+    // Update the product stock notification levels
+    product.stockNotificationLevels = stockNotificationLevels;
+    await product.save();
+
+    // Revalidate the products path to update the UI
+    revalidatePath('/dashboard/seller/products');
+    revalidatePath(`/dashboard/seller/products/${id}`);
+
+    return {
+      success: true,
+      message: 'Stock notification levels updated successfully',
+    };
+  } catch (error: any) {
+    console.error('Error updating stock notification levels:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to update stock notification levels',
+    };
+  }
+}
+
 // Export the wrapped server actions
 export const getProducts = withDbConnection(getProductsImpl);
 export const getAllProductsForAdmin = withDbConnection(getAllProductsForAdminImpl);
@@ -1226,5 +1317,6 @@ export const getAllWarehouses = withDbConnection(getAllWarehousesImpl);
 export const getAllSellers = withDbConnection(getAllSellersImpl);
 export const deleteProduct = withDbConnection(deleteProductImpl);
 export const updateProductStatus = withDbConnection(updateProductStatusImpl);
+export const updateProductStockNotifications = withDbConnection(updateProductStockNotificationsImpl);
 export const createProduct = withDbConnection(createProductImpl);
 export const updateProduct = withDbConnection(updateProductImpl);

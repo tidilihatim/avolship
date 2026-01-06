@@ -364,15 +364,37 @@ export async function createStockMovement(data: CreateStockMovementData): Promis
       }
     );
 
-    if (newStock <= 10 && newStock > 0) {
-      sendNotification({
-        userId: product.sellerId.toString(),
-        title: "Low Stock Warning",
-        message: `Your product "${(product as any).name || 'Unknown Product'}" is running low on stock. Only ${newStock} units remaining in ${(warehouse as any).name || 'warehouse'}. Consider restocking soon.`,
-        type: NotificationType.WARNING,
-        icon: NotificationIcon.ALERT_TRIANGLE,
-        actionLink: `/dashboard/seller/products/${product._id}`
-      })
+    // Check and send stock notifications based on configured notification levels
+    if (product.stockNotificationLevels && product.stockNotificationLevels.length > 0) {
+      // Get enabled notification levels
+      const enabledLevels = product.stockNotificationLevels.filter((level: any) => level.enabled);
+
+      if (enabledLevels.length > 0) {
+        // Only check when stock is decreasing
+        const isDecreasing = newStock < previousStock;
+
+        if (isDecreasing) {
+          // Find thresholds that were crossed (oldStock > threshold && newStock <= threshold)
+          const triggeredLevels = enabledLevels.filter((level: any) => {
+            return previousStock > level.threshold && newStock <= level.threshold;
+          });
+
+          if (triggeredLevels.length > 0) {
+            // Sort by threshold (highest first) and send notification for the highest crossed threshold
+            triggeredLevels.sort((a: any, b: any) => b.threshold - a.threshold);
+            const highestTriggeredLevel = triggeredLevels[0];
+
+            sendNotification({
+              userId: product.sellerId.toString(),
+              title: "Low Stock Alert",
+              message: `Your product "${product.name}" stock has reached ${newStock} items in ${warehouse.name} (threshold: ${highestTriggeredLevel.threshold}). Consider restocking soon.`,
+              type: NotificationType.WARNING,
+              icon: NotificationIcon.ALERT_TRIANGLE,
+              actionLink: `/dashboard/seller/products/${product._id}`
+            });
+          }
+        }
+      }
     }
 
     revalidatePath('/dashboard/seller/products');

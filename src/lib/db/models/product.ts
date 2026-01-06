@@ -30,6 +30,15 @@ export interface ImageData {
 }
 
 /**
+ * Stock notification level interface
+ * Allows sellers to set up to 5 stock notification thresholds
+ */
+export interface StockNotificationLevel {
+  threshold: number; // Stock level at which to trigger notification
+  enabled: boolean; // Whether this notification level is active
+}
+
+/**
  * Product interface based on SRS requirements (Section 2.2)
  */
 export interface IProduct extends Document {
@@ -43,6 +52,7 @@ export interface IProduct extends Document {
   image?: ImageData; // Image data with URL and public ID (supports both Cloudinary and S3)
   totalStock: number; // Calculated from warehouses
   status: ProductStatus;
+  stockNotificationLevels?: StockNotificationLevel[]; // Up to 5 notification thresholds
   createdAt: Date;
   updatedAt: Date;
 }
@@ -121,6 +131,19 @@ const ProductSchema = new Schema<IProduct>(
       enum: Object.values(ProductStatus),
       default: ProductStatus.ACTIVE,
     },
+    stockNotificationLevels: [
+      {
+        threshold: {
+          type: Number,
+          required: true,
+          min: [0, 'Threshold cannot be negative'],
+        },
+        enabled: {
+          type: Boolean,
+          default: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true, // Automatically add createdAt and updatedAt fields

@@ -17,6 +17,7 @@ import {
   ShoppingBag,
   AlertTriangle,
   History,
+  Bell,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -98,6 +99,7 @@ import { deleteProduct, updateProductStatus } from "@/app/actions/product";
 import { UserRole } from "@/lib/db/models/user";
 import { getLoginUserRole } from "@/app/actions/auth";
 import { PaginationData } from "@/types/user";
+import { StockNotificationDialog } from "./stock-notification-dialog";
 
 // Constants for filter values
 const ALL_STATUSES = "all_statuses";
@@ -669,6 +671,9 @@ export default function ProductTable({
                     <TableHead className="hidden md:table-cell">
                       {t("common.status")}
                     </TableHead>
+                    <TableHead className="hidden xl:table-cell">
+                      {t("products.table.notifications")}
+                    </TableHead>
                     <TableHead className="text-right">
                       {t("common.actions")}
                     </TableHead>
@@ -817,6 +822,43 @@ export default function ProductTable({
                           {getStatusBadge(product.status).label}
                         </Badge>
                       </TableCell>
+                      <TableCell className="hidden xl:table-cell">
+                        {product.stockNotificationLevels && product.stockNotificationLevels.length > 0 ? (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center gap-1.5 cursor-help">
+                                  <Bell className="h-4 w-4" />
+                                  <span className="text-sm">
+                                    {product.stockNotificationLevels.filter(l => l.enabled).length} {t("products.table.active")}
+                                  </span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <div className="text-xs space-y-1">
+                                  <p className="font-semibold">
+                                    {t("products.table.notificationLevels")}
+                                  </p>
+                                  {product.stockNotificationLevels
+                                    .filter(l => l.enabled)
+                                    .sort((a, b) => b.threshold - a.threshold)
+                                    .map((level, idx) => (
+                                      <div key={idx} className="flex items-center gap-2">
+                                        <Bell className="h-3 w-3" />
+                                        <span>{t("products.table.atStock", { stock: level.threshold })}</span>
+                                      </div>
+                                    ))}
+                                  {product.stockNotificationLevels.filter(l => l.enabled).length === 0 && (
+                                    <p className="text-muted-foreground">{t("products.table.noActiveNotifications")}</p>
+                                  )}
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
+                      </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -858,6 +900,11 @@ export default function ProductTable({
                                 {t("common.edit")}
                               </Link>
                             </DropdownMenuItem>
+                            <StockNotificationDialog
+                              productId={product._id}
+                              productName={product.name}
+                              currentLevels={product.stockNotificationLevels}
+                            />
                             <DropdownMenuSeparator />
 
                             {/* Status Actions */}
