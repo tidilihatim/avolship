@@ -35,6 +35,14 @@ export interface DeliveryLocation {
   accuracy?: number; // GPS accuracy in meters
 }
 
+/**
+ * Assigned agent configuration for sellers
+ */
+export interface AssignedAgent {
+  agentId: mongoose.Types.ObjectId;
+  maxPendingOrders?: number; // Max pending orders this agent can handle for this seller
+}
+
 
 /**
  * User interface based on SRS requirements
@@ -51,7 +59,8 @@ export interface IUser extends Document {
   businessInfo?: string;
   serviceType?: string; // Added for providers
   country?: string;
-  assignedCallCenterAgent?: mongoose.Types.ObjectId; // For sellers: which call center agent handles their orders
+  assignedCallCenterAgent?: mongoose.Types.ObjectId; // DEPRECATED: For sellers - use assignedCallCenterAgents instead
+  assignedCallCenterAgents?: AssignedAgent[]; // For sellers: array of call center agents with their configurations
   
   // Delivery Guy specific fields
   isAvailableForDelivery?: boolean; // Whether delivery guy is accepting new orders
@@ -139,8 +148,20 @@ const UserSchema = new Schema<IUser>(
     assignedCallCenterAgent: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      // Only for sellers - references a call center agent
+      // DEPRECATED: Only for sellers - use assignedCallCenterAgents instead
     },
+    assignedCallCenterAgents: [{
+      agentId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      maxPendingOrders: {
+        type: Number,
+        min: [1, 'Max pending orders must be at least 1'],
+        default: 10, // Default max pending orders per agent
+      },
+    }],
     
     // Delivery Guy specific fields
     isAvailableForDelivery: {

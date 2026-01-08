@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import mongoose from 'mongoose';
 
 import { UserFormData, UserApiResponse, UserFilters, PaginationData } from '@/types/user';
 import { withDbConnection } from '@/lib/db/db-connect';
@@ -155,13 +156,38 @@ export const getUsers = withDbConnection(async (
         select: 'name email',
         model: 'User'
       })
+      .populate({
+        path: 'assignedCallCenterAgents.agentId',
+        select: 'name email',
+        model: 'User'
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
 
+    // Transform assignedCallCenterAgents to flatten the structure for frontend
+    const transformedUsers = users.map((user: any) => {
+      if (user.assignedCallCenterAgents && user.assignedCallCenterAgents.length > 0) {
+        user.assignedCallCenterAgents = user.assignedCallCenterAgents
+          .map((config: any) => {
+            // Handle both populated and unpopulated cases
+            if (!config.agentId) return null;
+
+            return {
+              _id: config.agentId._id?.toString() || config.agentId.toString(),
+              name: config.agentId.name,
+              email: config.agentId.email,
+              maxPendingOrders: config.maxPendingOrders
+            };
+          })
+          .filter(Boolean); // Remove null entries (deleted agents)
+      }
+      return user;
+    });
+
     return {
-      users: JSON.parse(JSON.stringify(users)),
+      users: JSON.parse(JSON.stringify(transformedUsers)),
       pagination: { page, limit, total, totalPages },
       success: true,
       message: 'Users fetched successfully'
@@ -471,14 +497,14 @@ export const getCallCenterAgents = withDbConnection(async () => {
 });
 
 /**
- * Assign a seller to a call center agent
+ * Assign a seller to call center agents (supports multiple agents with configurations)
  * @param sellerId - ID of the seller to assign
- * @param agentId - ID of the call center agent (null to unassign)
+ * @param agentConfigs - Array of agent configurations with agentId and maxPendingOrders
  * @returns API response
  */
 export const assignSellerToAgent = withDbConnection(async (
   sellerId: string,
-  agentId: string | null
+  agentConfigs: Array<{ agentId: string; maxPendingOrders?: number }>
 ): Promise<UserApiResponse> => {
   try {
     // Validate seller exists and is a seller
@@ -497,74 +523,101 @@ export const assignSellerToAgent = withDbConnection(async (
       };
     }
 
-    // If agentId is provided, validate agent exists and is a call center agent
-    if (agentId) {
-      const agent = await User.findById(agentId);
-      if (!agent) {
+    // If agentConfigs are provided, validate all agents exist and are call center agents
+    if (agentConfigs && agentConfigs.length > 0) {
+      const agentIds = agentConfigs.map(config => config.agentId);
+      const agents = await User.find({
+        _id: { $in: agentIds },
+        role: 'call_center',
+        status: UserStatus.APPROVED
+      });
+
+      if (agents.length !== agentIds.length) {
         return {
           success: false,
-          message: 'Call center agent not found'
+          message: 'One or more call center agents not found or not approved'
         };
       }
 
-      if (agent.role !== 'call_center') {
-        return {
-          success: false,
-          message: 'User is not a call center agent'
-        };
+      // Validate maxPendingOrders values
+      for (const config of agentConfigs) {
+        if (config.maxPendingOrders !== undefined && config.maxPendingOrders < 1) {
+          return {
+            success: false,
+            message: 'Max pending orders must be at least 1'
+          };
+        }
       }
     }
 
-    // Update seller's assignedCallCenterAgent field
-    await User.findByIdAndUpdate(sellerId, {
-      assignedCallCenterAgent: agentId
-    });
+    // Get current agents for comparison (to find newly added agents)
+    const previousAgentIds = (seller.assignedCallCenterAgents || []).map((agent: any) =>
+      agent.agentId?.toString() || agent.toString()
+    );
+    const newAgentIds = agentConfigs
+      .map(config => config.agentId)
+      .filter(id => !previousAgentIds.includes(id));
+
+    // Update seller's assignedCallCenterAgents field (array of objects)
+    seller.assignedCallCenterAgents = agentConfigs.map(config => ({
+      agentId: new mongoose.Types.ObjectId(config.agentId),
+      maxPendingOrders: config.maxPendingOrders || 10 // Default to 10
+    }));
+
+    // Also update old field for backward compatibility (use first agent)
+    seller.assignedCallCenterAgent = agentConfigs.length > 0
+      ? new mongoose.Types.ObjectId(agentConfigs[0].agentId)
+      : undefined;
+
+    await seller.save();
 
     // Send notification to the seller about assignment change
-    if (agentId) {
-      const agent = await User.findById(agentId);
+    if (agentConfigs.length > 0) {
       await sendNotification({
         userId: sellerId,
         type: NotificationType.SYSTEM,
-        title: 'Call Center Agent Assigned',
-        message: `You have been assigned to call center agent: ${agent?.name}`,
+        title: 'Call Center Agents Assigned',
+        message: `You have been assigned ${agentConfigs.length} call center agent(s). They will handle your orders.`,
         actionLink: '/dashboard/seller/orders',
       });
 
-      // Send notification to the agent about new assignment
-      await sendNotification({
-        userId: agentId,
-        type: NotificationType.SYSTEM,
-        title: 'New Seller Assigned',
-        message: `Seller ${seller.name} has been assigned to you. You will receive their orders automatically.`,
-        actionLink: '/dashboard/call_center/orders',
-      });
+      // Send notification to newly assigned agents
+      for (const agentId of newAgentIds) {
+        await sendNotification({
+          userId: agentId,
+          type: NotificationType.SYSTEM,
+          title: 'New Seller Assigned',
+          message: `Seller ${seller.name} has been assigned to you. You will receive their orders automatically.`,
+          actionLink: '/dashboard/call_center/orders',
+        });
+      }
     } else {
       // Unassignment notification
       await sendNotification({
         userId: sellerId,
         type: NotificationType.SYSTEM,
-        title: 'Call Center Agent Unassigned',
-        message: 'You are no longer assigned to a call center agent.',
+        title: 'Call Center Agents Unassigned',
+        message: 'You are no longer assigned to any call center agents.',
         actionLink: '/dashboard/seller/orders',
       });
     }
 
     // Revalidate related pages
     revalidatePath('/dashboard/admin/users');
+    revalidatePath('/dashboard/super_admin/users');
     revalidatePath('/dashboard/call_center/orders');
 
     return {
       success: true,
-      message: agentId
-        ? 'Seller successfully assigned to call center agent'
-        : 'Seller successfully unassigned from call center agent'
+      message: agentConfigs.length > 0
+        ? `Seller successfully assigned to ${agentConfigs.length} call center agent(s)`
+        : 'Seller successfully unassigned from all call center agents'
     };
   } catch (error) {
-    console.error('Error assigning seller to agent:', error);
+    console.error('Error assigning seller to agents:', error);
     return {
       success: false,
-      message: 'Failed to assign seller to agent. Please try again.'
+      message: 'Failed to assign seller to agents. Please try again.'
     };
   }
 });

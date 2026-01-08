@@ -49,3 +49,4 @@ backend-chat-service.txt
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/scripts

@@ -579,6 +579,7 @@ export default function UserTable({ users, allCountries = [], callCenterAgents =
                           <SellerAgentAssignment
                             sellerId={user._id}
                             currentAgent={user.assignedCallCenterAgent}
+                            currentAgents={user.assignedCallCenterAgents}
                             agents={callCenterAgents}
                           />
                         ) : (

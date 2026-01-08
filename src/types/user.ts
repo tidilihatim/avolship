@@ -18,6 +18,16 @@ export interface UserFormData {
 }
 
 /**
+ * Assigned agent configuration for display
+ */
+export interface AssignedAgentData {
+  _id: string;
+  name: string;
+  email: string;
+  maxPendingOrders?: number;
+}
+
+/**
  * User table data interface for displaying users
  */
 export interface UserTableData {
@@ -34,6 +44,7 @@ export interface UserTableData {
     name: string;
     email: string;
   };
+  assignedCallCenterAgents?: AssignedAgentData[];
   twoFactorEnabled: boolean;
   createdAt: Date;
   lastActive?: Date;
