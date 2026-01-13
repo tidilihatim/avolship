@@ -27,6 +27,8 @@ interface CallCenterCommissionRulesFormProps {
 export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCenterCommissionRulesFormProps) {
   const t = useTranslations('settings.callCenterCommissionRules');
   const [newRule, setNewRule] = useState<Partial<CallCenterCommissionRule>>({
+    warehouseId: '',
+    currency: '',
     minDeliveries: 1,
     maxDeliveries: 5,
     commission: 0,
@@ -51,7 +53,10 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
 
     onRulesChange([...rules, ruleToAdd]);
 
+    // Reset form completely to allow adding new rules
     setNewRule({
+      warehouseId: '',
+      currency: '',
       minDeliveries: 1,
       maxDeliveries: 5,
       commission: 0,
@@ -100,8 +105,8 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
             return (
               <Card key={originalIndex}>
                 <CardContent className="pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                    <div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                    <div className="space-y-2">
                       <Label>{t('labels.warehouse')}</Label>
                       <WarehouseSelector
                         value={rule.warehouseId}
@@ -113,7 +118,7 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
                       />
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor={`min-deliveries-${originalIndex}`}>{t('labels.minDeliveries')}</Label>
                       <Input
                         id={`min-deliveries-${originalIndex}`}
@@ -126,7 +131,7 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
                       />
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor={`max-deliveries-${originalIndex}`}>{t('labels.maxDeliveries')}</Label>
                       <Input
                         id={`max-deliveries-${originalIndex}`}
@@ -139,7 +144,7 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
                       />
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
                       <Label htmlFor={`commission-${originalIndex}`}>{t('labels.commission')}</Label>
                       <div className="space-y-1">
                         <Input
@@ -160,7 +165,8 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
                       </div>
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
+                      <Label className="invisible">Action</Label>
                       <Button
                         variant="destructive"
                         size="icon"
@@ -185,8 +191,8 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
           <CardTitle className="text-sm">{t('addNew.title')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+            <div className="space-y-2">
               <Label>{t('labels.warehouse')}</Label>
               <WarehouseSelector
                 value={newRule.warehouseId}
@@ -197,7 +203,7 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
               />
             </div>
 
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="new-min-deliveries">{t('labels.minDeliveries')}</Label>
               <Input
                 id="new-min-deliveries"
@@ -213,7 +219,7 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
               />
             </div>
 
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="new-max-deliveries">{t('labels.maxDeliveries')}</Label>
               <Input
                 id="new-max-deliveries"
@@ -229,7 +235,7 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
               />
             </div>
 
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="new-commission">{t('labels.commission')}</Label>
               <div className="space-y-1">
                 <Input
@@ -253,7 +259,8 @@ export function CallCenterCommissionRulesForm({ rules, onRulesChange }: CallCent
               </div>
             </div>
 
-            <div>
+            <div className="space-y-2">
+              <Label className="invisible">Action</Label>
               <Button
                 onClick={addRule}
                 className="w-full"
