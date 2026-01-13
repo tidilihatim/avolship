@@ -48,6 +48,9 @@ export function WarehouseSelector({
       if (warehouse) {
         setSelectedCurrency(warehouse.currency);
       }
+    } else {
+      // Clear currency badge when no warehouse is selected
+      setSelectedCurrency("");
     }
   }, [value, warehouses]);
 
@@ -85,30 +88,22 @@ export function WarehouseSelector({
   }
 
   return (
-    <div className="flex items-center space-x-2">
-      <Select value={value} onValueChange={handleValueChange}>
-        <SelectTrigger className="min-w-[200px]">
-          <SelectValue placeholder={defaultPlaceholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {warehouses.map((warehouse) => (
-            <SelectItem key={warehouse._id} value={warehouse._id}>
-              <div className="flex items-center justify-between w-full">
-                <span>{warehouse.name}</span>
-                <Badge variant="secondary" className="ml-2">
-                  {warehouse.currency}
-                </Badge>
-              </div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      
-      {selectedCurrency && (
-        <Badge variant="outline" className="text-xs">
-          {t('currency')}: {selectedCurrency}
-        </Badge>
-      )}
-    </div>
+    <Select value={value} onValueChange={handleValueChange}>
+      <SelectTrigger>
+        <SelectValue placeholder={defaultPlaceholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {warehouses.map((warehouse) => (
+          <SelectItem key={warehouse._id} value={warehouse._id}>
+            <div className="flex items-center justify-between w-full">
+              <span>{warehouse.name}</span>
+              <Badge variant="secondary" className="ml-2 text-xs">
+                {warehouse.currency}
+              </Badge>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
