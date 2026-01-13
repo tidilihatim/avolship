@@ -176,16 +176,48 @@ export async function updateTicketStatus(ticketId: string, status: string) {
   }
 
   await connectToDatabase();
-  
+
   const updateData: any = { status };
   if (status === "closed") {
     updateData.closedAt = new Date();
   }
 
   await Ticket.findByIdAndUpdate(ticketId, updateData);
-  
+
   revalidatePath("/dashboard/support");
   return { success: true };
+}
+
+export async function updateTicketResolution(ticketId: string, resolution: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const role = await getLoginUserRole();
+  if (![UserRole.SUPPORT, UserRole.ADMIN].includes(role)) {
+    throw new Error("Access denied");
+  }
+
+  if (!resolution || resolution.trim().length === 0) {
+    throw new Error("Resolution cannot be empty");
+  }
+
+  await connectToDatabase();
+
+  const ticket = await Ticket.findByIdAndUpdate(
+    ticketId,
+    { resolution: resolution.trim() },
+    { new: true }
+  );
+
+  if (!ticket) {
+    throw new Error("Ticket not found");
+  }
+
+  revalidatePath("/dashboard/support");
+  revalidatePath(`/dashboard/admin/tickets/${ticketId}`);
+  return { success: true, resolution: ticket.resolution };
 }
 
 export async function addTicketMessage(formData: FormData) {

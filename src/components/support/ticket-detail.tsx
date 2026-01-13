@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { TicketAPI } from "@/lib/api/ticket-api";
-import { updateTicketStatus } from "@/app/actions/ticket-actions";
+import { updateTicketStatus, updateTicketResolution } from "@/app/actions/ticket-actions";
 
 interface TicketUser {
   _id: string;
@@ -122,12 +122,23 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
   };
 
   const handleSaveResolution = async () => {
+    if (!resolution || resolution.trim().length === 0) {
+      toast.error("Resolution cannot be empty");
+      return;
+    }
+
     try {
-      // This would call the API to update resolution
-      toast.success("Resolution saved");
-      setIsEditing(false);
+      const result = await updateTicketResolution(ticket._id, resolution);
+
+      if (result.success) {
+        // Update local ticket state with the saved resolution
+        setTicket(prev => ({ ...prev, resolution: result.resolution }));
+        toast.success("Resolution saved successfully");
+        setIsEditing(false);
+      }
     } catch (error: any) {
-      toast.error("Failed to save resolution");
+      console.error('Error saving resolution:', error);
+      toast.error(error.message || "Failed to save resolution");
     }
   };
 
