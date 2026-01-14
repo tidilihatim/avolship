@@ -114,6 +114,14 @@ export default function OrderManager({
           };
         });
         setAvailableOrders(transformedOrders);
+
+        // Remove any already invoiced orders from current selection
+        const alreadyInvoicedOrderIds = new Set(transformedOrders.filter(o => o.isAlreadyInvoiced).map(o => o.orderId));
+        const filteredSelection = selectedOrders.filter(id => !alreadyInvoicedOrderIds.has(id));
+        if (filteredSelection.length !== selectedOrders.length) {
+          setSelectedOrders(filteredSelection);
+          updateManualOrders(filteredSelection);
+        }
       } else {
         console.error('Failed to load orders:', ordersResult.message);
         setAvailableOrders([]);
@@ -126,7 +134,12 @@ export default function OrderManager({
     }
   };
 
-  const toggleOrderSelection = (orderId: string) => {
+  const toggleOrderSelection = (orderId: string, isAlreadyInvoiced: boolean) => {
+    // Prevent selection of already invoiced orders
+    if (isAlreadyInvoiced) {
+      return;
+    }
+
     const newSelected = selectedOrders.includes(orderId)
       ? selectedOrders.filter(id => id !== orderId)
       : [...selectedOrders, orderId];
@@ -152,8 +165,12 @@ export default function OrderManager({
   };
 
   const selectAllOrders = () => {
-    setSelectedOrders(availableOrders.map(order => order.orderId));
-    updateManualOrders(availableOrders.map(order => order.orderId));
+    // Only select non-invoiced orders
+    const selectableOrderIds = availableOrders
+      .filter(order => !order.isAlreadyInvoiced)
+      .map(order => order.orderId);
+    setSelectedOrders(selectableOrderIds);
+    updateManualOrders(selectableOrderIds);
   };
 
   const clearAllOrders = () => {
@@ -210,9 +227,9 @@ export default function OrderManager({
                 variant="outline"
                 size="sm"
                 onClick={selectAllOrders}
-                disabled={selectedOrders.length === availableOrders.length}
+                disabled={selectedOrders.length === availableOrders.filter(o => !o.isAlreadyInvoiced).length}
               >
-                Select All
+                Select All Available
               </Button>
               <Button
                 variant="outline"
@@ -223,7 +240,7 @@ export default function OrderManager({
                 Clear All
               </Button>
               <div className="ml-auto text-sm text-muted-foreground">
-                {selectedOrders.length} of {availableOrders.length} selected
+                {selectedOrders.length} of {availableOrders.filter(o => !o.isAlreadyInvoiced).length} available selected
               </div>
             </div>
           </CardHeader>
@@ -233,7 +250,7 @@ export default function OrderManager({
                 key={order.orderId}
                 className={`p-4 border rounded-lg transition-colors ${
                   order.isAlreadyInvoiced
-                    ? 'bg-destructive/5 border-destructive/20 opacity-75'
+                    ? 'bg-muted/50 border-muted opacity-60 cursor-not-allowed'
                     : selectedOrders.includes(order.orderId)
                       ? 'bg-primary/5 border-primary/20'
                       : 'bg-background'
@@ -242,7 +259,8 @@ export default function OrderManager({
                 <div className="flex items-start gap-3">
                   <Checkbox
                     checked={selectedOrders.includes(order.orderId)}
-                    onCheckedChange={() => toggleOrderSelection(order.orderId)}
+                    onCheckedChange={() => toggleOrderSelection(order.orderId, order.isAlreadyInvoiced)}
+                    disabled={order.isAlreadyInvoiced}
                   />
                   <div className="flex-1 space-y-3">
                     {/* Order Info */}

@@ -590,7 +590,12 @@ export default function DebtInvoicePreview({
                 {configuration.fees.shippingFee > 0 && (
                   <div className="flex justify-between ml-4 text-sm">
                     <span>Shipping Fee:</span>
-                    <span className="font-medium">{formatCurrency(configuration.fees.shippingFee)}</span>
+                    <span className="font-medium">
+                      {preview.totalOrders > 1
+                        ? `${formatCurrency(configuration.fees.shippingFee)} × ${preview.totalOrders} orders = ${formatCurrency(configuration.fees.shippingFee * preview.totalOrders)}`
+                        : formatCurrency(configuration.fees.shippingFee)
+                      }
+                    </span>
                   </div>
                 )}
                 {configuration.fees.processingFee > 0 && (

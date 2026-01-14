@@ -100,6 +100,14 @@ export default function ExpeditionManager({
         });
 
         setAvailableExpeditions(transformedExpeditions);
+
+        // Remove any already invoiced expeditions from current selection
+        const alreadyInvoicedIds = new Set(transformedExpeditions.filter(e => e.isAlreadyInvoiced).map(e => e.expeditionId));
+        const filteredSelection = selectedExpeditions.filter(id => !alreadyInvoicedIds.has(id));
+        if (filteredSelection.length !== selectedExpeditions.length) {
+          setSelectedExpeditions(filteredSelection);
+          updateManualExpeditions(filteredSelection);
+        }
       } else {
         console.error('Failed to load expeditions:', expeditionsResult.message);
         setAvailableExpeditions([]);
@@ -112,7 +120,12 @@ export default function ExpeditionManager({
     }
   };
 
-  const toggleExpeditionSelection = (expeditionId: string) => {
+  const toggleExpeditionSelection = (expeditionId: string, isAlreadyInvoiced: boolean) => {
+    // Prevent selection of already invoiced expeditions
+    if (isAlreadyInvoiced) {
+      return;
+    }
+
     const newSelected = selectedExpeditions.includes(expeditionId)
       ? selectedExpeditions.filter(id => id !== expeditionId)
       : [...selectedExpeditions, expeditionId];
@@ -148,8 +161,12 @@ export default function ExpeditionManager({
   };
 
   const selectAllExpeditions = () => {
-    setSelectedExpeditions(availableExpeditions.map(exp => exp.expeditionId));
-    updateManualExpeditions(availableExpeditions.map(exp => exp.expeditionId));
+    // Only select non-invoiced expeditions
+    const selectableExpeditionIds = availableExpeditions
+      .filter(exp => !exp.isAlreadyInvoiced)
+      .map(exp => exp.expeditionId);
+    setSelectedExpeditions(selectableExpeditionIds);
+    updateManualExpeditions(selectableExpeditionIds);
   };
 
   const clearAllExpeditions = () => {
@@ -206,9 +223,9 @@ export default function ExpeditionManager({
                 variant="outline"
                 size="sm"
                 onClick={selectAllExpeditions}
-                disabled={selectedExpeditions.length === availableExpeditions.length}
+                disabled={selectedExpeditions.length === availableExpeditions.filter(e => !e.isAlreadyInvoiced).length}
               >
-                Select All
+                Select All Available
               </Button>
               <Button
                 variant="outline"
@@ -219,7 +236,7 @@ export default function ExpeditionManager({
                 Clear All
               </Button>
               <div className="ml-auto text-sm text-muted-foreground">
-                {selectedExpeditions.length} of {availableExpeditions.length} selected
+                {selectedExpeditions.length} of {availableExpeditions.filter(e => !e.isAlreadyInvoiced).length} available selected
               </div>
             </div>
           </CardHeader>
@@ -229,7 +246,7 @@ export default function ExpeditionManager({
                 key={expedition.expeditionId}
                 className={`p-4 border rounded-lg transition-colors ${
                   expedition.isAlreadyInvoiced
-                    ? 'bg-destructive/5 border-destructive/20 opacity-75'
+                    ? 'bg-muted/50 border-muted opacity-60 cursor-not-allowed'
                     : selectedExpeditions.includes(expedition.expeditionId)
                       ? 'bg-primary/5 border-primary/20'
                       : 'bg-background'
@@ -238,7 +255,8 @@ export default function ExpeditionManager({
                 <div className="flex items-start gap-3">
                   <Checkbox
                     checked={selectedExpeditions.includes(expedition.expeditionId)}
-                    onCheckedChange={() => toggleExpeditionSelection(expedition.expeditionId)}
+                    onCheckedChange={() => toggleExpeditionSelection(expedition.expeditionId, expedition.isAlreadyInvoiced)}
+                    disabled={expedition.isAlreadyInvoiced}
                   />
                   <div className="flex-1 space-y-3">
                     {/* Expedition Info */}

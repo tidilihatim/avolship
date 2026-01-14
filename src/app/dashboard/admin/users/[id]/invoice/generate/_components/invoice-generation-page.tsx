@@ -232,6 +232,15 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
     setError(null);
 
     try {
+      // Calculate the number of selected orders
+      const numberOfOrders = configuration.manualOrders.length;
+
+      // Multiply shipping fee by number of orders
+      const adjustedFees = {
+        ...configuration.fees,
+        shippingFee: configuration.fees.shippingFee * numberOfOrders,
+      };
+
       const result = await generateDebtInvoicePreview({
         sellerId: seller._id,
         warehouseId: configuration.warehouseId,
@@ -244,7 +253,7 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
         selectedPreviousDebts: configuration.selectedPreviousDebts,
         currencyConversion: configuration.currencyConversion,
         refundProcessingFee: configuration.refundProcessingFee,
-        fees: configuration.fees,
+        fees: adjustedFees,
       });
 
       if (result.success && result.data) {
@@ -266,6 +275,15 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
     setError(null);
 
     try {
+      // Calculate the number of selected orders
+      const numberOfOrders = configuration.manualOrders.length;
+
+      // Multiply shipping fee by number of orders
+      const adjustedFees = {
+        ...configuration.fees,
+        shippingFee: configuration.fees.shippingFee * numberOfOrders,
+      };
+
       const result = await createDebtInvoice({
         sellerId: seller._id,
         warehouseId: configuration.warehouseId,
@@ -278,7 +296,7 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
         selectedPreviousDebts: configuration.selectedPreviousDebts,
         currencyConversion: configuration.currencyConversion,
         refundProcessingFee: configuration.refundProcessingFee,
-        fees: configuration.fees,
+        fees: adjustedFees,
         notes: configuration.notes || undefined,
         terms: configuration.terms || undefined,
       });
@@ -330,7 +348,7 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Configuration Panel */}
         <div className="space-y-6">
           <Card>
