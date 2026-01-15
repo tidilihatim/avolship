@@ -4597,7 +4597,10 @@
         "complete": "Terminer",
         "completeOrder": "Terminer la commande",
         "viewDetails": "Voir les détails",
-        "callCustomer": "Appeler le client"
+        "callCustomer": "Appeler le client",
+        "label": "Actions",
+        "updateStatus": "Mettre à jour le statut",
+        "update": "Mettre à jour"
       },
       "badges": {
         "assigned": "Assigné",
@@ -4605,7 +4608,43 @@
         "pending": "En attente",
         "confirmed": "Confirmé",
         "cancelled": "Annulé",
+        "expired": "Expiré",
+        "shipped": "Expédié",
+        "assigned_to_delivery": "Assigné à la livraison",
+        "accepted_by_delivery": "Accepté par la livraison",
+        "in_transit": "En transit",
+        "out_for_delivery": "En cours de livraison",
+        "delivered": "Livré",
+        "delivery_failed": "Échec de la livraison",
+        "refunded": "Remboursé",
+        "wrong_number": "Mauvais numéro",
+        "double": "Commande en double",
+        "unreached": "Injoignable"
+      },
+      "priority": "Priorité",
+      "seller": {
+        "label": "Vendeur:",
+        "assignedToYou": "Assigné à vous"
+      },
+      "time": {
         "expired": "Expiré"
+      },
+      "statusDialog": {
+        "title": "Mettre à jour le statut de la commande",
+        "description": "Changer le statut de la commande",
+        "newStatus": "Nouveau statut",
+        "selectStatus": "Sélectionner le statut",
+        "updateStock": "Mettre à jour les niveaux de stock",
+        "updateStockDescription": "Retourner automatiquement le stock à l'inventaire lors du changement vers ce statut. Cela augmentera les quantités en stock pour tous les produits de cette commande.",
+        "reasonLabel": "Raison/Commentaire (Optionnel)",
+        "reasonPlaceholder": "Ajouter une raison pour le changement de statut...",
+        "cancel": "Annuler",
+        "updating": "Mise à jour...",
+        "updateButton": "Mettre à jour le statut"
+      },
+      "callStatus": {
+        "confirmedViaCall": "Client confirmé par appel",
+        "invalidNumber": "Numéro de téléphone invalide"
       },
       "empty": {
         "noOrdersInQueue": "Aucune commande dans votre file d'attente",
@@ -4652,6 +4691,41 @@
       "callback": "Rappel Demandé",
       "wrongNumber": "Mauvais Numéro",
       "noAnswer": "Pas de Réponse"
+    },
+
+    "makeCall": {
+      "button": "Passer un Appel",
+      "dialogTitle": "Passer un Appel",
+      "selectPhoneLabel": "Sélectionner le numéro de téléphone",
+      "selectPhonePlaceholder": "Choisir un numéro de téléphone",
+      "callControl": {
+        "title": "Contrôle d'Appel",
+        "description": "Cliquez sur \"Passer un Appel\" pour ouvrir votre application téléphonique et commencer l'enregistrement"
+      },
+      "recording": "En cours d'enregistrement",
+      "notRecording": "Pas d'enregistrement",
+      "callStatusLabel": "Statut de l'Appel",
+      "selectOutcome": "Sélectionner le résultat de l'appel",
+      "status": {
+        "answered": "Répondu",
+        "unreached": "Injoignable",
+        "busy": "Occupé",
+        "invalid": "Numéro invalide"
+      },
+      "notesLabel": "Notes d'Appel (Optionnel)",
+      "notesPlaceholder": "Ajouter des notes sur l'appel...",
+      "processing": "Traitement en cours...",
+      "endCallButton": "Terminer l'Appel et Enregistrer",
+      "toast": {
+        "recordingStarted": "L'enregistrement de l'appel a commencé automatiquement",
+        "recordingError": "Impossible de démarrer l'enregistrement de l'appel. Veuillez vérifier les autorisations du microphone.",
+        "selectPhone": "Veuillez sélectionner un numéro de téléphone à appeler",
+        "selectStatus": "Veuillez sélectionner le statut de l'appel avant de terminer l'appel",
+        "callSaved": "La tentative d'appel a été enregistrée avec succès",
+        "saveFailed": "Échec de l'enregistrement de la tentative d'appel",
+        "authFailed": "Échec de l'authentification",
+        "uploadFailed": "Échec du téléchargement de l'enregistrement"
+      }
     },
 
     "performance": {

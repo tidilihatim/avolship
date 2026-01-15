@@ -139,7 +139,7 @@ function EnhancedOrderCard({
     const remainingMs = new Date(order.lockExpiry).getTime() - currentTime;
     const remainingMinutes = Math.floor(remainingMs / (1000 * 60));
     
-    if (remainingMinutes <= 0) return "Expired";
+    if (remainingMinutes <= 0) return t('callCenter.queue.time.expired');
     if (remainingMinutes < 60) return `${remainingMinutes}m`;
     
     const hours = Math.floor(remainingMinutes / 60);
@@ -251,7 +251,7 @@ function EnhancedOrderCard({
             </Badge>
             {isSellerAssignedToMe && (
               <Badge variant="default" className="bg-primary text-primary-foreground">
-                Priority
+                {t('callCenter.queue.priority')}
               </Badge>
             )}
           </div>
@@ -271,7 +271,7 @@ function EnhancedOrderCard({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('callCenter.queue.actions.label')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   
                   <div className="px-2 py-1.5">
@@ -289,16 +289,17 @@ function EnhancedOrderCard({
                           };
                           onMakeCallAttempt(order.orderId, attempt);
                         }
-                        
+
                         // Auto-update order status based on call result
                         if (callData.status === 'answered' && onUpdateOrderStatus) {
-                          onUpdateOrderStatus(order.orderId, OrderStatus.CONFIRMED, 'Customer confirmed via call');
+                          onUpdateOrderStatus(order.orderId, OrderStatus.CONFIRMED, t('callCenter.queue.callStatus.confirmedViaCall'));
                         } else if (callData.status === 'invalid' && onUpdateOrderStatus) {
-                          onUpdateOrderStatus(order.orderId, OrderStatus.WRONG_NUMBER, 'Invalid phone number');
+                          onUpdateOrderStatus(order.orderId, OrderStatus.WRONG_NUMBER, t('callCenter.queue.callStatus.invalidNumber'));
                         }
                       }}
                       size="sm"
                       className="w-full"
+                      t={t}
                     />
                   </div>
                   
@@ -306,7 +307,7 @@ function EnhancedOrderCard({
                     <DialogTrigger asChild>
                       <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                         <MessageSquare className="w-4 h-4 mr-2" />
-                        Update Status
+                        {t('callCenter.queue.actions.updateStatus')}
                       </DropdownMenuItem>
                     </DialogTrigger>
                   </Dialog>
@@ -316,7 +317,7 @@ function EnhancedOrderCard({
                   {onCompleteOrder && (
                     <DropdownMenuItem onClick={() => onCompleteOrder(order.orderId)}>
                       <CheckCircle className="w-4 h-4 mr-2" />
-                      Complete Order
+                      {t('callCenter.queue.actions.completeOrder')}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -339,14 +340,14 @@ function EnhancedOrderCard({
             <div className="flex items-center gap-2">
               <Building2 className="w-4 h-4 text-muted-foreground" />
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Seller:</span>
+                <span className="text-sm text-muted-foreground">{t('callCenter.queue.seller.label')}</span>
                 <span className="text-sm font-medium">{order.seller.name}</span>
                 {order.seller.businessName && (
                   <span className="text-xs text-muted-foreground">({order.seller.businessName})</span>
                 )}
                 {isSellerAssignedToMe && (
                   <Badge variant="secondary" className="text-xs">
-                    Assigned to you
+                    {t('callCenter.queue.seller.assignedToYou')}
                   </Badge>
                 )}
               </div>
@@ -441,16 +442,17 @@ function EnhancedOrderCard({
                     };
                     onMakeCallAttempt(order.orderId, attempt);
                   }
-                  
+
                   // Auto-update order status based on call result
                   if (callData.status === 'answered' && onUpdateOrderStatus) {
-                    onUpdateOrderStatus(order.orderId, OrderStatus.CONFIRMED, 'Customer confirmed via call');
+                    onUpdateOrderStatus(order.orderId, OrderStatus.CONFIRMED, t('callCenter.queue.callStatus.confirmedViaCall'));
                   } else if (callData.status === 'invalid' && onUpdateOrderStatus) {
-                    onUpdateOrderStatus(order.orderId, OrderStatus.WRONG_NUMBER, 'Invalid phone number');
+                    onUpdateOrderStatus(order.orderId, OrderStatus.WRONG_NUMBER, t('callCenter.queue.callStatus.invalidNumber'));
                   }
                 }}
                 className="flex-1"
                 size="sm"
+                t={t}
               />
               
               <Button
@@ -459,7 +461,7 @@ function EnhancedOrderCard({
                 size="sm"
               >
                 <MessageSquare className="w-4 h-4 mr-2" />
-                Update
+                {t('callCenter.queue.actions.update')}
               </Button>
             </>
           )}
@@ -471,35 +473,35 @@ function EnhancedOrderCard({
       <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Update Order Status</DialogTitle>
+            <DialogTitle>{t('callCenter.queue.statusDialog.title')}</DialogTitle>
             <DialogDescription>
-              Change the status of order {order.orderNumber}
+              {t('callCenter.queue.statusDialog.description')} {order.orderNumber}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div>
-              <Label htmlFor="orderStatus">New Status</Label>
+              <Label htmlFor="orderStatus">{t('callCenter.queue.statusDialog.newStatus')}</Label>
               <Select value={selectedStatus} onValueChange={(value) => setSelectedStatus(value as OrderStatus)}>
                 <SelectTrigger className="w-full mt-1">
-                  <SelectValue placeholder="Select status" />
+                  <SelectValue placeholder={t('callCenter.queue.statusDialog.selectStatus')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={OrderStatus.PENDING}>Pending</SelectItem>
-                  <SelectItem value={OrderStatus.CONFIRMED}>Confirmed</SelectItem>
-                  <SelectItem value={OrderStatus.CANCELLED}>Cancelled</SelectItem>
-                  <SelectItem value={OrderStatus.SHIPPED}>Shipped</SelectItem>
-                  <SelectItem value={OrderStatus.ASSIGNED_TO_DELIVERY}>Assigned to Delivery</SelectItem>
-                  <SelectItem value={OrderStatus.ACCEPTED_BY_DELIVERY}>Accepted by Delivery</SelectItem>
-                  <SelectItem value={OrderStatus.IN_TRANSIT}>In Transit</SelectItem>
-                  <SelectItem value={OrderStatus.OUT_FOR_DELIVERY}>Out for Delivery</SelectItem>
-                  <SelectItem value={OrderStatus.DELIVERED}>Delivered</SelectItem>
-                  <SelectItem value={OrderStatus.DELIVERY_FAILED}>Delivery Failed</SelectItem>
-                  <SelectItem value={OrderStatus.REFUNDED}>Refunded</SelectItem>
-                  <SelectItem value={OrderStatus.WRONG_NUMBER}>Wrong Number</SelectItem>
-                  <SelectItem value={OrderStatus.DOUBLE}>Double Order</SelectItem>
-                  <SelectItem value={OrderStatus.UNREACHED}>Unreached</SelectItem>
-                  <SelectItem value={OrderStatus.EXPIRED}>Expired</SelectItem>
+                  <SelectItem value={OrderStatus.PENDING}>{t('callCenter.queue.badges.pending')}</SelectItem>
+                  <SelectItem value={OrderStatus.CONFIRMED}>{t('callCenter.queue.badges.confirmed')}</SelectItem>
+                  <SelectItem value={OrderStatus.CANCELLED}>{t('callCenter.queue.badges.cancelled')}</SelectItem>
+                  <SelectItem value={OrderStatus.SHIPPED}>{t('callCenter.queue.badges.shipped')}</SelectItem>
+                  <SelectItem value={OrderStatus.ASSIGNED_TO_DELIVERY}>{t('callCenter.queue.badges.assigned_to_delivery')}</SelectItem>
+                  <SelectItem value={OrderStatus.ACCEPTED_BY_DELIVERY}>{t('callCenter.queue.badges.accepted_by_delivery')}</SelectItem>
+                  <SelectItem value={OrderStatus.IN_TRANSIT}>{t('callCenter.queue.badges.in_transit')}</SelectItem>
+                  <SelectItem value={OrderStatus.OUT_FOR_DELIVERY}>{t('callCenter.queue.badges.out_for_delivery')}</SelectItem>
+                  <SelectItem value={OrderStatus.DELIVERED}>{t('callCenter.queue.badges.delivered')}</SelectItem>
+                  <SelectItem value={OrderStatus.DELIVERY_FAILED}>{t('callCenter.queue.badges.delivery_failed')}</SelectItem>
+                  <SelectItem value={OrderStatus.REFUNDED}>{t('callCenter.queue.badges.refunded')}</SelectItem>
+                  <SelectItem value={OrderStatus.WRONG_NUMBER}>{t('callCenter.queue.badges.wrong_number')}</SelectItem>
+                  <SelectItem value={OrderStatus.DOUBLE}>{t('callCenter.queue.badges.double')}</SelectItem>
+                  <SelectItem value={OrderStatus.UNREACHED}>{t('callCenter.queue.badges.unreached')}</SelectItem>
+                  <SelectItem value={OrderStatus.EXPIRED}>{t('callCenter.queue.badges.expired')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -514,25 +516,24 @@ function EnhancedOrderCard({
                   className="mt-0.5"
                 />
                 <div className="space-y-1">
-                  <Label 
-                    htmlFor="updateStock" 
+                  <Label
+                    htmlFor="updateStock"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Update stock levels
+                    {t('callCenter.queue.statusDialog.updateStock')}
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Automatically return stock to inventory when changing to this status. 
-                    This will increase stock quantities for all products in this order.
+                    {t('callCenter.queue.statusDialog.updateStockDescription')}
                   </p>
                 </div>
               </div>
             )}
             
             <div>
-              <Label htmlFor="statusComment">Reason/Comment (Optional)</Label>
+              <Label htmlFor="statusComment">{t('callCenter.queue.statusDialog.reasonLabel')}</Label>
               <Textarea
                 id="statusComment"
-                placeholder="Add reason for status change..."
+                placeholder={t('callCenter.queue.statusDialog.reasonPlaceholder')}
                 value={statusComment}
                 onChange={(e) => setStatusComment(e.target.value)}
                 className="mt-1"
@@ -541,18 +542,18 @@ function EnhancedOrderCard({
           </div>
           
           <DialogFooter>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setIsStatusDialogOpen(false)}
               disabled={isUpdatingStatus}
             >
-              Cancel
+              {t('callCenter.queue.statusDialog.cancel')}
             </Button>
-            <Button 
+            <Button
               onClick={handleStatusUpdate}
               disabled={isUpdatingStatus}
             >
-              {isUpdatingStatus ? 'Updating...' : 'Update Status'}
+              {isUpdatingStatus ? t('callCenter.queue.statusDialog.updating') : t('callCenter.queue.statusDialog.updateButton')}
             </Button>
           </DialogFooter>
         </DialogContent>

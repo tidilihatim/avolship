@@ -4635,7 +4635,10 @@
         "complete": "Complete",
         "completeOrder": "Complete Order",
         "viewDetails": "View Details",
-        "callCustomer": "Call Customer"
+        "callCustomer": "Call Customer",
+        "label": "Actions",
+        "updateStatus": "Update Status",
+        "update": "Update"
       },
       "badges": {
         "assigned": "Assigned",
@@ -4643,7 +4646,43 @@
         "pending": "Pending",
         "confirmed": "Confirmed",
         "cancelled": "Cancelled",
+        "expired": "Expired",
+        "shipped": "Shipped",
+        "assigned_to_delivery": "Assigned to Delivery",
+        "accepted_by_delivery": "Accepted by Delivery",
+        "in_transit": "In Transit",
+        "out_for_delivery": "Out for Delivery",
+        "delivered": "Delivered",
+        "delivery_failed": "Delivery Failed",
+        "refunded": "Refunded",
+        "wrong_number": "Wrong Number",
+        "double": "Double Order",
+        "unreached": "Unreached"
+      },
+      "priority": "Priority",
+      "seller": {
+        "label": "Seller:",
+        "assignedToYou": "Assigned to you"
+      },
+      "time": {
         "expired": "Expired"
+      },
+      "statusDialog": {
+        "title": "Update Order Status",
+        "description": "Change the status of order",
+        "newStatus": "New Status",
+        "selectStatus": "Select status",
+        "updateStock": "Update stock levels",
+        "updateStockDescription": "Automatically return stock to inventory when changing to this status. This will increase stock quantities for all products in this order.",
+        "reasonLabel": "Reason/Comment (Optional)",
+        "reasonPlaceholder": "Add reason for status change...",
+        "cancel": "Cancel",
+        "updating": "Updating...",
+        "updateButton": "Update Status"
+      },
+      "callStatus": {
+        "confirmedViaCall": "Customer confirmed via call",
+        "invalidNumber": "Invalid phone number"
       },
       "empty": {
         "noOrdersInQueue": "No orders in your queue",
@@ -4686,6 +4725,41 @@
       "callback": "Callback Requested",
       "wrongNumber": "Wrong Number",
       "noAnswer": "No Answer"
+    },
+
+    "makeCall": {
+      "button": "Make Call",
+      "dialogTitle": "Make Call",
+      "selectPhoneLabel": "Select Phone Number",
+      "selectPhonePlaceholder": "Choose a phone number",
+      "callControl": {
+        "title": "Call Control",
+        "description": "Click \"Make Call\" to open your phone app and start recording"
+      },
+      "recording": "Recording",
+      "notRecording": "Not Recording",
+      "callStatusLabel": "Call Status",
+      "selectOutcome": "Select call outcome",
+      "status": {
+        "answered": "Answered",
+        "unreached": "Unreached",
+        "busy": "Busy",
+        "invalid": "Invalid Number"
+      },
+      "notesLabel": "Call Notes (Optional)",
+      "notesPlaceholder": "Add any notes about the call...",
+      "processing": "Processing...",
+      "endCallButton": "End Call & Save",
+      "toast": {
+        "recordingStarted": "Call recording has begun automatically",
+        "recordingError": "Could not start call recording. Please check microphone permissions.",
+        "selectPhone": "Please select a phone number to call",
+        "selectStatus": "Please select the call status before ending the call",
+        "callSaved": "Call attempt has been recorded successfully",
+        "saveFailed": "Failed to save call attempt",
+        "authFailed": "Authentication failed",
+        "uploadFailed": "Failed to upload recording"
+      }
     },
 
     "performance": {

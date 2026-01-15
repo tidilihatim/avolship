@@ -40,6 +40,7 @@ interface MakeCallButtonProps {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
   size?: 'default' | 'sm' | 'lg' | 'icon'
   disabled?: boolean
+  t?: any
 }
 
 export function MakeCallButton({
@@ -51,6 +52,7 @@ export function MakeCallButton({
   variant = 'default',
   size = 'default',
   disabled = false,
+  t = (key: string) => key, // Fallback for backwards compatibility
 }: MakeCallButtonProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState('')
@@ -119,10 +121,10 @@ export function MakeCallButton({
         }
       }, 1000)
 
-      toast.success("Call recording has begun automatically")
+      toast.success(t('callCenter.makeCall.toast.recordingStarted'))
     } catch (error) {
       console.error('Error starting recording:', error)
-      toast.error("Could not start call recording. Please check microphone permissions.")
+      toast.error(t('callCenter.makeCall.toast.recordingError'))
     }
   }
 
@@ -149,7 +151,7 @@ export function MakeCallButton({
 
   const handleMakeCall = async () => {
     if (!selectedPhoneNumber) {
-      toast.error("Please select a phone number to call")
+      toast.error(t('callCenter.makeCall.toast.selectPhone'))
       return
     }
 
@@ -162,7 +164,7 @@ export function MakeCallButton({
 
   const handleEndCall = async () => {
     if (!callStatus) {
-      toast.error("Please select the call status before ending the call")
+      toast.error(t('callCenter.makeCall.toast.selectStatus'))
       return
     }
 
@@ -176,7 +178,7 @@ export function MakeCallButton({
         // Get JWT token
         const jwtToken = await getAccessToken()
         if (!jwtToken) {
-          throw new Error("Authentication failed")
+          throw new Error(t('callCenter.makeCall.toast.authFailed'))
         }
 
         const REALTIME_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000'
@@ -201,7 +203,7 @@ export function MakeCallButton({
           recordingData = uploadResult.data
         } else {
           const errorText = await uploadResponse.text()
-          throw new Error(`Failed to upload recording: ${errorText}`)
+          throw new Error(`${t('callCenter.makeCall.toast.uploadFailed')}: ${errorText}`)
         }
       }
 
@@ -216,7 +218,7 @@ export function MakeCallButton({
 
       const jwtToken = await getAccessToken()
       if (!jwtToken) {
-        throw new Error("Authentication failed")
+        throw new Error(t('callCenter.makeCall.toast.authFailed'))
       }
 
       const REALTIME_SERVER_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000'
@@ -231,7 +233,7 @@ export function MakeCallButton({
       })
 
       if (response.ok) {
-        toast.success("Call attempt has been recorded successfully")
+        toast.success(t('callCenter.makeCall.toast.callSaved'))
         onCallComplete?.({
           phoneNumber: selectedPhoneNumber,
           status: callStatus,
@@ -243,11 +245,11 @@ export function MakeCallButton({
         handleDialogClose()
       } else {
         const errorText = await response.text()
-        throw new Error(`Failed to save call attempt: ${errorText}`)
+        throw new Error(`${t('callCenter.makeCall.toast.saveFailed')}: ${errorText}`)
       }
     } catch (error) {
       console.error('Error saving call:', error)
-      toast.error(`Failed to save call attempt: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(`${t('callCenter.makeCall.toast.saveFailed')}: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsProcessing(false)
     }
@@ -273,28 +275,28 @@ export function MakeCallButton({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant={variant} 
-          size={size} 
+        <Button
+          variant={variant}
+          size={size}
           disabled={disabled}
           className={cn(className)}
         >
           <Phone className="h-4 w-4 mr-2" />
-          Make Call
+          {t('callCenter.makeCall.button')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Make Call - {customerName}</DialogTitle>
+          <DialogTitle>{t('callCenter.makeCall.dialogTitle')} - {customerName}</DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-6">
           {/* Phone Number Selection */}
           <div className="space-y-2">
-            <Label htmlFor="phone-select">Select Phone Number</Label>
+            <Label htmlFor="phone-select">{t('callCenter.makeCall.selectPhoneLabel')}</Label>
             <Select value={selectedPhoneNumber} onValueChange={setSelectedPhoneNumber}>
               <SelectTrigger id="phone-select">
-                <SelectValue placeholder="Choose a phone number" />
+                <SelectValue placeholder={t('callCenter.makeCall.selectPhonePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {phoneNumbers.map((phone, index) => (
@@ -311,10 +313,10 @@ export function MakeCallButton({
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <PhoneCall className="h-5 w-5" />
-                Call Control
+                {t('callCenter.makeCall.callControl.title')}
               </CardTitle>
               <CardDescription>
-                Click "Make Call" to open your phone app and start recording
+                {t('callCenter.makeCall.callControl.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -326,7 +328,7 @@ export function MakeCallButton({
                   size="lg"
                 >
                   <Phone className="h-4 w-4 mr-2" />
-                  Make Call
+                  {t('callCenter.makeCall.button')}
                 </Button>
               ) : (
                 <div className="space-y-4">
@@ -339,7 +341,7 @@ export function MakeCallButton({
                         <MicOff className="h-5 w-5 text-muted-foreground" />
                       )}
                       <span className="font-medium">
-                        {isRecording ? 'Recording' : 'Not Recording'}
+                        {isRecording ? t('callCenter.makeCall.recording') : t('callCenter.makeCall.notRecording')}
                       </span>
                     </div>
                     <Badge variant={isRecording ? "destructive" : "secondary"}>
@@ -349,26 +351,26 @@ export function MakeCallButton({
 
                   {/* Call Status Selection */}
                   <div className="space-y-2">
-                    <Label htmlFor="call-status">Call Status</Label>
+                    <Label htmlFor="call-status">{t('callCenter.makeCall.callStatusLabel')}</Label>
                     <Select value={callStatus} onValueChange={(value) => setCallStatus(value as 'answered' | 'unreached' | 'busy' | 'invalid')}>
                       <SelectTrigger id="call-status">
-                        <SelectValue placeholder="Select call outcome" />
+                        <SelectValue placeholder={t('callCenter.makeCall.selectOutcome')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="answered">Answered</SelectItem>
-                        <SelectItem value="unreached">Unreached</SelectItem>
-                        <SelectItem value="busy">Busy</SelectItem>
-                        <SelectItem value="invalid">Invalid Number</SelectItem>
+                        <SelectItem value="answered">{t('callCenter.makeCall.status.answered')}</SelectItem>
+                        <SelectItem value="unreached">{t('callCenter.makeCall.status.unreached')}</SelectItem>
+                        <SelectItem value="busy">{t('callCenter.makeCall.status.busy')}</SelectItem>
+                        <SelectItem value="invalid">{t('callCenter.makeCall.status.invalid')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {/* Call Notes */}
                   <div className="space-y-2">
-                    <Label htmlFor="call-notes">Call Notes (Optional)</Label>
+                    <Label htmlFor="call-notes">{t('callCenter.makeCall.notesLabel')}</Label>
                     <Textarea
                       id="call-notes"
-                      placeholder="Add any notes about the call..."
+                      placeholder={t('callCenter.makeCall.notesPlaceholder')}
                       value={callNotes}
                       onChange={(e) => setCallNotes(e.target.value)}
                       rows={3}
@@ -386,12 +388,12 @@ export function MakeCallButton({
                     {isProcessing ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Processing...
+                        {t('callCenter.makeCall.processing')}
                       </>
                     ) : (
                       <>
                         <Square className="h-4 w-4 mr-2" />
-                        End Call & Save
+                        {t('callCenter.makeCall.endCallButton')}
                       </>
                     )}
                   </Button>
