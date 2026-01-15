@@ -313,6 +313,8 @@ export default function ProductTable({
                   <TableHead>Total Stock</TableHead>
                   <TableHead className="hidden lg:table-cell">Available</TableHead>
                   <TableHead className="hidden lg:table-cell">Defective</TableHead>
+                  <TableHead className="hidden xl:table-cell">In Transit</TableHead>
+                  <TableHead className="hidden xl:table-cell">Delivered</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -321,7 +323,7 @@ export default function ProductTable({
               <TableBody>
                 {products.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={showSellerFilter ? 10 : 9} className="text-center py-8">
+                    <TableCell colSpan={showSellerFilter ? 12 : 11} className="text-center py-8">
                       No products found
                     </TableCell>
                   </TableRow>
@@ -401,6 +403,24 @@ export default function ProductTable({
                             : "text-muted-foreground"
                         }`}>
                           {product.totalDefectiveQuantity || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden xl:table-cell">
+                        <span className={`${
+                          (product.totalInTransit || 0) > 0
+                            ? "text-blue-600"
+                            : "text-muted-foreground"
+                        }`}>
+                          {product.totalInTransit || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden xl:table-cell">
+                        <span className={`${
+                          (product.totalDelivered || 0) > 0
+                            ? "text-green-600"
+                            : "text-muted-foreground"
+                        }`}>
+                          {product.totalDelivered || 0}
                         </span>
                       </TableCell>
                       <TableCell>

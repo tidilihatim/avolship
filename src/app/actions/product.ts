@@ -482,6 +482,91 @@ async function getAllProductsForAdminImpl(
       confirmedOrdersMap.set(order._id.toString(), order.totalConfirmedQuantity);
     }
 
+    // Get in-transit orders (in_transit, out_for_delivery, accepted_by_delivery, assigned_to_delivery)
+    const inTransitOrdersMatch: any = {
+      status: {
+        $in: [
+          OrderStatus.IN_TRANSIT,
+          OrderStatus.OUT_FOR_DELIVERY,
+          OrderStatus.ACCEPTED_BY_DELIVERY,
+          OrderStatus.ASSIGNED_TO_DELIVERY
+        ]
+      },
+      'products.productId': { $in: productIds }
+    };
+
+    if (filters.warehouseId) {
+      inTransitOrdersMatch.warehouseId = new mongoose.Types.ObjectId(filters.warehouseId);
+    }
+
+    const inTransitOrders = await Order.aggregate([
+      {
+        $match: inTransitOrdersMatch
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalInTransitQuantity: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Create a map of product ID to in-transit quantity
+    const inTransitOrdersMap = new Map<string, number>();
+    for (const order of inTransitOrders) {
+      inTransitOrdersMap.set(order._id.toString(), order.totalInTransitQuantity);
+    }
+
+    // Get delivered orders (delivered, processed, paid)
+    const deliveredOrdersMatch: any = {
+      status: {
+        $in: [
+          OrderStatus.DELIVERED,
+          OrderStatus.PROCESSED,
+          OrderStatus.PAID
+        ]
+      },
+      'products.productId': { $in: productIds }
+    };
+
+    if (filters.warehouseId) {
+      deliveredOrdersMatch.warehouseId = new mongoose.Types.ObjectId(filters.warehouseId);
+    }
+
+    const deliveredOrders = await Order.aggregate([
+      {
+        $match: deliveredOrdersMatch
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalDeliveredQuantity: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Create a map of product ID to delivered quantity
+    const deliveredOrdersMap = new Map<string, number>();
+    for (const order of deliveredOrders) {
+      deliveredOrdersMap.set(order._id.toString(), order.totalDeliveredQuantity);
+    }
+
     // Map products to include warehouse and seller names
     const productsWithNames: ProductTableData[] = [];
 
@@ -513,6 +598,10 @@ async function getAllProductsForAdminImpl(
 
       // Get confirmed orders quantity for this product
       const confirmedQuantity = confirmedOrdersMap.get(productId) || 0;
+
+      // Get in-transit and delivered quantities for this product
+      const inTransitQuantity = inTransitOrdersMap.get(productId) || 0;
+      const deliveredQuantity = deliveredOrdersMap.get(productId) || 0;
 
       // Calculate available stock
       // If a warehouse is filtered, use that warehouse's stock only
@@ -554,6 +643,8 @@ async function getAllProductsForAdminImpl(
         totalStock: product.totalStock,
         totalDefectiveQuantity,
         availableStock,
+        totalInTransit: inTransitQuantity,
+        totalDelivered: deliveredQuantity,
         status: product.status,
         stockNotificationLevels: cleanedNotificationLevels,
         createdAt: product.createdAt,

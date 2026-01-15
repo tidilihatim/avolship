@@ -36,6 +36,8 @@ export interface ProductTableData {
   totalStock: number;
   totalDefectiveQuantity?: number;
   availableStock?: number; // totalStock - confirmed orders quantity
+  totalInTransit?: number; // quantity in orders with in_transit, out_for_delivery, accepted_by_delivery, assigned_to_delivery statuses
+  totalDelivered?: number; // quantity in orders with delivered, processed, paid statuses
   status: ProductStatus;
   stockNotificationLevels?: StockNotificationLevel[];
   createdAt: Date;
