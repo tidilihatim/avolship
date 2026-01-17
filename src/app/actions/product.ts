@@ -264,6 +264,91 @@ async function getProductsImpl(
       confirmedOrdersMap.set(order._id.toString(), order.totalConfirmedQuantity);
     }
 
+    // Get in-transit orders (in_transit, out_for_delivery, accepted_by_delivery, assigned_to_delivery)
+    const inTransitOrdersMatch: any = {
+      status: {
+        $in: [
+          OrderStatus.IN_TRANSIT,
+          OrderStatus.OUT_FOR_DELIVERY,
+          OrderStatus.ACCEPTED_BY_DELIVERY,
+          OrderStatus.ASSIGNED_TO_DELIVERY
+        ]
+      },
+      'products.productId': { $in: productIds }
+    };
+
+    if (selectedWarehouseId) {
+      inTransitOrdersMatch.warehouseId = new mongoose.Types.ObjectId(selectedWarehouseId);
+    }
+
+    const inTransitOrders = await Order.aggregate([
+      {
+        $match: inTransitOrdersMatch
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalInTransitQuantity: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Create a map of product ID to in-transit quantity
+    const inTransitOrdersMap = new Map<string, number>();
+    for (const order of inTransitOrders) {
+      inTransitOrdersMap.set(order._id.toString(), order.totalInTransitQuantity);
+    }
+
+    // Get delivered orders (delivered, processed, paid)
+    const deliveredOrdersMatch: any = {
+      status: {
+        $in: [
+          OrderStatus.DELIVERED,
+          OrderStatus.PROCESSED,
+          OrderStatus.PAID
+        ]
+      },
+      'products.productId': { $in: productIds }
+    };
+
+    if (selectedWarehouseId) {
+      deliveredOrdersMatch.warehouseId = new mongoose.Types.ObjectId(selectedWarehouseId);
+    }
+
+    const deliveredOrders = await Order.aggregate([
+      {
+        $match: deliveredOrdersMatch
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalDeliveredQuantity: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Create a map of product ID to delivered quantity
+    const deliveredOrdersMap = new Map<string, number>();
+    for (const order of deliveredOrders) {
+      deliveredOrdersMap.set(order._id.toString(), order.totalDeliveredQuantity);
+    }
+
     // Map products to include warehouse and seller names
     const productsWithNames: ProductTableData[] = [];
 
@@ -296,6 +381,10 @@ async function getProductsImpl(
       // Get confirmed orders quantity for this product
       const confirmedQuantity = confirmedOrdersMap.get(productId) || 0;
 
+      // Get in-transit and delivered quantities for this product
+      const inTransitQuantity = inTransitOrdersMap.get(productId) || 0;
+      const deliveredQuantity = deliveredOrdersMap.get(productId) || 0;
+
       // Calculate available stock (totalStock - confirmed orders)
       const availableStock = product.totalStock - confirmedQuantity;
 
@@ -326,6 +415,8 @@ async function getProductsImpl(
         totalStock: product.totalStock,
         totalDefectiveQuantity,
         availableStock,
+        totalInTransit: inTransitQuantity,
+        totalDelivered: deliveredQuantity,
         status: product.status,
         stockNotificationLevels: cleanedNotificationLevels,
         createdAt: product.createdAt,
@@ -335,7 +426,7 @@ async function getProductsImpl(
 
     // Calculate pagination data
     const totalPages = Math.ceil(total / limit);
-    
+
     return {
       success: true,
       products: productsWithNames,
@@ -366,19 +457,66 @@ async function getAllProductsForAdminImpl(
   try {
     // Get the current user
     const user = await getCurrentUser();
-    if (!user || ![UserRole.ADMIN, UserRole.MODERATOR].includes(user.role)) {
+    if (!user || ![UserRole.ADMIN, UserRole.MODERATOR, UserRole.CALL_CENTER].includes(user.role)) {
       return {
         success: false,
-        message: 'Unauthorized - Admin/Moderator access required',
+        message: 'Unauthorized - Admin/Moderator/Call Center access required',
       };
     }
 
     // Build query based on filters
     const query: Record<string, any> = {};
 
-    // Apply seller filter if provided
-    if (filters.sellerId) {
-      query.sellerId = new mongoose.Types.ObjectId(filters.sellerId);
+    // For call center agents, only show products from sellers who have assigned them
+    if (user.role === UserRole.CALL_CENTER) {
+      // Find all sellers who have this call center agent assigned
+      const assignedSellers = await User.find({
+        role: UserRole.SELLER,
+        'assignedCallCenterAgents.agentId': user._id
+      }).select('_id').lean();
+
+      const sellerIds = assignedSellers.map((s: any) => s._id);
+
+      if (sellerIds.length === 0) {
+        // No sellers assigned to this agent, return empty result
+        return {
+          success: true,
+          products: [],
+          pagination: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+
+      // Filter products to only those from assigned sellers
+      query.sellerId = { $in: sellerIds };
+
+      // If a specific seller filter is also provided, ensure it's one of the assigned sellers
+      if (filters.sellerId) {
+        const filterSellerId = new mongoose.Types.ObjectId(filters.sellerId);
+        if (!sellerIds.some((id: any) => id.equals(filterSellerId))) {
+          // The requested seller is not assigned to this agent
+          return {
+            success: true,
+            products: [],
+            pagination: {
+              page,
+              limit,
+              total: 0,
+              totalPages: 0,
+            },
+          };
+        }
+        query.sellerId = filterSellerId;
+      }
+    } else {
+      // For admin/moderator, apply seller filter if provided
+      if (filters.sellerId) {
+        query.sellerId = new mongoose.Types.ObjectId(filters.sellerId);
+      }
     }
 
     // Apply warehouse filter if provided
@@ -706,6 +844,21 @@ async function getProductByIdImpl(id: string): Promise<ProductResponse> {
       };
     }
 
+    // Check if user is a call center agent and the product belongs to an assigned seller
+    if (user.role === UserRole.CALL_CENTER) {
+      const seller = await User.findOne({
+        _id: product.sellerId,
+        'assignedCallCenterAgents.agentId': user._id
+      }).lean();
+
+      if (!seller) {
+        return {
+          success: false,
+          message: 'Unauthorized to view this product',
+        };
+      }
+    }
+
     // Get all warehouse IDs and seller ID
     const warehouseIds = product.warehouses.map((w: any) => w.warehouseId);
     const sellerId = product.sellerId;
@@ -817,18 +970,26 @@ async function getAllSellersImpl(): Promise<{ _id: string; name: string; email: 
   try {
     // Get the current user
     const user = await getCurrentUser();
-    if (!user || ![UserRole.ADMIN, UserRole.MODERATOR].includes(user.role)) {
+    if (!user || ![UserRole.ADMIN, UserRole.MODERATOR, UserRole.CALL_CENTER].includes(user.role)) {
       return [];
     }
 
-    // Query to get all sellers
-    const sellers: any[] = await User.find({ role: UserRole.SELLER })
+    // Build query based on user role
+    let sellerQuery: Record<string, any> = { role: UserRole.SELLER };
+
+    // For call center agents, only return sellers who have assigned them
+    if (user.role === UserRole.CALL_CENTER) {
+      sellerQuery['assignedCallCenterAgents.agentId'] = user._id;
+    }
+
+    // Query to get sellers
+    const sellers: any[] = await User.find(sellerQuery)
       .select('_id name email')
       .sort({ name: 1 })
       .lean();
 
     const result: { _id: string; name: string; email: string }[] = [];
-    
+
     for (const seller of sellers) {
       result.push({
         _id: seller._id.toString(),
@@ -836,7 +997,7 @@ async function getAllSellersImpl(): Promise<{ _id: string; name: string; email: 
         email: seller.email,
       });
     }
-    
+
     return result;
   } catch (error) {
     console.error('Error fetching sellers:', error);
@@ -1031,6 +1192,21 @@ async function updateProductImpl(id: string, productData: ProductInput): Promise
         success: false,
         message: 'You do not have permission to update this product',
       };
+    }
+
+    // Check if user is a call center agent and the product belongs to an assigned seller
+    if (user.role === UserRole.CALL_CENTER) {
+      const seller = await User.findOne({
+        _id: product.sellerId,
+        'assignedCallCenterAgents.agentId': user._id
+      }).lean();
+
+      if (!seller) {
+        return {
+          success: false,
+          message: 'You do not have permission to update this product',
+        };
+      }
     }
 
     // Check if code is unique for this seller if changed

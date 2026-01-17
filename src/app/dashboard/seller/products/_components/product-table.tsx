@@ -668,6 +668,8 @@ export default function ProductTable({
                     <TableHead>{t("products.table.totalStock")}</TableHead>
                     <TableHead className="hidden lg:table-cell">{t("products.table.availableStock")}</TableHead>
                     <TableHead className="hidden lg:table-cell">{t("products.table.defectiveQuantity")}</TableHead>
+                    <TableHead className="hidden xl:table-cell">{t("products.table.inTransit")}</TableHead>
+                    <TableHead className="hidden xl:table-cell">{t("products.table.delivered")}</TableHead>
                     <TableHead className="hidden md:table-cell">
                       {t("common.status")}
                     </TableHead>
@@ -812,6 +814,24 @@ export default function ProductTable({
                             : "text-muted-foreground"
                         }`}>
                           {product.totalDefectiveQuantity || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden xl:table-cell">
+                        <span className={`${
+                          (product.totalInTransit || 0) > 0
+                            ? "text-blue-600"
+                            : "text-muted-foreground"
+                        }`}>
+                          {product.totalInTransit || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden xl:table-cell">
+                        <span className={`${
+                          (product.totalDelivered || 0) > 0
+                            ? "text-green-600"
+                            : "text-muted-foreground"
+                        }`}>
+                          {product.totalDelivered || 0}
                         </span>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">

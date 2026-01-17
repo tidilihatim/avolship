@@ -234,6 +234,11 @@ export const sidebarNavigations: Record<UserType, NavigationItem[]> = {
       icon: Users,
     },
     {
+      name:"navigation.products",
+      href:"/dashboard/call_center/products",
+      icon: Package
+    },
+    {
       name: "navigation.leaderboard",
       href: "/dashboard/call_center/leaderboard",
       icon: Trophy

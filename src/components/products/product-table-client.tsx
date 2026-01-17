@@ -35,6 +35,8 @@ export default function ProductTableClient({
       return '/dashboard/admin/products';
     } else if (pathname.includes('/moderator/')) {
       return '/dashboard/moderator/products';
+    } else if (pathname.includes('/call_center/')) {
+      return '/dashboard/call_center/products';
     } else {
       return '/dashboard/products'; // fallback for sellers
     }
