@@ -28,6 +28,7 @@ import { EpicSellersChart } from '@/components/admin/dashboard/charts/epic-selle
 import { TopPerformersComponent } from '@/components/admin/dashboard/top-performers';
 import { RecentActivityComponent } from '@/components/admin/dashboard/recent-activity';
 import { DashboardFilters, type DashboardFilters as FilterType } from '@/components/admin/dashboard/filters/dashboard-filters';
+import { NetProfitSection } from '@/components/dashboard/net-profit-section';
 
 import {
   StatsCardsSkeleton,
@@ -621,6 +622,9 @@ export default function AdminOverviewPage() {
       ) : data.stats ? (
         <StatsCards stats={data.stats} />
       ) : null}
+
+      {/* Net Profit Section */}
+      <NetProfitSection showSellerFilter={true} />
 
       {/* Processed Amount + Delivery Issues Row */}
       <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">

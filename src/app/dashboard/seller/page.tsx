@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { CallCenterSection } from '@/components/dashboard/call-center-section';
 import { OrderStatusSection } from '@/components/dashboard/order-status-section';
 import { TrendingProductsSection } from '@/components/dashboard/trending-products-section';
+import { NetProfitSection } from '@/components/dashboard/net-profit-section';
 
 type Props = {}
 
@@ -22,10 +23,11 @@ const page = async (props: Props) => {
         </p>
       </div>
 
+      <NetProfitSection showSellerFilter={false} />
       <CallCenterSection />
       <OrderStatusSection />
       <TrendingProductsSection />
-      
+
       {/* Future chart sections can be added here with their own filters */}
     </div>
   );

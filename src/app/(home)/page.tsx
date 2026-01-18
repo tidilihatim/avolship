@@ -16,6 +16,11 @@ import {
   Globe2,
   CogIcon,
   LifeBuoyIcon,
+  Eye,
+  CheckCircle,
+  MapPin,
+  RefreshCw,
+  Settings,
 } from "lucide-react";
 
 // Custom components
@@ -111,14 +116,6 @@ export default function HomePage() {
               animate={{ opacity: isLoaded ? 1 : 0, x: isLoaded ? 0 : -50 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <motion.span
-                className="inline-block  px-3 py-1 mb-4 text-xs font-medium bg-secondary/10 text-[#1c2d51] rounded-full"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                {t("heroTag")}
-              </motion.span>
 
               <motion.h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1c2d51] mb-4 leading-tight"
@@ -162,31 +159,7 @@ export default function HomePage() {
                 </Link>
               </motion.div>
 
-              <motion.div
-                className="mt-10 flex items-center space-x-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isLoaded ? 1 : 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-              >
-                <div className="flex -space-x-2">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className="w-8 h-8 rounded-full border-2 border-white overflow-hidden"
-                    >
-                      <div className={`w-full h-full bg-gray-${i * 100}`}>
-                        <img src={`/images/hero-person-${i}.png`} alt={`person-${i}`} className="w-full" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-semibold text-[#1c2d51]">2,000+</span>{" "}
-                    {t("companiesUse")}
-                  </p>
-                </div>
-              </motion.div>
+              
             </motion.div>
 
             <motion.div
@@ -914,8 +887,8 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Value 1 - Innovation */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {/* Value 1 - Integrity */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -953,7 +926,7 @@ export default function HomePage() {
                 </p>
               </motion.div>
 
-              {/* Value 3 - Growth */}
+              {/* Value 3 - Operational Discipline */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -962,13 +935,108 @@ export default function HomePage() {
                 className="text-center group"
               >
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1c2d51] to-[#f37922] rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Globe2 className="h-8 w-8 text-white" />
+                  <CogIcon className="h-8 w-8 text-white" />
                 </div>
                 <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
                   {t("value3Title")}
                 </h4>
                 <p className="text-gray-600 leading-relaxed">
                   {t("value3Desc")}
+                </p>
+              </motion.div>
+
+              {/* Value 4 - Transparency */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="text-center group"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#f37922] to-[#f37922]/80 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Eye className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
+                  {t("value4Title")}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {t("value4Desc")}
+                </p>
+              </motion.div>
+
+              {/* Value 5 - Reliability */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                viewport={{ once: true }}
+                className="text-center group"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1c2d51] to-[#1c2d51]/80 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <CheckCircle className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
+                  {t("value5Title")}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {t("value5Desc")}
+                </p>
+              </motion.div>
+
+              {/* Value 6 - Local Presence */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="text-center group"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#f37922] to-[#1c2d51] rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <MapPin className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
+                  {t("value6Title")}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {t("value6Desc")}
+                </p>
+              </motion.div>
+
+              {/* Value 7 - Continuity */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                viewport={{ once: true }}
+                className="text-center group"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1c2d51] to-[#f37922] rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <RefreshCw className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
+                  {t("value7Title")}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {t("value7Desc")}
+                </p>
+              </motion.div>
+
+              {/* Value 8 - Control */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                viewport={{ once: true }}
+                className="text-center group"
+              >
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#f37922] to-[#f37922]/80 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Settings className="h-8 w-8 text-white" />
+                </div>
+                <h4 className="text-xl font-semibold text-[#1c2d51] mb-3">
+                  {t("value8Title")}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {t("value8Desc")}
                 </p>
               </motion.div>
             </div>
