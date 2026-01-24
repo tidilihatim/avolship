@@ -98,7 +98,6 @@ function EnhancedOrderCard({
   order, 
   type = 'assigned',
   onRequestAssignment,
-  onCompleteOrder,
   onUpdateOrderStatus,
   onMakeCallAttempt,
   currentAgentId,
@@ -107,7 +106,6 @@ function EnhancedOrderCard({
   order: OrderItem;
   type?: 'assigned' | 'available';
   onRequestAssignment?: (orderId: string) => void;
-  onCompleteOrder?: (orderId: string) => void;
   onUpdateOrderStatus?: (orderId: string, status: OrderStatus, comment?: string, shouldUpdateStock?: boolean) => void;
   onMakeCallAttempt?: (orderId: string, attempt: CallAttempt) => void;
   currentAgentId?: string;
@@ -311,15 +309,6 @@ function EnhancedOrderCard({
                       </DropdownMenuItem>
                     </DialogTrigger>
                   </Dialog>
-                  
-                  <DropdownMenuSeparator />
-                  
-                  {onCompleteOrder && (
-                    <DropdownMenuItem onClick={() => onCompleteOrder(order.orderId)}>
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      {t('callCenter.queue.actions.completeOrder')}
-                    </DropdownMenuItem>
-                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}

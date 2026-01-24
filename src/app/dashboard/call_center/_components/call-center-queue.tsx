@@ -104,7 +104,6 @@ export default function EnhancedCallCenterQueue() {
     isAvailable,
     isConnected,
     requestOrderAssignment,
-    completeOrder,
     updateAvailability,
     refreshQueue
   } = useOrderQueue();
@@ -267,7 +266,6 @@ export default function EnhancedCallCenterQueue() {
                   key={order.orderId}
                   order={order}
                   type="assigned"
-                  onCompleteOrder={completeOrder}
                   onUpdateOrderStatus={handleUpdateOrderStatus}
                   onMakeCallAttempt={handleMakeCallAttempt}
                   currentAgentId={session?.user?.id}

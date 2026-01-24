@@ -197,16 +197,6 @@ export function useOrderQueue() {
     emit('order:request-assignment', { orderId });
   }, [isConnected, emit]);
 
-  // Complete order (remove from queue)
-  const completeOrder = useCallback((orderId: string) => {
-    if (!isConnected) {
-      toast.error('Not connected to server');
-      return;
-    }
-
-    console.log('Completing order:', orderId);
-    emit('order:complete', { orderId });
-  }, [isConnected, emit]);
 
   // Update agent availability status
   const updateAvailability = useCallback((available: boolean) => {
@@ -271,7 +261,6 @@ export function useOrderQueue() {
     isAvailable,
     isConnected,
     requestOrderAssignment,
-    completeOrder,
     updateAvailability,
     refreshQueue
   };
