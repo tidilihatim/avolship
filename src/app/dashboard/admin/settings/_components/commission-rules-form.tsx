@@ -136,11 +136,6 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                             updateRule(originalIndex, 'commission', parseFloat(e.target.value) || 0)
                           }
                         />
-                        {rule.currency && rule.commission > 0 && (
-                          <div className="text-xs text-muted-foreground">
-                            {formatPrice(rule.commission, rule.currency)}
-                          </div>
-                        )}
                       </div>
                     </div>
 
@@ -214,11 +209,6 @@ export function CommissionRulesForm({ rules, onRulesChange }: CommissionRulesFor
                     }))
                   }
                 />
-                {newRule.currency && newRule.commission && newRule.commission > 0 && (
-                  <div className="text-xs text-muted-foreground">
-                    {formatPrice(newRule.commission, newRule.currency)}
-                  </div>
-                )}
               </div>
             </div>
 

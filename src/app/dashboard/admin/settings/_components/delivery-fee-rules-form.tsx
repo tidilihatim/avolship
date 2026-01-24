@@ -28,6 +28,8 @@ interface DeliveryFeeRulesFormProps {
 export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesFormProps) {
   const t = useTranslations('settings.deliveryRules');
   const [newRule, setNewRule] = useState<Partial<DeliveryFeeRule>>({
+    warehouseId: '',
+    currency: '',
     minDistance: 0,
     maxDistance: 5,
     fee: 0,
@@ -85,7 +87,7 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
   };
 
   const addRule = () => {
-    if (!newRule.warehouseId || newRule.minDistance === undefined || !newRule.maxDistance || !newRule.fee) {
+    if (!newRule.warehouseId || newRule.minDistance === undefined || newRule.minDistance === null || !newRule.maxDistance || !newRule.fee) {
       return;
     }
 
@@ -116,8 +118,11 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
     };
 
     onRulesChange([...rules, ruleToAdd]);
-    
+
+    // Reset form completely to allow adding new rules
     setNewRule({
+      warehouseId: '',
+      currency: '',
       minDistance: 0,
       maxDistance: 5,
       fee: 0,
@@ -182,74 +187,70 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
           {rules.map((rule, index) => (
             <Card key={index}>
               <CardContent className="pt-4">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label>{t('labels.warehouse')}</Label>
-                      <WarehouseSelector
-                        value={rule.warehouseId}
-                        onValueChange={(warehouseId, currency) => {
-                          updateRule(index, 'warehouseId', warehouseId);
-                          updateRule(index, 'currency', currency);
-                        }}
-                        placeholder={t('placeholders.selectWarehouse')}
-                      />
-                    </div>
-                    
-                    <div className="flex items-end justify-end">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => removeRule(index)}
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        {t('actions.remove')}
-                      </Button>
-                    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                  <div className="space-y-2">
+                    <Label>{t('labels.warehouse')}</Label>
+                    <WarehouseSelector
+                      value={rule.warehouseId}
+                      onValueChange={(warehouseId, currency) => {
+                        updateRule(index, 'warehouseId', warehouseId);
+                        updateRule(index, 'currency', currency);
+                      }}
+                      placeholder={t('placeholders.selectWarehouse')}
+                    />
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor={`min-${index}`}>{t('labels.minDistance')}</Label>
-                      <Input
-                        id={`min-${index}`}
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        value={rule.minDistance}
-                        onChange={(e) => 
-                          updateRule(index, 'minDistance', parseFloat(e.target.value) || 0)
-                        }
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor={`max-${index}`}>{t('labels.maxDistance')}</Label>
-                      <Input
-                        id={`max-${index}`}
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        value={rule.maxDistance}
-                        onChange={(e) => 
-                          updateRule(index, 'maxDistance', parseFloat(e.target.value) || 0)
-                        }
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor={`fee-${index}`}>{t('labels.fee')} {rule.currency && `(${rule.currency})`}</Label>
-                      <Input
-                        id={`fee-${index}`}
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={rule.fee}
-                        onChange={(e) => 
-                          updateRule(index, 'fee', parseFloat(e.target.value) || 0)
-                        }
-                      />
-                    </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`min-${index}`}>{t('labels.minDistance')}</Label>
+                    <Input
+                      id={`min-${index}`}
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={rule.minDistance}
+                      onChange={(e) =>
+                        updateRule(index, 'minDistance', parseFloat(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`max-${index}`}>{t('labels.maxDistance')}</Label>
+                    <Input
+                      id={`max-${index}`}
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={rule.maxDistance}
+                      onChange={(e) =>
+                        updateRule(index, 'maxDistance', parseFloat(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`fee-${index}`}>{t('labels.fee')} {rule.currency && `(${rule.currency})`}</Label>
+                    <Input
+                      id={`fee-${index}`}
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={rule.fee}
+                      onChange={(e) =>
+                        updateRule(index, 'fee', parseFloat(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="invisible">Action</Label>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => removeRule(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -266,84 +267,82 @@ export function DeliveryFeeRulesForm({ rules, onRulesChange }: DeliveryFeeRulesF
           <CardTitle className="text-sm">{t('addNew.title')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label>Warehouse</Label>
-                <WarehouseSelector
-                  value={newRule.warehouseId}
-                  onValueChange={handleWarehouseChange}
-                  placeholder="Select warehouse"
-                />
-                {newRule.warehouseId && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t('addNew.suggestedRange', { distance: getSuggestedMinDistance(newRule.warehouseId) })}
-                  </p>
-                )}
-              </div>
-              
-              <div className="flex items-end justify-end">
-                <Button 
-                  onClick={addRule}
-                  disabled={!newRule.warehouseId || !newRule.minDistance || !newRule.maxDistance || !newRule.fee}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('actions.addRule')}
-                </Button>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+            <div className="space-y-2">
+              <Label>Warehouse</Label>
+              <WarehouseSelector
+                value={newRule.warehouseId}
+                onValueChange={handleWarehouseChange}
+                placeholder="Select warehouse"
+              />
+              {newRule.warehouseId && (
+                <p className="text-xs text-muted-foreground">
+                  {t('addNew.suggestedRange', { distance: getSuggestedMinDistance(newRule.warehouseId) })}
+                </p>
+              )}
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="new-min">{t('labels.minDistance')}</Label>
-                <Input
-                  id="new-min"
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  value={newRule.minDistance || ''}
-                  onChange={(e) => 
-                    setNewRule(prev => ({ 
-                      ...prev, 
-                      minDistance: parseFloat(e.target.value) || 0 
-                    }))
-                  }
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="new-max">{t('labels.maxDistance')}</Label>
-                <Input
-                  id="new-max"
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  value={newRule.maxDistance || ''}
-                  onChange={(e) => 
-                    setNewRule(prev => ({ 
-                      ...prev, 
-                      maxDistance: parseFloat(e.target.value) || 0 
-                    }))
-                  }
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="new-fee">{t('labels.fee')} {newRule.currency && `(${newRule.currency})`}</Label>
-                <Input
-                  id="new-fee"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={newRule.fee || ''}
-                  onChange={(e) => 
-                    setNewRule(prev => ({ 
-                      ...prev, 
-                      fee: parseFloat(e.target.value) || 0 
-                    }))
-                  }
-                />
-              </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="new-min">{t('labels.minDistance')}</Label>
+              <Input
+                id="new-min"
+                type="number"
+                min="0"
+                step="0.1"
+                value={newRule.minDistance ?? ''}
+                onChange={(e) =>
+                  setNewRule(prev => ({
+                    ...prev,
+                    minDistance: parseFloat(e.target.value) || 0
+                  }))
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="new-max">{t('labels.maxDistance')}</Label>
+              <Input
+                id="new-max"
+                type="number"
+                min="0"
+                step="0.1"
+                value={newRule.maxDistance || ''}
+                onChange={(e) =>
+                  setNewRule(prev => ({
+                    ...prev,
+                    maxDistance: parseFloat(e.target.value) || 0
+                  }))
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="new-fee">{t('labels.fee')} {newRule.currency && `(${newRule.currency})`}</Label>
+              <Input
+                id="new-fee"
+                type="number"
+                min="0"
+                step="0.01"
+                value={newRule.fee || ''}
+                onChange={(e) =>
+                  setNewRule(prev => ({
+                    ...prev,
+                    fee: parseFloat(e.target.value) || 0
+                  }))
+                }
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="invisible">Action</Label>
+              <Button
+                onClick={addRule}
+                className="w-full"
+                disabled={!newRule.warehouseId || newRule.minDistance === undefined || !newRule.maxDistance || !newRule.fee}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {t('actions.addRule')}
+              </Button>
             </div>
           </div>
         </CardContent>
