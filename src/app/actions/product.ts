@@ -385,8 +385,8 @@ async function getProductsImpl(
       const inTransitQuantity = inTransitOrdersMap.get(productId) || 0;
       const deliveredQuantity = deliveredOrdersMap.get(productId) || 0;
 
-      // Calculate available stock (totalStock - confirmed orders)
-      const availableStock = product.totalStock - confirmedQuantity;
+      // Calculate available stock (totalStock - confirmed orders - defective)
+      const availableStock = product.totalStock - confirmedQuantity - totalDefectiveQuantity;
 
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
@@ -745,14 +745,17 @@ async function getAllProductsForAdminImpl(
       // If a warehouse is filtered, use that warehouse's stock only
       // Otherwise use total stock
       let warehouseStock = product.totalStock;
+      let warehouseDefectiveQty = totalDefectiveQuantity;
+
       if (filters.warehouseId) {
         const selectedWarehouse = product.warehouses.find(
           (wh: any) => wh.warehouseId.toString() === filters.warehouseId
         );
         warehouseStock = selectedWarehouse?.stock || 0;
+        warehouseDefectiveQty = selectedWarehouse?.defectiveQuantity || 0;
       }
 
-      const availableStock = warehouseStock - confirmedQuantity;
+      const availableStock = warehouseStock - confirmedQuantity - warehouseDefectiveQty;
 
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
