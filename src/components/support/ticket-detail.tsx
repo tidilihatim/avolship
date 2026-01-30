@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -13,10 +14,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { 
-  Calendar, 
-  Clock, 
-  User, 
+import {
+  Calendar,
+  Clock,
+  User,
   Tag,
   Image as ImageIcon,
   FileIcon,
@@ -26,7 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { TicketAPI } from "@/lib/api/ticket-api";
-import { updateTicketStatus, updateTicketResolution } from "@/app/actions/ticket-actions";
+import { updateTicketStatus, updateTicketResolution, updateResolutionFeedback } from "@/app/actions/ticket-actions";
 
 interface TicketUser {
   _id: string;
@@ -57,6 +58,8 @@ interface TicketDetailProps {
     attachments: Attachment[];
     relatedOrderId?: string;
     resolution?: string;
+    resolutionFeedback?: 'satisfied' | 'not_satisfied';
+    resolutionFeedbackAt?: string;
     createdAt: string;
     updatedAt: string;
   };
@@ -79,10 +82,19 @@ const priorityColors = {
 };
 
 export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetailProps) {
+  const t = useTranslations('callCenterSupport.ticketDetail');
+  const tStatus = useTranslations('callCenterSupport.status');
+  const tPriority = useTranslations('callCenterSupport.priority');
+  const tCategory = useTranslations('callCenterSupport.category');
+
   const [ticket, setTicket] = useState(initialTicket);
   const [isEditing, setIsEditing] = useState(false);
   const [resolution, setResolution] = useState(ticket.resolution || "");
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [resolutionFeedback, setResolutionFeedback] = useState<'satisfied' | 'not_satisfied' | null>(
+    ticket.resolutionFeedback || null
+  );
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -104,18 +116,18 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
 
   const handleStatusChange = async (newStatus: string) => {
     if (newStatus === ticket.status) return; // No change needed
-    
+
     setIsUpdatingStatus(true);
     try {
       // Use server action to update status
       await updateTicketStatus(ticket._id, newStatus);
-      
+
       // Update local ticket state
       setTicket(prev => ({ ...prev, status: newStatus }));
-      toast.success(`Ticket status updated to ${newStatus.replace('_', ' ')}`);
+      toast.success(t('toasts.statusUpdated', { status: tStatus(newStatus) }));
     } catch (error: any) {
       console.error('Error updating ticket status:', error);
-      toast.error(error.message || "Failed to update status");
+      toast.error(error.message || t('toasts.statusUpdateFailed'));
     } finally {
       setIsUpdatingStatus(false);
     }
@@ -123,7 +135,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
 
   const handleSaveResolution = async () => {
     if (!resolution || resolution.trim().length === 0) {
-      toast.error("Resolution cannot be empty");
+      toast.error(t('toasts.resolutionEmpty'));
       return;
     }
 
@@ -133,12 +145,12 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
       if (result.success) {
         // Update local ticket state with the saved resolution
         setTicket(prev => ({ ...prev, resolution: result.resolution }));
-        toast.success("Resolution saved successfully");
+        toast.success(t('toasts.resolutionSaved'));
         setIsEditing(false);
       }
     } catch (error: any) {
       console.error('Error saving resolution:', error);
-      toast.error(error.message || "Failed to save resolution");
+      toast.error(error.message || t('toasts.resolutionSaveFailed'));
     }
   };
 
@@ -149,6 +161,38 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
 
   const canUpdateStatus = () => {
     return currentUser && ['support', 'admin'].includes(currentUser.role);
+  };
+
+  const canEditResolution = () => {
+    return currentUser && ['support', 'admin'].includes(currentUser.role);
+  };
+
+  const handleResolutionFeedback = async (feedback: 'satisfied' | 'not_satisfied') => {
+    setIsSubmittingFeedback(true);
+    try {
+      const result = await updateResolutionFeedback(ticket._id, feedback);
+
+      if (result.success) {
+        setResolutionFeedback(result.feedback);
+        setTicket(prev => ({
+          ...prev,
+          resolutionFeedback: result.feedback,
+          resolutionFeedbackAt: new Date().toISOString(),
+          status: result.status
+        }));
+
+        if (feedback === 'satisfied') {
+          toast.success(t('toasts.feedbackSatisfied'));
+        } else {
+          toast.info(t('toasts.feedbackNotSatisfied'));
+        }
+      }
+    } catch (error: any) {
+      console.error('Error submitting feedback:', error);
+      toast.error(error.message || t('toasts.feedbackSubmitFailed'));
+    } finally {
+      setIsSubmittingFeedback(false);
+    }
   };
 
   // Bucket is public now, no need for presigned URLs
@@ -162,12 +206,12 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
             <h1 className="text-2xl font-bold mb-2">{ticket.title}</h1>
             <div className="flex items-center gap-2 mb-4">
               <Badge className={statusColors[ticket.status as keyof typeof statusColors]}>
-                {ticket.status.replace('_', ' ')}
+                {tStatus(ticket.status)}
               </Badge>
               <Badge className={priorityColors[ticket.priority as keyof typeof priorityColors]}>
-                {ticket.priority} priority
+                {t('priorityLabel', { priority: tPriority(ticket.priority) })}
               </Badge>
-              <Badge variant="outline">{ticket.category}</Badge>
+              <Badge variant="outline">{tCategory(ticket.category)}</Badge>
             </div>
           </div>
           
@@ -179,11 +223,11 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="open">Open</SelectItem>
-                    <SelectItem value="assigned">Assigned</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="resolved">Resolved</SelectItem>
-                    <SelectItem value="closed">Closed</SelectItem>
+                    <SelectItem value="open">{t('statusSelect.open')}</SelectItem>
+                    <SelectItem value="assigned">{t('statusSelect.assigned')}</SelectItem>
+                    <SelectItem value="in_progress">{t('statusSelect.inProgress')}</SelectItem>
+                    <SelectItem value="resolved">{t('statusSelect.resolved')}</SelectItem>
+                    <SelectItem value="closed">{t('statusSelect.closed')}</SelectItem>
                   </SelectContent>
                 </Select>
                 {isUpdatingStatus && (
@@ -192,7 +236,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
               </>
             ) : (
               <Badge className={statusColors[ticket.status as keyof typeof statusColors]}>
-                {ticket.status.replace('_', ' ')}
+                {tStatus(ticket.status)}
               </Badge>
             )}
           </div>
@@ -202,25 +246,25 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="font-medium">Created by</p>
+              <p className="font-medium">{t('createdBy')}</p>
               <p className="text-muted-foreground">
                 {ticket.createdBy.name} ({ticket.createdBy.role})
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="font-medium">Created</p>
+              <p className="font-medium">{t('created')}</p>
               <p className="text-muted-foreground">{formatDate(ticket.createdAt)}</p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="font-medium">Last updated</p>
+              <p className="font-medium">{t('lastUpdated')}</p>
               <p className="text-muted-foreground">{formatDate(ticket.updatedAt)}</p>
             </div>
           </div>
@@ -229,7 +273,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
         {ticket.assignedTo && (
           <div className="mt-4 p-3 bg-muted rounded-lg">
             <p className="text-sm">
-              <span className="font-medium">Assigned to:</span> {ticket.assignedTo.name} ({ticket.assignedTo.email})
+              <span className="font-medium">{t('assignedToLabel')}:</span> {ticket.assignedTo.name} ({ticket.assignedTo.email})
             </p>
           </div>
         )}
@@ -237,7 +281,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
         {ticket.relatedOrderId && (
           <div className="mt-4 p-3 bg-muted rounded-lg">
             <p className="text-sm">
-              <span className="font-medium">Related Order:</span> {ticket.relatedOrderId}
+              <span className="font-medium">{t('relatedOrder')}:</span> {ticket.relatedOrderId}
             </p>
           </div>
         )}
@@ -245,7 +289,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
 
       {/* Description */}
       <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-3">Description</h2>
+        <h2 className="text-lg font-semibold mb-3">{t('description')}</h2>
         <div className="prose prose-sm max-w-none">
           <p className="whitespace-pre-wrap">{ticket.description}</p>
         </div>
@@ -256,7 +300,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
             <Tag className="h-4 w-4" />
-            Tags
+            {t('tags')}
           </h2>
           <div className="flex flex-wrap gap-2">
             {ticket.tags.map((tag) => (
@@ -273,7 +317,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
             <ImageIcon className="h-4 w-4" />
-            Images ({ticket.images.length})
+            {t('images')} ({ticket.images.length})
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {ticket.images.map((imageUrl, index) => {
@@ -298,7 +342,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
                       asChild
                     >
                       <a href={imageUrl} target="_blank" rel="noopener noreferrer" download={filename}>
-                        Download
+                        {t('download')}
                       </a>
                     </Button>
                   </div>
@@ -314,7 +358,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
             <FileIcon className="h-4 w-4" />
-            Attachments ({ticket.attachments.length})
+            {t('attachments')} ({ticket.attachments.length})
           </h2>
           <div className="space-y-4">
             {ticket.attachments.map((attachment, index) => {
@@ -349,13 +393,13 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
                             </p>
                           </div>
                         </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           asChild
                         >
                           <a href={attachment.url} target="_blank" rel="noopener noreferrer" download={attachment.filename}>
-                            Download
+                            {t('download')}
                           </a>
                         </Button>
                       </div>
@@ -372,13 +416,13 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
                           </p>
                         </div>
                       </div>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         asChild
                       >
                         <a href={attachment.url} target="_blank" rel="noopener noreferrer" download={attachment.filename}>
-                          Download
+                          {t('download')}
                         </a>
                       </Button>
                     </div>
@@ -396,40 +440,118 @@ export function TicketDetail({ ticket: initialTicket, currentUser }: TicketDetai
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <CheckCircle className="h-4 w-4" />
-              Resolution
+              {t('resolution')}
             </h2>
-            {!isEditing && (
+            {!isEditing && canEditResolution() && (
               <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
                 <Edit3 className="h-4 w-4 mr-2" />
-                Edit
+                {t('edit')}
               </Button>
             )}
           </div>
-          
+
           {isEditing ? (
             <div className="space-y-3">
               <Textarea
                 value={resolution}
                 onChange={(e) => setResolution(e.target.value)}
-                placeholder="Describe how this issue was resolved..."
+                placeholder={t('resolutionPlaceholder')}
                 className="min-h-[100px]"
               />
               <div className="flex gap-2">
                 <Button onClick={handleSaveResolution}>
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Save Resolution
+                  {t('saveResolution')}
                 </Button>
                 <Button variant="outline" onClick={() => setIsEditing(false)}>
                   <X className="h-4 w-4 mr-2" />
-                  Cancel
+                  {t('cancel')}
                 </Button>
               </div>
             </div>
           ) : (
-            <div className="prose prose-sm max-w-none">
-              <p className="whitespace-pre-wrap">
-                {ticket.resolution || "No resolution provided yet."}
-              </p>
+            <div className="space-y-4">
+              <div className="prose prose-sm max-w-none">
+                <p className="whitespace-pre-wrap">
+                  {ticket.resolution || t('noResolutionYet')}
+                </p>
+              </div>
+
+              {/* Resolution Feedback Section */}
+              {!canEditResolution() && ticket.resolution && (ticket.status === 'resolved' || ticket.status === 'in_progress') && (
+                <div className="border-t pt-4 mt-4">
+                  {/* Show existing feedback if present */}
+                  {ticket.resolutionFeedback && ticket.resolutionFeedbackAt && (
+                    <div className="mb-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        {ticket.resolutionFeedback === 'satisfied' ? (
+                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            {t('resolutionFeedback.customerSatisfied')}
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                            <X className="h-3 w-3 mr-1" />
+                            {t('resolutionFeedback.customerNotSatisfied')}
+                          </Badge>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {formatDate(ticket.resolutionFeedbackAt)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Feedback buttons - always show for sellers to update */}
+                  <Label className="text-sm font-medium mb-2 block">
+                    {ticket.resolutionFeedback ? t('resolutionFeedback.updateQuestion') : t('resolutionFeedback.question')}
+                  </Label>
+                  <div className="flex gap-3">
+                    <Button
+                      variant={resolutionFeedback === 'satisfied' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => handleResolutionFeedback('satisfied')}
+                      disabled={isSubmittingFeedback}
+                      className="flex items-center gap-2"
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      {isSubmittingFeedback && resolutionFeedback === 'satisfied' ? t('resolutionFeedback.submitting') : t('resolutionFeedback.yes')}
+                    </Button>
+                    <Button
+                      variant={resolutionFeedback === 'not_satisfied' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => handleResolutionFeedback('not_satisfied')}
+                      disabled={isSubmittingFeedback}
+                      className="flex items-center gap-2"
+                    >
+                      <X className="h-4 w-4" />
+                      {isSubmittingFeedback && resolutionFeedback === 'not_satisfied' ? t('resolutionFeedback.submitting') : t('resolutionFeedback.no')}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Show existing feedback to admin/support (read-only) */}
+              {canEditResolution() && ticket.resolutionFeedback && ticket.resolutionFeedbackAt && (
+                <div className="border-t pt-4 mt-4">
+                  <div className="flex items-center gap-2">
+                    {ticket.resolutionFeedback === 'satisfied' ? (
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        {t('resolutionFeedback.customerSatisfied')}
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                        <X className="h-3 w-3 mr-1" />
+                        {t('resolutionFeedback.customerNotSatisfied')}
+                      </Badge>
+                    )}
+                    <span className="text-xs text-muted-foreground">
+                      {formatDate(ticket.resolutionFeedbackAt)}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </Card>

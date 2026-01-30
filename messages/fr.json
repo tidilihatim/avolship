@@ -330,6 +330,55 @@
       "account": "Compte",
       "order": "Commande",
       "general": "Général"
+    },
+    "ticketDetail": {
+      "supportTicketDetails": "Détails du Ticket de Support",
+      "support": "Support",
+      "ticket": "Ticket",
+      "createdBy": "Créé par",
+      "created": "Créé",
+      "lastUpdated": "Dernière mise à jour",
+      "assignedToLabel": "Assigné à",
+      "relatedOrder": "Commande Associée",
+      "description": "Description",
+      "tags": "Étiquettes",
+      "images": "Images",
+      "attachments": "Pièces Jointes",
+      "download": "Télécharger",
+      "resolution": "Résolution",
+      "edit": "Modifier",
+      "editResolution": "Modifier la Résolution",
+      "saveResolution": "Enregistrer la Résolution",
+      "cancel": "Annuler",
+      "noResolutionYet": "Aucune résolution fournie pour le moment.",
+      "resolutionPlaceholder": "Décrivez comment ce problème a été résolu...",
+      "resolutionFeedback": {
+        "question": "Cette résolution est-elle satisfaisante?",
+        "updateQuestion": "Souhaitez-vous mettre à jour votre avis?",
+        "yes": "Oui, Résolu",
+        "no": "Non, Non Résolu",
+        "submitting": "Envoi en cours...",
+        "customerSatisfied": "Client Satisfait",
+        "customerNotSatisfied": "Client Non Satisfait"
+      },
+      "toasts": {
+        "statusUpdated": "Statut du ticket mis à jour en {status}",
+        "resolutionSaved": "Résolution enregistrée avec succès",
+        "feedbackSatisfied": "Merci pour votre retour! Le ticket a été marqué comme résolu.",
+        "feedbackNotSatisfied": "Votre retour a été noté. L'équipe de support examinera à nouveau ce ticket.",
+        "resolutionEmpty": "La résolution ne peut pas être vide",
+        "statusUpdateFailed": "Échec de la mise à jour du statut",
+        "resolutionSaveFailed": "Échec de l'enregistrement de la résolution",
+        "feedbackSubmitFailed": "Échec de l'envoi du retour"
+      },
+      "priorityLabel": "priorité {priority}",
+      "statusSelect": {
+        "open": "Ouvert",
+        "assigned": "Assigné",
+        "inProgress": "En Cours",
+        "resolved": "Résolu",
+        "closed": "Fermé"
+      }
     }
   },
   "profile": {

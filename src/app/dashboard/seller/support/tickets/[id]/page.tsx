@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getMyTickets } from "@/app/actions/ticket-actions";
 import { TicketDetail } from "@/components/support/ticket-detail";
 import { TicketChat } from "@/components/support/ticket-chat";
@@ -26,8 +27,9 @@ async function getTicketMessages(id: string) {
 }
 
 export default async function SellerTicketPage({ params }: TicketPageProps) {
+  const t = await getTranslations('callCenterSupport.ticketDetail');
   const session = await getServerSession(authOptions);
-  
+
   if (!session?.user) {
     redirect("/auth/login");
   }
@@ -40,7 +42,7 @@ export default async function SellerTicketPage({ params }: TicketPageProps) {
 
   const { id } = await params;
   const ticket = await getTicket(id);
-  
+
   if (!ticket) {
     redirect("/dashboard/seller/support");
   }
@@ -51,11 +53,11 @@ export default async function SellerTicketPage({ params }: TicketPageProps) {
   return (
     <div className="container mx-auto p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Support Ticket Details</h1>
+        <h1 className="text-2xl font-bold">{t('supportTicketDetails')}</h1>
         <nav className="text-sm text-muted-foreground">
-          <a href="/dashboard/seller/support" className="hover:text-primary">Support</a>
+          <a href="/dashboard/seller/support" className="hover:text-primary">{t('support')}</a>
           {" / "}
-          <span>Ticket #{ticket._id.slice(-6)}</span>
+          <span>{t('ticket')} #{ticket._id.slice(-6)}</span>
         </nav>
       </div>
 

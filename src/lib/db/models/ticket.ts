@@ -19,6 +19,8 @@ export interface ITicket extends Document {
   tags: string[];
   relatedOrderId?: string;
   resolution?: string;
+  resolutionFeedback?: 'satisfied' | 'not_satisfied';
+  resolutionFeedbackAt?: Date;
   closedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -103,6 +105,13 @@ const TicketSchema: Schema = new Schema({
   resolution: {
     type: String,
     maxlength: 1000
+  },
+  resolutionFeedback: {
+    type: String,
+    enum: ['satisfied', 'not_satisfied']
+  },
+  resolutionFeedbackAt: {
+    type: Date
   },
   closedAt: {
     type: Date

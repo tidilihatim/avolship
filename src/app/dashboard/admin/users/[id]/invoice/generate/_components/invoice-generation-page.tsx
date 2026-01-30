@@ -232,8 +232,8 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
     setError(null);
 
     try {
-      // Calculate the number of selected orders
-      const numberOfOrders = configuration.manualOrders.length;
+      // Calculate the number of selected orders (only count orders with include: true)
+      const numberOfOrders = configuration.manualOrders.filter((order: any) => order.include).length;
 
       // Multiply shipping fee by number of orders
       const adjustedFees = {
@@ -275,8 +275,8 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
     setError(null);
 
     try {
-      // Calculate the number of selected orders
-      const numberOfOrders = configuration.manualOrders.length;
+      // Calculate the number of selected orders (only count orders with include: true)
+      const numberOfOrders = configuration.manualOrders.filter((order: any) => order.include).length;
 
       // Multiply shipping fee by number of orders
       const adjustedFees = {

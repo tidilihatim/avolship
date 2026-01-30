@@ -284,7 +284,7 @@ export async function getTicketMessages(ticketId: string) {
   }
 
   await connectToDatabase();
-  
+
   // Verify user can access this ticket
   const ticket = await Ticket.findById(ticketId);
   if (!ticket) {
@@ -292,7 +292,7 @@ export async function getTicketMessages(ticketId: string) {
   }
 
   const role = await getLoginUserRole();
-  const canAccess = ticket.createdBy.toString() === session.user.id || 
+  const canAccess = ticket.createdBy.toString() === session.user.id ||
                    [UserRole.SUPPORT, UserRole.ADMIN].includes(role);
 
   if (!canAccess) {
@@ -311,4 +311,57 @@ export async function getTicketMessages(ticketId: string) {
     .lean();
 
   return JSON.parse(JSON.stringify(messages));
+}
+
+export async function updateResolutionFeedback(
+  ticketId: string,
+  feedback: 'satisfied' | 'not_satisfied'
+) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  await connectToDatabase();
+
+  // Verify ticket exists and user is the creator
+  const ticket = await Ticket.findById(ticketId);
+  if (!ticket) {
+    throw new Error("Ticket not found");
+  }
+
+  if (ticket.createdBy.toString() !== session.user.id) {
+    throw new Error("Only the ticket creator can provide feedback");
+  }
+
+  if (!ticket.resolution) {
+    throw new Error("Cannot provide feedback on a ticket without a resolution");
+  }
+
+  // Update the feedback
+  ticket.resolutionFeedback = feedback;
+  ticket.resolutionFeedbackAt = new Date();
+
+  // If not satisfied, change status back to in_progress
+  if (feedback === 'not_satisfied' && ticket.status === 'resolved') {
+    ticket.status = 'in_progress';
+  }
+
+  // If satisfied and status is in_progress (was previously not satisfied), change to resolved
+  if (feedback === 'satisfied' && ticket.status === 'in_progress' && ticket.resolution) {
+    ticket.status = 'resolved';
+  }
+
+  await ticket.save();
+
+  revalidatePath("/dashboard/seller/support");
+  revalidatePath(`/dashboard/seller/support/tickets/${ticketId}`);
+  revalidatePath("/dashboard/support");
+  revalidatePath(`/dashboard/admin/tickets/${ticketId}`);
+
+  return {
+    success: true,
+    feedback: ticket.resolutionFeedback,
+    status: ticket.status
+  };
 }

@@ -345,12 +345,12 @@ export default function ProductTable({
                               <Package className="h-5 w-5 text-muted-foreground" />
                             </div>
                           )}
-                          <div>
-                            <div className="font-medium">{product.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {product.description.length > 50
-                                ? `${product.description.substring(0, 50)}...`
-                                : product.description}
+                          <div className="max-w-[200px]">
+                            <div className="font-medium truncate" title={product.name}>
+                              {product.name}
+                            </div>
+                            <div className="text-sm text-muted-foreground truncate" title={product.description}>
+                              {product.description}
                             </div>
                           </div>
                         </div>

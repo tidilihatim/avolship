@@ -330,6 +330,55 @@
       "account": "Account",
       "order": "Order",
       "general": "General"
+    },
+    "ticketDetail": {
+      "supportTicketDetails": "Support Ticket Details",
+      "support": "Support",
+      "ticket": "Ticket",
+      "createdBy": "Created by",
+      "created": "Created",
+      "lastUpdated": "Last updated",
+      "assignedToLabel": "Assigned to",
+      "relatedOrder": "Related Order",
+      "description": "Description",
+      "tags": "Tags",
+      "images": "Images",
+      "attachments": "Attachments",
+      "download": "Download",
+      "resolution": "Resolution",
+      "edit": "Edit",
+      "editResolution": "Edit Resolution",
+      "saveResolution": "Save Resolution",
+      "cancel": "Cancel",
+      "noResolutionYet": "No resolution provided yet.",
+      "resolutionPlaceholder": "Describe how this issue was resolved...",
+      "resolutionFeedback": {
+        "question": "Is this resolution satisfactory?",
+        "updateQuestion": "Would you like to update your feedback?",
+        "yes": "Yes, Resolved",
+        "no": "No, Not Resolved",
+        "submitting": "Submitting...",
+        "customerSatisfied": "Customer Satisfied",
+        "customerNotSatisfied": "Customer Not Satisfied"
+      },
+      "toasts": {
+        "statusUpdated": "Ticket status updated to {status}",
+        "resolutionSaved": "Resolution saved successfully",
+        "feedbackSatisfied": "Thank you for your feedback! The ticket has been marked as resolved.",
+        "feedbackNotSatisfied": "Your feedback has been noted. The support team will review this ticket again.",
+        "resolutionEmpty": "Resolution cannot be empty",
+        "statusUpdateFailed": "Failed to update status",
+        "resolutionSaveFailed": "Failed to save resolution",
+        "feedbackSubmitFailed": "Failed to submit feedback"
+      },
+      "priorityLabel": "{priority} priority",
+      "statusSelect": {
+        "open": "Open",
+        "assigned": "Assigned",
+        "inProgress": "In Progress",
+        "resolved": "Resolved",
+        "closed": "Closed"
+      }
     }
   },
   "profile": {
