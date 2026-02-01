@@ -7,6 +7,8 @@ import User, { UserRole } from '@/lib/db/models/user';
 import Warehouse from '@/lib/db/models/warehouse';
 import UserIntegration from '@/lib/db/models/user-integration';
 import Order, { OrderStatus } from '@/lib/db/models/order';
+import Expedition from '@/lib/db/models/expedition';
+import { ExpeditionStatus } from '@/app/dashboard/_constant/expedition';
 import { ProductFilters, ProductInput, ProductResponse, ProductTableData, WarehouseData } from '@/types/product';
 import mongoose from 'mongoose';
 import { withDbConnection } from '@/lib/db/db-connect';
@@ -349,6 +351,36 @@ async function getProductsImpl(
       deliveredOrdersMap.set(order._id.toString(), order.totalDeliveredQuantity);
     }
 
+    // Get expedition stock for all products (all-time stock from expeditions)
+    const expeditionStock = await Expedition.aggregate([
+      {
+        $match: {
+          'products.productId': { $in: productIds },
+          status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] }
+        }
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalExpeditionStock: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Create a map of product ID to expedition stock
+    const expeditionStockMap = new Map<string, number>();
+    for (const exp of expeditionStock) {
+      expeditionStockMap.set(exp._id.toString(), exp.totalExpeditionStock);
+    }
+
     // Map products to include warehouse and seller names
     const productsWithNames: ProductTableData[] = [];
 
@@ -385,8 +417,11 @@ async function getProductsImpl(
       const inTransitQuantity = inTransitOrdersMap.get(productId) || 0;
       const deliveredQuantity = deliveredOrdersMap.get(productId) || 0;
 
-      // Calculate available stock (totalStock - confirmed orders - defective)
-      const availableStock = product.totalStock - confirmedQuantity - totalDefectiveQuantity;
+      // Get expedition stock for this product (all-time stock from expeditions)
+      const totalStock = expeditionStockMap.get(productId) || 0;
+
+      // Calculate available stock (totalStock from expeditions - confirmed orders - defective)
+      const availableStock = totalStock - confirmedQuantity - totalDefectiveQuantity;
 
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
@@ -412,7 +447,7 @@ async function getProductsImpl(
         sellerId,
         sellerName: sellerMap.get(sellerId)?.name || 'Unknown Seller',
         image: product.image,
-        totalStock: product.totalStock,
+        totalStock,
         totalDefectiveQuantity,
         availableStock,
         totalInTransit: inTransitQuantity,
@@ -705,6 +740,36 @@ async function getAllProductsForAdminImpl(
       deliveredOrdersMap.set(order._id.toString(), order.totalDeliveredQuantity);
     }
 
+    // Get expedition stock for all products (all-time stock from expeditions)
+    const expeditionStock = await Expedition.aggregate([
+      {
+        $match: {
+          'products.productId': { $in: productIds },
+          status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] }
+        }
+      },
+      {
+        $unwind: '$products'
+      },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalExpeditionStock: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    // Create a map of product ID to expedition stock
+    const expeditionStockMap = new Map<string, number>();
+    for (const exp of expeditionStock) {
+      expeditionStockMap.set(exp._id.toString(), exp.totalExpeditionStock);
+    }
+
     // Map products to include warehouse and seller names
     const productsWithNames: ProductTableData[] = [];
 
@@ -741,10 +806,13 @@ async function getAllProductsForAdminImpl(
       const inTransitQuantity = inTransitOrdersMap.get(productId) || 0;
       const deliveredQuantity = deliveredOrdersMap.get(productId) || 0;
 
+      // Get expedition stock for this product (all-time stock from expeditions)
+      const totalStock = expeditionStockMap.get(productId) || 0;
+
       // Calculate available stock
       // If a warehouse is filtered, use that warehouse's stock only
-      // Otherwise use total stock
-      let warehouseStock = product.totalStock;
+      // Otherwise use total stock from expeditions
+      let warehouseStock = totalStock;
       let warehouseDefectiveQty = totalDefectiveQuantity;
 
       if (filters.warehouseId) {
@@ -781,7 +849,7 @@ async function getAllProductsForAdminImpl(
         sellerId,
         sellerName: sellerMap.get(sellerId)?.name || 'Unknown Seller',
         image: product.image,
-        totalStock: product.totalStock,
+        totalStock,
         totalDefectiveQuantity,
         availableStock,
         totalInTransit: inTransitQuantity,
