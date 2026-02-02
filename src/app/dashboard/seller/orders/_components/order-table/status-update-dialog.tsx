@@ -134,19 +134,19 @@ export default function StatusUpdateDialog({
         className: "bg-blue-50 text-blue-700 border-blue-200",
       },
       [OrderStatus.ASSIGNED_TO_DELIVERY]: {
-        label: "Assigned to Delivery",
+        label: t("statuses.assigned_to_delivery"),
         className: "bg-indigo-50 text-indigo-700 border-indigo-200",
       },
       [OrderStatus.ACCEPTED_BY_DELIVERY]: {
-        label: "Accepted by Delivery",
+        label: t("statuses.accepted_by_delivery"),
         className: "bg-teal-50 text-teal-700 border-teal-200",
       },
       [OrderStatus.IN_TRANSIT]: {
-        label: "In Transit",
+        label: t("statuses.in_transit"),
         className: "bg-cyan-50 text-cyan-700 border-cyan-200",
       },
       [OrderStatus.OUT_FOR_DELIVERY]: {
-        label: "Out for Delivery",
+        label: t("statuses.out_for_delivery"),
         className: "bg-sky-50 text-sky-700 border-sky-200",
       },
       [OrderStatus.DELIVERED]: {
@@ -154,7 +154,7 @@ export default function StatusUpdateDialog({
         className: "bg-emerald-50 text-emerald-700 border-emerald-200",
       },
       [OrderStatus.DELIVERY_FAILED]: {
-        label: "Delivery Failed",
+        label: t("statuses.delivery_failed"),
         className: "bg-rose-50 text-rose-700 border-rose-200",
       },
       [OrderStatus.REFUNDED]: {
@@ -305,15 +305,14 @@ export default function StatusUpdateDialog({
                 className="mt-0.5"
               />
               <div className="space-y-1">
-                <Label 
-                  htmlFor="updateStock" 
+                <Label
+                  htmlFor="updateStock"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Update stock levels
+                  {t("statusUpdate.updateStockLabel")}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Automatically return stock to inventory when changing to this status. 
-                  This will increase stock quantities for all products in this order.
+                  {t("statusUpdate.updateStockDescription")}
                 </p>
               </div>
             </div>

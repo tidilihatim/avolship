@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Percent, Calculator, AlertCircle } from "lucide-react";
 
@@ -59,6 +60,7 @@ export default function DiscountDialog({
   order,
   onDiscountApplied,
 }: DiscountDialogProps) {
+  const t = useTranslations("orders.discountDialog");
   const [isPending, startTransition] = useTransition();
   const [discounts, setDiscounts] = useState<Record<string, DiscountApplication>>({});
   const [discountLimits, setDiscountLimits] = useState<{
@@ -120,16 +122,16 @@ export default function DiscountDialog({
       if (discountAmount > maxDiscountFromPercentage) {
         setValidationErrors(prev => ({
           ...prev,
-          [productId]: `Maximum new price can be ${formatPrice(maxNewPriceFromPercentage, order.warehouseCurrency)} (${maxDiscountPercentage}% max discount)`
+          [productId]: t("maxNewPrice", { price: formatPrice(maxNewPriceFromPercentage, order.warehouseCurrency), percentage: maxDiscountPercentage })
         }));
       }
-      
+
       // Check amount limit if specified
       if (discountLimits.maxDiscountAmount && discountAmount > discountLimits.maxDiscountAmount) {
         const maxNewPriceFromAmount = originalPrice - discountLimits.maxDiscountAmount;
         setValidationErrors(prev => ({
           ...prev,
-          [productId]: `Maximum new price can be ${formatPrice(maxNewPriceFromAmount, order.warehouseCurrency)} (max discount: ${formatPrice(discountLimits.maxDiscountAmount as number, order.warehouseCurrency)})`
+          [productId]: t("maxNewPriceAmount", { price: formatPrice(maxNewPriceFromAmount, order.warehouseCurrency), amount: formatPrice(discountLimits.maxDiscountAmount as number, order.warehouseCurrency) })
         }));
       }
     }
@@ -165,18 +167,18 @@ export default function DiscountDialog({
 
   const handleSubmit = () => {
     if (getTotalDiscount() === 0) {
-      toast.error("Please apply at least one discount before submitting");
+      toast.error(t("toast.noDiscount"));
       return;
     }
 
     startTransition(async () => {
       try {
-        const validDiscounts = Object.values(discounts).filter(d => 
+        const validDiscounts = Object.values(discounts).filter(d =>
           d.newPrice && d.newPrice < d.originalPrice && d.reason
         );
-        
+
         if (validDiscounts.length === 0) {
-          toast.error("Please provide valid discount information for all products");
+          toast.error(t("toast.invalidDiscount"));
           return;
         }
 
@@ -184,19 +186,19 @@ export default function DiscountDialog({
           orderId: order._id,
           discounts: validDiscounts
         });
-        
+
         if (result.success) {
-          toast.success("Discounts applied successfully");
+          toast.success(t("toast.success"));
           onDiscountApplied?.();
           onClose();
           // Reset form
           setDiscounts({});
           setValidationErrors({});
         } else {
-          toast.error(result.message || "Failed to apply discounts");
+          toast.error(result.message || t("toast.error"));
         }
       } catch (error) {
-        toast.error("Failed to apply discounts");
+        toast.error(t("toast.error"));
       }
     });
   };
@@ -214,10 +216,10 @@ export default function DiscountDialog({
         <DialogHeader className="pb-6">
           <DialogTitle className="text-xl flex items-center gap-2">
             <Percent className="h-5 w-5" />
-            Apply Discounts
+            {t("title")}
           </DialogTitle>
           <DialogDescription className="text-base">
-            Apply discounts to order #{order.orderId}. These discounts will be applied immediately to the order.
+            {t("description", { orderId: order.orderId })}
           </DialogDescription>
         </DialogHeader>
 
@@ -227,15 +229,15 @@ export default function DiscountDialog({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div>
-                  <h3 className="text-lg font-semibold">Order Discounts</h3>
-                  <p className="text-sm text-muted-foreground">Set discounted prices for products in this order</p>
+                  <h3 className="text-lg font-semibold">{t("orderDiscounts")}</h3>
+                  <p className="text-sm text-muted-foreground">{t("orderDiscountsDescription")}</p>
                 </div>
               </div>
               {discountLimits?.hasLimits && discountLimits.isEnabled && (
                 <Badge variant="secondary" className="text-sm">
-                  Max: {discountLimits.maxDiscountPercentage}%
+                  {t("maxDiscount", { percentage: discountLimits.maxDiscountPercentage })}
                   {discountLimits.maxDiscountAmount && (
-                    <span> or {formatPrice(discountLimits.maxDiscountAmount, order.warehouseCurrency)}</span>
+                    <span> {t("maxDiscountOr", { amount: formatPrice(discountLimits.maxDiscountAmount, order.warehouseCurrency) })}</span>
                   )}
                 </Badge>
               )}
@@ -247,9 +249,9 @@ export default function DiscountDialog({
                 <div className="flex items-center gap-3">
                   <AlertCircle className="h-5 w-5 text-warning" />
                   <div>
-                    <h4 className="font-medium text-warning">Discount Limits Disabled</h4>
+                    <h4 className="font-medium text-warning">{t("limitsDisabled.title")}</h4>
                     <p className="text-sm text-warning/80">
-                      The seller has disabled discount limits. You can apply unlimited discounts.
+                      {t("limitsDisabled.description")}
                     </p>
                   </div>
                 </div>
@@ -259,20 +261,20 @@ export default function DiscountDialog({
             {/* Order Summary */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Order Summary</CardTitle>
+                <CardTitle className="text-base">{t("orderSummary")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-1">Original Total</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t("originalTotal")}</p>
                     <p className="text-lg font-semibold">{formatPrice(getOriginalTotal(), order.warehouseCurrency)}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-1">Total Discount</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t("totalDiscount")}</p>
                     <p className="text-lg font-semibold text-destructive">-{formatPrice(getTotalDiscount(), order.warehouseCurrency)}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-1">Final Total</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t("finalTotal")}</p>
                     <p className="text-lg font-bold text-primary">{formatPrice(getFinalTotal(), order.warehouseCurrency)}</p>
                   </div>
                 </div>
@@ -294,11 +296,11 @@ export default function DiscountDialog({
                         <div className="flex-1">
                           <h4 className="font-medium">{product.productName}</h4>
                           <p className="text-sm text-muted-foreground">
-                            {product.productCode} • Quantity: {product.quantity}
+                            {product.productCode} • {t("quantity", { quantity: product.quantity })}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm text-muted-foreground">Original Price</p>
+                          <p className="text-sm text-muted-foreground">{t("originalPrice")}</p>
                           <p className="font-semibold">{formatPrice(product.unitPrice, order.warehouseCurrency)}</p>
                         </div>
                       </div>
@@ -306,7 +308,7 @@ export default function DiscountDialog({
                       {/* Discount Form */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor={`price-${product.productId}`} className="text-sm font-medium">New Price</Label>
+                          <Label htmlFor={`price-${product.productId}`} className="text-sm font-medium">{t("newPrice")}</Label>
                           <div className="space-y-2">
                             <Input
                               id={`price-${product.productId}`}
@@ -326,9 +328,9 @@ export default function DiscountDialog({
                             )}
                             {!hasError && discountLimits?.hasLimits && discountLimits.isEnabled && (
                               <p className="text-xs text-muted-foreground">
-                                Max: {discountLimits.maxDiscountPercentage}%
+                                {t("maxDiscount", { percentage: discountLimits.maxDiscountPercentage })}
                                 {discountLimits.maxDiscountAmount && (
-                                  <span> or {formatPrice(discountLimits.maxDiscountAmount, order.warehouseCurrency)}</span>
+                                  <span> {t("maxDiscountOr", { amount: formatPrice(discountLimits.maxDiscountAmount, order.warehouseCurrency) })}</span>
                                 )}
                               </p>
                             )}
@@ -336,15 +338,15 @@ export default function DiscountDialog({
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor={`reason-${product.productId}`} className="text-sm font-medium">Reason</Label>
+                          <Label htmlFor={`reason-${product.productId}`} className="text-sm font-medium">{t("reason")}</Label>
                           <Select
                             value={discount.reason || ''}
-                            onValueChange={(value) => 
+                            onValueChange={(value) =>
                               handleProductDiscountChange(product.productId, 'reason', value)
                             }
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Select reason" />
+                              <SelectValue placeholder={t("selectReason")} />
                             </SelectTrigger>
                             <SelectContent>
                               {Object.entries(DISCOUNT_REASON_LABELS).map(([key, label]) => (
@@ -357,12 +359,12 @@ export default function DiscountDialog({
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor={`notes-${product.productId}`} className="text-sm font-medium">Notes</Label>
+                          <Label htmlFor={`notes-${product.productId}`} className="text-sm font-medium">{t("notes")}</Label>
                           <Input
                             id={`notes-${product.productId}`}
-                            placeholder="Optional notes..."
+                            placeholder={t("notesPlaceholder")}
                             value={discount.notes || ''}
-                            onChange={(e) => 
+                            onChange={(e) =>
                               handleProductDiscountChange(product.productId, 'notes', e.target.value)
                             }
                           />
@@ -373,7 +375,7 @@ export default function DiscountDialog({
                       {hasDiscount && (
                         <div className="mt-4 p-3 bg-primary/5 rounded-lg">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">Applied Discount:</span>
+                            <span className="text-sm font-medium">{t("appliedDiscount")}</span>
                             <div className="flex items-center gap-2">
                               <Badge variant="secondary">
                                 -{formatPrice(discount.discountAmount || 0, order.warehouseCurrency)}
@@ -397,17 +399,17 @@ export default function DiscountDialog({
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
                     <Calculator className="h-4 w-4" />
-                    Discount Summary
+                    {t("discountSummary")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex justify-between">
-                      <span className="text-sm">Total Savings:</span>
+                      <span className="text-sm">{t("totalSavings")}</span>
                       <span className="font-medium text-green-600">{formatPrice(getTotalDiscount(), order.warehouseCurrency)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm">Percentage Off:</span>
+                      <span className="text-sm">{t("percentageOff")}</span>
                       <span className="font-medium">
                         {((getTotalDiscount() / getOriginalTotal()) * 100).toFixed(1)}%
                       </span>
@@ -421,14 +423,14 @@ export default function DiscountDialog({
 
         <DialogFooter className="pt-6">
           <Button type="button" variant="outline" onClick={handleClose}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             type="button"
             onClick={handleSubmit}
             disabled={isPending || hasValidationErrors() || getTotalDiscount() === 0}
           >
-            {isPending ? "Applying Discounts..." : "Apply Discounts"}
+            {isPending ? t("applying") : t("applyButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

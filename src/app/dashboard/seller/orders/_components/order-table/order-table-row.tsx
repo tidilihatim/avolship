@@ -1084,6 +1084,7 @@ export default function OrderTableRow({
                     onCallComplete={handleCallComplete}
                     size="sm"
                     className="w-full"
+                    t={t}
                   />
                 </div>
 

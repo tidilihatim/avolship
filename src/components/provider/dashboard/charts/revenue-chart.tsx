@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { AreaChart, Area, XAxis, YAxis } from 'recharts';
@@ -32,17 +33,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function RevenueChart({ data }: RevenueChartProps) {
+  const t = useTranslations('providerDashboard.charts.revenue');
+
   if (!data || data.length === 0) {
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Revenue Trends</CardTitle>
-          <CardDescription>No revenue data available</CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No revenue recorded yet</p>
-            <p className="text-xs mt-1">Your revenue trends will appear here</p>
+            <p className="text-sm">{t('noRevenue')}</p>
+            <p className="text-xs mt-1">{t('noRevenueDesc')}</p>
           </div>
         </CardContent>
       </Card>
@@ -56,9 +59,13 @@ export function RevenueChart({ data }: RevenueChartProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Revenue Trends</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          ${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} total revenue from {totalExpeditions.toLocaleString()} expeditions (${avgRevenuePerExpedition.toFixed(2)} avg/expedition)
+          {t('summary', {
+            total: `$${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+            count: totalExpeditions.toLocaleString(),
+            avg: `$${avgRevenuePerExpedition.toFixed(2)}`
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -89,9 +96,9 @@ export function RevenueChart({ data }: RevenueChartProps) {
                 <ChartTooltipContent
                   formatter={(value, name) => [
                     name === 'revenue' ? `$${Number(value).toFixed(2)}` : `${value}`,
-                    name === 'revenue' ? 'Revenue' : 'Expeditions'
+                    name === 'revenue' ? t('label') : t('label')
                   ]}
-                  labelFormatter={(label) => `Date: ${label}`}
+                  labelFormatter={(label) => t('dateLabel', { date: label })}
                 />
               }
             />

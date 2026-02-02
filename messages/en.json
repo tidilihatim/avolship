@@ -381,6 +381,10 @@
       }
     }
   },
+  "sellerSupport": {
+    "title": "Support Center",
+    "description": "Get help with your account, orders, and technical issues"
+  },
   "profile": {
     "title": "Seller Profile",
     "description": "Update your seller account information and business details",
@@ -1398,7 +1402,9 @@
         "description": "Current status of your notification preferences",
         "enabled": "Enabled",
         "disabled": "Disabled"
-      }
+      },
+      "saving": "Saving...",
+      "saveChanges": "Save Changes"
     },
     "loading": "Loading settings...",
     "loadFailed": "Failed to load settings",
@@ -1461,6 +1467,61 @@
       "duplicates": {
         "title": "Duplicate Detection",
         "description": "Configure automatic duplicate order detection rules"
+      },
+      "discount": {
+        "title": "Discount Settings",
+        "description": "Configure maximum discount limits for call center agents"
+      }
+    },
+    "discountSettings": {
+      "title": "Discount Limits",
+      "description": "Set maximum discount percentages that call center agents can apply for",
+      "noWarehouse": "Please select a warehouse from the dashboard to configure discount settings.",
+      "editSettings": "Edit Settings",
+      "configureLimits": "Configure Limits",
+      "editDialog": {
+        "title": "Edit Discount Settings",
+        "description": "Update discount limits for {warehouse}"
+      },
+      "createDialog": {
+        "title": "Configure Discount Settings",
+        "description": "Set maximum discount limits for {warehouse}"
+      },
+      "fields": {
+        "maxPercentage": "Maximum Discount Percentage",
+        "maxPercentageHelp": "Maximum percentage discount agents can apply (0-100%)",
+        "maxAmount": "Maximum Discount Amount (Optional)",
+        "maxAmountHelp": "Optional maximum discount amount in {currency}",
+        "enableLimits": "Enable discount limits",
+        "noLimit": "No limit"
+      },
+      "labels": {
+        "maxPercent": "Max %:",
+        "maxAmount": "Max Amount:"
+      },
+      "noSettings": {
+        "title": "No Discount Settings",
+        "description": "You haven't configured discount limits for {warehouse} yet."
+      },
+      "infoAlert": "Call center agents will not be able to apply discounts exceeding these limits when confirming orders for {warehouse}. You can enable/disable these limits at any time.",
+      "buttons": {
+        "cancel": "Cancel",
+        "save": "Save Settings",
+        "update": "Update Settings",
+        "saving": "Saving..."
+      },
+      "toast": {
+        "created": "Discount settings created successfully",
+        "updated": "Discount settings updated successfully",
+        "deleted": "Discount settings removed",
+        "enabled": "Discount settings enabled",
+        "disabled": "Discount settings disabled",
+        "errorSave": "Failed to save discount settings",
+        "errorDelete": "Failed to delete discount settings",
+        "errorUpdate": "Failed to update settings",
+        "errorLoad": "Failed to load discount settings",
+        "noWarehouse": "No warehouse selected",
+        "invalidPercentage": "Discount percentage must be between 0 and 100"
       }
     },
     "badges": {
@@ -1721,6 +1782,9 @@
     "duplicateDetection": {
       "title": "Duplicate Order Detection",
       "description": "Configure rules to automatically detect and prevent duplicate orders",
+      "loadFailed": "Failed to Load Settings",
+      "loadFailedDescription": "Unable to load duplicate detection settings.",
+      "tryAgain": "Try Again",
       "enableToggle": "Enable duplicate detection",
       "addRule": "Add New Rule",
       "editRule": "Edit Rule",
@@ -2742,9 +2806,50 @@
       "updating": "Updating...",
       "successMessage": "Order status updated successfully",
       "errorMessage": "Failed to update order status",
-      "noChangesMessage": "No changes detected. Please select a different status or add a comment."
+      "noChangesMessage": "No changes detected. Please select a different status or add a comment.",
+      "updateStockLabel": "Update stock levels",
+      "updateStockDescription": "Automatically return stock to inventory when changing to this status. This will increase stock quantities for all products in this order."
     },
-    
+
+    "discountDialog": {
+      "title": "Apply Discounts",
+      "description": "Apply discounts to order #{orderId}. These discounts will be applied immediately to the order.",
+      "orderDiscounts": "Order Discounts",
+      "orderDiscountsDescription": "Set discounted prices for products in this order",
+      "maxDiscount": "Max: {percentage}%",
+      "maxDiscountOr": "or {amount}",
+      "limitsDisabled": {
+        "title": "Discount Limits Disabled",
+        "description": "The seller has disabled discount limits. You can apply unlimited discounts."
+      },
+      "orderSummary": "Order Summary",
+      "originalTotal": "Original Total",
+      "totalDiscount": "Total Discount",
+      "finalTotal": "Final Total",
+      "quantity": "Quantity: {quantity}",
+      "originalPrice": "Original Price",
+      "newPrice": "New Price",
+      "maxNewPrice": "Maximum new price can be {price} ({percentage}% max discount)",
+      "maxNewPriceAmount": "Maximum new price can be {price} (max discount: {amount})",
+      "reason": "Reason",
+      "selectReason": "Select reason",
+      "notes": "Notes",
+      "notesPlaceholder": "Optional notes...",
+      "appliedDiscount": "Applied Discount:",
+      "discountSummary": "Discount Summary",
+      "totalSavings": "Total Savings:",
+      "percentageOff": "Percentage Off:",
+      "cancel": "Cancel",
+      "applying": "Applying Discounts...",
+      "applyButton": "Apply Discounts",
+      "toast": {
+        "noDiscount": "Please apply at least one discount before submitting",
+        "invalidDiscount": "Please provide valid discount information for all products",
+        "success": "Discounts applied successfully",
+        "error": "Failed to apply discounts"
+      }
+    },
+
     "import": {
       "title": "Import Orders",
       "description": "Import orders from CSV or Excel files",
@@ -4437,6 +4542,224 @@
       "messageMinLength": "Message must be at least 10 characters long",
       "fixErrors": "Please fix the errors above",
       "submitFailed": "Failed to send message. Please try again."
+    }
+  },
+  "providerTokens": {
+    "title": "Profile Boost Tokens",
+    "subtitle": "Purchase tokens and boost your profile visibility to get more clients",
+    "tabs": {
+      "purchase": "Purchase Tokens",
+      "campaigns": "Boost Campaigns",
+      "history": "Transaction History"
+    },
+    "balance": {
+      "currentBalance": "Current Balance",
+      "availableTokens": "Available tokens for boosting",
+      "totalPurchased": "Total Purchased",
+      "tokensPurchasedAllTime": "Tokens purchased all time",
+      "totalSpent": "Total Spent",
+      "tokensSpentOnCampaigns": "Tokens spent on campaigns",
+      "unableToLoad": "Unable to load token data"
+    },
+    "purchase": {
+      "title": "Choose Your Token Package",
+      "subtitle": "Purchase tokens to boost your profile and get more visibility",
+      "noPackages": "No Token Packages Available",
+      "noPackagesDesc": "Token packages are not currently available. Please contact support.",
+      "bestValue": "Best Value",
+      "tokens": "tokens",
+      "perToken": "per token",
+      "tokensLabel": "Tokens:",
+      "priceLabel": "Price:",
+      "purchaseButton": "Purchase Tokens",
+      "securePayment": "Secure Payment",
+      "securePaymentDesc": "All payments are processed securely through Stripe. We support credit cards, PayPal, Apple Pay, Google Pay, and more.",
+      "toast": {
+        "loadFailed": "Failed to load token packages",
+        "purchaseSuccess": "Tokens purchased successfully!"
+      }
+    },
+    "campaigns": {
+      "title": "Boost Campaigns",
+      "subtitle": "Manage your profile boost campaigns and track performance",
+      "createButton": "Create Campaign",
+      "createFirstButton": "Create First Campaign",
+      "noCampaigns": "No Active Campaigns",
+      "noCampaignsDesc": "Create your first boost campaign to increase profile visibility",
+      "dialog": {
+        "title": "Create Boost Campaign",
+        "description": "Set up a new campaign to boost your profile visibility",
+        "tokensPerClick": "Tokens per Click",
+        "tokensPerClickHelp": "Higher values = better positioning. Range: 1-100 tokens",
+        "totalBudget": "Total Budget (Tokens)",
+        "availableBalance": "Available balance: {balance} tokens",
+        "autoRenew": "Auto-renew Campaign",
+        "autoRenewHelp": "Automatically restart when budget is exhausted",
+        "estimatedPerformance": "Estimated Performance:",
+        "maxClicks": "Max clicks: {count}",
+        "cancel": "Cancel",
+        "create": "Create Campaign",
+        "creating": "Creating..."
+      },
+      "card": {
+        "campaignId": "Campaign #{id}",
+        "started": "Started {date}",
+        "tokensPerClick": "{count} tokens/click",
+        "impressions": "Impressions",
+        "clicks": "Clicks",
+        "ctr": "CTR",
+        "remaining": "Remaining",
+        "budgetUsed": "Budget: {spent} / {total} tokens used",
+        "pause": "Pause",
+        "resume": "Resume",
+        "cancel": "Cancel"
+      },
+      "statuses": {
+        "active": "Active",
+        "paused": "Paused",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "toast": {
+        "loadFailed": "Failed to load campaigns",
+        "insufficientBalance": "Insufficient token balance",
+        "tokensPerClickRange": "Tokens per click must be between 1 and 100",
+        "budgetTooLow": "Budget must be at least equal to tokens per click",
+        "createSuccess": "Boost campaign created successfully!",
+        "createFailed": "Failed to create campaign",
+        "updateFailed": "Failed to update campaign",
+        "cancelConfirm": "Are you sure you want to cancel this campaign? Remaining tokens will be refunded.",
+        "cancelSuccess": "Campaign cancelled. {count} tokens refunded.",
+        "cancelFailed": "Failed to cancel campaign"
+      }
+    },
+    "transactions": {
+      "title": "Transaction History",
+      "subtitle": "View all your token purchases, spending, and adjustments",
+      "loading": "Loading your token transactions...",
+      "refresh": "Refresh",
+      "searchPlaceholder": "Search transactions...",
+      "filterAllTypes": "All Types",
+      "filterPurchases": "Purchases",
+      "filterCampaigns": "Campaigns",
+      "filterRefunds": "Refunds",
+      "filterAdjustments": "Adjustments",
+      "filterAllStatus": "All Status",
+      "filterCompleted": "Completed",
+      "filterPending": "Pending",
+      "filterFailed": "Failed",
+      "filterRefunded": "Refunded",
+      "noTransactions": "No Transactions Found",
+      "noTransactionsFiltered": "No transactions match your current filters.",
+      "noTransactionsYet": "You haven't made any token transactions yet.",
+      "table": {
+        "type": "Type",
+        "description": "Description",
+        "amount": "Amount",
+        "status": "Status",
+        "date": "Date",
+        "id": "ID: {id}"
+      },
+      "types": {
+        "purchase": "Purchase",
+        "spend": "Campaign",
+        "refund": "Refund",
+        "admin_adjustment": "Adjustment"
+      },
+      "statuses": {
+        "completed": "Completed",
+        "pending": "Pending",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      }
+    },
+    "checkout": {
+      "backToPackages": "Back to Packages",
+      "loadingPayment": "Loading Payment...",
+      "settingUpPayment": "Setting up secure payment",
+      "completeYourPurchase": "Complete Your Purchase",
+      "securePayment": "Secure payment powered by Stripe",
+      "orderSummary": "Order Summary",
+      "reviewPackage": "Review your token package",
+      "tokens": "Tokens:",
+      "pricePerToken": "Price per token:",
+      "total": "Total:",
+      "secureSSL": "Secure SSL encrypted payment",
+      "paymentMethod": "Payment Method",
+      "choosePaymentMethod": "Choose your preferred payment method",
+      "supportsPayments": "Supports credit cards, debit cards, Apple Pay, Google Pay, and more.",
+      "paymentSecure": "Your payment information is secure and encrypted."
+    }
+  },
+  "providerDashboard": {
+    "title": "Provider Dashboard",
+    "subtitle": "Manage your expeditions and track performance metrics.",
+    "welcomeSubtitle": "Welcome to your provider dashboard. Manage your expeditions and track performance.",
+    "errorLoading": "Unable to load dashboard data",
+    "filters": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "customRange": "Custom Range",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply"
+    },
+    "stats": {
+      "totalExpeditions": "Total Expeditions",
+      "totalExpeditionsDesc": "All time expeditions",
+      "activeExpeditions": "Active Expeditions",
+      "activeExpeditionsDesc": "Currently in progress",
+      "completedExpeditions": "Completed Expeditions",
+      "completedExpeditionsDesc": "Successfully delivered",
+      "successRate": "Success Rate",
+      "successRateDesc": "Delivery success rate",
+      "totalRevenue": "Total Revenue",
+      "totalRevenueDesc": "All time earnings",
+      "totalWeight": "Total Weight",
+      "totalWeightDesc": "Total weight handled"
+    },
+    "charts": {
+      "expeditionStatus": {
+        "title": "Expedition Status Distribution",
+        "noData": "No expedition data available",
+        "noExpeditions": "No expeditions yet",
+        "noExpeditionsDesc": "Expedition status distribution will appear here",
+        "distribution": "Distribution of {count} total expeditions"
+      },
+      "revenue": {
+        "title": "Revenue Trends",
+        "noData": "No revenue data available",
+        "noRevenue": "No revenue recorded yet",
+        "noRevenueDesc": "Your revenue trends will appear here",
+        "summary": "{total} total revenue from {count} expeditions ({avg} avg/expedition)",
+        "label": "Revenue",
+        "dateLabel": "Date: {date}"
+      },
+      "transportMode": {
+        "title": "Transport Mode Distribution",
+        "noData": "No transport mode data available",
+        "noExpeditions": "No expeditions yet",
+        "noExpeditionsDesc": "Transport mode distribution will appear here",
+        "summary": "{count} expeditions • {weight} kg total weight",
+        "expeditionsLabel": "Expeditions",
+        "weightLabel": "Weight (kg)",
+        "totalWeight": "Total Weight"
+      }
+    },
+    "statuses": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "in_transit": "In Transit",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "rejected": "Rejected"
+    },
+    "transportModes": {
+      "road": "Road",
+      "railway": "Railway",
+      "air": "Air",
+      "maritime": "Maritime"
     }
   },
   "common": {

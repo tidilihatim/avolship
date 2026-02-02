@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis } from 'recharts';
@@ -14,16 +15,6 @@ interface TransportModeData {
 interface TransportModeChartProps {
   data: TransportModeData[];
 }
-
-const getModeLabel = (mode: string): string => {
-  const labels: Record<string, string> = {
-    'road': 'Road',
-    'railway': 'Railway',
-    'air': 'Air',
-    'maritime': 'Maritime'
-  };
-  return labels[mode] || mode;
-};
 
 const chartConfig = {
   count: {
@@ -43,17 +34,30 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function TransportModeChart({ data }: TransportModeChartProps) {
+  const t = useTranslations('providerDashboard');
+
+  const getModeLabel = (mode: string): string => {
+    const modeKey = mode as keyof typeof modeLabels;
+    const modeLabels = {
+      'road': t('transportModes.road'),
+      'railway': t('transportModes.railway'),
+      'air': t('transportModes.air'),
+      'maritime': t('transportModes.maritime')
+    };
+    return modeLabels[modeKey] || mode;
+  };
+
   if (!data || data.length === 0) {
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Transport Mode Distribution</CardTitle>
-          <CardDescription>No transport mode data available</CardDescription>
+          <CardTitle>{t('charts.transportMode.title')}</CardTitle>
+          <CardDescription>{t('charts.transportMode.noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No expeditions yet</p>
-            <p className="text-xs mt-1">Transport mode distribution will appear here</p>
+            <p className="text-sm">{t('charts.transportMode.noExpeditions')}</p>
+            <p className="text-xs mt-1">{t('charts.transportMode.noExpeditionsDesc')}</p>
           </div>
         </CardContent>
       </Card>
@@ -73,9 +77,12 @@ export function TransportModeChart({ data }: TransportModeChartProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Transport Mode Distribution</CardTitle>
+        <CardTitle>{t('charts.transportMode.title')}</CardTitle>
         <CardDescription>
-          {totalExpeditions.toLocaleString()} expeditions • {totalWeight.toLocaleString()} kg total weight
+          {t('charts.transportMode.summary', {
+            count: totalExpeditions.toLocaleString(),
+            weight: totalWeight.toLocaleString()
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -105,7 +112,7 @@ export function TransportModeChart({ data }: TransportModeChartProps) {
                 <ChartTooltipContent
                   formatter={(value, name) => [
                     name === 'weight' ? `${Number(value).toLocaleString()} kg` : `${value}`,
-                    name === 'weight' ? 'Total Weight' : 'Expeditions'
+                    name === 'weight' ? t('charts.transportMode.totalWeight') : t('charts.transportMode.expeditionsLabel')
                   ]}
                   labelFormatter={(label) => `${label}`}
                 />

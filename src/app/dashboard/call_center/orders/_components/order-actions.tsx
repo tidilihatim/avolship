@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from 'next-intl'
 import { MakeCallButton } from '@/components/call-center/make-call-button'
 import { OrderTableData } from '@/app/dashboard/seller/orders/_components/order-table/order-table-types'
 
@@ -9,6 +10,8 @@ interface OrderActionsProps {
 }
 
 export function OrderActions({ order, onCallComplete }: OrderActionsProps) {
+  const t = useTranslations()
+
   const handleCallComplete = (callData: {
     phoneNumber: string
     status: 'answered' | 'unreached' | 'busy' | 'invalid'
@@ -27,6 +30,7 @@ export function OrderActions({ order, onCallComplete }: OrderActionsProps) {
         phoneNumbers={order.customer.phoneNumbers}
         onCallComplete={handleCallComplete}
         size="sm"
+        t={t}
       />
     </div>
   )

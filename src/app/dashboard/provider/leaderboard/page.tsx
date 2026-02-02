@@ -6,8 +6,11 @@ import { fetchProviderLeaderboard, getProviderUserPosition } from '@/app/actions
 import { isLeaderboardEnabled } from '@/app/actions/leaderboard-settings'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 
 function ProviderLeaderboardSkeleton() {
+  
   return (
     <div className="space-y-6">
       <div className="space-y-4">
@@ -71,6 +74,7 @@ async function ProviderLeaderboardContent() {
 
 export default async function ProviderLeaderboardPage() {
   const isEnabled = await isLeaderboardEnabled('provider')
+  const t = await getTranslations('leaderboard');
   
   if (!isEnabled) {
     return (
@@ -86,9 +90,9 @@ export default async function ProviderLeaderboardPage() {
       <div className="flex items-center gap-2 mb-6">
         <Trophy className="h-5 w-5 text-yellow-500" />
         <div>
-          <h1 className="text-xl font-semibold">Provider Performance</h1>
+          <h1 className="text-xl font-semibold">{t("providers.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Track your performance against other providers
+            {t("providers.description")}
           </p>
         </div>
       </div>

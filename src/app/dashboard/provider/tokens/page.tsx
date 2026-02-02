@@ -1,6 +1,7 @@
 "use client"
 
 import { Suspense, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TokenBalanceCard } from './_components/token-balance-card';
@@ -24,6 +25,7 @@ function TokensPageSkeleton() {
 }
 
 export default function ProviderTokensPage() {
+  const t = useTranslations('providerTokens');
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleBalanceUpdate = () => {
@@ -33,31 +35,31 @@ export default function ProviderTokensPage() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Profile Boost Tokens</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Purchase tokens and boost your profile visibility to get more clients
+          {t('subtitle')}
         </p>
       </div>
 
       <Suspense fallback={<TokensPageSkeleton />}>
         <div className="space-y-6" key={refreshKey}>
           <TokenBalanceCard />
-          
+
           <Tabs defaultValue="purchase" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="purchase">Purchase Tokens</TabsTrigger>
-              <TabsTrigger value="campaigns">Boost Campaigns</TabsTrigger>
-              <TabsTrigger value="history">Transaction History</TabsTrigger>
+              <TabsTrigger value="purchase">{t('tabs.purchase')}</TabsTrigger>
+              <TabsTrigger value="campaigns">{t('tabs.campaigns')}</TabsTrigger>
+              <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="purchase" className="space-y-6">
               <PurchaseTokensSection onBalanceUpdate={handleBalanceUpdate} />
             </TabsContent>
-            
+
             <TabsContent value="campaigns" className="space-y-6">
               <BoostCampaignsSection />
             </TabsContent>
-            
+
             <TabsContent value="history" className="space-y-6">
               <TransactionHistorySection />
             </TabsContent>

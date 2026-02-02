@@ -381,6 +381,10 @@
       }
     }
   },
+  "sellerSupport": {
+    "title": "Centre d'Assistance",
+    "description": "Obtenez de l'aide pour votre compte, vos commandes et vos problèmes techniques"
+  },
   "profile": {
     "title": "Profil Vendeur",
     "description": "Mettez à jour vos informations de compte vendeur et détails d'entreprise",
@@ -1758,7 +1762,9 @@
         "description": "Statut actuel de vos préférences de notification",
         "enabled": "Activé",
         "disabled": "Désactivé"
-      }
+      },
+      "saving": "Enregistrement...",
+      "saveChanges": "Enregistrer les Modifications"
     },
     "loading": "Chargement des paramètres...",
     "loadFailed": "Échec du chargement des paramètres",
@@ -1821,6 +1827,61 @@
       "duplicates": {
         "title": "Détection des Doublons",
         "description": "Configurer les règles de détection automatique des commandes dupliquées"
+      },
+      "discount": {
+        "title": "Paramètres de Remise",
+        "description": "Configurer les limites de remise maximales pour les agents du centre d'appels"
+      }
+    },
+    "discountSettings": {
+      "title": "Limites de Remise",
+      "description": "Définir les pourcentages de remise maximaux que les agents du centre d'appels peuvent appliquer pour",
+      "noWarehouse": "Veuillez sélectionner un entrepôt depuis le tableau de bord pour configurer les paramètres de remise.",
+      "editSettings": "Modifier les Paramètres",
+      "configureLimits": "Configurer les Limites",
+      "editDialog": {
+        "title": "Modifier les Paramètres de Remise",
+        "description": "Mettre à jour les limites de remise pour {warehouse}"
+      },
+      "createDialog": {
+        "title": "Configurer les Paramètres de Remise",
+        "description": "Définir les limites de remise maximales pour {warehouse}"
+      },
+      "fields": {
+        "maxPercentage": "Pourcentage de Remise Maximum",
+        "maxPercentageHelp": "Pourcentage de remise maximum que les agents peuvent appliquer (0-100%)",
+        "maxAmount": "Montant de Remise Maximum (Optionnel)",
+        "maxAmountHelp": "Montant de remise maximum optionnel en {currency}",
+        "enableLimits": "Activer les limites de remise",
+        "noLimit": "Pas de limite"
+      },
+      "labels": {
+        "maxPercent": "Max % :",
+        "maxAmount": "Montant Max :"
+      },
+      "noSettings": {
+        "title": "Aucun Paramètre de Remise",
+        "description": "Vous n'avez pas encore configuré les limites de remise pour {warehouse}."
+      },
+      "infoAlert": "Les agents du centre d'appels ne pourront pas appliquer de remises dépassant ces limites lors de la confirmation des commandes pour {warehouse}. Vous pouvez activer/désactiver ces limites à tout moment.",
+      "buttons": {
+        "cancel": "Annuler",
+        "save": "Enregistrer les Paramètres",
+        "update": "Mettre à Jour les Paramètres",
+        "saving": "Enregistrement..."
+      },
+      "toast": {
+        "created": "Paramètres de remise créés avec succès",
+        "updated": "Paramètres de remise mis à jour avec succès",
+        "deleted": "Paramètres de remise supprimés",
+        "enabled": "Paramètres de remise activés",
+        "disabled": "Paramètres de remise désactivés",
+        "errorSave": "Échec de l'enregistrement des paramètres de remise",
+        "errorDelete": "Échec de la suppression des paramètres de remise",
+        "errorUpdate": "Échec de la mise à jour des paramètres",
+        "errorLoad": "Échec du chargement des paramètres de remise",
+        "noWarehouse": "Aucun entrepôt sélectionné",
+        "invalidPercentage": "Le pourcentage de remise doit être entre 0 et 100"
       }
     },
     "badges": {
@@ -2081,6 +2142,9 @@
     "duplicateDetection": {
       "title": "Détection des Commandes Dupliquées",
       "description": "Configurez des règles pour détecter et prévenir automatiquement les commandes dupliquées",
+      "loadFailed": "Échec du Chargement des Paramètres",
+      "loadFailedDescription": "Impossible de charger les paramètres de détection des doublons.",
+      "tryAgain": "Réessayer",
       "enableToggle": "Activer la détection des doublons",
       "addRule": "Ajouter une Nouvelle Règle",
       "editRule": "Modifier la Règle",
@@ -2708,8 +2772,50 @@
       "updating": "Mise à jour...",
       "successMessage": "Statut de la commande mis à jour avec succès",
       "errorMessage": "Échec de la mise à jour du statut de la commande",
-      "noChangesMessage": "Aucun changement détecté. Veuillez sélectionner un statut différent ou ajouter un commentaire."
+      "noChangesMessage": "Aucun changement détecté. Veuillez sélectionner un statut différent ou ajouter un commentaire.",
+      "updateStockLabel": "Mettre à jour les niveaux de stock",
+      "updateStockDescription": "Retourner automatiquement le stock à l'inventaire lors du changement vers ce statut. Cela augmentera les quantités de stock pour tous les produits de cette commande."
     },
+
+    "discountDialog": {
+      "title": "Appliquer des Réductions",
+      "description": "Appliquer des réductions à la commande #{orderId}. Ces réductions seront appliquées immédiatement à la commande.",
+      "orderDiscounts": "Réductions de Commande",
+      "orderDiscountsDescription": "Définir des prix réduits pour les produits de cette commande",
+      "maxDiscount": "Max: {percentage}%",
+      "maxDiscountOr": "ou {amount}",
+      "limitsDisabled": {
+        "title": "Limites de Réduction Désactivées",
+        "description": "Le vendeur a désactivé les limites de réduction. Vous pouvez appliquer des réductions illimitées."
+      },
+      "orderSummary": "Résumé de la Commande",
+      "originalTotal": "Total Original",
+      "totalDiscount": "Réduction Totale",
+      "finalTotal": "Total Final",
+      "quantity": "Quantité: {quantity}",
+      "originalPrice": "Prix Original",
+      "newPrice": "Nouveau Prix",
+      "maxNewPrice": "Le nouveau prix maximum peut être {price} ({percentage}% de réduction max)",
+      "maxNewPriceAmount": "Le nouveau prix maximum peut être {price} (réduction max: {amount})",
+      "reason": "Raison",
+      "selectReason": "Sélectionner une raison",
+      "notes": "Notes",
+      "notesPlaceholder": "Notes optionnelles...",
+      "appliedDiscount": "Réduction Appliquée:",
+      "discountSummary": "Résumé des Réductions",
+      "totalSavings": "Économies Totales:",
+      "percentageOff": "Pourcentage de Réduction:",
+      "cancel": "Annuler",
+      "applying": "Application des Réductions...",
+      "applyButton": "Appliquer les Réductions",
+      "toast": {
+        "noDiscount": "Veuillez appliquer au moins une réduction avant de soumettre",
+        "invalidDiscount": "Veuillez fournir des informations de réduction valides pour tous les produits",
+        "success": "Réductions appliquées avec succès",
+        "error": "Échec de l'application des réductions"
+      }
+    },
+
     "statusHistory": {
       "title": "Historique du Statut",
       "description": "Chronologie complète des changements de statut pour cette commande",
@@ -4436,6 +4542,224 @@
       "messageMinLength": "Le message doit contenir au moins 10 caractères",
       "fixErrors": "Veuillez corriger les erreurs ci-dessus",
       "submitFailed": "Échec de l'envoi du message. Veuillez réessayer."
+    }
+  },
+  "providerTokens": {
+    "title": "Jetons de Boost de Profil",
+    "subtitle": "Achetez des jetons et boostez la visibilité de votre profil pour obtenir plus de clients",
+    "tabs": {
+      "purchase": "Acheter des Jetons",
+      "campaigns": "Campagnes de Boost",
+      "history": "Historique des Transactions"
+    },
+    "balance": {
+      "currentBalance": "Solde Actuel",
+      "availableTokens": "Jetons disponibles pour le boost",
+      "totalPurchased": "Total Acheté",
+      "tokensPurchasedAllTime": "Jetons achetés depuis toujours",
+      "totalSpent": "Total Dépensé",
+      "tokensSpentOnCampaigns": "Jetons dépensés en campagnes",
+      "unableToLoad": "Impossible de charger les données des jetons"
+    },
+    "purchase": {
+      "title": "Choisissez Votre Pack de Jetons",
+      "subtitle": "Achetez des jetons pour booster votre profil et obtenir plus de visibilité",
+      "noPackages": "Aucun Pack de Jetons Disponible",
+      "noPackagesDesc": "Les packs de jetons ne sont pas disponibles actuellement. Veuillez contacter le support.",
+      "bestValue": "Meilleur Rapport",
+      "tokens": "jetons",
+      "perToken": "par jeton",
+      "tokensLabel": "Jetons :",
+      "priceLabel": "Prix :",
+      "purchaseButton": "Acheter des Jetons",
+      "securePayment": "Paiement Sécurisé",
+      "securePaymentDesc": "Tous les paiements sont traités de manière sécurisée via Stripe. Nous acceptons les cartes de crédit, PayPal, Apple Pay, Google Pay et plus encore.",
+      "toast": {
+        "loadFailed": "Échec du chargement des packs de jetons",
+        "purchaseSuccess": "Jetons achetés avec succès !"
+      }
+    },
+    "campaigns": {
+      "title": "Campagnes de Boost",
+      "subtitle": "Gérez vos campagnes de boost de profil et suivez les performances",
+      "createButton": "Créer une Campagne",
+      "createFirstButton": "Créer une Première Campagne",
+      "noCampaigns": "Aucune Campagne Active",
+      "noCampaignsDesc": "Créez votre première campagne de boost pour augmenter la visibilité de votre profil",
+      "dialog": {
+        "title": "Créer une Campagne de Boost",
+        "description": "Configurez une nouvelle campagne pour booster la visibilité de votre profil",
+        "tokensPerClick": "Jetons par Clic",
+        "tokensPerClickHelp": "Des valeurs plus élevées = meilleur positionnement. Plage : 1-100 jetons",
+        "totalBudget": "Budget Total (Jetons)",
+        "availableBalance": "Solde disponible : {balance} jetons",
+        "autoRenew": "Renouvellement Automatique",
+        "autoRenewHelp": "Redémarrer automatiquement lorsque le budget est épuisé",
+        "estimatedPerformance": "Performance Estimée :",
+        "maxClicks": "Clics max : {count}",
+        "cancel": "Annuler",
+        "create": "Créer la Campagne",
+        "creating": "Création..."
+      },
+      "card": {
+        "campaignId": "Campagne #{id}",
+        "started": "Démarrée le {date}",
+        "tokensPerClick": "{count} jetons/clic",
+        "impressions": "Impressions",
+        "clicks": "Clics",
+        "ctr": "CTR",
+        "remaining": "Restant",
+        "budgetUsed": "Budget : {spent} / {total} jetons utilisés",
+        "pause": "Pause",
+        "resume": "Reprendre",
+        "cancel": "Annuler"
+      },
+      "statuses": {
+        "active": "Actif",
+        "paused": "En Pause",
+        "completed": "Terminé",
+        "cancelled": "Annulé"
+      },
+      "toast": {
+        "loadFailed": "Échec du chargement des campagnes",
+        "insufficientBalance": "Solde de jetons insuffisant",
+        "tokensPerClickRange": "Les jetons par clic doivent être entre 1 et 100",
+        "budgetTooLow": "Le budget doit être au moins égal aux jetons par clic",
+        "createSuccess": "Campagne de boost créée avec succès !",
+        "createFailed": "Échec de la création de la campagne",
+        "updateFailed": "Échec de la mise à jour de la campagne",
+        "cancelConfirm": "Êtes-vous sûr de vouloir annuler cette campagne ? Les jetons restants seront remboursés.",
+        "cancelSuccess": "Campagne annulée. {count} jetons remboursés.",
+        "cancelFailed": "Échec de l'annulation de la campagne"
+      }
+    },
+    "transactions": {
+      "title": "Historique des Transactions",
+      "subtitle": "Consultez tous vos achats, dépenses et ajustements de jetons",
+      "loading": "Chargement de vos transactions de jetons...",
+      "refresh": "Actualiser",
+      "searchPlaceholder": "Rechercher des transactions...",
+      "filterAllTypes": "Tous les Types",
+      "filterPurchases": "Achats",
+      "filterCampaigns": "Campagnes",
+      "filterRefunds": "Remboursements",
+      "filterAdjustments": "Ajustements",
+      "filterAllStatus": "Tous les Statuts",
+      "filterCompleted": "Terminé",
+      "filterPending": "En Attente",
+      "filterFailed": "Échoué",
+      "filterRefunded": "Remboursé",
+      "noTransactions": "Aucune Transaction Trouvée",
+      "noTransactionsFiltered": "Aucune transaction ne correspond à vos filtres actuels.",
+      "noTransactionsYet": "Vous n'avez encore effectué aucune transaction de jetons.",
+      "table": {
+        "type": "Type",
+        "description": "Description",
+        "amount": "Montant",
+        "status": "Statut",
+        "date": "Date",
+        "id": "ID : {id}"
+      },
+      "types": {
+        "purchase": "Achat",
+        "spend": "Campagne",
+        "refund": "Remboursement",
+        "admin_adjustment": "Ajustement"
+      },
+      "statuses": {
+        "completed": "Terminé",
+        "pending": "En Attente",
+        "failed": "Échoué",
+        "refunded": "Remboursé"
+      }
+    },
+    "checkout": {
+      "backToPackages": "Retour aux Packs",
+      "loadingPayment": "Chargement du Paiement...",
+      "settingUpPayment": "Configuration du paiement sécurisé",
+      "completeYourPurchase": "Finalisez Votre Achat",
+      "securePayment": "Paiement sécurisé via Stripe",
+      "orderSummary": "Résumé de la Commande",
+      "reviewPackage": "Vérifiez votre pack de jetons",
+      "tokens": "Jetons :",
+      "pricePerToken": "Prix par jeton :",
+      "total": "Total :",
+      "secureSSL": "Paiement chiffré SSL sécurisé",
+      "paymentMethod": "Mode de Paiement",
+      "choosePaymentMethod": "Choisissez votre mode de paiement préféré",
+      "supportsPayments": "Accepte les cartes de crédit, cartes de débit, Apple Pay, Google Pay et plus.",
+      "paymentSecure": "Vos informations de paiement sont sécurisées et chiffrées."
+    }
+  },
+  "providerDashboard": {
+    "title": "Tableau de Bord Fournisseur",
+    "subtitle": "Gérez vos expéditions et suivez vos indicateurs de performance.",
+    "welcomeSubtitle": "Bienvenue sur votre tableau de bord fournisseur. Gérez vos expéditions et suivez vos performances.",
+    "errorLoading": "Impossible de charger les données du tableau de bord",
+    "filters": {
+      "today": "Aujourd'hui",
+      "thisWeek": "Cette Semaine",
+      "thisMonth": "Ce Mois",
+      "customRange": "Plage Personnalisée",
+      "from": "Du",
+      "to": "Au",
+      "apply": "Appliquer"
+    },
+    "stats": {
+      "totalExpeditions": "Total des Expéditions",
+      "totalExpeditionsDesc": "Expéditions de tous les temps",
+      "activeExpeditions": "Expéditions Actives",
+      "activeExpeditionsDesc": "Actuellement en cours",
+      "completedExpeditions": "Expéditions Terminées",
+      "completedExpeditionsDesc": "Livrées avec succès",
+      "successRate": "Taux de Réussite",
+      "successRateDesc": "Taux de réussite des livraisons",
+      "totalRevenue": "Revenus Totaux",
+      "totalRevenueDesc": "Gains de tous les temps",
+      "totalWeight": "Poids Total",
+      "totalWeightDesc": "Poids total traité"
+    },
+    "charts": {
+      "expeditionStatus": {
+        "title": "Distribution des Statuts d'Expédition",
+        "noData": "Aucune donnée d'expédition disponible",
+        "noExpeditions": "Pas encore d'expéditions",
+        "noExpeditionsDesc": "La distribution des statuts d'expédition apparaîtra ici",
+        "distribution": "Distribution de {count} expéditions au total"
+      },
+      "revenue": {
+        "title": "Tendances des Revenus",
+        "noData": "Aucune donnée de revenus disponible",
+        "noRevenue": "Aucun revenu enregistré",
+        "noRevenueDesc": "Vos tendances de revenus apparaîtront ici",
+        "summary": "{total} revenus totaux de {count} expéditions ({avg} moy/expédition)",
+        "label": "Revenus",
+        "dateLabel": "Date : {date}"
+      },
+      "transportMode": {
+        "title": "Distribution des Modes de Transport",
+        "noData": "Aucune donnée de mode de transport disponible",
+        "noExpeditions": "Pas encore d'expéditions",
+        "noExpeditionsDesc": "La distribution des modes de transport apparaîtra ici",
+        "summary": "{count} expéditions • {weight} kg poids total",
+        "expeditionsLabel": "Expéditions",
+        "weightLabel": "Poids (kg)",
+        "totalWeight": "Poids Total"
+      }
+    },
+    "statuses": {
+      "pending": "En Attente",
+      "approved": "Approuvé",
+      "in_transit": "En Transit",
+      "delivered": "Livré",
+      "cancelled": "Annulé",
+      "rejected": "Rejeté"
+    },
+    "transportModes": {
+      "road": "Route",
+      "railway": "Ferroviaire",
+      "air": "Aérien",
+      "maritime": "Maritime"
     }
   },
   "common": {

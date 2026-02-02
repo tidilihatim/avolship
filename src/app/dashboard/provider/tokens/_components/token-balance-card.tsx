@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Coins, TrendingUp, TrendingDown } from 'lucide-react';
@@ -18,6 +19,7 @@ interface TokenBalanceCardProps {
 }
 
 export function TokenBalanceCard({ onBalanceUpdate }: TokenBalanceCardProps = {}) {
+  const t = useTranslations('providerTokens.balance');
   const [tokenData, setTokenData] = useState<TokenData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +61,7 @@ export function TokenBalanceCard({ onBalanceUpdate }: TokenBalanceCardProps = {}
     return (
       <Card>
         <CardContent className="text-center py-6">
-          <p className="text-muted-foreground">Unable to load token data</p>
+          <p className="text-muted-foreground">{t('unableToLoad')}</p>
         </CardContent>
       </Card>
     );
@@ -69,39 +71,39 @@ export function TokenBalanceCard({ onBalanceUpdate }: TokenBalanceCardProps = {}
     <div className="grid gap-4 md:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Current Balance</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('currentBalance')}</CardTitle>
           <Coins className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{tokenData.balance}</div>
           <p className="text-xs text-muted-foreground">
-            Available tokens for boosting
+            {t('availableTokens')}
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Purchased</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('totalPurchased')}</CardTitle>
           <TrendingUp className="h-4 w-4 text-green-600" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-green-600">{tokenData.totalPurchased}</div>
           <p className="text-xs text-muted-foreground">
-            Tokens purchased all time
+            {t('tokensPurchasedAllTime')}
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('totalSpent')}</CardTitle>
           <TrendingDown className="h-4 w-4 text-blue-600" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-blue-600">{tokenData.totalSpent}</div>
           <p className="text-xs text-muted-foreground">
-            Tokens spent on campaigns
+            {t('tokensSpentOnCampaigns')}
           </p>
         </CardContent>
       </Card>

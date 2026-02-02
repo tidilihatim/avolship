@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +14,7 @@ interface ProviderDashboardClientProps {
 }
 
 export function ProviderDashboardClient({ children }: ProviderDashboardClientProps) {
+  const t = useTranslations('providerDashboard.filters');
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -68,21 +70,21 @@ export function ProviderDashboardClient({ children }: ProviderDashboardClientPro
                 onClick={() => handleFilterChange('today')}
               >
                 <CalendarDays className="w-4 h-4 mr-1" />
-                Today
+                {t('today')}
               </Button>
               <Button
                 variant={dateFilter === 'this_week' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => handleFilterChange('this_week')}
               >
-                This Week
+                {t('thisWeek')}
               </Button>
               <Button
                 variant={dateFilter === 'this_month' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => handleFilterChange('this_month')}
               >
-                This Month
+                {t('thisMonth')}
               </Button>
               <Button
                 variant={dateFilter === 'custom' ? 'default' : 'outline'}
@@ -90,14 +92,14 @@ export function ProviderDashboardClient({ children }: ProviderDashboardClientPro
                 onClick={() => handleFilterChange('custom')}
               >
                 <Calendar className="w-4 h-4 mr-1" />
-                Custom Range
+                {t('customRange')}
               </Button>
             </div>
-            
+
             {dateFilter === 'custom' && (
               <div className="flex gap-2 items-end">
                 <div className="space-y-1">
-                  <Label htmlFor="start-date" className="text-xs">From</Label>
+                  <Label htmlFor="start-date" className="text-xs">{t('from')}</Label>
                   <Input
                     id="start-date"
                     type="date"
@@ -107,7 +109,7 @@ export function ProviderDashboardClient({ children }: ProviderDashboardClientPro
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="end-date" className="text-xs">To</Label>
+                  <Label htmlFor="end-date" className="text-xs">{t('to')}</Label>
                   <Input
                     id="end-date"
                     type="date"
@@ -116,12 +118,12 @@ export function ProviderDashboardClient({ children }: ProviderDashboardClientPro
                     className="w-36"
                   />
                 </div>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   onClick={handleCustomDateApply}
                   disabled={!customStartDate || !customEndDate}
                 >
-                  Apply
+                  {t('apply')}
                 </Button>
               </div>
             )}

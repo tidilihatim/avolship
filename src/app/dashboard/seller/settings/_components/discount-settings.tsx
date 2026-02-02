@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import { Percent, Edit2, Trash2, AlertCircle, Settings } from 'lucide-react';
 import { 
@@ -46,6 +47,7 @@ interface Warehouse {
 }
 
 export default function DiscountSettings() {
+  const t = useTranslations('settings.discountSettings');
   const [isPending, startTransition] = useTransition();
   const [discountSetting, setDiscountSetting] = useState<DiscountSetting | null>(null);
   const [warehouse, setWarehouse] = useState<Warehouse | null>(null);
@@ -82,10 +84,10 @@ export default function DiscountSettings() {
         }
       } else {
         setHasWarehouseSelected(false);
-        toast.error(warehouseResult.message || 'No warehouse selected');
+        toast.error(warehouseResult.message || t('toast.noWarehouse'));
       }
     } catch (error) {
-      toast.error('Failed to load discount settings');
+      toast.error(t('toast.errorLoad'));
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +125,7 @@ export default function DiscountSettings() {
   // Handle save (create or update)
   const handleSave = () => {
     if (formData.maxDiscountPercentage < 0 || formData.maxDiscountPercentage > 100) {
-      toast.error('Discount percentage must be between 0 and 100');
+      toast.error(t('toast.invalidPercentage'));
       return;
     }
 
@@ -148,19 +150,19 @@ export default function DiscountSettings() {
           setDiscountSetting(settingData);
           
           if (discountSetting) {
-            toast.success('Discount settings updated successfully');
+            toast.success(t('toast.updated'));
           } else {
-            toast.success('Discount settings created successfully');
+            toast.success(t('toast.created'));
           }
 
           // Reset form and close dialog
           resetForm();
           setIsEditing(false);
         } else {
-          toast.error(result.message || 'Failed to save discount settings');
+          toast.error(result.message || t('toast.errorSave'));
         }
       } catch (error) {
-        toast.error('Failed to save discount settings');
+        toast.error(t('toast.errorSave'));
       }
     });
   };
@@ -175,12 +177,12 @@ export default function DiscountSettings() {
         
         if (result.success) {
           setDiscountSetting(null);
-          toast.success('Discount settings removed');
+          toast.success(t('toast.deleted'));
         } else {
-          toast.error(result.message || 'Failed to delete discount settings');
+          toast.error(result.message || t('toast.errorDelete'));
         }
       } catch (error) {
-        toast.error('Failed to delete discount settings');
+        toast.error(t('toast.errorDelete'));
       }
     });
   };
@@ -197,12 +199,12 @@ export default function DiscountSettings() {
             isEnabled,
             updatedAt: new Date().toISOString()
           } : null);
-          toast.success(`Discount settings ${isEnabled ? 'enabled' : 'disabled'}`);
+          toast.success(isEnabled ? t('toast.enabled') : t('toast.disabled'));
         } else {
-          toast.error(result.message || 'Failed to update settings');
+          toast.error(result.message || t('toast.errorUpdate'));
         }
       } catch (error) {
-        toast.error('Failed to update settings');
+        toast.error(t('toast.errorUpdate'));
       }
     });
   };
@@ -216,7 +218,7 @@ export default function DiscountSettings() {
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          Please select a warehouse from the dashboard to configure discount settings.
+          {t('noWarehouse')}
         </AlertDescription>
       </Alert>
     );
@@ -227,9 +229,9 @@ export default function DiscountSettings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium">Discount Limits</h3>
+          <h3 className="text-lg font-medium">{t('title')}</h3>
           <p className="text-sm text-muted-foreground">
-            Set maximum discount percentages that call center agents can apply for <strong>{warehouse?.name}</strong>
+            {t('description')} <strong>{warehouse?.name}</strong>
           </p>
         </div>
         
@@ -238,20 +240,20 @@ export default function DiscountSettings() {
             <DialogTrigger asChild>
               <Button size="sm" onClick={handleEdit}>
                 <Edit2 className="h-4 w-4 mr-2" />
-                Edit Settings
+                {t('editSettings')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Edit Discount Settings</DialogTitle>
+                <DialogTitle>{t('editDialog.title')}</DialogTitle>
                 <DialogDescription>
-                  Update discount limits for {warehouse?.name}
+                  {t('editDialog.description', { warehouse: warehouse?.name ?? '' })}
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="maxPercentage">Maximum Discount Percentage</Label>
+                  <Label htmlFor="maxPercentage">{t('fields.maxPercentage')}</Label>
                   <div className="relative">
                     <Input
                       id="maxPercentage"
@@ -269,45 +271,45 @@ export default function DiscountSettings() {
                     <Percent className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Maximum percentage discount agents can apply (0-100%)
+                    {t('fields.maxPercentageHelp')}
                   </p>
                 </div>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="maxAmount">Maximum Discount Amount (Optional)</Label>
+                  <Label htmlFor="maxAmount">{t('fields.maxAmount')}</Label>
                   <Input
                     id="maxAmount"
                     type="number"
                     min="0"
                     step="0.01"
                     value={formData.maxDiscountAmount || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      maxDiscountAmount: parseFloat(e.target.value) || undefined 
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      maxDiscountAmount: parseFloat(e.target.value) || undefined
                     }))}
-                    placeholder="No limit"
+                    placeholder={t('fields.noLimit')}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Optional maximum discount amount in {warehouse?.currency}
+                    {t('fields.maxAmountHelp', { currency: warehouse?.currency ?? '' })}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="enabled"
                     checked={formData.isEnabled}
                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isEnabled: checked }))}
                   />
-                  <Label htmlFor="enabled">Enable discount limits</Label>
+                  <Label htmlFor="enabled">{t('fields.enableLimits')}</Label>
                 </div>
               </div>
-              
+
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  Cancel
+                  {t('buttons.cancel')}
                 </Button>
                 <Button onClick={handleSave} disabled={isPending}>
-                  {isPending ? 'Saving...' : 'Update Settings'}
+                  {isPending ? t('buttons.saving') : t('buttons.update')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -320,20 +322,20 @@ export default function DiscountSettings() {
                 setIsEditing(true);
               }}>
                 <Settings className="h-4 w-4 mr-2" />
-                Configure Limits
+                {t('configureLimits')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Configure Discount Settings</DialogTitle>
+                <DialogTitle>{t('createDialog.title')}</DialogTitle>
                 <DialogDescription>
-                  Set maximum discount limits for {warehouse?.name}
+                  {t('createDialog.description', { warehouse: warehouse?.name ?? '' })}
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="maxPercentage">Maximum Discount Percentage</Label>
+                  <Label htmlFor="maxPercentage">{t('fields.maxPercentage')}</Label>
                   <div className="relative">
                     <Input
                       id="maxPercentage"
@@ -342,54 +344,54 @@ export default function DiscountSettings() {
                       max="100"
                       step="0.1"
                       value={formData.maxDiscountPercentage}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        maxDiscountPercentage: parseFloat(e.target.value) || 0 
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        maxDiscountPercentage: parseFloat(e.target.value) || 0
                       }))}
                       className="pr-8"
                     />
                     <Percent className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Maximum percentage discount agents can apply (0-100%)
+                    {t('fields.maxPercentageHelp')}
                   </p>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="maxAmount">Maximum Discount Amount (Optional)</Label>
+                  <Label htmlFor="maxAmount">{t('fields.maxAmount')}</Label>
                   <Input
                     id="maxAmount"
                     type="number"
                     min="0"
                     step="0.01"
                     value={formData.maxDiscountAmount || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      maxDiscountAmount: parseFloat(e.target.value) || undefined 
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      maxDiscountAmount: parseFloat(e.target.value) || undefined
                     }))}
-                    placeholder="No limit"
+                    placeholder={t('fields.noLimit')}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Optional maximum discount amount in {warehouse?.currency}
+                    {t('fields.maxAmountHelp', { currency: warehouse?.currency ?? '' })}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="enabled"
                     checked={formData.isEnabled}
                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isEnabled: checked }))}
                   />
-                  <Label htmlFor="enabled">Enable discount limits</Label>
+                  <Label htmlFor="enabled">{t('fields.enableLimits')}</Label>
                 </div>
               </div>
-              
+
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  Cancel
+                  {t('buttons.cancel')}
                 </Button>
                 <Button onClick={handleSave} disabled={isPending}>
-                  {isPending ? 'Saving...' : 'Save Settings'}
+                  {isPending ? t('buttons.saving') : t('buttons.save')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -409,18 +411,18 @@ export default function DiscountSettings() {
                     {warehouse?.currency} • {warehouse?.country}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center space-x-4 text-sm">
                   <div>
-                    <span className="text-muted-foreground">Max %:</span>
+                    <span className="text-muted-foreground">{t('labels.maxPercent')}</span>
                     <Badge variant="outline" className="ml-1">
                       {discountSetting.maxDiscountPercentage}%
                     </Badge>
                   </div>
-                  
+
                   {discountSetting.maxDiscountAmount && (
                     <div>
-                      <span className="text-muted-foreground">Max Amount:</span>
+                      <span className="text-muted-foreground">{t('labels.maxAmount')}</span>
                       <Badge variant="outline" className="ml-1">
                         {discountSetting.maxDiscountAmount} {warehouse?.currency}
                       </Badge>
@@ -428,15 +430,15 @@ export default function DiscountSettings() {
                   )}
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={discountSetting.isEnabled}
                   onCheckedChange={handleToggleEnabled}
                 />
-                
-                <Button 
-                  variant="ghost" 
+
+                <Button
+                  variant="ghost"
                   size="sm"
                   onClick={handleDelete}
                   className="text-destructive hover:text-destructive"
@@ -451,16 +453,16 @@ export default function DiscountSettings() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Percent className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No Discount Settings</h3>
+            <h3 className="text-lg font-medium mb-2">{t('noSettings.title')}</h3>
             <p className="text-muted-foreground text-center mb-4">
-              You haven't configured discount limits for {warehouse?.name} yet.
+              {t('noSettings.description', { warehouse: warehouse?.name ?? '' })}
             </p>
             <Button onClick={() => {
               resetForm();
               setIsEditing(true);
             }}>
               <Settings className="h-4 w-4 mr-2" />
-              Configure Limits
+              {t('configureLimits')}
             </Button>
           </CardContent>
         </Card>
@@ -470,8 +472,7 @@ export default function DiscountSettings() {
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          Call center agents will not be able to apply discounts exceeding these limits when confirming orders for {warehouse?.name}. 
-          You can enable/disable these limits at any time.
+          {t('infoAlert', { warehouse: warehouse?.name ?? '' })}
         </AlertDescription>
       </Alert>
     </div>

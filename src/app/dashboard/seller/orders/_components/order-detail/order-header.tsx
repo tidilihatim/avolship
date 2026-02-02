@@ -29,14 +29,15 @@ interface OrderHeaderProps {
   formatDate: (date: Date | string) => string;
 }
 
-export default function OrderHeader({ 
-  order, 
-  userRole, 
-  getStatusConfig, 
-  formatPrice, 
-  formatDate 
+export default function OrderHeader({
+  order,
+  userRole,
+  getStatusConfig,
+  formatPrice,
+  formatDate
 }: OrderHeaderProps) {
   const t = useTranslations('orders');
+  const tGlobal = useTranslations();
   const router = useRouter();
 
   const isAdminOrModerator = userRole === UserRole.ADMIN || userRole === UserRole.MODERATOR;
@@ -69,6 +70,7 @@ export default function OrderHeader({
                 variant="default"
                 size="sm"
                 className="p-2"
+                t={tGlobal}
               />
             )}
             <Button variant="outline" size="sm" asChild>
@@ -122,6 +124,7 @@ export default function OrderHeader({
                   phoneNumbers={order?.customer?.phoneNumbers}
                   variant="default"
                   className="h-11 px-6"
+                  t={tGlobal}
                 />
                 <Button variant="outline" className="h-11 px-6">
                   {t('actions.updateStatus')}

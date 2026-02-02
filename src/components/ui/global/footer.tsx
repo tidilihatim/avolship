@@ -9,7 +9,7 @@ const Footer = (props: Props) => {
   return (
     <footer className="bg-gray-900 text-white pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row gap-16 mb-12">
+        <div className="flex flex-col justify-center items-center md:flex-row gap-16 mb-12">
           {/* Logo & About */}
           <div className="max-w-sm">
             <Link href="/" className="flex items-center space-x-2 mb-6">

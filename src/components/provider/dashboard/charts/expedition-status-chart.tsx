@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { PieChart, Pie, Cell } from 'recharts';
@@ -23,20 +24,8 @@ const getStatusColor = (status: string, index: number): string => {
     'cancelled': `hsl(var(--chart-5))`,
     'rejected': `hsl(var(--chart-1))`
   };
-  
-  return statusColors[status] || `hsl(var(--chart-${((index % 5) + 1)}))`;
-};
 
-const getStatusLabel = (status: string): string => {
-  const labels: Record<string, string> = {
-    'pending': 'Pending',
-    'approved': 'Approved',
-    'in_transit': 'In Transit',
-    'delivered': 'Delivered',
-    'cancelled': 'Cancelled',
-    'rejected': 'Rejected'
-  };
-  return labels[status] || status.replace('_', ' ');
+  return statusColors[status] || `hsl(var(--chart-${((index % 5) + 1)}))`;
 };
 
 const chartConfig = {
@@ -46,17 +35,32 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ExpeditionStatusChart({ data }: ExpeditionStatusChartProps) {
+  const t = useTranslations('providerDashboard');
+
+  const getStatusLabel = (status: string): string => {
+    const statusKey = status as keyof typeof statusLabels;
+    const statusLabels = {
+      'pending': t('statuses.pending'),
+      'approved': t('statuses.approved'),
+      'in_transit': t('statuses.in_transit'),
+      'delivered': t('statuses.delivered'),
+      'cancelled': t('statuses.cancelled'),
+      'rejected': t('statuses.rejected')
+    };
+    return statusLabels[statusKey] || status.replace('_', ' ');
+  };
+
   if (!data || data.length === 0) {
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Expedition Status Distribution</CardTitle>
-          <CardDescription>No expedition data available</CardDescription>
+          <CardTitle>{t('charts.expeditionStatus.title')}</CardTitle>
+          <CardDescription>{t('charts.expeditionStatus.noData')}</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
           <div className="text-center text-muted-foreground">
-            <p className="text-sm">No expeditions yet</p>
-            <p className="text-xs mt-1">Expedition status distribution will appear here</p>
+            <p className="text-sm">{t('charts.expeditionStatus.noExpeditions')}</p>
+            <p className="text-xs mt-1">{t('charts.expeditionStatus.noExpeditionsDesc')}</p>
           </div>
         </CardContent>
       </Card>
@@ -75,9 +79,9 @@ export function ExpeditionStatusChart({ data }: ExpeditionStatusChartProps) {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Expedition Status Distribution</CardTitle>
+        <CardTitle>{t('charts.expeditionStatus.title')}</CardTitle>
         <CardDescription>
-          Distribution of {totalExpeditions.toLocaleString()} total expeditions
+          {t('charts.expeditionStatus.distribution', { count: totalExpeditions.toLocaleString() })}
         </CardDescription>
       </CardHeader>
       <CardContent>

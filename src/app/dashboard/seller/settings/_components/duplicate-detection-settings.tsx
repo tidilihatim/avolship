@@ -129,12 +129,12 @@ export default function DuplicateDetectionSettings() {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <Settings className="w-12 h-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium mb-2">Failed to Load Settings</h3>
+        <h3 className="text-lg font-medium mb-2">{t('loadFailed')}</h3>
         <p className="text-muted-foreground mb-4">
-          Unable to load duplicate detection settings.
+          {t('loadFailedDescription')}
         </p>
         <Button onClick={loadSettings} variant="outline">
-          Try Again
+          {t('tryAgain')}
         </Button>
       </div>
     );

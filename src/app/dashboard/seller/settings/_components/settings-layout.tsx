@@ -33,8 +33,8 @@ export default function SettingsLayout() {
   const settingSections: SettingSection[] = [
     {
       id: 'discount',
-      title: 'Discount Settings',
-      description: 'Configure maximum discount limits for call center agents',
+      title: t('sections.discount.title'),
+      description: t('sections.discount.description'),
       icon: <Percent className="w-5 h-5" />,
       component: <DiscountSettings />
     },

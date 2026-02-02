@@ -125,7 +125,6 @@ export default function HomePage() {
               >
                 {t("heroTitle1")}{" "}
                 <span className="text-[#f37922]">{t("heroTitle2")}</span>{" "}
-                {t("heroTitle3")}
               </motion.h1>
 
               <motion.p
@@ -1043,7 +1042,7 @@ export default function HomePage() {
           </motion.div>
 
           {/* Company Story */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -1088,7 +1087,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </motion.div> */}
         </div>
       </section>
 
@@ -1147,7 +1146,7 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gray-50">
+      {/* <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.h2
@@ -1184,7 +1183,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Contact Section */}
       <section id="contact" className="py-24 bg-gray-50">
@@ -1301,13 +1300,6 @@ export default function HomePage() {
               >
                 {t("startToday")}
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-
-              <Link
-                href="#contact"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-white/90 text-[#1c2d51] font-medium rounded-lg transition-colors shadow-md hover:shadow-lg"
-              >
-                {t("contactSales")}
               </Link>
             </div>
           </motion.div>

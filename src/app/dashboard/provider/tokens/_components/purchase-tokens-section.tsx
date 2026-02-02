@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +25,7 @@ interface PurchaseTokensSectionProps {
 }
 
 export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSectionProps) {
+  const t = useTranslations('providerTokens.purchase');
   const [packages, setPackages] = useState<TokenPackage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPackage, setSelectedPackage] = useState<TokenPackage | null>(null);
@@ -40,7 +42,7 @@ export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSection
       setPackages(packagesData || []);
     } catch (error) {
       console.error('Error fetching packages:', error);
-      toast.error('Failed to load token packages');
+      toast.error(t('toast.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -54,7 +56,7 @@ export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSection
   const handlePaymentSuccess = () => {
     setShowPayment(false);
     setSelectedPackage(null);
-    toast.success('Tokens purchased successfully!');
+    toast.success(t('toast.purchaseSuccess'));
     onBalanceUpdate?.();
   };
 
@@ -107,9 +109,9 @@ export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSection
       <Card>
         <CardContent className="text-center py-12">
           <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-medium mb-2">No Token Packages Available</h3>
+          <h3 className="text-lg font-medium mb-2">{t('noPackages')}</h3>
           <p className="text-muted-foreground">
-            Token packages are not currently available. Please contact support.
+            {t('noPackagesDesc')}
           </p>
         </CardContent>
       </Card>
@@ -119,9 +121,9 @@ export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSection
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Choose Your Token Package</h2>
+        <h2 className="text-2xl font-bold mb-2">{t('title')}</h2>
         <p className="text-muted-foreground">
-          Purchase tokens to boost your profile and get more visibility
+          {t('subtitle')}
         </p>
       </div>
 
@@ -129,8 +131,8 @@ export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSection
         {packages
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((pkg) => (
-          <Card 
-            key={pkg._id} 
+          <Card
+            key={pkg._id}
             className={`relative transition-all duration-300 hover:shadow-lg ${
               bestValue?._id === pkg._id ? 'ring-2 ring-primary' : ''
             }`}
@@ -139,36 +141,36 @@ export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSection
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-primary text-primary-foreground flex items-center gap-1">
                   <Star className="h-3 w-3" />
-                  Best Value
+                  {t('bestValue')}
                 </Badge>
               </div>
             )}
-            
+
             <CardHeader className="text-center">
               <CardTitle className="text-xl">{pkg.name}</CardTitle>
               {pkg.description && (
                 <CardDescription>{pkg.description}</CardDescription>
               )}
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               <div className="text-center">
                 <div className="text-3xl font-bold">${pkg.priceUsd.toFixed(2)}</div>
                 <div className="text-sm text-muted-foreground">
-                  {pkg.tokenCount} tokens
+                  {pkg.tokenCount} {t('tokens')}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">
-                  ${(pkg.priceUsd / pkg.tokenCount).toFixed(3)} per token
+                  ${(pkg.priceUsd / pkg.tokenCount).toFixed(3)} {t('perToken')}
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Tokens:</span>
+                  <span>{t('tokensLabel')}</span>
                   <span className="font-medium">{pkg.tokenCount}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span>Price:</span>
+                  <span>{t('priceLabel')}</span>
                   <span className="font-medium">${pkg.priceUsd.toFixed(2)}</span>
                 </div>
               </div>
@@ -178,7 +180,7 @@ export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSection
                 onClick={() => handleSelectPackage(pkg)}
               >
                 <CreditCard className="h-4 w-4 mr-2" />
-                Purchase Tokens
+                {t('purchaseButton')}
               </Button>
             </CardContent>
           </Card>
@@ -192,9 +194,9 @@ export function PurchaseTokensSection({ onBalanceUpdate }: PurchaseTokensSection
               <Check className="h-4 w-4 text-primary" />
             </div>
             <div className="flex-1">
-              <h4 className="font-medium">Secure Payment</h4>
+              <h4 className="font-medium">{t('securePayment')}</h4>
               <p className="text-sm text-muted-foreground">
-                All payments are processed securely through Stripe. We support credit cards, PayPal, Apple Pay, Google Pay, and more.
+                {t('securePaymentDesc')}
               </p>
             </div>
           </div>

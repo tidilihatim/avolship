@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package, CheckCircle, Clock, TrendingUp, Weight, DollarSign } from 'lucide-react';
 import { ProviderDashboardStats } from '@/app/actions/provider-dashboard';
@@ -9,42 +10,44 @@ interface StatsCardsProps {
 }
 
 export function StatsCards({ stats }: StatsCardsProps) {
+  const t = useTranslations('providerDashboard.stats');
+
   const cards = [
     {
-      title: 'Total Expeditions',
+      title: t('totalExpeditions'),
       value: stats.totalExpeditions.toLocaleString(),
       icon: Package,
-      description: 'All time expeditions'
+      description: t('totalExpeditionsDesc')
     },
     {
-      title: 'Active Expeditions',
+      title: t('activeExpeditions'),
       value: stats.activeExpeditions.toLocaleString(),
       icon: Clock,
-      description: 'Currently in progress'
+      description: t('activeExpeditionsDesc')
     },
     {
-      title: 'Completed Expeditions',
+      title: t('completedExpeditions'),
       value: stats.completedExpeditions.toLocaleString(),
       icon: CheckCircle,
-      description: 'Successfully delivered'
+      description: t('completedExpeditionsDesc')
     },
     {
-      title: 'Success Rate',
+      title: t('successRate'),
       value: `${stats.successRate}%`,
       icon: TrendingUp,
-      description: 'Delivery success rate'
+      description: t('successRateDesc')
     },
     {
-      title: 'Total Revenue',
+      title: t('totalRevenue'),
       value: `$${stats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: DollarSign,
-      description: 'All time earnings'
+      description: t('totalRevenueDesc')
     },
     {
-      title: 'Total Weight',
+      title: t('totalWeight'),
       value: `${stats.totalWeight.toLocaleString()}kg`,
       icon: Weight,
-      description: 'Total weight handled'
+      description: t('totalWeightDesc')
     }
   ];
 
