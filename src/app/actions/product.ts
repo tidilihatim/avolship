@@ -420,8 +420,8 @@ async function getProductsImpl(
       // Get expedition stock for this product (all-time stock from expeditions)
       const totalStock = expeditionStockMap.get(productId) || 0;
 
-      // Calculate available stock (totalStock from expeditions - confirmed orders - defective)
-      const availableStock = totalStock - confirmedQuantity - totalDefectiveQuantity;
+      // Calculate available stock (totalStock from expeditions - confirmed orders - defective - delivered)
+      const availableStock = totalStock - confirmedQuantity - totalDefectiveQuantity - deliveredQuantity;
 
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
@@ -823,7 +823,7 @@ async function getAllProductsForAdminImpl(
         warehouseDefectiveQty = selectedWarehouse?.defectiveQuantity || 0;
       }
 
-      const availableStock = warehouseStock - confirmedQuantity - warehouseDefectiveQty;
+      const availableStock = warehouseStock - confirmedQuantity - warehouseDefectiveQty - deliveredQuantity;
 
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
@@ -1005,14 +1005,18 @@ async function getAllWarehousesImpl(): Promise<{ _id: string; name: string; coun
       return [];
     }
 
-    // Query to get all warehouses
-    const warehouses: any[] = await Warehouse.find({ 
-      isActive: true,
-      $or: [
+    // Query to get warehouses
+    // Admins and moderators can see all active warehouses
+    // Sellers can only see warehouses available to all or assigned to them
+    const warehouseQuery: any = { isActive: true };
+    if (![UserRole.ADMIN, UserRole.MODERATOR].includes(user.role)) {
+      warehouseQuery.$or = [
         { isAvailableToAll: true },
         { assignedSellers: user._id }
-      ]
-     })
+      ];
+    }
+
+    const warehouses: any[] = await Warehouse.find(warehouseQuery)
       .select('_id name country')
       .sort({ name: 1 })
       .lean();
