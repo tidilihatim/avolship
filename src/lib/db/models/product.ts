@@ -162,9 +162,11 @@ ProductSchema.pre('save', function (next) {
     this.totalStock = 0;
   }
   
-  // Auto-update status to OUT_OF_STOCK if total stock is 0
+  // Auto-update status based on stock level
   if (this.totalStock === 0 && this.status === ProductStatus.ACTIVE) {
     this.status = ProductStatus.OUT_OF_STOCK;
+  } else if (this.totalStock > 0 && this.status === ProductStatus.OUT_OF_STOCK && !this.isModified('status')) {
+    this.status = ProductStatus.ACTIVE;
   }
   
   next();
