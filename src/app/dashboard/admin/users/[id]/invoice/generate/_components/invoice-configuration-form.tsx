@@ -290,22 +290,6 @@ export default function InvoiceConfigurationForm({
           </p>
         </div>
         
-        <div className="space-y-2 mb-4">
-          <Label htmlFor="refund-processing-fee">Refund Processing Fee</Label>
-          <Input
-            id="refund-processing-fee"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="Fixed amount for refund processing"
-            value={configuration.refundProcessingFee}
-            onChange={(e) => updateConfiguration({ refundProcessingFee: parseFloat(e.target.value) || 0 })}
-          />
-          <p className="text-xs text-muted-foreground">
-            Fixed fee charged to seller for each refund order (not percentage)
-          </p>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="confirmation-fee">Confirmation Fee</Label>

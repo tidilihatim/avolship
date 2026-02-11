@@ -441,7 +441,7 @@ export default function SellerInvoicePreview({
           </Card>
         )}
 
-        {/* Refund Details (No Processing Fees) */}
+        {/* Refund Details - amounts deducted from revenue */}
         {preview.refundData.length > 0 && (
           <Card className="border-orange-500/20">
             <CardHeader className="bg-orange-500/5">
@@ -577,7 +577,7 @@ export default function SellerInvoicePreview({
                   </div>
                 )}
 
-                {/* NO REFUND PROCESSING FEES FOR SELLER */}
+                {/* Refund amounts deducted directly from revenue */}
               </div>
             )}
 

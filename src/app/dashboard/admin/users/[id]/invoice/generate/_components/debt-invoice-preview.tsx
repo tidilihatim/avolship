@@ -473,11 +473,9 @@ export default function DebtInvoicePreview({
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-4">
-              {(!hideSensitiveInfo || showSalesSummaryForSeller) && (
-                <div className="text-sm text-muted-foreground mb-4">
-                  <strong>Note:</strong> Refund amounts are shown for transparency. {showSalesSummaryForSeller ? 'Processing fees are charged to you.' : 'Only processing fees are charged to seller.'}
-                </div>
-              )}
+              <div className="text-sm text-muted-foreground mb-4">
+                <strong>Note:</strong> Refund amounts are deducted from seller revenue.
+              </div>
               <div className="space-y-4">
                 {preview.refundData.map((refund, index) => (
                   <div key={index} className="border rounded-lg p-4 bg-muted/30">
@@ -499,11 +497,9 @@ export default function DebtInvoicePreview({
                       <div className="text-right">
                         <div className="text-sm text-muted-foreground">Original Amount</div>
                         <div className="font-semibold">{formatCurrency(refund.originalAmount)}</div>
-                        {(!hideSensitiveInfo || showSalesSummaryForSeller) && (
-                          <div className="text-sm text-destructive">
-                            Processing Fee: {formatCurrency(configuration.refundProcessingFee)}
-                          </div>
-                        )}
+                        <div className="text-sm text-destructive">
+                          (Deducted from revenue)
+                        </div>
                       </div>
                     </div>
 
@@ -611,13 +607,7 @@ export default function DebtInvoicePreview({
                   </div>
                 )}
 
-                {/* Refund Processing Fees */}
-                {(!hideSensitiveInfo || showSalesSummaryForSeller) && preview.totalRefunds > 0 && configuration.refundProcessingFee > 0 && (
-                  <div className="flex justify-between ml-4 text-sm">
-                    <span>Refund Processing ({preview.totalRefunds}x):</span>
-                    <span className="font-medium">{formatCurrency(configuration.refundProcessingFee * preview.totalRefunds)}</span>
-                  </div>
-                )}
+                {/* Refund processing fee removed - refund amounts are deducted directly */}
               </div>
             )}
 

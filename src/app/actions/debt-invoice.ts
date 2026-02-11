@@ -363,13 +363,11 @@ export const generateDebtInvoicePreview = withDbConnection(async (data: any) => 
     // Calculate service fees from custom fees
     const totalCustomFees = customFees.reduce((sum: number, fee: any) => sum + fee.amount, 0);
 
-    // Admin-configurable refund processing fee (per refund order)
-    const refundProcessingFees = refundedOrders.length * (data.refundProcessingFee || 0);
-
     // Correct Logic - ONLY CHARGE FEES (NO SALES IN CALCULATION):
     // We only charge our fees to the seller:
     // - Expedition fees (weight × fee per KG)
-    // - Service fees (refund fees, custom fees, etc.)
+    // - Service fees (custom fees, legacy fees, etc.)
+    // - Refund amounts are deducted from seller revenue
     // - Previous debt
     // Sales revenue is SELLER'S MONEY - we don't touch it
 
@@ -395,11 +393,11 @@ export const generateDebtInvoicePreview = withDbConnection(async (data: any) => 
     // Our expedition fees (weight × fee per KG)
     const expeditionFeesOwed = totalExpeditionCosts;
 
-    // Our service fees (custom fees + refund fees + legacy fees)
+    // Our service fees (custom fees + legacy fees)
     const legacyFees = Object.values(data.fees || {})
       .filter((fee): fee is number => typeof fee === 'number')
       .reduce((sum, fee) => sum + fee, 0);
-    const serviceFees = totalCustomFees + refundProcessingFees + legacyFees;
+    const serviceFees = totalCustomFees + legacyFees;
 
     // Total amount seller owes us (fees + refund amounts + previous debt)
     const totalFeesOwed = expeditionFeesOwed + serviceFees + totalRefundAmount + previousDebtAmount;
@@ -443,7 +441,7 @@ export const generateDebtInvoicePreview = withDbConnection(async (data: any) => 
       totalExpeditionCosts,
       totalRefundAmount,
       totalCustomFees,
-      totalHiddenFees: refundProcessingFees,
+      totalHiddenFees: 0,
 
       // Available expeditions for admin selection
       availableExpeditions,
@@ -584,7 +582,7 @@ export const createDebtInvoice = withDbConnection(async (data: any) => {
         customFees: data.customFees || [],
 
         // Hidden fees
-        refundProcessingFees: preview.totalHiddenFees,
+        refundProcessingFees: 0,
       },
 
       summary: {
