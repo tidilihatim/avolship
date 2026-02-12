@@ -171,6 +171,7 @@ export default function OrderManager({
     const manualOrders: ManualOrder[] = availableOrders.map(order => ({
       orderId: order.orderId,
       include: selected.includes(order.orderId),
+      status: order.status,
     }));
 
     onOrdersChange(manualOrders);

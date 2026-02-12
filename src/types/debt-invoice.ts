@@ -61,6 +61,7 @@ export interface ManualExpedition {
 export interface ManualOrder {
   orderId: string;
   include: boolean;
+  status?: string; // 'delivered' | 'refunded' - used to calculate shipping fee only for delivered orders
 }
 
 export interface ExpeditionProduct {

@@ -232,13 +232,13 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
     setError(null);
 
     try {
-      // Calculate the number of selected orders (only count orders with include: true)
-      const numberOfOrders = configuration.manualOrders.filter((order: any) => order.include).length;
+      // Calculate the number of selected delivered orders only (shipping fee does not apply to refunds)
+      const numberOfDeliveredOrders = configuration.manualOrders.filter((order: any) => order.include && order.status !== 'refunded').length;
 
-      // Multiply shipping fee by number of orders
+      // Multiply shipping fee by number of delivered orders only
       const adjustedFees = {
         ...configuration.fees,
-        shippingFee: configuration.fees.shippingFee * numberOfOrders,
+        shippingFee: configuration.fees.shippingFee * numberOfDeliveredOrders,
       };
 
       const result = await generateDebtInvoicePreview({
@@ -275,13 +275,13 @@ export default function InvoiceGenerationPage({ seller }: InvoiceGenerationPageP
     setError(null);
 
     try {
-      // Calculate the number of selected orders (only count orders with include: true)
-      const numberOfOrders = configuration.manualOrders.filter((order: any) => order.include).length;
+      // Calculate the number of selected delivered orders only (shipping fee does not apply to refunds)
+      const numberOfDeliveredOrders = configuration.manualOrders.filter((order: any) => order.include && order.status !== 'refunded').length;
 
-      // Multiply shipping fee by number of orders
+      // Multiply shipping fee by number of delivered orders only
       const adjustedFees = {
         ...configuration.fees,
-        shippingFee: configuration.fees.shippingFee * numberOfOrders,
+        shippingFee: configuration.fees.shippingFee * numberOfDeliveredOrders,
       };
 
       const result = await createDebtInvoice({
