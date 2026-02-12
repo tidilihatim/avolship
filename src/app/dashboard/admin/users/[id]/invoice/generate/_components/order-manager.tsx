@@ -25,7 +25,9 @@ interface AvailableOrder {
   }>;
   status: string;
   isAlreadyInvoiced: boolean;
-  previousInvoiceNumber?: string;
+  isAlreadyRefunded: boolean; // Refunded order already included in a previous invoice as refund
+  isDisabled: boolean; // Whether the order checkbox should be disabled
+  disabledReason?: string; // Reason shown when disabled
 }
 
 interface OrderManagerProps {
@@ -92,9 +94,28 @@ export default function OrderManager({
         // Transform orders to include invoice status information
         const transformedOrders = allOrders.map((order: any) => {
           const orderId = order._id || order.id;
+          const isRefunded = order.status === 'refunded';
           const isDeliveredAndInvoiced = invoicedOrderIds.has(orderId);
           const isRefundedAndInvoiced = invoicedRefundIds.has(orderId);
-          const isInvoiced = isDeliveredAndInvoiced || isRefundedAndInvoiced;
+
+          // Determine if this order should be disabled
+          let isDisabled = false;
+          let disabledReason: string | undefined;
+
+          if (isRefunded) {
+            // Refunded order: disable only if already refunded in a previous invoice
+            if (isRefundedAndInvoiced) {
+              isDisabled = true;
+              disabledReason = 'Already Refunded';
+            }
+            // Otherwise refunded orders are selectable (even if delivered version was invoiced)
+          } else {
+            // Delivered order: disable if already invoiced
+            if (isDeliveredAndInvoiced) {
+              isDisabled = true;
+              disabledReason = 'Previously Invoiced';
+            }
+          }
 
           return {
             orderId: orderId,
@@ -109,13 +130,19 @@ export default function OrderManager({
               unitPrice: product.unitPrice || 0,
             })) || [],
             status: order.status || 'pending',
-            isAlreadyInvoiced: isInvoiced,
-            previousInvoiceNumber: isInvoiced ? 'Previously Invoiced' : undefined,
+            isAlreadyInvoiced: isDeliveredAndInvoiced || isRefundedAndInvoiced,
+            isAlreadyRefunded: isRefundedAndInvoiced,
+            isDisabled,
+            disabledReason,
           };
         });
         setAvailableOrders(transformedOrders);
 
-        // Keep existing selection intact (previously invoiced orders can still be selected)
+        // Remove any previously selected orders that are now disabled
+        setSelectedOrders(prev => prev.filter(id => {
+          const order = transformedOrders.find(o => o.orderId === id);
+          return order && !order.isDisabled;
+        }));
       } else {
         console.error('Failed to load orders:', ordersResult.message);
         setAvailableOrders([]);
@@ -129,6 +156,9 @@ export default function OrderManager({
   };
 
   const toggleOrderSelection = (orderId: string) => {
+    const order = availableOrders.find(o => o.orderId === orderId);
+    if (order?.isDisabled) return;
+
     const newSelected = selectedOrders.includes(orderId)
       ? selectedOrders.filter(id => id !== orderId)
       : [...selectedOrders, orderId];
@@ -155,6 +185,7 @@ export default function OrderManager({
 
   const selectAllOrders = () => {
     const selectableOrderIds = availableOrders
+      .filter(order => !order.isDisabled)
       .map(order => order.orderId);
     setSelectedOrders(selectableOrderIds);
     updateManualOrders(selectableOrderIds);
@@ -214,7 +245,7 @@ export default function OrderManager({
                 variant="outline"
                 size="sm"
                 onClick={selectAllOrders}
-                disabled={selectedOrders.length === availableOrders.length}
+                disabled={selectedOrders.length === availableOrders.filter(o => !o.isDisabled).length}
               >
                 Select All Available
               </Button>
@@ -227,7 +258,7 @@ export default function OrderManager({
                 Clear All
               </Button>
               <div className="ml-auto text-sm text-muted-foreground">
-                {selectedOrders.length} of {availableOrders.length} selected
+                {selectedOrders.length} of {availableOrders.filter(o => !o.isDisabled).length} selectable
               </div>
             </div>
           </CardHeader>
@@ -236,7 +267,9 @@ export default function OrderManager({
               <div
                 key={order.orderId}
                 className={`p-4 border rounded-lg transition-colors ${
-                  selectedOrders.includes(order.orderId)
+                  order.isDisabled
+                    ? 'bg-muted/50 border-muted opacity-60'
+                    : selectedOrders.includes(order.orderId)
                     ? 'bg-primary/5 border-primary/20'
                     : 'bg-background'
                 }`}
@@ -245,6 +278,7 @@ export default function OrderManager({
                   <Checkbox
                     checked={selectedOrders.includes(order.orderId)}
                     onCheckedChange={() => toggleOrderSelection(order.orderId)}
+                    disabled={order.isDisabled}
                   />
                   <div className="flex-1 space-y-3">
                     {/* Order Info */}
@@ -260,10 +294,10 @@ export default function OrderManager({
                         >
                           {order.status}
                         </Badge>
-                        {order.isAlreadyInvoiced && (
-                          <Badge variant="destructive" className="text-xs mt-1 ml-1">
+                        {order.isDisabled && order.disabledReason && (
+                          <Badge variant="outline" className="text-xs mt-1 ml-1 border-destructive text-destructive">
                             <AlertCircle className="h-3 w-3 mr-1" />
-                            Previously Invoiced
+                            {order.disabledReason}
                           </Badge>
                         )}
                       </div>

@@ -66,7 +66,6 @@ const ProductSchema = new Schema<IProduct>(
     name: {
       type: String,
       required: [true, 'Product name is required'],
-      trim: true,
     },
     description: {
       type: String,
