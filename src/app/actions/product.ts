@@ -351,17 +351,19 @@ async function getProductsImpl(
       deliveredOrdersMap.set(order._id.toString(), order.totalDeliveredQuantity);
     }
 
-    // Get expedition stock for all products (all-time stock from expeditions)
+    // Get expedition stock for all products (filtered by selected warehouse)
+    const expeditionMatchFilter: any = {
+      'products.productId': { $in: productIds },
+      status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] }
+    };
+
+    if (selectedWarehouseId) {
+      expeditionMatchFilter.warehouseId = new mongoose.Types.ObjectId(selectedWarehouseId);
+    }
+
     const expeditionStock = await Expedition.aggregate([
-      {
-        $match: {
-          'products.productId': { $in: productIds },
-          status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] }
-        }
-      },
-      {
-        $unwind: '$products'
-      },
+      { $match: expeditionMatchFilter },
+      { $unwind: '$products' },
       {
         $match: {
           'products.productId': { $in: productIds }
@@ -420,8 +422,8 @@ async function getProductsImpl(
       // Get expedition stock for this product (all-time stock from expeditions)
       const totalStock = expeditionStockMap.get(productId) || 0;
 
-      // Calculate available stock (totalStock from expeditions - confirmed orders - defective - delivered)
-      const availableStock = totalStock - confirmedQuantity - totalDefectiveQuantity - deliveredQuantity;
+      // Calculate available stock (totalStock from expeditions - confirmed - in transit - defective - delivered)
+      const availableStock = totalStock - confirmedQuantity - inTransitQuantity - totalDefectiveQuantity - deliveredQuantity;
 
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
@@ -448,6 +450,7 @@ async function getProductsImpl(
         sellerName: sellerMap.get(sellerId)?.name || 'Unknown Seller',
         image: product.image,
         totalStock,
+        totalConfirmed: confirmedQuantity,
         totalDefectiveQuantity,
         availableStock,
         totalInTransit: inTransitQuantity,
@@ -740,17 +743,19 @@ async function getAllProductsForAdminImpl(
       deliveredOrdersMap.set(order._id.toString(), order.totalDeliveredQuantity);
     }
 
-    // Get expedition stock for all products (all-time stock from expeditions)
+    // Get expedition stock for all products (filtered by warehouse if provided)
+    const adminExpeditionMatchFilter: any = {
+      'products.productId': { $in: productIds },
+      status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] }
+    };
+
+    if (filters.warehouseId) {
+      adminExpeditionMatchFilter.warehouseId = new mongoose.Types.ObjectId(filters.warehouseId);
+    }
+
     const expeditionStock = await Expedition.aggregate([
-      {
-        $match: {
-          'products.productId': { $in: productIds },
-          status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] }
-        }
-      },
-      {
-        $unwind: '$products'
-      },
+      { $match: adminExpeditionMatchFilter },
+      { $unwind: '$products' },
       {
         $match: {
           'products.productId': { $in: productIds }
@@ -823,7 +828,7 @@ async function getAllProductsForAdminImpl(
         warehouseDefectiveQty = selectedWarehouse?.defectiveQuantity || 0;
       }
 
-      const availableStock = warehouseStock - confirmedQuantity - warehouseDefectiveQty - deliveredQuantity;
+      const availableStock = warehouseStock - confirmedQuantity - inTransitQuantity - warehouseDefectiveQty - deliveredQuantity;
 
       // Get primary warehouse (first one for display purposes)
       const primaryWarehouse = warehousesWithNames[0] || null;
@@ -850,6 +855,7 @@ async function getAllProductsForAdminImpl(
         sellerName: sellerMap.get(sellerId)?.name || 'Unknown Seller',
         image: product.image,
         totalStock,
+        totalConfirmed: confirmedQuantity,
         totalDefectiveQuantity,
         availableStock,
         totalInTransit: inTransitQuantity,
@@ -930,9 +936,14 @@ async function getProductByIdImpl(id: string): Promise<ProductResponse> {
       }
     }
 
+    // Get selected warehouse from cookies
+    const cookiesStore = await cookies();
+    const selectedWarehouseId = cookiesStore.get('selectedWarehouse')?.value;
+
     // Get all warehouse IDs and seller ID
     const warehouseIds = product.warehouses.map((w: any) => w.warehouseId);
     const sellerId = product.sellerId;
+    const productId = product._id;
 
     // Get warehouse and seller data
     const warehouses: any[] = await Warehouse.find({ _id: { $in: warehouseIds } }).lean();
@@ -944,20 +955,88 @@ async function getProductByIdImpl(id: string): Promise<ProductResponse> {
       warehouseMap.set(w._id.toString(), w);
     }
 
-    // Map warehouses with names
+    // Get total expedition stock (filtered by selected warehouse)
+    const expeditionMatchFilter: any = {
+      'products.productId': productId,
+      status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] }
+    };
+    if (selectedWarehouseId) {
+      expeditionMatchFilter.warehouseId = new mongoose.Types.ObjectId(selectedWarehouseId);
+    }
+
+    const expeditionStockResult = await Expedition.aggregate([
+      { $match: expeditionMatchFilter },
+      { $unwind: '$products' },
+      { $match: { 'products.productId': productId } },
+      { $group: { _id: null, totalExpeditionStock: { $sum: '$products.quantity' } } }
+    ]);
+    const totalStock = expeditionStockResult[0]?.totalExpeditionStock || 0;
+
+    // Build order match filter with selected warehouse
+    const orderWarehouseFilter: any = selectedWarehouseId
+      ? { warehouseId: new mongoose.Types.ObjectId(selectedWarehouseId) }
+      : {};
+
+    // Get confirmed orders quantity
+    const confirmedResult = await Order.aggregate([
+      { $match: { ...orderWarehouseFilter, status: OrderStatus.CONFIRMED, 'products.productId': productId } },
+      { $unwind: '$products' },
+      { $match: { 'products.productId': productId } },
+      { $group: { _id: null, total: { $sum: '$products.quantity' } } }
+    ]);
+    const confirmedQuantity = confirmedResult[0]?.total || 0;
+
+    // Get in-transit orders quantity
+    const inTransitResult = await Order.aggregate([
+      {
+        $match: {
+          ...orderWarehouseFilter,
+          status: { $in: [OrderStatus.IN_TRANSIT, OrderStatus.OUT_FOR_DELIVERY, OrderStatus.ACCEPTED_BY_DELIVERY, OrderStatus.ASSIGNED_TO_DELIVERY] },
+          'products.productId': productId
+        }
+      },
+      { $unwind: '$products' },
+      { $match: { 'products.productId': productId } },
+      { $group: { _id: null, total: { $sum: '$products.quantity' } } }
+    ]);
+    const inTransitQuantity = inTransitResult[0]?.total || 0;
+
+    // Get delivered orders quantity
+    const deliveredResult = await Order.aggregate([
+      {
+        $match: {
+          ...orderWarehouseFilter,
+          status: { $in: [OrderStatus.DELIVERED, OrderStatus.PROCESSED, OrderStatus.PAID] },
+          'products.productId': productId
+        }
+      },
+      { $unwind: '$products' },
+      { $match: { 'products.productId': productId } },
+      { $group: { _id: null, total: { $sum: '$products.quantity' } } }
+    ]);
+    const deliveredQuantity = deliveredResult[0]?.total || 0;
+
+    // Map warehouses with names and calculate defective total
+    let totalDefectiveQuantity = 0;
     const warehousesWithNames: WarehouseData[] = [];
-    
+
     for (const warehouse of product.warehouses) {
       const warehouseId = warehouse.warehouseId.toString();
       const warehouseData = warehouseMap.get(warehouseId);
-      
+      const defectiveQty = warehouse.defectiveQuantity || 0;
+      totalDefectiveQuantity += defectiveQty;
+
       warehousesWithNames.push({
         warehouseId,
         warehouseName: warehouseData?.name || 'Unknown Warehouse',
         stock: warehouse.stock,
+        defectiveQuantity: defectiveQty,
         country: warehouseData?.country,
       });
     }
+
+    // Calculate available stock
+    const availableStock = totalStock - confirmedQuantity - inTransitQuantity - totalDefectiveQuantity - deliveredQuantity;
 
     // Get primary warehouse (first one for display purposes)
     const primaryWarehouse = warehousesWithNames[0] || null;
@@ -975,7 +1054,12 @@ async function getProductByIdImpl(id: string): Promise<ProductResponse> {
       sellerId: product.sellerId.toString(),
       sellerName: seller?.name || 'Unknown Seller',
       image: product.image,
-      totalStock: product.totalStock,
+      totalStock,
+      totalConfirmed: confirmedQuantity,
+      totalDefectiveQuantity,
+      availableStock,
+      totalInTransit: inTransitQuantity,
+      totalDelivered: deliveredQuantity,
       status: product.status,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt

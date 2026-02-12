@@ -114,7 +114,7 @@ export default function ProductDetails({ product, userRole }: ProductDetailsProp
     }
   };
 
-  const stockConfig = getStockLevelConfig(product.totalStock);
+  const stockConfig = getStockLevelConfig(product.availableStock ?? product.totalStock);
   const StockIcon = stockConfig.icon;
   
   return (
@@ -286,9 +286,17 @@ export default function ProductDetails({ product, userRole }: ProductDetailsProp
                 <p className="text-sm font-medium text-muted-foreground">
                   {t('products.fields.totalStock')}
                 </p>
+                <p className="text-2xl font-bold mt-1">
+                  {product.totalStock}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t('products.table.availableStock')}
+                </p>
                 <div className="flex items-center space-x-2 mt-1">
                   <p className="text-2xl font-bold">
-                    {product.totalStock}
+                    {product.availableStock ?? 0}
                   </p>
                   <Badge variant="outline" className={stockConfig.className}>
                     <StockIcon className="mr-1 h-3 w-3" />
@@ -296,6 +304,41 @@ export default function ProductDetails({ product, userRole }: ProductDetailsProp
                   </Badge>
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t('products.table.confirmed')}
+                  </p>
+                  <p className={`text-lg font-bold mt-1 ${(product.totalConfirmed || 0) > 0 ? 'text-orange-600' : 'text-muted-foreground'}`}>
+                    {product.totalConfirmed || 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t('products.table.defectiveQuantity')}
+                  </p>
+                  <p className={`text-lg font-bold mt-1 ${(product.totalDefectiveQuantity || 0) > 0 ? 'text-red-600' : 'text-muted-foreground'}`}>
+                    {product.totalDefectiveQuantity || 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t('products.table.inTransit')}
+                  </p>
+                  <p className={`text-lg font-bold mt-1 ${(product.totalInTransit || 0) > 0 ? 'text-blue-600' : 'text-muted-foreground'}`}>
+                    {product.totalInTransit || 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t('products.table.delivered')}
+                  </p>
+                  <p className={`text-lg font-bold mt-1 ${(product.totalDelivered || 0) > 0 ? 'text-green-600' : 'text-muted-foreground'}`}>
+                    {product.totalDelivered || 0}
+                  </p>
+                </div>
+              </div>
+              <Separator />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
                   {t('products.fields.status')}

@@ -118,7 +118,7 @@ export default async function CallCenterProductDetailPage({ params }: ProductDet
 
                   <div className="flex items-center gap-4">
                     {getStatusBadge(product.status)}
-                    {getStockBadge(product.totalStock)}
+                    {getStockBadge(product.availableStock ?? product.totalStock)}
                   </div>
                 </div>
               </div>
@@ -145,17 +145,30 @@ export default async function CallCenterProductDetailPage({ params }: ProductDet
 
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t("table.availableStock")}</label>
-                  <p className="text-lg">{product.availableStock ?? 0} {t("units")}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg">{product.availableStock ?? 0} {t("units")}</p>
+                    {getStockBadge(product.availableStock ?? product.totalStock)}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">{t("table.confirmed")}</label>
+                  <p className={`text-lg ${(product.totalConfirmed || 0) > 0 ? 'text-orange-600' : ''}`}>{product.totalConfirmed || 0} {t("units")}</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">{t("table.defectiveQuantity")}</label>
+                  <p className={`text-lg ${(product.totalDefectiveQuantity || 0) > 0 ? 'text-red-600' : ''}`}>{product.totalDefectiveQuantity || 0} {t("units")}</p>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t("table.inTransit")}</label>
-                  <p className="text-lg text-blue-600">{product.totalInTransit ?? 0} {t("units")}</p>
+                  <p className={`text-lg ${(product.totalInTransit || 0) > 0 ? 'text-blue-600' : ''}`}>{product.totalInTransit || 0} {t("units")}</p>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t("table.delivered")}</label>
-                  <p className="text-lg text-green-600">{product.totalDelivered ?? 0} {t("units")}</p>
+                  <p className={`text-lg ${(product.totalDelivered || 0) > 0 ? 'text-green-600' : ''}`}>{product.totalDelivered || 0} {t("units")}</p>
                 </div>
               </div>
 
@@ -279,8 +292,28 @@ export default async function CallCenterProductDetailPage({ params }: ProductDet
               </div>
 
               <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("table.availableStock")}</span>
+                <span className="font-medium">{product.availableStock ?? 0}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("table.confirmed")}</span>
+                <span className="font-medium text-orange-600">{product.totalConfirmed || 0}</span>
+              </div>
+
+              <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">{t("table.defectiveQuantity")}</span>
                 <span className="font-medium text-red-600">{product.totalDefectiveQuantity ?? 0}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("table.inTransit")}</span>
+                <span className="font-medium text-blue-600">{product.totalInTransit || 0}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("table.delivered")}</span>
+                <span className="font-medium text-green-600">{product.totalDelivered || 0}</span>
               </div>
 
               <div className="flex justify-between">

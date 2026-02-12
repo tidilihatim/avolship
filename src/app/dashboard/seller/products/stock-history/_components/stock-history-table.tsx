@@ -421,7 +421,7 @@ export default function StockHistoryTable({
 
       {/* Summary Cards */}
       {summary && (
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{t('stockHistory.totalMovements')}</CardTitle>
@@ -429,15 +429,6 @@ export default function StockHistoryTable({
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{summary.totalMovements}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('stockHistory.currentStock')}</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{summary.currentStock}</div>
             </CardContent>
           </Card>
           <Card>
@@ -631,7 +622,6 @@ export default function StockHistoryTable({
                     <TableHead className="hidden md:table-cell">{t('common.warehouse')}</TableHead>
                     <TableHead className="text-right">{t('stockHistory.quantity')}</TableHead>
                     <TableHead className="text-right">{t('stockHistory.previous')}</TableHead>
-                    <TableHead className="text-right">{t('stockHistory.newStock')}</TableHead>
                     <TableHead className="text-right">{t('stockHistory.change')}</TableHead>
                     {isAdminOrModerator && (
                       <TableHead className="hidden lg:table-cell">{t('stockHistory.user')}</TableHead>
@@ -694,9 +684,6 @@ export default function StockHistoryTable({
                         </TableCell>
                         <TableCell className="text-right text-muted-foreground">
                           {history.previousStock}
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {history.newStock}
                         </TableCell>
                         <TableCell className="text-right">
                           <span 

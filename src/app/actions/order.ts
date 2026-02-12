@@ -707,14 +707,89 @@ export const getProductsForOrder = withDbConnection(async (warehouseId: string) 
       .populate('sellerId', 'name')
       .lean();
 
+    // Get all product IDs for batch queries
+    const productIds = products.map((p: any) => p._id);
+
+    // Get total expedition stock for all products (filtered by warehouse)
+    const expeditionStockResults = await Expedition.aggregate([
+      {
+        $match: {
+          'products.productId': { $in: productIds },
+          warehouseId: new mongoose.Types.ObjectId(warehouseId),
+          status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] }
+        }
+      },
+      { $unwind: '$products' },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalExpeditionStock: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    const expeditionStockMap = new Map<string, number>();
+    for (const exp of expeditionStockResults) {
+      expeditionStockMap.set(exp._id.toString(), exp.totalExpeditionStock);
+    }
+
+    // Get committed order quantities for all products (confirmed + in-transit + delivered)
+    const committedStatuses = [
+      OrderStatus.CONFIRMED,
+      OrderStatus.IN_TRANSIT,
+      OrderStatus.OUT_FOR_DELIVERY,
+      OrderStatus.ACCEPTED_BY_DELIVERY,
+      OrderStatus.ASSIGNED_TO_DELIVERY,
+      OrderStatus.DELIVERED,
+      OrderStatus.PROCESSED,
+      OrderStatus.PAID
+    ];
+
+    const committedOrderResults = await Order.aggregate([
+      {
+        $match: {
+          warehouseId: new mongoose.Types.ObjectId(warehouseId),
+          status: { $in: committedStatuses },
+          'products.productId': { $in: productIds }
+        }
+      },
+      { $unwind: '$products' },
+      {
+        $match: {
+          'products.productId': { $in: productIds }
+        }
+      },
+      {
+        $group: {
+          _id: '$products.productId',
+          totalCommitted: { $sum: '$products.quantity' }
+        }
+      }
+    ]);
+
+    const committedMap = new Map<string, number>();
+    for (const order of committedOrderResults) {
+      committedMap.set(order._id.toString(), order.totalCommitted);
+    }
+
     // For each product, get available expeditions with pricing
     const productsWithExpeditions: ProductOption[] = await Promise.all(
       products.map(async (product: any) => {
-        // Get warehouse-specific stock
-        const warehouseStock = product.warehouses.find(
+        const productId = product._id.toString();
+
+        // Calculate available stock: expedition total - committed orders - defective
+        const expeditionTotal = expeditionStockMap.get(productId) || 0;
+        const committedQuantity = committedMap.get(productId) || 0;
+        const warehouseEntry = product.warehouses.find(
           (w: any) => w.warehouseId.toString() === warehouseId
         );
-        const totalStock = warehouseStock?.stock || 0;
+        const defectiveQuantity = warehouseEntry?.defectiveQuantity || 0;
+        const totalStock = expeditionTotal - committedQuantity - defectiveQuantity;
 
         // Get expeditions for this product and warehouse
         const expeditions = await Expedition.find({
@@ -742,7 +817,7 @@ export const getProductsForOrder = withDbConnection(async (warehouseId: string) 
         });
 
         return {
-          _id: product._id.toString(),
+          _id: productId,
           name: product.name,
           code: product.code,
           description: product.description,

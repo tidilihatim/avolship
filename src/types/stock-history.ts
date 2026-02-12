@@ -72,6 +72,7 @@ export interface StockSummaryData {
   totalIncreases: number;
   totalDecreases: number;
   currentStock: number;
+  availableStock?: number;
   lastMovementDate?: Date;
   lastRestockDate?: Date;
   warehouseBreakdown: {

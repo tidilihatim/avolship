@@ -2,6 +2,7 @@
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ArrowLeft, Edit, Trash2, Package, MapPin, User, Calendar, ExternalLink } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ interface ProductDetailPageProps {
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const resolvedParams = await params;
   const productId = resolvedParams.id;
+  const t = await getTranslations("products");
 
   // Check if user has admin/moderator access
   const userRole = await getLoginUserRole();
@@ -44,11 +46,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const getStatusBadge = (status: ProductStatus) => {
     switch (status) {
       case ProductStatus.ACTIVE:
-        return <Badge variant="default" className="bg-green-100 text-green-800">Active</Badge>;
+        return <Badge variant="default" className="bg-green-100 text-green-800">{t("statuses.active")}</Badge>;
       case ProductStatus.INACTIVE:
-        return <Badge variant="secondary">Inactive</Badge>;
+        return <Badge variant="secondary">{t("statuses.inactive")}</Badge>;
       case ProductStatus.OUT_OF_STOCK:
-        return <Badge variant="destructive">Out of Stock</Badge>;
+        return <Badge variant="destructive">{t("statuses.out_of_stock")}</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -57,11 +59,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   // Get stock badge variant based on stock level
   const getStockBadge = (stock: number) => {
     if (stock === 0) {
-      return <Badge variant="destructive">{stock} units</Badge>;
+      return <Badge variant="destructive">{stock} {t("units")}</Badge>;
     } else if (stock <= 10) {
-      return <Badge variant="secondary">{stock} units</Badge>;
+      return <Badge variant="secondary">{stock} {t("units")}</Badge>;
     } else {
-      return <Badge variant="default">{stock} units</Badge>;
+      return <Badge variant="default">{stock} {t("units")}</Badge>;
     }
   };
 
@@ -73,12 +75,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <Link href="/dashboard/admin/products">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Products
+              {t("backToProducts")}
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Product Details</h1>
-            <p className="text-muted-foreground">View and manage product information</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t("productDetails")}</h1>
+            <p className="text-muted-foreground">{t("viewProductInfo")}</p>
           </div>
         </div>
 
@@ -86,7 +88,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <Link href={`/dashboard/admin/products/${productId}/edit`}>
             <Button size="sm">
               <Edit className="h-4 w-4 mr-2" />
-              Edit Product
+              {t("editProduct")}
             </Button>
           </Link>
           <ProductDeleteButton productId={productId} productName={product.name} />
@@ -101,7 +103,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
-                Product Information
+                {t("sections.basicInfo")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -126,7 +128,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
                   <div className="flex items-center gap-4">
                     {getStatusBadge(product.status)}
-                    {getStockBadge(product.totalStock)}
+                    {getStockBadge(product.availableStock ?? product.totalStock)}
                   </div>
                 </div>
               </div>
@@ -135,24 +137,52 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Product Code</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t("fields.productCode")}</label>
                   <p className="font-mono text-lg">{product.code}</p>
                 </div>
 
                 {product.variantCode && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Variant Code</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t("fields.variantCode")}</label>
                     <p className="font-mono text-lg">{product.variantCode}</p>
                   </div>
                 )}
 
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Total Stock</label>
-                  <p className="text-lg">{product.totalStock} units</p>
+                  <label className="text-sm font-medium text-muted-foreground">{t("table.totalStock")}</label>
+                  <p className="text-lg">{product.totalStock} {t("units")}</p>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Status</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t("table.availableStock")}</label>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg">{product.availableStock ?? 0} {t("units")}</p>
+                    {getStockBadge(product.availableStock ?? product.totalStock)}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">{t("table.confirmed")}</label>
+                  <p className={`text-lg ${(product.totalConfirmed || 0) > 0 ? 'text-orange-600' : ''}`}>{product.totalConfirmed || 0} {t("units")}</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">{t("table.defectiveQuantity")}</label>
+                  <p className={`text-lg ${(product.totalDefectiveQuantity || 0) > 0 ? 'text-red-600' : ''}`}>{product.totalDefectiveQuantity || 0} {t("units")}</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">{t("table.inTransit")}</label>
+                  <p className={`text-lg ${(product.totalInTransit || 0) > 0 ? 'text-blue-600' : ''}`}>{product.totalInTransit || 0} {t("units")}</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">{t("table.delivered")}</label>
+                  <p className={`text-lg ${(product.totalDelivered || 0) > 0 ? 'text-green-600' : ''}`}>{product.totalDelivered || 0} {t("units")}</p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">{t("fields.status")}</label>
                   <div className="mt-1">
                     {getStatusBadge(product.status)}
                   </div>
@@ -163,7 +193,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <>
                   <Separator />
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Verification Link</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t("fields.verificationLink")}</label>
                     <div className="mt-1">
                       <a
                         href={product.verificationLink}
@@ -186,10 +216,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
-                Warehouse Distribution
+                {t("sections.warehouseDistribution")}
               </CardTitle>
               <CardDescription>
-                Stock levels across different warehouses
+                {t("warehouseStockLevels")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -210,7 +240,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
                 {product.warehouses.length === 0 && (
                   <p className="text-center text-muted-foreground py-8">
-                    No warehouses assigned to this product
+                    {t("noWarehousesAssigned")}
                   </p>
                 )}
               </div>
@@ -225,7 +255,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                Seller Information
+                {t("sections.sellerInfo")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -241,17 +271,17 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                Timeline
+                {t("timeline")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Created</label>
+                <label className="text-sm font-medium text-muted-foreground">{t("created")}</label>
                 <p className="text-sm">{new Date(product.createdAt).toLocaleString()}</p>
               </div>
 
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
+                <label className="text-sm font-medium text-muted-foreground">{t("lastUpdated")}</label>
                 <p className="text-sm">{new Date(product.updatedAt).toLocaleString()}</p>
               </div>
             </CardContent>
@@ -260,21 +290,46 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           {/* Quick Stats */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Stats</CardTitle>
+              <CardTitle>{t("quickStats")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Warehouses</span>
+                <span className="text-sm text-muted-foreground">{t("warehouses")}</span>
                 <span className="font-medium">{product.warehouses.length}</span>
               </div>
 
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Total Stock</span>
+                <span className="text-sm text-muted-foreground">{t("table.totalStock")}</span>
                 <span className="font-medium">{product.totalStock}</span>
               </div>
 
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Status</span>
+                <span className="text-sm text-muted-foreground">{t("table.availableStock")}</span>
+                <span className="font-medium">{product.availableStock ?? 0}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("table.confirmed")}</span>
+                <span className="font-medium text-orange-600">{product.totalConfirmed || 0}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("table.defectiveQuantity")}</span>
+                <span className="font-medium text-red-600">{product.totalDefectiveQuantity || 0}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("table.inTransit")}</span>
+                <span className="font-medium text-blue-600">{product.totalInTransit || 0}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("table.delivered")}</span>
+                <span className="font-medium text-green-600">{product.totalDelivered || 0}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">{t("status")}</span>
                 <span className="font-medium">{product.status}</span>
               </div>
             </CardContent>

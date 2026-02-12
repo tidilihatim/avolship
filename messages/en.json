@@ -3556,6 +3556,7 @@
 
     "table": {
       "totalStock": "Total Stock",
+      "confirmed": "Confirmed",
       "availableStock": "Available Stock",
       "defectiveQuantity": "Defective",
       "inTransit": "In Transit",

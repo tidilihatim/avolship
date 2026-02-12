@@ -668,6 +668,7 @@ export default function ProductTable({
                     <TableHead>{t("products.table.totalStock")}</TableHead>
                     <TableHead className="hidden lg:table-cell">{t("products.table.availableStock")}</TableHead>
                     <TableHead className="hidden lg:table-cell">{t("products.table.defectiveQuantity")}</TableHead>
+                    <TableHead className="hidden lg:table-cell">{t("products.table.confirmed")}</TableHead>
                     <TableHead className="hidden xl:table-cell">{t("products.table.inTransit")}</TableHead>
                     <TableHead className="hidden xl:table-cell">{t("products.table.delivered")}</TableHead>
                     <TableHead className="hidden md:table-cell">
@@ -814,6 +815,15 @@ export default function ProductTable({
                             : "text-muted-foreground"
                         }`}>
                           {product.totalDefectiveQuantity || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <span className={`${
+                          (product.totalConfirmed || 0) > 0
+                            ? "text-orange-600"
+                            : "text-muted-foreground"
+                        }`}>
+                          {product.totalConfirmed || 0}
                         </span>
                       </TableCell>
                       <TableCell className="hidden xl:table-cell">
