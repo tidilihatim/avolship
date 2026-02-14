@@ -1233,3 +1233,153 @@ export const getAllWarehousesForExpedition = withDbConnection(async (): Promise<
     return [];
   }
 });
+
+/**
+ * Get total expedition stock for a product grouped by warehouse
+ * Sums up all expedition product quantities for the given product per warehouse
+ */
+export const getExpeditionStockForProduct = withDbConnection(async (
+  productId: string
+): Promise<{ warehouseId: string; totalStock: number; latestExpeditionId: string | null }[]> => {
+  try {
+    const result = await Expedition.aggregate([
+      {
+        $match: {
+          'products.productId': new mongoose.Types.ObjectId(productId),
+        },
+      },
+      { $unwind: '$products' },
+      {
+        $match: {
+          'products.productId': new mongoose.Types.ObjectId(productId),
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $group: {
+          _id: '$warehouseId',
+          totalStock: { $sum: '$products.quantity' },
+          latestExpeditionId: { $first: '$_id' },
+        },
+      },
+    ]);
+
+    return result.map((r: any) => ({
+      warehouseId: r._id.toString(),
+      totalStock: r.totalStock,
+      latestExpeditionId: r.latestExpeditionId?.toString() || null,
+    }));
+  } catch (error) {
+    console.error('Error getting expedition stock:', error);
+    return [];
+  }
+});
+
+/**
+ * Update the latest expedition's product quantity for a given product and warehouse.
+ * Called when admin edits stock from product edit form.
+ * The difference between new total and current total is applied to the latest expedition.
+ */
+export const updateExpeditionStock = withDbConnection(async (
+  productId: string,
+  warehouseId: string,
+  newTotalStock: number
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return { success: false, message: 'Unauthorized' };
+    const user = await User.findById(session.user.id) as IUser | null;
+    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
+      return { success: false, message: 'Only admins and moderators can update expedition stock' };
+    }
+
+    // Calculate current total from all expeditions for this product + warehouse
+    const currentStockResult = await Expedition.aggregate([
+      {
+        $match: {
+          warehouseId: new mongoose.Types.ObjectId(warehouseId),
+          'products.productId': new mongoose.Types.ObjectId(productId),
+        },
+      },
+      { $unwind: '$products' },
+      {
+        $match: {
+          'products.productId': new mongoose.Types.ObjectId(productId),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalStock: { $sum: '$products.quantity' },
+        },
+      },
+    ]);
+
+    const currentTotal = currentStockResult.length > 0 ? currentStockResult[0].totalStock : 0;
+    const difference = newTotalStock - currentTotal;
+
+    if (difference === 0) {
+      return { success: true, message: 'No stock change needed' };
+    }
+
+    // Find the latest expedition for this product + warehouse
+    const latestExpedition = await Expedition.findOne({
+      warehouseId: new mongoose.Types.ObjectId(warehouseId),
+      'products.productId': new mongoose.Types.ObjectId(productId),
+    }).sort({ createdAt: -1 });
+
+    if (!latestExpedition) {
+      return { success: false, message: 'No expedition found for this product and warehouse' };
+    }
+
+    // Update the product quantity in the latest expedition
+    const productInExpedition = latestExpedition.products.find(
+      (p: any) => p.productId.toString() === productId
+    );
+
+    if (!productInExpedition) {
+      return { success: false, message: 'Product not found in latest expedition' };
+    }
+
+    const newQuantity = productInExpedition.quantity + difference;
+    if (newQuantity < 0) {
+      return { success: false, message: 'Cannot reduce stock below zero in the latest expedition' };
+    }
+
+    productInExpedition.quantity = newQuantity;
+    await latestExpedition.save();
+
+    // Record stock movement history
+    const absDifference = Math.abs(difference);
+    const movementType = difference > 0 ? StockMovementType.INCREASE : StockMovementType.DECREASE;
+    const movementReason = difference > 0
+      ? StockMovementReason.MANUAL_ADJUSTMENT_INCREASE
+      : StockMovementReason.MANUAL_ADJUSTMENT_DECREASE;
+    const movementNote = difference > 0
+      ? `Stock increased by ${absDifference} via admin product edit (expedition ${latestExpedition.expeditionCode})`
+      : `Stock decreased by ${absDifference} via admin product edit (expedition ${latestExpedition.expeditionCode})`;
+
+    await StockHistory.create({
+      productId: new mongoose.Types.ObjectId(productId),
+      warehouseId: new mongoose.Types.ObjectId(warehouseId),
+      movementType,
+      quantity: absDifference,
+      previousStock: currentTotal,
+      newStock: newTotalStock,
+      reason: movementReason,
+      notes: movementNote,
+      userId: user._id,
+      metadata: {
+        expeditionId: latestExpedition._id.toString(),
+        expeditionCode: latestExpedition.expeditionCode,
+      },
+    });
+
+    return { success: true, message: 'Expedition stock updated successfully' };
+  } catch (error: any) {
+    console.error('Error updating expedition stock:', error);
+    return { success: false, message: error.message || 'Failed to update expedition stock' };
+  }
+});

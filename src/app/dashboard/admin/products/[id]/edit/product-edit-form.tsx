@@ -23,11 +23,19 @@ import { Separator } from "@/components/ui/separator";
 import { ProductTableData } from "@/types/product";
 import { ProductStatus } from "@/lib/db/models/product";
 import { updateProduct } from "@/app/actions/product";
+import { updateExpeditionStock } from "@/app/actions/expedition";
+
+interface ExpeditionStockData {
+  warehouseId: string;
+  totalStock: number;
+  latestExpeditionId: string | null;
+}
 
 interface ProductEditFormProps {
   product: ProductTableData;
   warehouses: { _id: string; name: string; country: string }[];
   productId: string;
+  expeditionStock: ExpeditionStockData[];
 }
 
 interface WarehouseStock {
@@ -36,10 +44,16 @@ interface WarehouseStock {
   defectiveQuantity: number;
 }
 
-export default function ProductEditForm({ product, warehouses, productId }: ProductEditFormProps) {
+export default function ProductEditForm({ product, warehouses, productId, expeditionStock }: ProductEditFormProps) {
   const router = useRouter();
   const t = useTranslations("products.editForm");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Helper to get expedition stock for a warehouse
+  const getExpeditionStockForWarehouse = (warehouseId: string) => {
+    const expStock = expeditionStock.find(e => e.warehouseId === warehouseId);
+    return expStock?.totalStock ?? 0;
+  };
 
   // Form state
   const [formData, setFormData] = useState({
@@ -51,10 +65,11 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
     status: product.status,
   });
 
+  // Initialize stock from expedition totals (not product model)
   const [warehouseStocks, setWarehouseStocks] = useState<WarehouseStock[]>(
     product.warehouses.map(w => ({
       warehouseId: w.warehouseId,
-      stock: w.stock,
+      stock: getExpeditionStockForWarehouse(w.warehouseId),
       defectiveQuantity: w.defectiveQuantity || 0
     }))
   );
@@ -145,10 +160,27 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
         return;
       }
 
-      // Prepare data for API
+      // Update expedition stock for each warehouse where stock changed
+      for (const ws of warehouseStocks) {
+        const originalExpStock = getExpeditionStockForWarehouse(ws.warehouseId);
+        if (ws.stock !== originalExpStock) {
+          const expResult = await updateExpeditionStock(productId, ws.warehouseId, ws.stock);
+          if (!expResult.success) {
+            toast.error(expResult.message || `Failed to update expedition stock for warehouse`);
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
+
+      // Prepare data for product API (defective quantity stays on product model, stock comes from expeditions)
       const updateData = {
         ...formData,
-        warehouses: warehouseStocks,
+        warehouses: warehouseStocks.map(ws => ({
+          warehouseId: ws.warehouseId,
+          stock: ws.stock,
+          defectiveQuantity: ws.defectiveQuantity,
+        })),
         image: product.image // Keep existing image for now
       };
 
@@ -274,7 +306,7 @@ export default function ProductEditForm({ product, warehouses, productId }: Prod
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Current Warehouses */}
-            {warehouseStocks.map((warehouseStock, index) => (
+            {warehouseStocks.map((warehouseStock) => (
               <div key={warehouseStock.warehouseId} className="space-y-2 p-3 border rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="flex-1">

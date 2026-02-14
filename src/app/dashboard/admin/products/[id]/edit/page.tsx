@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getProductById, getAllWarehouses } from "@/app/actions/product";
 import { getLoginUserRole } from "@/app/actions/auth";
+import { getExpeditionStockForProduct } from "@/app/actions/expedition";
 import { UserRole } from "@/lib/db/models/user";
 import ProductEditForm from "./product-edit-form";
 
@@ -29,10 +30,11 @@ export default async function ProductEditPage({ params }: ProductEditPageProps) 
     redirect('/dashboard');
   }
 
-  // Fetch product details and warehouses in parallel
-  const [productResult, warehouses] = await Promise.all([
+  // Fetch product details, warehouses, and expedition stock in parallel
+  const [productResult, warehouses, expeditionStock] = await Promise.all([
     getProductById(productId),
-    getAllWarehouses()
+    getAllWarehouses(),
+    getExpeditionStockForProduct(productId)
   ]);
 
   if (!productResult.success || !productResult.product) {
@@ -60,6 +62,7 @@ export default async function ProductEditPage({ params }: ProductEditPageProps) 
         product={productResult.product}
         warehouses={warehouses}
         productId={productId}
+        expeditionStock={expeditionStock}
       />
     </div>
   );

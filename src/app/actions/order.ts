@@ -1577,41 +1577,55 @@ export const updateOrderStatus = withDbConnection(async (
     let movementReason: StockMovementReason | null = null;
     let movementNote = '';
 
-    switch (newStatus) {
-      case OrderStatus.CONFIRMED:
-        movementType = StockMovementType.DECREASE;
-        movementReason = StockMovementReason.ORDER_CONFIRMED;
-        movementNote = `Stock reduced due to order confirmation ${order?.orderId}`;
-        break;
-      
-      case OrderStatus.DELIVERY_FAILED:
-        movementType = StockMovementType.INCREASE;
-        movementReason = StockMovementReason.DELIVERY_FAILED;
-        movementNote = `Stock returned due to delivery failure ${order?.orderId}`;
-        break;
-      
-      case OrderStatus.REFUNDED:
-        movementType = StockMovementType.INCREASE;
-        movementReason = StockMovementReason.RETURN_FROM_CUSTOMER;
-        movementNote = `Stock returned due to refund ${order?.orderId}`;
-        break;
-      
-      case OrderStatus.UNREACHED:
-        movementType = StockMovementType.INCREASE;
-        movementReason = StockMovementReason.CUSTOMER_UNREACHED;
-        movementNote = `Stock returned due to unreachable customer ${order?.orderId}`;
-        break;
-      
-      case OrderStatus.CANCELLED:
-        movementType = StockMovementType.INCREASE;
-        movementReason = StockMovementReason.RETURN_FROM_CUSTOMER;
-        movementNote = `Stock returned due to order cancellation ${order?.orderId}`;
-        break;
-      
-      // No stock movement needed for other statuses
-      default:
-        movementType = null;
-        break;
+    // Statuses that mean stock should be decreased (order is moving forward)
+    const stockDecreaseStatuses = [
+      OrderStatus.CONFIRMED,
+      OrderStatus.IN_PREPARATION,
+      OrderStatus.AWAITING_DISPATCH,
+      OrderStatus.SHIPPED,
+      OrderStatus.ASSIGNED_TO_DELIVERY,
+      OrderStatus.ACCEPTED_BY_DELIVERY,
+      OrderStatus.IN_TRANSIT,
+      OrderStatus.OUT_FOR_DELIVERY,
+    ];
+
+    // Statuses that mean stock should be increased (order is returning/cancelled)
+    const stockIncreaseStatuses = [
+      OrderStatus.DELIVERY_FAILED,
+      OrderStatus.REFUNDED,
+      OrderStatus.UNREACHED,
+      OrderStatus.CANCELLED,
+      OrderStatus.CANCELLED_AT_DELIVERY,
+      OrderStatus.RETURNED,
+      OrderStatus.RETURN_IN_PROGRESS,
+    ];
+
+    // Only decrease stock if previous status was NOT already a decrease status
+    // (to avoid double-decreasing when moving from confirmed -> in_transit etc.)
+    const previousWasDecreased = stockDecreaseStatuses.includes(previousStatus);
+    const previousWasIncreased = stockIncreaseStatuses.includes(previousStatus);
+
+    if (stockDecreaseStatuses.includes(newStatus) && !previousWasDecreased) {
+      movementType = StockMovementType.DECREASE;
+      movementReason = StockMovementReason.ORDER_CONFIRMED;
+      movementNote = `Stock reduced due to order status change to ${newStatus} - Order ${order?.orderId}`;
+    } else if (stockIncreaseStatuses.includes(newStatus) && !previousWasIncreased) {
+      movementType = StockMovementType.INCREASE;
+
+      switch (newStatus) {
+        case OrderStatus.DELIVERY_FAILED:
+          movementReason = StockMovementReason.DELIVERY_FAILED;
+          movementNote = `Stock returned due to delivery failure ${order?.orderId}`;
+          break;
+        case OrderStatus.UNREACHED:
+          movementReason = StockMovementReason.CUSTOMER_UNREACHED;
+          movementNote = `Stock returned due to unreachable customer ${order?.orderId}`;
+          break;
+        default:
+          movementReason = StockMovementReason.RETURN_FROM_CUSTOMER;
+          movementNote = `Stock returned due to ${newStatus} - Order ${order?.orderId}`;
+          break;
+      }
     }
 
     // Only process stock movement for statuses that require it and when instructed
