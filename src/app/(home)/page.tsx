@@ -613,12 +613,12 @@ export default function HomePage() {
                   descKey: "section3Card1Desc",
                 },
                 {
-                  icon: "Execution & Tracking.svg",
+                  icon: "Execution and Tracking.svg",
                   titleKey: "section3Card2Title",
                   descKey: "section3Card2Desc",
                 },
                 {
-                  icon: "Cash & Reporting.svg",
+                  icon: "Cash and Reporting.svg",
                   titleKey: "section3Card3Title",
                   descKey: "section3Card3Desc",
                 },
