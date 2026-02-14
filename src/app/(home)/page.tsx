@@ -482,10 +482,280 @@ export default function HomePage() {
         </div>
       </section> */}
 
+      {/* What is actually handled by AvolShip Section */}
+      <section className="py-16 md:py-24 bg-[#f8f8f8]">
+        <div className="container mx-auto px-4">
+          {/* Section Header */}
+          <motion.div
+            className="text-center max-w-3xl mx-auto mb-12 md:mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1c2d51] mb-4">
+              {t("section2Title")}
+            </h2>
+            <p className="text-lg text-gray-500">
+              {t("section2Subtitle")}
+            </p>
+            <span className="inline-block mt-4 px-4 py-1.5 text-sm font-semibold text-[#e8792b] border border-[#e8792b] rounded-full">
+              {t("section2Badge")}
+            </span>
+          </motion.div>
+
+          {/* Cards Grid */}
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 max-w-7xl mx-auto"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={{
+              hidden: {},
+              visible: {
+                transition: { staggerChildren: 0.1 },
+              },
+            }}
+          >
+            {[
+              { icon: "Goods Reception.svg", labelKey: "section2Item1" },
+              { icon: "Controlled Storage.svg", labelKey: "section2Item2" },
+              { icon: "Order Confirmation.svg", labelKey: "section2Item3" },
+              { icon: "Delivery Management.svg", labelKey: "section2Item4" },
+              { icon: "Get Paid on Your Deliveries.svg", labelKey: "section2Item5" },
+              { icon: "Track Your Business Performance.svg", labelKey: "section2Item6" },
+              { icon: "Operational Support When You Need It.svg", labelKey: "section2Item7" },
+              { icon: "A team Focused on Improving Your Delivery Results.svg", labelKey: "section2Item8" },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                className="flex flex-col items-center text-center p-6 md:p-8"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+                }}
+              >
+                <div className="w-52 h-52 sm:w-56 sm:h-56 md:w-60 md:h-60 mb-5 relative">
+                  <Image
+                    src={`/icons/section2/${item.icon}`}
+                    alt={t(item.labelKey)}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <p className="text-lg md:text-xl font-semibold text-[#1c2d51] leading-snug max-w-[250px]">
+                  {t(item.labelKey)}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Operational Flow Section */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="container mx-auto px-4">
+          {/* Section Header */}
+          <motion.div
+            className="text-center max-w-4xl mx-auto mb-12 md:mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1c2d51] mb-4">
+              {t("section3Title")}
+            </h2>
+            <p className="text-lg text-gray-500">
+              {t("section3Subtitle")}
+            </p>
+            <span className="inline-block mt-4 px-4 py-1.5 text-sm font-semibold text-[#e8792b] border border-[#e8792b] rounded-full">
+              {t("section3Badge")}
+            </span>
+          </motion.div>
+
+          {/* Cards */}
+          <div className="relative max-w-6xl mx-auto">
+            {/* Background Design between cards */}
+            <div className="hidden md:block absolute left-1/3 -translate-x-1/2 top-1/3 -translate-y-1/2 w-[900px] h-[900px] z-0 opacity-50">
+              <Image
+                src="/icons/section3/Background Design.svg"
+                alt=""
+                fill
+                className="object-contain"
+              />
+            </div>
+            <div className="hidden md:block absolute left-2/3 -translate-x-1/2 top-1/3 -translate-y-1/2 w-[900px] h-[900px] z-0 opacity-50">
+              <Image
+                src="/icons/section3/Background Design.svg"
+                alt=""
+                fill
+                className="object-contain"
+              />
+            </div>
+
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 relative z-10"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: { staggerChildren: 0.15 },
+                },
+              }}
+            >
+              {[
+                {
+                  icon: "Inbound Control.svg",
+                  titleKey: "section3Card1Title",
+                  descKey: "section3Card1Desc",
+                },
+                {
+                  icon: "Execution & Tracking.svg",
+                  titleKey: "section3Card2Title",
+                  descKey: "section3Card2Desc",
+                },
+                {
+                  icon: "Cash & Reporting.svg",
+                  titleKey: "section3Card3Title",
+                  descKey: "section3Card3Desc",
+                },
+              ].map((card, index) => (
+                <motion.div
+                  key={index}
+                  className="relative flex flex-col items-center"
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+                  }}
+                >
+                  {/* Card - navy behind + light card on top */}
+                  <div className="relative w-full flex-1">
+                    {/* Navy card (behind, in natural position) */}
+                    <div className="absolute inset-0 bg-[#1c2d51] rounded-2xl" />
+                    {/* White card (on top, shifted left over the blue) */}
+                    <div className="relative z-10 -translate-x-3 translate-y-3 rounded-2xl bg-[#f0eeee] p-8 md:p-10 text-center h-full flex flex-col justify-center">
+                      <h3 className="text-xl md:text-2xl font-bold text-[#1c2d51] mb-3">
+                        {t(card.titleKey)}
+                      </h3>
+                      <p className="text-base md:text-lg text-gray-600 leading-relaxed">
+                        {t(card.descKey)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Icon below card */}
+                  <div className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 -mt-6 relative z-10 flex-shrink-0">
+                    <Image
+                      src={`/icons/section3/${card.icon}`}
+                      alt={t(card.titleKey)}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+              </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Where Demand Creates Opportunity Section */}
+      <section className="py-16 md:py-24 bg-[#FFFFFF]">
+        <div className="container mx-auto px-4">
+          {/* Section Header */}
+          <motion.div
+            className="text-center max-w-4xl mx-auto mb-16 md:mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1c2d51] mb-4">
+              {t("section4Title")}
+            </h2>
+            <p className="text-lg text-gray-500">
+              {t("section4Subtitle1")}
+            </p>
+            <p className="text-lg text-gray-500">
+              {t("section4Subtitle2")}{" "}
+              <span className="font-bold text-[#1c2d51]">{t("section4Country")}</span>
+              {t("section4Subtitle3")}
+            </p>
+          </motion.div>
+
+          {/* Market Opportunity + Map */}
+          <motion.div
+            className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 max-w-6xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+          >
+            {/* Left - Market Opportunity */}
+            <div className="w-full lg:w-1/2">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#1c2d51] mb-8">
+                {t("section4MarketTitle")}
+              </h3>
+              <div className="flex flex-col gap-4">
+                {[
+                  "section4Item1",
+                  "section4Item2",
+                  "section4Item3",
+                  "section4Item4",
+                ].map((key, index) => (
+                  <motion.div
+                    key={index}
+                    className="bg-[#1c2d51] text-white text-center py-4 px-6 rounded-full text-base md:text-lg font-medium"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    {t(key)}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right - Guinea Map */}
+            <div className="w-full lg:w-1/2 flex justify-center">
+              <div className="relative w-[350px] h-[350px] sm:w-[450px] sm:h-[450px] md:w-[600px] md:h-[600px]">
+                <Image
+                  src="/icons/section4/Guinea map.svg"
+                  alt="Guinea Conakry Map"
+                  fill
+                  unoptimized
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Learn More Button */}
+          <motion.div
+            className="text-center mt-12 md:mt-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <Link
+              href="#features"
+              className="inline-block px-10 py-3 text-lg font-medium text-[#1c2d51] border-2 border-gray-300 rounded-full hover:border-[#1c2d51] transition-colors"
+            >
+              {t("section4LearnMore")}
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Features Section */}
       {/* Features Section - Clean & Modern Alternating Layout */}
       {/* Features Section - Clean & Modern with Subtle Animations */}
-      <section id="features" className="py-24 bg-gray-50" ref={featuresRef}>
+      {false && <section id="features" className="py-24 bg-gray-50" ref={featuresRef}>
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <motion.div
@@ -783,27 +1053,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* CTA Button */}
-          {/* <motion.div
-            className="text-center mt-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          >
-            <Link
-              href="/features"
-              className="inline-flex items-center justify-center px-8 py-4 bg-[#1c2d51] hover:bg-[#1c2d51]/90 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg"
-            >
-              {t("exploreAllFeatures")}
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-            <p className="mt-3 text-gray-500 text-sm">
-              {t("featuresExploreHint")}
-            </p>
-          </motion.div> */}
         </div>
-      </section>
+      </section>}
 
       {/* About Us Section */}
       <section id="about" className="py-24 bg-white">
