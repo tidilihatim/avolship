@@ -1088,9 +1088,11 @@ export default function OrderTableRow({
                   />
                 </div>
 
-                <DropdownMenuItem className="cursor-pointer">
-                  <Phone className="mr-2 h-4 w-4" />
+                <DropdownMenuItem className="cursor-pointer" asChild>
+                  <Link href={`/dashboard/${userRole}/orders/${order._id}#call_history`} >
+                    <Phone className="mr-2 h-4 w-4" />
                   {dt("viewCallHistory")}
+                  </Link>
                 </DropdownMenuItem>
               </>
             )}

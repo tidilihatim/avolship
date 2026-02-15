@@ -1,6 +1,7 @@
 'use client';
 
 // src/app/[locale]/dashboard/orders/[id]/_components/order-details.tsx
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { 
   CheckCircle,
@@ -46,6 +47,17 @@ interface OrderDetailsProps {
  */
 export default function OrderDetails({ order, userRole }: OrderDetailsProps) {
   const t = useTranslations('orders');
+
+  // Scroll to hash fragment after mount (for links like #call_history)
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      const element = document.querySelector(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, []);
 
   // Check if user is admin or moderator
   const isAdminOrModerator = userRole === UserRole.ADMIN || userRole === UserRole.MODERATOR;

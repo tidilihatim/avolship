@@ -299,7 +299,7 @@ export default function CallHistoryCard({ order, formatDate, userRole }: CallHis
   }, []);
 
   return (
-    <Card className="shadow-sm">
+    <Card id='call_history' className="shadow-sm">
       <CardHeader className="pb-4">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-primary/10 rounded-lg">
