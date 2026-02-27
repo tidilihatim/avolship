@@ -3710,6 +3710,31 @@
       "high": "High Stock (> 50)"
     },
 
+    "productTable": {
+      "title": "Products Management",
+      "description": "Manage and view products across the platform",
+      "filters": "Filters",
+      "filterTitle": "Filter Products",
+      "filterDescription": "Filter products by various criteria",
+      "seller": "Seller",
+      "allStatuses": "All Statuses",
+      "allWarehouses": "All Warehouses",
+      "allSellers": "All Sellers",
+      "minStock": "Min Stock",
+      "maxStock": "Max Stock",
+      "clear": "Clear",
+      "columns": {
+        "product": "Product",
+        "code": "Code",
+        "warehouse": "Warehouse",
+        "available": "Available"
+      },
+      "itemsPerPage": "Items per page:",
+      "showing": "Showing {from} to {to} of {total} products",
+      "previous": "Previous",
+      "next": "Next"
+    },
+
     "validation": {
       "nameRequired": "Product name is required",
       "descriptionRequired": "Description is required",

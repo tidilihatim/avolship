@@ -3678,6 +3678,31 @@
       "high": "Stock Élevé (> 50)"
     },
 
+    "productTable": {
+      "title": "Gestion des Produits",
+      "description": "Gérer et visualiser les produits sur la plateforme",
+      "filters": "Filtres",
+      "filterTitle": "Filtrer les Produits",
+      "filterDescription": "Filtrer les produits selon différents critères",
+      "seller": "Vendeur",
+      "allStatuses": "Tous les Statuts",
+      "allWarehouses": "Tous les Entrepôts",
+      "allSellers": "Tous les Vendeurs",
+      "minStock": "Stock Min",
+      "maxStock": "Stock Max",
+      "clear": "Effacer",
+      "columns": {
+        "product": "Produit",
+        "code": "Code",
+        "warehouse": "Entrepôt",
+        "available": "Disponible"
+      },
+      "itemsPerPage": "Éléments par page :",
+      "showing": "Affichage de {from} à {to} sur {total} produits",
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+
     "validation": {
       "nameRequired": "Le nom du produit est requis",
       "descriptionRequired": "La description est requise",

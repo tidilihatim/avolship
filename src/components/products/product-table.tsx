@@ -77,7 +77,8 @@ export default function ProductTable({
   showSellerFilter = false,
   onProductAction,
 }: ProductTableProps) {
-  const t = useTranslations();
+  const t = useTranslations("products");
+  const tc = useTranslations("common");
   const router = useRouter();
   const pathname = usePathname();
 
@@ -146,11 +147,11 @@ export default function ProductTable({
   const getStatusBadge = (status: ProductStatus) => {
     switch (status) {
       case ProductStatus.ACTIVE:
-        return <Badge variant="default">Active</Badge>;
+        return <Badge variant="default">{t("statuses.active")}</Badge>;
       case ProductStatus.INACTIVE:
-        return <Badge variant="secondary">Inactive</Badge>;
+        return <Badge variant="secondary">{t("statuses.inactive")}</Badge>;
       case ProductStatus.OUT_OF_STOCK:
-        return <Badge variant="destructive">Out of Stock</Badge>;
+        return <Badge variant="destructive">{t("statuses.out_of_stock")}</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -179,9 +180,9 @@ export default function ProductTable({
 
       <Card>
         <CardHeader>
-          <CardTitle>Products Management</CardTitle>
+          <CardTitle>{t("productTable.title")}</CardTitle>
           <CardDescription>
-            Manage and view products across the platform
+            {t("productTable.description")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -189,7 +190,7 @@ export default function ProductTable({
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             <form onSubmit={handleSearchSubmit} className="flex gap-2 flex-1 max-w-sm">
               <Input
-                placeholder="Search products..."
+                placeholder={t("searchProducts")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="flex-1"
@@ -204,40 +205,40 @@ export default function ProductTable({
                 <SheetTrigger asChild>
                   <Button variant="outline" size="sm">
                     <Filter className="h-4 w-4 mr-2" />
-                    Filters
+                    {t("productTable.filters")}
                   </Button>
                 </SheetTrigger>
                 <SheetContent>
                   <SheetHeader>
-                    <SheetTitle>Filter Products</SheetTitle>
+                    <SheetTitle>{t("productTable.filterTitle")}</SheetTitle>
                     <SheetDescription>
-                      Filter products by various criteria
+                      {t("productTable.filterDescription")}
                     </SheetDescription>
                   </SheetHeader>
                   <div className="space-y-4 mt-6">
                     <div>
-                      <label className="text-sm font-medium">Status</label>
+                      <label className="text-sm font-medium">{t("filterByStatus")}</label>
                       <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger>
-                          <SelectValue placeholder="All Statuses" />
+                          <SelectValue placeholder={t("productTable.allStatuses")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value={ALL_STATUSES}>All Statuses</SelectItem>
-                          <SelectItem value={ProductStatus.ACTIVE}>Active</SelectItem>
-                          <SelectItem value={ProductStatus.INACTIVE}>Inactive</SelectItem>
-                          <SelectItem value={ProductStatus.OUT_OF_STOCK}>Out of Stock</SelectItem>
+                          <SelectItem value={ALL_STATUSES}>{t("productTable.allStatuses")}</SelectItem>
+                          <SelectItem value={ProductStatus.ACTIVE}>{t("statuses.active")}</SelectItem>
+                          <SelectItem value={ProductStatus.INACTIVE}>{t("statuses.inactive")}</SelectItem>
+                          <SelectItem value={ProductStatus.OUT_OF_STOCK}>{t("statuses.out_of_stock")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium">Warehouse</label>
+                      <label className="text-sm font-medium">{t("filterByWarehouse")}</label>
                       <Select value={warehouseFilter} onValueChange={setWarehouseFilter}>
                         <SelectTrigger>
-                          <SelectValue placeholder="All Warehouses" />
+                          <SelectValue placeholder={t("productTable.allWarehouses")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value={ALL_WAREHOUSES}>All Warehouses</SelectItem>
+                          <SelectItem value={ALL_WAREHOUSES}>{t("productTable.allWarehouses")}</SelectItem>
                           {allWarehouses.map((warehouse) => (
                             <SelectItem key={warehouse._id} value={warehouse._id}>
                               {warehouse.name} ({warehouse.country})
@@ -249,13 +250,13 @@ export default function ProductTable({
 
                     {showSellerFilter && (
                       <div>
-                        <label className="text-sm font-medium">Seller</label>
+                        <label className="text-sm font-medium">{t("filterBySeller")}</label>
                         <Select value={sellerFilter} onValueChange={setSellerFilter}>
                           <SelectTrigger>
-                            <SelectValue placeholder="All Sellers" />
+                            <SelectValue placeholder={t("productTable.allSellers")} />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={ALL_SELLERS}>All Sellers</SelectItem>
+                            <SelectItem value={ALL_SELLERS}>{t("productTable.allSellers")}</SelectItem>
                             {allSellers.map((seller) => (
                               <SelectItem key={seller._id} value={seller._id}>
                                 {seller.name} ({seller.email})
@@ -268,7 +269,7 @@ export default function ProductTable({
 
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-sm font-medium">Min Stock</label>
+                        <label className="text-sm font-medium">{t("productTable.minStock")}</label>
                         <Input
                           type="number"
                           placeholder="0"
@@ -277,7 +278,7 @@ export default function ProductTable({
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium">Max Stock</label>
+                        <label className="text-sm font-medium">{t("productTable.maxStock")}</label>
                         <Input
                           type="number"
                           placeholder="1000"
@@ -289,10 +290,10 @@ export default function ProductTable({
 
                     <div className="flex gap-2 pt-4">
                       <Button onClick={applyFilters} className="flex-1">
-                        Apply Filters
+                        {t("applyFilters")}
                       </Button>
                       <Button onClick={clearFilters} variant="outline" className="flex-1">
-                        Clear
+                        {t("productTable.clear")}
                       </Button>
                     </div>
                   </div>
@@ -302,51 +303,53 @@ export default function ProductTable({
           </div>
 
           {/* Products Table */}
-          <div className="border rounded-lg">
-            <Table>
+          <div className="border rounded-lg overflow-x-auto">
+            <Table className="min-w-[1000px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Code</TableHead>
-                  {showSellerFilter && <TableHead>Seller</TableHead>}
-                  <TableHead>Warehouse</TableHead>
-                  <TableHead>Total Stock</TableHead>
-                  <TableHead className="hidden lg:table-cell">Available</TableHead>
-                  <TableHead className="hidden lg:table-cell">Defective</TableHead>
-                  <TableHead className="hidden lg:table-cell">Confirmed</TableHead>
-                  <TableHead className="hidden xl:table-cell">In Transit</TableHead>
-                  <TableHead className="hidden xl:table-cell">Delivered</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t("productTable.columns.product")}</TableHead>
+                  <TableHead className="min-w-[140px] whitespace-nowrap">{t("productTable.columns.code")}</TableHead>
+                  {showSellerFilter && <TableHead>{t("productTable.seller")}</TableHead>}
+                  <TableHead>{t("productTable.columns.warehouse")}</TableHead>
+                  <TableHead>{t("table.totalStock")}</TableHead>
+                  <TableHead className="hidden lg:table-cell">{t("productTable.columns.available")}</TableHead>
+                  <TableHead className="hidden lg:table-cell">{t("table.defectiveQuantity")}</TableHead>
+                  <TableHead className="hidden lg:table-cell">{t("table.confirmed")}</TableHead>
+                  <TableHead className="hidden xl:table-cell">{t("table.inTransit")}</TableHead>
+                  <TableHead className="hidden xl:table-cell">{t("table.delivered")}</TableHead>
+                  <TableHead>{t("status")}</TableHead>
+                  <TableHead>{t("created")}</TableHead>
+                  <TableHead className="text-right">{tc("actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {products.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={showSellerFilter ? 13 : 12} className="text-center py-8">
-                      No products found
+                      {t("noProductsFound")}
                     </TableCell>
                   </TableRow>
                 ) : (
                   products.map((product) => (
                     <TableRow key={product._id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          {product.image ? (
-                            <img
-                              src={product.image.url}
-                              alt={product.name}
-                              width={40}
-                              height={40}
-                              className="rounded object-cover"
-                            />
-                          ) : (
-                            <div className="w-10 h-10 bg-muted rounded flex items-center justify-center">
-                              <Package className="h-5 w-5 text-muted-foreground" />
-                            </div>
-                          )}
-                          <div className="max-w-[200px]">
+                      <TableCell className="max-w-[200px]">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="shrink-0">
+                            {product.image ? (
+                              <img
+                                src={product.image.url}
+                                alt={product.name}
+                                width={40}
+                                height={40}
+                                className="rounded object-cover"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 bg-muted rounded flex items-center justify-center">
+                                <Package className="h-5 w-5 text-muted-foreground" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 overflow-hidden">
                             <div className="font-medium truncate" title={product.name}>
                               {product.name}
                             </div>
@@ -356,7 +359,7 @@ export default function ProductTable({
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <div>
                           <div className="font-mono text-sm">{product.code}</div>
                           {product.variantCode && (
@@ -466,18 +469,18 @@ export default function ProductTable({
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => onProductAction?.('view', product._id)}>
                               <Eye className="h-4 w-4 mr-2" />
-                              View
+                              {tc("view")}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => onProductAction?.('edit', product._id)}>
                               <Edit className="h-4 w-4 mr-2" />
-                              Edit
+                              {tc("edit")}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => onProductAction?.('delete', product._id)}
                               className="text-destructive"
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
+                              {tc("delete")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -492,7 +495,7 @@ export default function ProductTable({
           {/* Pagination */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Items per page:</span>
+              <span>{t("productTable.itemsPerPage")}</span>
               <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
                 <SelectTrigger className="w-20">
                   <SelectValue />
@@ -505,9 +508,11 @@ export default function ProductTable({
                 </SelectContent>
               </Select>
               <span>
-                Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
-                {pagination.total} products
+                {t("productTable.showing", {
+                  from: (pagination.page - 1) * pagination.limit + 1,
+                  to: Math.min(pagination.page * pagination.limit, pagination.total),
+                  total: pagination.total,
+                })}
               </span>
             </div>
 
@@ -518,7 +523,7 @@ export default function ProductTable({
                 onClick={() => handlePageChange(pagination.page - 1)}
                 disabled={pagination.page <= 1}
               >
-                Previous
+                {t("productTable.previous")}
               </Button>
 
               <div className="flex items-center gap-1">
@@ -553,7 +558,7 @@ export default function ProductTable({
                 onClick={() => handlePageChange(pagination.page + 1)}
                 disabled={pagination.page >= pagination.totalPages}
               >
-                Next
+                {t("productTable.next")}
               </Button>
             </div>
           </div>
