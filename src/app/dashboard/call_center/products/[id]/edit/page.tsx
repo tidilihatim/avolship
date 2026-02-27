@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { getProductById, getAllWarehouses } from "@/app/actions/product";
+import { getExpeditionStockForProduct } from "@/app/actions/expedition";
 import ProductEditForm from "./product-edit-form";
 
 export const metadata: Metadata = {
@@ -23,10 +24,11 @@ export default async function CallCenterProductEditPage({ params }: ProductEditP
   const productId = resolvedParams.id;
   const t = await getTranslations("products");
 
-  // Fetch product details and warehouses in parallel
-  const [productResult, warehouses] = await Promise.all([
+  // Fetch product details, warehouses, and expedition stock in parallel
+  const [productResult, warehouses, expeditionStock] = await Promise.all([
     getProductById(productId),
-    getAllWarehouses()
+    getAllWarehouses(),
+    getExpeditionStockForProduct(productId)
   ]);
 
   if (!productResult.success || !productResult.product) {
@@ -54,6 +56,7 @@ export default async function CallCenterProductEditPage({ params }: ProductEditP
         product={productResult.product}
         warehouses={warehouses}
         productId={productId}
+        expeditionStock={expeditionStock}
         redirectPath={`/dashboard/call_center/products/${productId}`}
       />
     </div>

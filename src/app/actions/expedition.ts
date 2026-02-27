@@ -1291,8 +1291,8 @@ export const updateExpeditionStock = withDbConnection(async (
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return { success: false, message: 'Unauthorized' };
     const user = await User.findById(session.user.id) as IUser | null;
-    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR)) {
-      return { success: false, message: 'Only admins and moderators can update expedition stock' };
+    if (!user || (user.role !== UserRole.ADMIN && user.role !== UserRole.MODERATOR && user.role !== UserRole.CALL_CENTER)) {
+      return { success: false, message: 'Only admins, moderators and call center agents can update expedition stock' };
     }
 
     // Calculate current total from all expeditions for this product + warehouse
@@ -1357,9 +1357,10 @@ export const updateExpeditionStock = withDbConnection(async (
     const movementReason = difference > 0
       ? StockMovementReason.MANUAL_ADJUSTMENT_INCREASE
       : StockMovementReason.MANUAL_ADJUSTMENT_DECREASE;
+    const editorRole = user.role === UserRole.CALL_CENTER ? 'call center' : 'admin';
     const movementNote = difference > 0
-      ? `Stock increased by ${absDifference} via admin product edit (expedition ${latestExpedition.expeditionCode})`
-      : `Stock decreased by ${absDifference} via admin product edit (expedition ${latestExpedition.expeditionCode})`;
+      ? `Stock increased by ${absDifference} via ${editorRole} product edit (expedition ${latestExpedition.expeditionCode})`
+      : `Stock decreased by ${absDifference} via ${editorRole} product edit (expedition ${latestExpedition.expeditionCode})`;
 
     await StockHistory.create({
       productId: new mongoose.Types.ObjectId(productId),
