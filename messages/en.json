@@ -2808,7 +2808,10 @@
       "errorMessage": "Failed to update order status",
       "noChangesMessage": "No changes detected. Please select a different status or add a comment.",
       "updateStockLabel": "Update stock levels",
-      "updateStockDescription": "Automatically return stock to inventory when changing to this status. This will increase stock quantities for all products in this order."
+      "updateStockDescription": "Automatically return stock to inventory when changing to this status. This will increase stock quantities for all products in this order.",
+      "groupBeforeConfirmation": "Before Confirmation",
+      "groupAfterConfirmation": "After Confirmation",
+      "groupOther": "Other"
     },
 
     "discountDialog": {

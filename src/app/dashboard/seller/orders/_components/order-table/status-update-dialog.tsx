@@ -16,7 +16,10 @@ import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -283,13 +286,80 @@ export default function StatusUpdateDialog({
                   <SelectValue placeholder={t("statusUpdate.selectStatus")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.values(OrderStatus)
-                    .filter((status) => status !== OrderStatus.DOUBLE)
-                    .map((status) => (
+                  <SelectGroup>
+                    <SelectLabel>{t("statusUpdate.groupBeforeConfirmation")}</SelectLabel>
+                    {([
+                      OrderStatus.PENDING,
+                      OrderStatus.CONFIRMED,
+                      OrderStatus.CANCELLED,
+                      OrderStatus.WRONG_NUMBER,
+                      OrderStatus.UNREACHED,
+                      OrderStatus.BUSY,
+                      OrderStatus.NO_ANSWER,
+                      OrderStatus.ASKING_FOR_DISCOUNT,
+                      OrderStatus.NOT_READY,
+                      OrderStatus.MISTAKEN_ORDER,
+                      OrderStatus.OUT_OF_DELIVERY_ZONE,
+                      OrderStatus.EXPIRED,
+                    ] as OrderStatus[]).map((status) => (
                       <SelectItem key={status} value={status}>
                         {getStatusBadge(status).label}
                       </SelectItem>
                     ))}
+                  </SelectGroup>
+                  <SelectSeparator />
+                  <SelectGroup>
+                    <SelectLabel>{t("statusUpdate.groupAfterConfirmation")}</SelectLabel>
+                    {([
+                      OrderStatus.IN_PREPARATION,
+                      OrderStatus.OUT_FOR_DELIVERY,
+                      OrderStatus.DELIVERED,
+                      OrderStatus.DELIVERY_FAILED,
+                      OrderStatus.RETURNED,
+                      OrderStatus.CANCELLED_AT_DELIVERY,
+                      OrderStatus.ALREADY_RECEIVED,
+                      OrderStatus.PAID,
+                      OrderStatus.REFUNDED,
+                    ] as OrderStatus[]).map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {getStatusBadge(status).label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <SelectSeparator />
+                  <SelectGroup>
+                    <SelectLabel>{t("statusUpdate.groupOther")}</SelectLabel>
+                    {Object.values(OrderStatus)
+                      .filter((status) => ![
+                        OrderStatus.DOUBLE,
+                        OrderStatus.PENDING,
+                        OrderStatus.CONFIRMED,
+                        OrderStatus.CANCELLED,
+                        OrderStatus.WRONG_NUMBER,
+                        OrderStatus.UNREACHED,
+                        OrderStatus.BUSY,
+                        OrderStatus.NO_ANSWER,
+                        OrderStatus.ASKING_FOR_DISCOUNT,
+                        OrderStatus.NOT_READY,
+                        OrderStatus.MISTAKEN_ORDER,
+                        OrderStatus.OUT_OF_DELIVERY_ZONE,
+                        OrderStatus.EXPIRED,
+                        OrderStatus.IN_PREPARATION,
+                        OrderStatus.OUT_FOR_DELIVERY,
+                        OrderStatus.DELIVERED,
+                        OrderStatus.DELIVERY_FAILED,
+                        OrderStatus.RETURNED,
+                        OrderStatus.CANCELLED_AT_DELIVERY,
+                        OrderStatus.ALREADY_RECEIVED,
+                        OrderStatus.PAID,
+                        OrderStatus.REFUNDED,
+                      ].includes(status))
+                      .map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {getStatusBadge(status).label}
+                        </SelectItem>
+                      ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>

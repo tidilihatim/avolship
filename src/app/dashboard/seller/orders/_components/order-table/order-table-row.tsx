@@ -24,6 +24,7 @@ import {
   DollarSign,
   Image,
   Star,
+  Edit3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -1105,6 +1106,7 @@ export default function OrderTableRow({
                   className="cursor-pointer"
                   onClick={() => onStatusUpdate(order)}
                 >
+                  <Edit3 className="mr-2 h-4 w-4"/>
                   {t("orders.actions.updateStatus")}
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -1142,6 +1144,7 @@ export default function OrderTableRow({
                   className="cursor-pointer"
                   onClick={() => onStatusUpdate(order)}
                 >
+                  <Edit3 className="mr-2 h-4 w-4"/>
                   {t("orders.actions.updateStatus")}
                 </DropdownMenuItem>
                 {onAssignRider && (

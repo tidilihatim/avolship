@@ -2774,7 +2774,10 @@
       "errorMessage": "Échec de la mise à jour du statut de la commande",
       "noChangesMessage": "Aucun changement détecté. Veuillez sélectionner un statut différent ou ajouter un commentaire.",
       "updateStockLabel": "Mettre à jour les niveaux de stock",
-      "updateStockDescription": "Retourner automatiquement le stock à l'inventaire lors du changement vers ce statut. Cela augmentera les quantités de stock pour tous les produits de cette commande."
+      "updateStockDescription": "Retourner automatiquement le stock à l'inventaire lors du changement vers ce statut. Cela augmentera les quantités de stock pour tous les produits de cette commande.",
+      "groupBeforeConfirmation": "Avant Confirmation",
+      "groupAfterConfirmation": "Après Confirmation",
+      "groupOther": "Autre"
     },
 
     "discountDialog": {

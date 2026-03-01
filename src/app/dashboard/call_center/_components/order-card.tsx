@@ -29,7 +29,10 @@ import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -58,24 +61,7 @@ import { cn, formatPrice } from '@/lib/utils';
 import { MakeCallButton } from '@/components/call-center/make-call-button';
 import { Checkbox } from '@/components/ui/checkbox';
 
-// Order Status enum - Complete list from order model
-export enum OrderStatus {
-  PENDING = 'pending',
-  CONFIRMED = 'confirmed',
-  CANCELLED = 'cancelled',
-  SHIPPED = 'shipped',
-  ASSIGNED_TO_DELIVERY = 'assigned_to_delivery',
-  ACCEPTED_BY_DELIVERY = 'accepted_by_delivery',
-  IN_TRANSIT = 'in_transit',
-  OUT_FOR_DELIVERY = 'out_for_delivery',
-  DELIVERED = 'delivered',
-  DELIVERY_FAILED = 'delivery_failed',
-  REFUNDED = 'refunded',
-  WRONG_NUMBER = 'wrong_number',
-  DOUBLE = 'double',
-  UNREACHED = 'unreached',
-  EXPIRED = 'expired',
-}
+import { OrderStatus } from '@/lib/db/models/order';
 
 // Call Status enum
 export enum CallStatus {
@@ -476,21 +462,46 @@ function EnhancedOrderCard({
                   <SelectValue placeholder={t('callCenter.queue.statusDialog.selectStatus')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={OrderStatus.PENDING}>{t('callCenter.queue.badges.pending')}</SelectItem>
-                  <SelectItem value={OrderStatus.CONFIRMED}>{t('callCenter.queue.badges.confirmed')}</SelectItem>
-                  <SelectItem value={OrderStatus.CANCELLED}>{t('callCenter.queue.badges.cancelled')}</SelectItem>
-                  <SelectItem value={OrderStatus.SHIPPED}>{t('callCenter.queue.badges.shipped')}</SelectItem>
-                  <SelectItem value={OrderStatus.ASSIGNED_TO_DELIVERY}>{t('callCenter.queue.badges.assigned_to_delivery')}</SelectItem>
-                  <SelectItem value={OrderStatus.ACCEPTED_BY_DELIVERY}>{t('callCenter.queue.badges.accepted_by_delivery')}</SelectItem>
-                  <SelectItem value={OrderStatus.IN_TRANSIT}>{t('callCenter.queue.badges.in_transit')}</SelectItem>
-                  <SelectItem value={OrderStatus.OUT_FOR_DELIVERY}>{t('callCenter.queue.badges.out_for_delivery')}</SelectItem>
-                  <SelectItem value={OrderStatus.DELIVERED}>{t('callCenter.queue.badges.delivered')}</SelectItem>
-                  <SelectItem value={OrderStatus.DELIVERY_FAILED}>{t('callCenter.queue.badges.delivery_failed')}</SelectItem>
-                  <SelectItem value={OrderStatus.REFUNDED}>{t('callCenter.queue.badges.refunded')}</SelectItem>
-                  <SelectItem value={OrderStatus.WRONG_NUMBER}>{t('callCenter.queue.badges.wrong_number')}</SelectItem>
-                  <SelectItem value={OrderStatus.DOUBLE}>{t('callCenter.queue.badges.double')}</SelectItem>
-                  <SelectItem value={OrderStatus.UNREACHED}>{t('callCenter.queue.badges.unreached')}</SelectItem>
-                  <SelectItem value={OrderStatus.EXPIRED}>{t('callCenter.queue.badges.expired')}</SelectItem>
+                  <SelectGroup>
+                    <SelectLabel>{t('callCenter.queue.statusDialog.groupBeforeConfirmation')}</SelectLabel>
+                    <SelectItem value={OrderStatus.PENDING}>{t('callCenter.queue.badges.pending')}</SelectItem>
+                    <SelectItem value={OrderStatus.CONFIRMED}>{t('callCenter.queue.badges.confirmed')}</SelectItem>
+                    <SelectItem value={OrderStatus.CANCELLED}>{t('callCenter.queue.badges.cancelled')}</SelectItem>
+                    <SelectItem value={OrderStatus.WRONG_NUMBER}>{t('callCenter.queue.badges.wrong_number')}</SelectItem>
+                    <SelectItem value={OrderStatus.UNREACHED}>{t('callCenter.queue.badges.unreached')}</SelectItem>
+                    <SelectItem value={OrderStatus.BUSY}>{t('callCenter.queue.badges.busy')}</SelectItem>
+                    <SelectItem value={OrderStatus.NO_ANSWER}>{t('callCenter.queue.badges.no_answer')}</SelectItem>
+                    <SelectItem value={OrderStatus.ASKING_FOR_DISCOUNT}>{t('callCenter.queue.badges.asking_for_discount')}</SelectItem>
+                    <SelectItem value={OrderStatus.NOT_READY}>{t('callCenter.queue.badges.not_ready')}</SelectItem>
+                    <SelectItem value={OrderStatus.MISTAKEN_ORDER}>{t('callCenter.queue.badges.mistaken_order')}</SelectItem>
+                    <SelectItem value={OrderStatus.OUT_OF_DELIVERY_ZONE}>{t('callCenter.queue.badges.out_of_delivery_zone')}</SelectItem>
+                    <SelectItem value={OrderStatus.EXPIRED}>{t('callCenter.queue.badges.expired')}</SelectItem>
+                  </SelectGroup>
+                  <SelectSeparator />
+                  <SelectGroup>
+                    <SelectLabel>{t('callCenter.queue.statusDialog.groupAfterConfirmation')}</SelectLabel>
+                    <SelectItem value={OrderStatus.IN_PREPARATION}>{t('callCenter.queue.badges.in_preparation')}</SelectItem>
+                    <SelectItem value={OrderStatus.OUT_FOR_DELIVERY}>{t('callCenter.queue.badges.out_for_delivery')}</SelectItem>
+                    <SelectItem value={OrderStatus.DELIVERED}>{t('callCenter.queue.badges.delivered')}</SelectItem>
+                    <SelectItem value={OrderStatus.DELIVERY_FAILED}>{t('callCenter.queue.badges.delivery_failed')}</SelectItem>
+                    <SelectItem value={OrderStatus.RETURNED}>{t('callCenter.queue.badges.returned')}</SelectItem>
+                    <SelectItem value={OrderStatus.CANCELLED_AT_DELIVERY}>{t('callCenter.queue.badges.cancelled_at_delivery')}</SelectItem>
+                    <SelectItem value={OrderStatus.ALREADY_RECEIVED}>{t('callCenter.queue.badges.already_received')}</SelectItem>
+                    <SelectItem value={OrderStatus.PAID}>{t('callCenter.queue.badges.paid')}</SelectItem>
+                    <SelectItem value={OrderStatus.REFUNDED}>{t('callCenter.queue.badges.refunded')}</SelectItem>
+                  </SelectGroup>
+                  <SelectSeparator />
+                  <SelectGroup>
+                    <SelectLabel>{t('callCenter.queue.statusDialog.groupOther')}</SelectLabel>
+                    <SelectItem value={OrderStatus.SHIPPED}>{t('callCenter.queue.badges.shipped')}</SelectItem>
+                    <SelectItem value={OrderStatus.ASSIGNED_TO_DELIVERY}>{t('callCenter.queue.badges.assigned_to_delivery')}</SelectItem>
+                    <SelectItem value={OrderStatus.ACCEPTED_BY_DELIVERY}>{t('callCenter.queue.badges.accepted_by_delivery')}</SelectItem>
+                    <SelectItem value={OrderStatus.IN_TRANSIT}>{t('callCenter.queue.badges.in_transit')}</SelectItem>
+                    <SelectItem value={OrderStatus.AWAITING_DISPATCH}>{t('callCenter.queue.badges.awaiting_dispatch')}</SelectItem>
+                    <SelectItem value={OrderStatus.RETURN_IN_PROGRESS}>{t('callCenter.queue.badges.return_in_progress')}</SelectItem>
+                    <SelectItem value={OrderStatus.PROCESSED}>{t('callCenter.queue.badges.processed')}</SelectItem>
+                    <SelectItem value={OrderStatus.REFUND_IN_PROGRESS}>{t('callCenter.queue.badges.refund_in_progress')}</SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
