@@ -1101,16 +1101,16 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
             break;
           }
 
-          // Find approved expeditions for this product
+          // Find active expeditions for this product (same logic as single order creation)
           const expeditions = await Expedition.find({
             warehouseId: warehouseId,
             'products.productId': productDoc._id,
-            status: ExpeditionStatus.APPROVED,
+            status: { $nin: [ExpeditionStatus.CANCELLED, ExpeditionStatus.REJECTED] },
           }).lean();
 
           if (!expeditions || expeditions.length === 0) {
             hasError = true;
-            errorMessage = `Product ${product.id} has no approved expeditions`;
+            errorMessage = `Product ${product.id} has no active expeditions`;
             break;
           }
 

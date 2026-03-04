@@ -109,11 +109,18 @@ export default function ImportOrdersPage() {
       const result = await createBulkOrder(validOrders, selectedWarehouse);
       
       if (result.success) {
-        toast.success(`Successfully imported ${result.successCount} out of ${result.totalCount} orders`);
-        if (result.errorCount && result.errorCount > 0) {
-          toast.error(`${result.errorCount} orders failed to import`);
+        if ((result.successCount ?? 0) > 0) {
+          toast.success(`Successfully imported ${result.successCount} out of ${result.totalCount} orders`);
+          if (result.errorCount && result.errorCount > 0) {
+            toast.error(`${result.errorCount} orders failed to import`);
+          }
+          router.push('/dashboard/seller/orders');
+        } else {
+          // All orders failed — show the first error reason to help diagnose
+          const firstError = result.results?.find((r: any) => !r.success);
+          const reason = firstError?.message || result.message || 'All orders failed to import';
+          toast.error(`Import failed: ${reason}`);
         }
-        router.push('/dashboard/seller/orders');
       } else {
         toast.error(result.message || 'Failed to import orders');
       }
