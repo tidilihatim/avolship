@@ -1129,7 +1129,7 @@ export const createBulkOrder = withDbConnection(async (ordersData: any[], wareho
           orderProducts.push({
             productId: (productDoc._id as any).toString(),
             quantity: product.quantity,
-            unitPrice: expeditionProduct.unitPrice,
+            unitPrice: product.price,
             expeditionId: (expedition._id as any).toString(),
           });
         }
