@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Activity, CheckCircle, XCircle, Clock, TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface WebhookLogsStatsProps {
   stats: {
@@ -14,6 +15,7 @@ interface WebhookLogsStatsProps {
 }
 
 export function WebhookLogsStats({ stats }: WebhookLogsStatsProps) {
+  const t = useTranslations('webhookLogs.stats');
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'success':
@@ -63,7 +65,7 @@ export function WebhookLogsStats({ stats }: WebhookLogsStatsProps) {
       {/* Total Logs */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Logs</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('totalLogs')}</CardTitle>
           <Activity className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -74,7 +76,7 @@ export function WebhookLogsStats({ stats }: WebhookLogsStatsProps) {
       {/* Success Rate */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('successRate')}</CardTitle>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -91,7 +93,7 @@ export function WebhookLogsStats({ stats }: WebhookLogsStatsProps) {
       {/* Avg Processing Time */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Avg Processing</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('avgProcessing')}</CardTitle>
           <Clock className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -102,7 +104,7 @@ export function WebhookLogsStats({ stats }: WebhookLogsStatsProps) {
       {/* Status Breakdown */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Status Breakdown</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('statusBreakdown')}</CardTitle>
           <CheckCircle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>

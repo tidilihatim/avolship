@@ -2232,7 +2232,8 @@
         "connected": "Connected",
         "paused": "Paused",
         "available": "Available",
-        "comingSoon": "Coming Soon"
+        "comingSoon": "Coming Soon",
+        "pending": "Pending Setup"
       },
       "actions": {
         "connect": "Connect {platform}",
@@ -2243,6 +2244,7 @@
         "disconnect": "Disconnect",
         "disconnecting": "Disconnecting...",
         "unavailable": "Unavailable",
+        "completeSetup": "Complete Setup",
         "viewLogs": "View Logs"
       },
       "stats": {
@@ -2273,6 +2275,7 @@
         "youcanConnected": "YouCan integration connected successfully! Orders will now sync automatically.",
         "woocommerceConnected": "WooCommerce integration connected successfully! Orders will now sync automatically.",
         "shopifyConnected": "Shopify integration connected successfully! Orders will now sync automatically.",
+        "storeepConnected": "Storeep integration connected successfully! Orders will now sync automatically.",
         "defaultConnected": "Integration connected successfully!",
         "paused": "{platform} integration paused successfully",
         "resumed": "{platform} integration resumed successfully",
@@ -2355,6 +2358,107 @@
     "considerations": "Considerations",
     "cancel": "Cancel",
     "continueWith": "Continue with"
+  },
+  "storeepSetup": {
+    "title": "Connect Storeep Store",
+    "subtitle": "Follow these steps to connect your Storeep store. Orders will automatically sync to Avolship once the webhook is configured.",
+    "preparing": "Preparing integration...",
+    "steps": {
+      "step1": {
+        "label": "Go to Storeep Webhooks",
+        "description": "Open your Storeep dashboard and navigate to webhook settings.",
+        "openButton": "Open Storeep Webhooks"
+      },
+      "step2": {
+        "label": "Configure the webhook",
+        "description": "Fill in the following fields exactly as shown:",
+        "fields": {
+          "name": "Name",
+          "nameValue": "avolship",
+          "type": "Type",
+          "typeValue": "API event",
+          "event": "Event",
+          "eventValue": "order created",
+          "format": "Format",
+          "formatValue": "JSON"
+        }
+      },
+      "step3": {
+        "label": "Paste the Webhook URL",
+        "description": "Copy and paste this URL into the URL field in Storeep:"
+      },
+      "step4": {
+        "label": "Save the webhook",
+        "description": "Click Save in Storeep, then click \"I've set it up\" below to complete the connection."
+      }
+    },
+    "cancel": "Cancel",
+    "confirm": "I've set it up",
+    "confirming": "Confirming...",
+    "copied": "Copied!"
+  },
+  "webhookLogs": {
+    "header": {
+      "back": "Back",
+      "title": "Webhook Logs",
+      "integrationId": "Integration ID: {id}",
+      "refresh": "Refresh",
+      "retention": "Webhook logs are automatically retained for 30 days from their creation date. After this period, logs are permanently deleted to optimize system performance and comply with data management policies.",
+      "retentionLabel": "Data Retention Policy:"
+    },
+    "container": {
+      "noLogs": "No logs found",
+      "fetchError": "Failed to fetch logs",
+      "unexpectedError": "An unexpected error occurred"
+    },
+    "stats": {
+      "totalLogs": "Total Logs",
+      "successRate": "Success Rate",
+      "avgProcessing": "Avg Processing",
+      "statusBreakdown": "Status Breakdown"
+    },
+    "filters": {
+      "searchPlaceholder": "Search by webhook ID, order ID, customer name, or error message...",
+      "filtersButton": "Filters",
+      "status": "Status",
+      "allStatuses": "All statuses",
+      "platform": "Platform",
+      "allPlatforms": "All platforms",
+      "fromDate": "From Date",
+      "toDate": "To Date",
+      "pickDate": "Pick a date",
+      "clear": "Clear",
+      "applyFilters": "Apply Filters",
+      "search": "Search"
+    },
+    "list": {
+      "noLogs": "No webhook logs found",
+      "noLogsDescription": "No webhook logs match your current filters. Try adjusting your search criteria.",
+      "error": "Error",
+      "orderInfo": "Order Information",
+      "externalOrderId": "External Order ID",
+      "internalOrderId": "Internal Order ID",
+      "customer": "Customer",
+      "amount": "Amount",
+      "products": "Products",
+      "items": "{count} items",
+      "processingTimeline": "Processing Timeline",
+      "technicalDetails": "Technical Details",
+      "requestUrl": "Request URL",
+      "responseStatus": "Response Status",
+      "processingTime": "Processing Time",
+      "startedAt": "Started At",
+      "completedAt": "Completed At",
+      "signatureValidation": "Signature Validation",
+      "valid": "Valid",
+      "invalid": "Invalid"
+    },
+    "pagination": {
+      "showing": "Showing {from} to {to} of {total} results",
+      "rowsPerPage": "Rows per page:",
+      "previous": "Previous",
+      "next": "Next"
+    }
   },
    "orders": {
     "common":{

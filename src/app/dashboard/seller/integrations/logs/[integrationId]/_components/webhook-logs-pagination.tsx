@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface WebhookLogsPaginationProps {
   pagination: {
@@ -30,6 +31,7 @@ export function WebhookLogsPagination({
   onLimitChange,
   loading
 }: WebhookLogsPaginationProps) {
+  const t = useTranslations('webhookLogs.pagination');
   const { page, limit, total, totalPages, hasNextPage, hasPrevPage } = pagination;
 
   const startItem = (page - 1) * limit + 1;
@@ -70,12 +72,11 @@ export function WebhookLogsPagination({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
       <div className="flex items-center gap-4">
         <div className="text-sm text-muted-foreground">
-          Showing {startItem.toLocaleString()} to {endItem.toLocaleString()} of{' '}
-          {total.toLocaleString()} results
+          {t('showing', { from: startItem.toLocaleString(), to: endItem.toLocaleString(), total: total.toLocaleString() })}
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Rows per page:</span>
+          <span className="text-sm text-muted-foreground">{t('rowsPerPage')}</span>
           <Select
             value={limit.toString()}
             onValueChange={(value) => onLimitChange(parseInt(value))}
@@ -114,7 +115,7 @@ export function WebhookLogsPagination({
           disabled={!hasPrevPage || loading}
         >
           <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Previous</span>
+          <span className="hidden sm:inline">{t('previous')}</span>
         </Button>
 
         {/* Page Numbers */}
@@ -145,7 +146,7 @@ export function WebhookLogsPagination({
           onClick={() => onPageChange(page + 1)}
           disabled={!hasNextPage || loading}
         >
-          <span className="hidden sm:inline">Next</span>
+          <span className="hidden sm:inline">{t('next')}</span>
           <ChevronRight className="h-4 w-4" />
         </Button>
 

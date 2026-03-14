@@ -172,18 +172,20 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                   </div>
                   <Badge 
                     variant={
-                      isConnected 
-                        ? integration.status === 'paused' ? 'secondary' : 'default'
-                        : platform.status === 'available' 
-                          ? 'outline' 
+                      isConnected
+                        ? integration.status === 'paused' || integration.status === 'pending' ? 'secondary' : 'default'
+                        : platform.status === 'available'
+                          ? 'outline'
                           : 'secondary'
                     }
                     className="text-xs"
                   >
-                    {isConnected 
-                      ? integration.status === 'paused' ? t('status.paused') : t('status.connected')
-                      : platform.status === 'available' 
-                        ? t('status.available') 
+                    {isConnected
+                      ? integration.status === 'paused' ? t('status.paused')
+                        : integration.status === 'pending' ? t('status.pending')
+                        : t('status.connected')
+                      : platform.status === 'available'
+                        ? t('status.available')
                         : t('status.comingSoon')
                     }
                   </Badge>
@@ -205,31 +207,33 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
 
                 {isConnected ? (
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{t('stats.connected', { date: new Date(integration.createdAt).toLocaleDateString() })}</span>
-                      <div className="flex items-center gap-2">
-                        <span>{t('stats.orders', { count: integration.syncStats?.totalOrdersSynced || 0 })}</span>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                              <MoreVertical className="h-3 w-3" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem 
-                              onClick={() => router.push(`/dashboard/seller/integrations/logs/${integration._id}`)}
-                            >
-                              {tActions('viewLogs')}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                    {integration.status !== 'pending' && (
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{t('stats.connected', { date: new Date(integration.createdAt).toLocaleDateString() })}</span>
+                        <div className="flex items-center gap-2">
+                          <span>{t('stats.orders', { count: integration.syncStats?.totalOrdersSynced || 0 })}</span>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                <MoreVertical className="h-3 w-3" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={() => router.push(`/dashboard/seller/integrations/logs/${integration._id}`)}
+                              >
+                                {tActions('viewLogs')}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     <div className="flex gap-2">
                       {integration.status === 'connected' ? (
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="flex-1"
                           disabled={loadingActions[integration._id]}
                           onClick={() => handlePauseIntegration(integration._id, platform.name)}
@@ -237,19 +241,28 @@ export function IntegrationsPlatforms({ platforms, userIntegrations, onPlatformS
                           {loadingActions[integration._id] ? tActions('pausing') : tActions('pause')}
                         </Button>
                       ) : integration.status === 'paused' ? (
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="flex-1"
                           disabled={loadingActions[integration._id]}
                           onClick={() => handleResumeIntegration(integration._id, platform.name)}
                         >
                           {loadingActions[integration._id] ? tActions('resuming') : tActions('resume')}
                         </Button>
+                      ) : integration.status === 'pending' ? (
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => onPlatformSelect(platform.id)}
+                        >
+                          {tActions('completeSetup')}
+                        </Button>
                       ) : (
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                        <Button
+                          variant="outline"
+                          size="sm"
                           className="flex-1"
                           disabled={true}
                         >

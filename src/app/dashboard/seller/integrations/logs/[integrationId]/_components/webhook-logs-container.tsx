@@ -11,6 +11,7 @@ import { WebhookLogsPagination } from './webhook-logs-pagination';
 import { WebhookLogsLoading } from './webhook-logs-loading';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface WebhookLogsContainerProps {
   integrationId: string;
@@ -27,6 +28,7 @@ export function WebhookLogsContainer({
 }: WebhookLogsContainerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('webhookLogs.container');
   
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<WebhookLogsResponse['data'] | null>(null);
@@ -46,10 +48,10 @@ export function WebhookLogsContainer({
       if (result.success && result.data) {
         setData(result.data);
       } else {
-        setError(result.error || 'Failed to fetch logs');
+        setError(result.error || t('fetchError'));
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError(t('unexpectedError'));
     } finally {
       setLoading(false);
     }
@@ -124,7 +126,7 @@ export function WebhookLogsContainer({
       <div className="space-y-6">
         <WebhookLogsHeader integrationId={integrationId} />
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No logs found</p>
+          <p className="text-muted-foreground">{t('noLogs')}</p>
         </div>
       </div>
     );

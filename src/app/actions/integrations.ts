@@ -66,8 +66,27 @@ async function createDefaultPlatforms() {
       settings: {
         supportedFeatures: [
           'WordPress integration',
-          'Custom workflows', 
+          'Custom workflows',
           'Flexible setup'
+        ]
+      }
+    },
+    {
+      platformId: 'storeep',
+      name: 'Storeep',
+      description: 'Moroccan e-commerce platform',
+      iconPath: '/icons/storeep.png',
+      isActive: true,
+      directIntegrationEnabled: true,
+      googleSheetsEnabled: false,
+      isRecommended: false,
+      sortOrder: 4,
+      settings: {
+        apiEndpoint: 'https://app.storeep.com',
+        supportedFeatures: [
+          'Real-time orders',
+          'Auto fulfillment',
+          'Webhook integration'
         ]
       }
     }
@@ -89,11 +108,8 @@ export async function getIntegrationPlatforms() {
   try {
     await connectToDatabase();
     
-    // Check if any platforms exist, if not create defaults
-    const platformCount = await IntegrationPlatform.countDocuments();
-    if (platformCount === 0) {
-      await createDefaultPlatforms();
-    }
+    // Ensure all default platforms exist (safe to call always — checks per platform)
+    await createDefaultPlatforms();
     
     const platforms = await IntegrationPlatform.find({ 
       isActive: true 
@@ -716,5 +732,92 @@ async function createWooCommerceWebhooksServerAction(storeUrl: string, consumerK
     console.log('Successfully created WooCommerce webhook');
   } catch (error) {
     console.error('Failed to create WooCommerce webhooks:', error);
+  }
+}
+
+// Create Storeep integration and return the webhook URL
+export async function createStoreepIntegration(warehouseId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    await connectToDatabase();
+
+    // Check if already exists
+    const existing = await UserIntegration.findOne({
+      userId: session.user.id,
+      warehouseId,
+      platformId: 'storeep',
+      isActive: true
+    });
+
+    if (existing) {
+      const webhookUrl = `${process.env.NEXT_PUBLIC_SOCKET_URL}/api/webhooks/storeep?integrationId=${existing._id}`;
+      return {
+        success: true,
+        data: {
+          integrationId: existing._id.toString(),
+          webhookUrl,
+          status: existing.status
+        }
+      };
+    }
+
+    const integration = await UserIntegration.create({
+      userId: session.user.id,
+      warehouseId,
+      platformId: 'storeep',
+      integrationMethod: IntegrationMethod.DIRECT,
+      status: IntegrationStatus.PENDING,
+      connectionData: {},
+      isActive: true,
+      syncStats: { totalOrdersSynced: 0, syncErrors: 0 }
+    });
+
+    const webhookUrl = `${process.env.NEXT_PUBLIC_SOCKET_URL}/api/webhooks/storeep?integrationId=${integration._id}`;
+
+    return {
+      success: true,
+      data: {
+        integrationId: integration._id.toString(),
+        webhookUrl,
+        status: integration.status
+      }
+    };
+  } catch (error) {
+    console.error('Error creating Storeep integration:', error);
+    return { success: false, error: 'Failed to create integration' };
+  }
+}
+
+// Mark Storeep integration as connected after user sets up webhook
+export async function confirmStoreepIntegration(integrationId: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    await connectToDatabase();
+
+    const integration = await UserIntegration.findOne({
+      _id: integrationId,
+      userId: session.user.id,
+      platformId: 'storeep'
+    });
+
+    if (!integration) {
+      return { success: false, error: 'Integration not found' };
+    }
+
+    integration.status = IntegrationStatus.CONNECTED;
+    await integration.save();
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error confirming Storeep integration:', error);
+    return { success: false, error: 'Failed to confirm integration' };
   }
 }

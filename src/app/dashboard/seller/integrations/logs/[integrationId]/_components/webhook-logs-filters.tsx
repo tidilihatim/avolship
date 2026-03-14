@@ -21,6 +21,7 @@ import { CalendarIcon, Search, X, Filter } from 'lucide-react';
 import { format } from 'date-fns';
 import { WebhookLogsFilters as Filters } from '@/app/actions/webhook-logs';
 import { WebhookStatus } from '@/lib/db/models/webhook-log';
+import { useTranslations } from 'next-intl';
 
 interface WebhookLogsFiltersProps {
   filters: Filters;
@@ -29,6 +30,7 @@ interface WebhookLogsFiltersProps {
 }
 
 export function WebhookLogsFilters({ filters, onFiltersChange, loading }: WebhookLogsFiltersProps) {
+  const t = useTranslations('webhookLogs.filters');
   const [showFilters, setShowFilters] = useState(false);
   const [localFilters, setLocalFilters] = useState<Filters>(filters);
   const [dateFrom, setDateFrom] = useState<Date | undefined>(
@@ -70,7 +72,7 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by webhook ID, order ID, customer name, or error message..."
+                placeholder={t('searchPlaceholder')}
                 value={localFilters.search || ''}
                 onChange={(e) => setLocalFilters(prev => ({ ...prev, search: e.target.value }))}
                 className="pl-10"
@@ -84,7 +86,7 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
               disabled={loading}
             >
               <Filter className="h-4 w-4" />
-              Filters
+              {t('filtersButton')}
               {hasActiveFilters && (
                 <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full">
                   {Object.values(filters).filter(v => v !== undefined && v !== '').length}
@@ -99,20 +101,20 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {/* Status Filter */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Status</label>
+                  <label className="text-sm font-medium">{t('status')}</label>
                   <Select
                     value={localFilters.status || ''}
-                    onValueChange={(value) => setLocalFilters(prev => ({ 
-                      ...prev, 
-                      status: value === 'all' ? undefined : value as WebhookStatus 
+                    onValueChange={(value) => setLocalFilters(prev => ({
+                      ...prev,
+                      status: value === 'all' ? undefined : value as WebhookStatus
                     }))}
                     disabled={loading}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="All statuses" />
+                      <SelectValue placeholder={t('allStatuses')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All statuses</SelectItem>
+                      <SelectItem value="all">{t('allStatuses')}</SelectItem>
                       {Object.values(WebhookStatus).map((status) => (
                         <SelectItem key={status} value={status}>
                           {formatStatusDisplay(status)}
@@ -124,30 +126,31 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
 
                 {/* Platform Filter */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Platform</label>
+                  <label className="text-sm font-medium">{t('platform')}</label>
                   <Select
                     value={localFilters.platform || ''}
-                    onValueChange={(value) => setLocalFilters(prev => ({ 
-                      ...prev, 
-                      platform: value === 'all' ? undefined : value 
+                    onValueChange={(value) => setLocalFilters(prev => ({
+                      ...prev,
+                      platform: value === 'all' ? undefined : value
                     }))}
                     disabled={loading}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="All platforms" />
+                      <SelectValue placeholder={t('allPlatforms')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All platforms</SelectItem>
+                      <SelectItem value="all">{t('allPlatforms')}</SelectItem>
                       <SelectItem value="youcan">YouCan</SelectItem>
                       <SelectItem value="shopify">Shopify</SelectItem>
                       <SelectItem value="woocommerce">WooCommerce</SelectItem>
+                      <SelectItem value="storeep">Storeep</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Date From */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">From Date</label>
+                  <label className="text-sm font-medium">{t('fromDate')}</label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -156,7 +159,7 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
                         disabled={loading}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dateFrom ? format(dateFrom, "PPP") : "Pick a date"}
+                        {dateFrom ? format(dateFrom, "PPP") : t('pickDate')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
@@ -172,7 +175,7 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
 
                 {/* Date To */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">To Date</label>
+                  <label className="text-sm font-medium">{t('toDate')}</label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -181,7 +184,7 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
                         disabled={loading}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dateTo ? format(dateTo, "PPP") : "Pick a date"}
+                        {dateTo ? format(dateTo, "PPP") : t('pickDate')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
@@ -205,13 +208,13 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
                   className="flex items-center gap-2"
                 >
                   <X className="h-4 w-4" />
-                  Clear
+                  {t('clear')}
                 </Button>
                 <Button
                   onClick={handleApplyFilters}
                   disabled={loading}
                 >
-                  Apply Filters
+                  {t('applyFilters')}
                 </Button>
               </div>
             </div>
@@ -225,7 +228,7 @@ export function WebhookLogsFilters({ filters, onFiltersChange, loading }: Webhoo
                 onClick={handleApplyFilters}
                 disabled={loading}
               >
-                Search
+                {t('search')}
               </Button>
             </div>
           )}

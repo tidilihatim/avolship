@@ -7,6 +7,7 @@ import { IntegrationsPlatforms } from './integrations-platforms';
 import { YouCanSetupDialog } from './youcan-setup-dialog';
 import { WooCommerceSetupDialog } from './woocommerce-setup-dialog';
 import { ShopifySetupDialog } from './shopify-setup-dialog';
+import { StoreepSetupDialog } from './storeep-setup-dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -93,9 +94,16 @@ export function IntegrationsContainer({
         onClose={handleDialogClose}
       />
       
-      <ShopifySetupDialog 
+      <ShopifySetupDialog
         open={selectedPlatform === 'shopify'}
         onClose={handleDialogClose}
+      />
+
+      <StoreepSetupDialog
+        open={selectedPlatform === 'storeep'}
+        onClose={handleDialogClose}
+        warehouseId={warehouseId}
+        onIntegrationUpdate={handleIntegrationUpdate}
       />
     </div>
   );
@@ -126,6 +134,8 @@ function getSuccessMessage(success: string, t: any): string {
       return t('success.woocommerceConnected');
     case 'shopify_connected':
       return t('success.shopifyConnected');
+    case 'storeep_connected':
+      return t('success.storeepConnected');
     default:
       return t('success.defaultConnected');
   }

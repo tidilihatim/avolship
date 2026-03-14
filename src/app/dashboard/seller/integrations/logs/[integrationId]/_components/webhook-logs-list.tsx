@@ -22,6 +22,7 @@ import {
 import { formatDistanceToNow, format } from 'date-fns';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface WebhookLogsListProps {
   logs: any[];
@@ -29,6 +30,7 @@ interface WebhookLogsListProps {
 }
 
 export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
+  const t = useTranslations('webhookLogs.list');
   const [expandedLogs, setExpandedLogs] = useState<Set<string>>(new Set());
 
   const toggleLogExpansion = (logId: string) => {
@@ -108,10 +110,8 @@ export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
       <Card>
         <CardContent className="p-12 text-center">
           <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-medium mb-2">No webhook logs found</h3>
-          <p className="text-muted-foreground">
-            No webhook logs match your current filters. Try adjusting your search criteria.
-          </p>
+          <h3 className="text-lg font-medium mb-2">{t('noLogs')}</h3>
+          <p className="text-muted-foreground">{t('noLogsDescription')}</p>
         </CardContent>
       </Card>
     );
@@ -201,7 +201,6 @@ export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
                 <div className="flex items-center gap-2">
                   {log.orderData?.totalAmount && (
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <DollarSign className="h-3 w-3" />
                       <span>{log.orderData.totalAmount} {log.orderData.currency || 'MAD'}</span>
                     </div>
                   )}
@@ -210,7 +209,7 @@ export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
               
               {log.errorMessage && (
                 <div className="mt-3 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm">
-                  <div className="font-medium text-destructive mb-1">Error</div>
+                  <div className="font-medium text-destructive mb-1">{t('error')}</div>
                   <div className="text-destructive/80 break-words font-mono text-xs">
                     {log.errorMessage}
                   </div>
@@ -228,12 +227,12 @@ export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
                     <div>
                       <h4 className="font-medium mb-3 flex items-center gap-2 text-sm">
                         <Package className="h-4 w-4" />
-                        Order Information
+                        {t('orderInfo')}
                       </h4>
                       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                         {log.orderData.externalOrderId && (
                           <div className="text-sm">
-                            <div className="text-muted-foreground mb-1">External Order ID</div>
+                            <div className="text-muted-foreground mb-1">{t('externalOrderId')}</div>
                             <code className="text-xs bg-background px-2 py-1 rounded border">
                               {log.orderData.externalOrderId}
                             </code>
@@ -241,7 +240,7 @@ export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
                         )}
                         {log.orderData.internalOrderId && (
                           <div className="text-sm">
-                            <div className="text-muted-foreground mb-1">Internal Order ID</div>
+                            <div className="text-muted-foreground mb-1">{t('internalOrderId')}</div>
                             <code className="text-xs bg-background px-2 py-1 rounded border">
                               {log.orderData.internalOrderId}
                             </code>
@@ -249,20 +248,20 @@ export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
                         )}
                         {log.orderData.customerName && (
                           <div className="text-sm">
-                            <div className="text-muted-foreground mb-1">Customer</div>
+                            <div className="text-muted-foreground mb-1">{t('customer')}</div>
                             <div>{log.orderData.customerName}</div>
                           </div>
                         )}
                         {log.orderData.totalAmount && (
                           <div className="text-sm">
-                            <div className="text-muted-foreground mb-1">Amount</div>
+                            <div className="text-muted-foreground mb-1">{t('amount')}</div>
                             <div>{log.orderData.totalAmount} {log.orderData.currency || 'MAD'}</div>
                           </div>
                         )}
                         {log.orderData.productsCount && (
                           <div className="text-sm">
-                            <div className="text-muted-foreground mb-1">Products</div>
-                            <div>{log.orderData.productsCount} items</div>
+                            <div className="text-muted-foreground mb-1">{t('products')}</div>
+                            <div>{t('items', { count: log.orderData.productsCount })}</div>
                           </div>
                         )}
                       </div>
@@ -274,7 +273,7 @@ export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
                     <div>
                       <h4 className="font-medium mb-3 flex items-center gap-2 text-sm">
                         <Timer className="h-4 w-4" />
-                        Processing Timeline
+                        {t('processingTimeline')}
                       </h4>
                       <div className="space-y-2">
                         {log.steps.map((step: any, index: number) => (
@@ -305,59 +304,59 @@ export function WebhookLogsList({ logs, loading }: WebhookLogsListProps) {
                   <div>
                     <h4 className="font-medium mb-3 flex items-center gap-2 text-sm">
                       <Globe className="h-4 w-4" />
-                      Technical Details
+                      {t('technicalDetails')}
                     </h4>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="space-y-3">
                         <div>
-                          <div className="text-muted-foreground text-xs mb-1">Request URL</div>
+                          <div className="text-muted-foreground text-xs mb-1">{t('requestUrl')}</div>
                           <code className="text-xs bg-background p-2 rounded border block break-all">
                             {log.requestUrl}
                           </code>
                         </div>
-                        
+
                         <div className="flex gap-4">
                           <div>
-                            <div className="text-muted-foreground text-xs mb-1">Response Status</div>
+                            <div className="text-muted-foreground text-xs mb-1">{t('responseStatus')}</div>
                             <Badge variant="outline" className="text-xs">
                               {log.responseStatus}
                             </Badge>
                           </div>
-                          
+
                           <div>
-                            <div className="text-muted-foreground text-xs mb-1">Processing Time</div>
+                            <div className="text-muted-foreground text-xs mb-1">{t('processingTime')}</div>
                             <Badge variant="secondary" className="text-xs">
                               {log.processingTime}ms
                             </Badge>
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-3">
                         <div>
-                          <div className="text-muted-foreground text-xs mb-1">Started At</div>
+                          <div className="text-muted-foreground text-xs mb-1">{t('startedAt')}</div>
                           <div className="text-sm font-mono">
                             {format(new Date(log.startedAt), 'PPpp')}
                           </div>
                         </div>
-                        
+
                         {log.completedAt && (
                           <div>
-                            <div className="text-muted-foreground text-xs mb-1">Completed At</div>
+                            <div className="text-muted-foreground text-xs mb-1">{t('completedAt')}</div>
                             <div className="text-sm font-mono">
                               {format(new Date(log.completedAt), 'PPpp')}
                             </div>
                           </div>
                         )}
-                        
+
                         {log.signatureValidation && (
                           <div>
-                            <div className="text-muted-foreground text-xs mb-1">Signature Validation</div>
-                            <Badge 
+                            <div className="text-muted-foreground text-xs mb-1">{t('signatureValidation')}</div>
+                            <Badge
                               variant={log.signatureValidation.isValid ? "default" : "destructive"}
                               className="text-xs"
                             >
-                              {log.signatureValidation.isValid ? 'Valid' : 'Invalid'}
+                              {log.signatureValidation.isValid ? t('valid') : t('invalid')}
                             </Badge>
                           </div>
                         )}

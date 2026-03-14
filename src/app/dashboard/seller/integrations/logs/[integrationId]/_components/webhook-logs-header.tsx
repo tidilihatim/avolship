@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, RefreshCw, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 interface WebhookLogsHeaderProps {
   integrationId: string;
@@ -13,6 +14,7 @@ interface WebhookLogsHeaderProps {
 
 export function WebhookLogsHeader({ integrationId, onRefresh, loading }: WebhookLogsHeaderProps) {
   const router = useRouter();
+  const t = useTranslations('webhookLogs.header');
 
   return (
     <div className="space-y-4">
@@ -25,16 +27,16 @@ export function WebhookLogsHeader({ integrationId, onRefresh, loading }: Webhook
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            {t('back')}
           </Button>
           <div>
-            <h1 className="text-2xl font-semibold">Webhook Logs</h1>
+            <h1 className="text-2xl font-semibold">{t('title')}</h1>
             <p className="text-sm text-muted-foreground">
-              Integration ID: {integrationId}
+              {t('integrationId', { id: integrationId })}
             </p>
           </div>
         </div>
-        
+
         {onRefresh && (
           <Button
             variant="outline"
@@ -44,7 +46,7 @@ export function WebhookLogsHeader({ integrationId, onRefresh, loading }: Webhook
             className="flex items-center gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('refresh')}
           </Button>
         )}
       </div>
@@ -52,8 +54,7 @@ export function WebhookLogsHeader({ integrationId, onRefresh, loading }: Webhook
       <Alert>
         <Info className="h-4 w-4" />
         <AlertDescription>
-          <strong>Data Retention Policy:</strong> Webhook logs are automatically retained for 30 days from their creation date. 
-          After this period, logs are permanently deleted to optimize system performance and comply with data management policies.
+          <strong>{t('retentionLabel')}</strong> {t('retention')}
         </AlertDescription>
       </Alert>
     </div>

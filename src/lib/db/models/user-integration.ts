@@ -76,7 +76,7 @@ const UserIntegrationSchema = new Schema<IUserIntegration>({
   platformId: {
     type: String,
     required: true,
-    enum: ['youcan', 'shopify', 'woocommerce']
+    enum: ['youcan', 'shopify', 'woocommerce', 'storeep']
   },
   integrationMethod: {
     type: String,

@@ -1504,7 +1504,8 @@
         "connected": "Connectée",
         "paused": "En Pause",
         "available": "Disponible",
-        "comingSoon": "Bientôt Disponible"
+        "comingSoon": "Bientôt Disponible",
+        "pending": "Configuration en Attente"
       },
       "actions": {
         "connect": "Connecter {platform}",
@@ -1515,6 +1516,7 @@
         "disconnect": "Déconnecter",
         "disconnecting": "Déconnexion...",
         "unavailable": "Indisponible",
+        "completeSetup": "Terminer la Configuration",
         "viewLogs": "Voir les Journaux"
       },
       "stats": {
@@ -1545,6 +1547,7 @@
         "youcanConnected": "Intégration YouCan connectée avec succès ! Les commandes vont maintenant se synchroniser automatiquement.",
         "woocommerceConnected": "Intégration WooCommerce connectée avec succès ! Les commandes vont maintenant se synchroniser automatiquement.",
         "shopifyConnected": "Intégration Shopify connectée avec succès ! Les commandes vont maintenant se synchroniser automatiquement.",
+        "storeepConnected": "Intégration Storeep connectée avec succès ! Les commandes vont maintenant se synchroniser automatiquement.",
         "defaultConnected": "Intégration connectée avec succès !",
         "paused": "Intégration {platform} mise en pause avec succès",
         "resumed": "Intégration {platform} reprise avec succès",
@@ -1627,6 +1630,107 @@
     "considerations": "Considérations",
     "cancel": "Annuler",
     "continueWith": "Continuer avec"
+  },
+  "storeepSetup": {
+    "title": "Connecter la Boutique Storeep",
+    "subtitle": "Suivez ces étapes pour connecter votre boutique Storeep. Les commandes se synchroniseront automatiquement avec Avolship une fois le webhook configuré.",
+    "preparing": "Préparation de l'intégration...",
+    "steps": {
+      "step1": {
+        "label": "Aller aux Webhooks Storeep",
+        "description": "Ouvrez votre tableau de bord Storeep et accédez aux paramètres des webhooks.",
+        "openButton": "Ouvrir les Webhooks Storeep"
+      },
+      "step2": {
+        "label": "Configurer le webhook",
+        "description": "Remplissez les champs suivants exactement comme indiqué :",
+        "fields": {
+          "name": "Nom",
+          "nameValue": "avolship",
+          "type": "Type",
+          "typeValue": "API event",
+          "event": "Événement",
+          "eventValue": "order created",
+          "format": "Format",
+          "formatValue": "JSON"
+        }
+      },
+      "step3": {
+        "label": "Coller l'URL du Webhook",
+        "description": "Copiez et collez cette URL dans le champ URL de Storeep :"
+      },
+      "step4": {
+        "label": "Sauvegarder le webhook",
+        "description": "Cliquez sur Enregistrer dans Storeep, puis cliquez sur \"J'ai terminé la configuration\" ci-dessous pour finaliser la connexion."
+      }
+    },
+    "cancel": "Annuler",
+    "confirm": "J'ai terminé la configuration",
+    "confirming": "Confirmation...",
+    "copied": "Copié !"
+  },
+  "webhookLogs": {
+    "header": {
+      "back": "Retour",
+      "title": "Journaux Webhook",
+      "integrationId": "ID d'intégration : {id}",
+      "refresh": "Actualiser",
+      "retention": "Les journaux webhook sont automatiquement conservés pendant 30 jours à partir de leur date de création. Passé ce délai, les journaux sont définitivement supprimés pour optimiser les performances du système et se conformer aux politiques de gestion des données.",
+      "retentionLabel": "Politique de conservation des données :"
+    },
+    "container": {
+      "noLogs": "Aucun journal trouvé",
+      "fetchError": "Échec de récupération des journaux",
+      "unexpectedError": "Une erreur inattendue s'est produite"
+    },
+    "stats": {
+      "totalLogs": "Total des Journaux",
+      "successRate": "Taux de Succès",
+      "avgProcessing": "Traitement Moyen",
+      "statusBreakdown": "Répartition par Statut"
+    },
+    "filters": {
+      "searchPlaceholder": "Rechercher par ID webhook, ID commande, nom client ou message d'erreur...",
+      "filtersButton": "Filtres",
+      "status": "Statut",
+      "allStatuses": "Tous les statuts",
+      "platform": "Plateforme",
+      "allPlatforms": "Toutes les plateformes",
+      "fromDate": "Date de début",
+      "toDate": "Date de fin",
+      "pickDate": "Choisir une date",
+      "clear": "Effacer",
+      "applyFilters": "Appliquer les filtres",
+      "search": "Rechercher"
+    },
+    "list": {
+      "noLogs": "Aucun journal webhook trouvé",
+      "noLogsDescription": "Aucun journal webhook ne correspond à vos filtres actuels. Essayez d'ajuster vos critères de recherche.",
+      "error": "Erreur",
+      "orderInfo": "Informations de commande",
+      "externalOrderId": "ID commande externe",
+      "internalOrderId": "ID commande interne",
+      "customer": "Client",
+      "amount": "Montant",
+      "products": "Produits",
+      "items": "{count} articles",
+      "processingTimeline": "Chronologie de traitement",
+      "technicalDetails": "Détails techniques",
+      "requestUrl": "URL de la requête",
+      "responseStatus": "Statut de réponse",
+      "processingTime": "Temps de traitement",
+      "startedAt": "Démarré à",
+      "completedAt": "Terminé à",
+      "signatureValidation": "Validation de signature",
+      "valid": "Valide",
+      "invalid": "Invalide"
+    },
+    "pagination": {
+      "showing": "Affichage de {from} à {to} sur {total} résultats",
+      "rowsPerPage": "Lignes par page :",
+      "previous": "Précédent",
+      "next": "Suivant"
+    }
   },
   "leaderboard": {
     "title": "Classements de la Plateforme",

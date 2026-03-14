@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IIntegrationPlatform extends Document {
-  platformId: string; // 'youcan', 'shopify', 'woocommerce'
+  platformId: string; // 'youcan', 'shopify', 'woocommerce', 'storeep'
   name: string;
   description: string;
   iconPath: string;
@@ -26,7 +26,7 @@ const IntegrationPlatformSchema = new Schema<IIntegrationPlatform>({
     type: String,
     required: true,
     unique: true,
-    enum: ['youcan', 'shopify', 'woocommerce']
+    enum: ['youcan', 'shopify', 'woocommerce', 'storeep']
   },
   name: {
     type: String,
