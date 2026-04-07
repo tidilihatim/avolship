@@ -903,7 +903,7 @@ export default function ExpeditionTable({
                                   </div>
                                   <div className="text-sm text-muted-foreground">
                                     Qty: {expedition.totalQuantity}
-                                    {expedition.totalValue && (
+                                    {!!expedition.totalValue && (
                                       <span className="ml-2">
                                         • {formatCurrency(expedition.totalValue, expedition.warehouse?.currency)}
                                       </span>
