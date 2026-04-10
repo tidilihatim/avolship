@@ -919,13 +919,13 @@ export const createOrder = withDbConnection(async (orderData: any) => {
         };
       }
 
-      // Only enforce price match when the expedition has a unit price set
-      if (expeditionProduct.unitPrice != null && expeditionProduct.unitPrice !== orderProduct.unitPrice) {
-        return {
-          success: false,
-          message: `Price mismatch for product ${orderProduct.productId}. Expected: ${expeditionProduct.unitPrice}, Got: ${orderProduct.unitPrice}`,
-        };
-      }
+      // Price check disabled — seller sets the unit price manually on the order
+      // if (expeditionProduct.unitPrice != null && expeditionProduct.unitPrice !== orderProduct.unitPrice) {
+      //   return {
+      //     success: false,
+      //     message: `Price mismatch for product ${orderProduct.productId}. Expected: ${expeditionProduct.unitPrice}, Got: ${orderProduct.unitPrice}`,
+      //   };
+      // }
     }
 
     // Parse phone numbers from string (separated by |)
