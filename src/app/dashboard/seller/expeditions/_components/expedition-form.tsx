@@ -975,8 +975,8 @@ export default function ExpeditionForm({
                           : ""
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                        <div className="flex-1 min-w-0">
                           <div className="font-medium">{product.name}</div>
                           <div className="text-sm text-muted-foreground">
                             Code: {product.code}
@@ -993,7 +993,7 @@ export default function ExpeditionForm({
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-end gap-2">
                           <div className="space-y-1">
                             <Label className="text-xs">Quantity</Label>
                             <Input
@@ -1030,14 +1030,14 @@ export default function ExpeditionForm({
                                   parseFloat(e.target.value) || 0
                                 )
                               }
-                              className="w-32 h-8"
+                              className="w-28 h-8"
                               placeholder="0.00"
                             />
                           </div>
 
                           <div className="space-y-1">
                             <Label className="text-xs">Total</Label>
-                            <div className="text-sm font-medium p-2 bg-muted rounded text-center w-24">
+                            <div className="text-sm font-medium p-2 bg-muted rounded text-center w-28 overflow-hidden text-ellipsis whitespace-nowrap" title={formatCurrency((product.unitPrice || 0) * product.quantity)}>
                               {formatCurrency(
                                 (product.unitPrice || 0) * product.quantity
                               )}
@@ -1048,7 +1048,7 @@ export default function ExpeditionForm({
                             type="button"
                             variant="destructive"
                             size="icon"
-                            className="h-8 w-8 mt-5"
+                            className="h-8 w-8"
                             onClick={() => handleRemoveProduct(product._id)}
                           >
                             <X className="h-4 w-4" />
@@ -1060,7 +1060,7 @@ export default function ExpeditionForm({
 
                   {/* Summary */}
                   <div className="border rounded-md p-4 bg-muted/20">
-                    <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                       <div>
                         <div className="font-medium">Total Products</div>
                         <div className="text-lg font-bold">{totalProducts}</div>

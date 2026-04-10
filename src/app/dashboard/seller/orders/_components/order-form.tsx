@@ -219,6 +219,15 @@ export default function OrderForm({
     );
   };
 
+  // Update order product unit price
+  const handleUpdateOrderProductUnitPrice = (productId: string, unitPrice: number) => {
+    setSelectedProducts(
+      selectedProducts.map((p) =>
+        p._id === productId ? { ...p, unitPrice } : p
+      )
+    );
+  };
+
   // Currency formatter helper
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { // Consider making locale for NumberFormat dynamic if needed
@@ -641,9 +650,20 @@ export default function OrderForm({
                             <Label className="text-xs">
                               {t("form.unitPriceLabel")} ({warehouseCurrency})
                             </Label>
-                            <div className="text-sm font-medium p-2 bg-muted rounded text-center w-24">
-                              {formatCurrency(product.unitPrice)}
-                            </div>
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={product.unitPrice ?? ""}
+                              onChange={(e) =>
+                                handleUpdateOrderProductUnitPrice(
+                                  product._id,
+                                  parseFloat(e.target.value) || 0
+                                )
+                              }
+                              className="w-24 h-8"
+                              placeholder="0.00"
+                            />
                           </div>
 
                           <div className="space-y-1">

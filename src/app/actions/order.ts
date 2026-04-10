@@ -919,7 +919,8 @@ export const createOrder = withDbConnection(async (orderData: any) => {
         };
       }
 
-      if (expeditionProduct.unitPrice !== orderProduct.unitPrice) {
+      // Only enforce price match when the expedition has a unit price set
+      if (expeditionProduct.unitPrice != null && expeditionProduct.unitPrice !== orderProduct.unitPrice) {
         return {
           success: false,
           message: `Price mismatch for product ${orderProduct.productId}. Expected: ${expeditionProduct.unitPrice}, Got: ${orderProduct.unitPrice}`,

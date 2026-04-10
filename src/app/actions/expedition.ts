@@ -963,8 +963,8 @@ export const updateExpedition = withDbConnection(async (
       return { success: false, message: 'You can only edit your own expeditions' };
     }
 
-    // Only allow editing if expedition is pending
-    if (expedition.status !== 'pending') {
+    // Only allow editing if expedition is pending (admins and moderators can edit any status)
+    if (expedition.status !== 'pending' && user.role === UserRole.SELLER) {
       return { success: false, message: 'Can only edit pending expeditions' };
     }
 
