@@ -3695,6 +3695,7 @@
     "fields": {
       "name": "Product Name",
       "code": "Product Code",
+      "storeSku": "Store Product SKU",
 
       "warehouses": "Warehouses",
 
@@ -3729,6 +3730,7 @@
       "enterName": "Enter product name",
       "enterCode": "Enter unique product code",
       "enterVariantCode": "Enter variant code (optional)",
+      "enterStoreSku": "Enter your store product SKU",
       "enterDescription": "Enter product description",
       "enterVerificationLink": "Enter verification link (optional)",
       "enterPrice": "Enter price (optional)",
@@ -3793,6 +3795,7 @@
     "help": {
       "uniqueCode": "Must be unique for each product you create",
       "optionalVariant": "Optional code for product variants",
+      "storeSku": "This must exactly match the SKU of this product in your store. An incorrect SKU will prevent orders from being automatically linked to this product.",
       "price": "Product price (optional)",
       "verificationLink": "Link to product verification page",
       "imageRequirements": "Image must be less than 5MB and in JPG, PNG, or WEBP format",
@@ -3846,6 +3849,7 @@
       "nameRequired": "Product name is required",
       "descriptionRequired": "Description is required",
       "codeRequired": "Product code is required",
+      "storeSkuRequired": "Store Product SKU is required",
       "priceInvalid": "Price must be a valid number",
       "warehouseRequired": "At least one warehouse must be selected",
       "stockRequired": "At least one warehouse must have stock",
@@ -4009,6 +4013,7 @@
       "maxPendingOrders": "Max Pending Orders",
       "updateAssignment": "Update Assignment",
       "updating": "Updating...",
+      "updateUnassignedOrders": "Also assign unassigned orders of this seller to the selected agents",
       "assignmentSuccess": "Assignment updated successfully",
       "assignmentError": "Failed to update assignment",
       "unassignConfirm": "Remove call center agent assignment?",

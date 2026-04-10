@@ -7,6 +7,7 @@ import { UserFormData, UserApiResponse, UserFilters, PaginationData } from '@/ty
 import { withDbConnection } from '@/lib/db/db-connect';
 import { sanitizeUserData, validateUserFilters, validateUserForm } from '@/lib/validations/user';
 import User, { UserRole, UserStatus } from '@/lib/db/models/user';
+import Order from '@/lib/db/models/order';
 import { sendNotification } from '@/lib/notifications/send-notification';
 import { NotificationType } from '@/types/notification';
 import { getCurrentUser } from './auth';
@@ -504,7 +505,8 @@ export const getCallCenterAgents = withDbConnection(async () => {
  */
 export const assignSellerToAgent = withDbConnection(async (
   sellerId: string,
-  agentConfigs: Array<{ agentId: string; maxPendingOrders?: number }>
+  agentConfigs: Array<{ agentId: string; maxPendingOrders?: number }>,
+  updateUnassignedOrders: boolean = false
 ): Promise<UserApiResponse> => {
   try {
     // Validate seller exists and is a seller
@@ -570,6 +572,14 @@ export const assignSellerToAgent = withDbConnection(async (
       : undefined;
 
     await seller.save();
+
+    // Backfill unassigned orders if requested — assign first agent to all unassigned orders
+    if (updateUnassignedOrders && agentConfigs.length > 0) {
+      await Order.updateMany(
+        { sellerId: seller._id, assignedAgent: { $exists: false } },
+        { $set: { assignedAgent: new mongoose.Types.ObjectId(agentConfigs[0].agentId), assignedAt: new Date() } }
+      );
+    }
 
     // Send notification to the seller about assignment change
     if (agentConfigs.length > 0) {

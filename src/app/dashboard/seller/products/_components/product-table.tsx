@@ -658,6 +658,9 @@ export default function ProductTable({
                       {t("common.code")}
                     </TableHead>
                     <TableHead className="hidden lg:table-cell">
+                      {t("products.fields.storeSku")}
+                    </TableHead>
+                    <TableHead className="hidden lg:table-cell">
                       {t("common.warehouse")}
                     </TableHead>
                     {isAdminOrModerator && (
@@ -716,6 +719,15 @@ export default function ProductTable({
                         <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
                           {product.code}
                         </code>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {product.storeSku ? (
+                          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
+                            {product.storeSku}
+                          </code>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">—</span>
+                        )}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         <TooltipProvider>

@@ -8,6 +8,8 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Users } from "lucide-react";
 
 interface CallCenterAgent {
@@ -52,6 +54,7 @@ export default function SellerAgentAssignment({
   const [agentConfigs, setAgentConfigs] = useState<Array<{ agentId: string; maxPendingOrders: number }>>(
     initialConfigs
   );
+  const [updateUnassignedOrders, setUpdateUnassignedOrders] = useState(true);
   const [isPending, startTransition] = useTransition();
 
   // Get selected agent IDs for the MultiSelect
@@ -79,7 +82,7 @@ export default function SellerAgentAssignment({
   const handleAssignment = () => {
     startTransition(async () => {
       try {
-        const result = await assignSellerToAgent(sellerId, agentConfigs);
+        const result = await assignSellerToAgent(sellerId, agentConfigs, updateUnassignedOrders);
 
         if (result.success) {
           toast.success(t("assignmentSuccess"));
@@ -147,6 +150,19 @@ export default function SellerAgentAssignment({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {agentConfigs.length > 0 && (
+        <div className="flex items-start gap-2">
+          <Checkbox
+            id="updateUnassignedOrders"
+            checked={updateUnassignedOrders}
+            onCheckedChange={(checked) => setUpdateUnassignedOrders(!!checked)}
+          />
+          <Label htmlFor="updateUnassignedOrders" className="text-xs text-muted-foreground leading-tight cursor-pointer">
+            {t("updateUnassignedOrders")}
+          </Label>
         </div>
       )}
 

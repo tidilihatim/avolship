@@ -443,6 +443,7 @@ async function getProductsImpl(
         code: product.code,
         variantCode: product.variantCode,
         verificationLink: product.verificationLink,
+        storeSku: product.storeSku,
         warehouses: warehousesWithNames,
         primaryWarehouseId: primaryWarehouse?.warehouseId,
         primaryWarehouseName: primaryWarehouse?.warehouseName,
@@ -848,6 +849,7 @@ async function getAllProductsForAdminImpl(
         code: product.code,
         variantCode: product.variantCode,
         verificationLink: product.verificationLink,
+        storeSku: product.storeSku,
         warehouses: warehousesWithNames,
         primaryWarehouseId: primaryWarehouse?.warehouseId,
         primaryWarehouseName: primaryWarehouse?.warehouseName,
@@ -1048,6 +1050,7 @@ async function getProductByIdImpl(id: string): Promise<ProductResponse> {
       code: product.code,
       variantCode: product.variantCode,
       verificationLink: product.verificationLink,
+      storeSku: product.storeSku,
       warehouses: warehousesWithNames,
       primaryWarehouseId: primaryWarehouse?.warehouseId,
       primaryWarehouseName: primaryWarehouse?.warehouseName,
@@ -1262,6 +1265,7 @@ async function createProductImpl(productData: ProductInput): Promise<ProductResp
       code: productData.code,
       variantCode: productData.variantCode,
       verificationLink: productData.verificationLink,
+      storeSku: productData.storeSku,
       warehouses: productData.warehouses.map(w => ({
         warehouseId: new mongoose.Types.ObjectId(w.warehouseId),
         stock: w.stock,
@@ -1450,6 +1454,7 @@ async function updateProductImpl(id: string, productData: ProductInput): Promise
     product.code = productData.code;
     product.variantCode = productData.variantCode;
     product.verificationLink = productData.verificationLink;
+    product.storeSku = productData.storeSku;
     product.warehouses = productData.warehouses.map(w => ({
       warehouseId: new mongoose.Types.ObjectId(w.warehouseId),
       stock: w.stock,

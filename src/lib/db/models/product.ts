@@ -47,6 +47,7 @@ export interface IProduct extends Document {
   code: string; // Seller-generated unique code
   variantCode?: string;
   verificationLink?: string;
+  storeSku?: string; // Seller's store product SKU for webhook order automation
   warehouses: WarehouseInventory[]; // Multiple warehouses
   sellerId: mongoose.Types.ObjectId; // Link to seller user
   image?: ImageData; // Image data with URL and public ID (supports both Cloudinary and S3)
@@ -85,6 +86,9 @@ const ProductSchema = new Schema<IProduct>(
     verificationLink: {
       type: String,
       trim: true,
+    },
+    storeSku: {
+      type: String,
     },
     warehouses: [
       {

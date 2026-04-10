@@ -230,6 +230,19 @@ export default function ProductDetails({ product, userRole }: ProductDetailsProp
                   </div>
                 </div>
               )}
+              {product.storeSku && (
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {t('products.fields.storeSku')}
+                  </p>
+                  <div className="flex items-center space-x-2">
+                    <Tag className="h-4 w-4 text-muted-foreground" />
+                    <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
+                      {product.storeSku}
+                    </code>
+                  </div>
+                </div>
+              )}
               <Separator />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">

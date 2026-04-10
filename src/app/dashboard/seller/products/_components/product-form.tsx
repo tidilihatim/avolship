@@ -60,6 +60,7 @@ export default function ProductForm({
     code: generateProductCode(),
     variantCode: "",
     verificationLink: "",
+    storeSku: "",
   });
 
   // Check Shopify integration status
@@ -87,6 +88,7 @@ export default function ProductForm({
         code: product.code || "",
         variantCode: product.variantCode || "",
         verificationLink: product.verificationLink || "",
+        storeSku: product.storeSku || "",
       });
 
       // Set warehouse selections
@@ -213,6 +215,10 @@ export default function ProductForm({
       newErrors.code = t('products.validation.codeRequired');
     }
 
+    if (!formData.storeSku.trim()) {
+      newErrors.storeSku = t('products.validation.storeSkuRequired');
+    }
+
     if (selectedWarehouses.length === 0) {
       newErrors.warehouses = t('products.validation.warehouseRequired');
     }
@@ -253,6 +259,7 @@ export default function ProductForm({
         code: formData.code,
         variantCode: formData.variantCode,
         verificationLink: formData.verificationLink,
+        storeSku: formData.storeSku,
         warehouses: warehousesData,
         syncToShopify: isShopifyConnected ? syncToShopify : false,
       };
@@ -381,6 +388,27 @@ export default function ProductForm({
                   {t('products.help.verificationLink')}
                 </p>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="storeSku" className="text-sm font-medium">
+                {t('products.fields.storeSku')} <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="storeSku"
+                name="storeSku"
+                value={formData.storeSku}
+                onChange={handleChange}
+                placeholder={t('products.placeholders.enterStoreSku')}
+                className={errors.storeSku ? "border-destructive" : ""}
+              />
+              {errors.storeSku ? (
+                <p className="text-sm text-destructive">{errors.storeSku}</p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  {t('products.help.storeSku')}
+                </p>
+              )}
             </div>
           </div>
 

@@ -25,6 +25,7 @@ export interface ProductTableData {
   description: string;
   warehouses: WarehouseData[];
   verificationLink: string;
+  storeSku?: string;
   primaryWarehouseId?: string;
   primaryWarehouseName?: string;
   sellerId: string;
@@ -54,6 +55,7 @@ export interface ProductInput {
   code: string;
   variantCode?: string;
   verificationLink?: string;
+  storeSku?: string;
   warehouses: {
     warehouseId: string;
     stock: number;
