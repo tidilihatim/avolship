@@ -21,6 +21,7 @@ import {
 import { UserRole } from "@/lib/db/models/user";
 import { getLoginUserRole } from "@/app/actions/auth";
 import { assignOrderToAgent, updateCustomerInfo } from "@/app/actions/call-center";
+import { deleteOrder } from "@/app/actions/order";
 import { getCallCenterAgents } from "@/app/actions/user";
 import { getAccessToken } from "@/app/actions/cookie";
 import { getAppSettings } from "@/app/actions/app-settings";
@@ -167,6 +168,7 @@ export default function OrderTable({
     call_center: boolean;
   } | null>(null);
   const [showDeliveryProofToSeller, setShowDeliveryProofToSeller] = useState<boolean>(false);
+  const [canCallCenterDeleteOrders, setCanCallCenterDeleteOrders] = useState<boolean>(false);
 
   // Column visibility management
   const { columnVisibility, setColumnVisibility } = useColumnVisibility();
@@ -194,6 +196,7 @@ export default function OrderTable({
         if (settingsResult.success) {
           setTrackingSettings(settingsResult.data.showLocationTracking);
           setShowDeliveryProofToSeller(settingsResult.data.showDeliveryProofToSeller);
+          setCanCallCenterDeleteOrders(settingsResult.data.canCallCenterDeleteOrders ?? false);
         }
       } catch (error) {
         console.error("Error fetching user role:", error);
@@ -448,6 +451,18 @@ export default function OrderTable({
     });
   };
 
+  // Delete order handler
+  const handleDeleteOrder = async (order: OrderTableData) => {
+    if (!confirm(t("orders.actions.deleteOrderConfirm"))) return;
+    const result = await deleteOrder(order._id);
+    if (result.success) {
+      toast.success(t("orders.actions.deleteOrderSuccess"));
+      router.refresh();
+    } else {
+      toast.error(result.message || t("orders.actions.deleteOrderError"));
+    }
+  };
+
   // Discount dialog handlers
   const openDiscountDialog = (order: OrderTableData) => {
     setDiscountDialog({
@@ -666,6 +681,12 @@ export default function OrderTable({
                       onAssignRider={openRiderAssignmentDialog}
                       onEditCustomer={openCustomerUpdateDialog}
                       onApplyDiscount={openDiscountDialog}
+                      onDeleteOrder={
+                        userRole === UserRole.ADMIN ||
+                        (userRole === UserRole.CALL_CENTER && canCallCenterDeleteOrders)
+                          ? handleDeleteOrder
+                          : undefined
+                      }
                       columnVisibility={columnVisibility}
                       isTrackingAllowed={isTrackingAllowed()}
                       showDeliveryProofToSeller={showDeliveryProofToSeller}

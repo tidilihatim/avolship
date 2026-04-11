@@ -1924,6 +1924,10 @@
         "title": "Paramètres des Vendeurs",
         "description": "Configurer les permissions des vendeurs et la visibilité des preuves de livraison"
       },
+      "callCenterPermissions": {
+        "title": "Permissions du Centre d'Appels",
+        "description": "Contrôler ce que les agents du centre d'appels sont autorisés à faire"
+      },
       "notifications": {
         "title": "Notifications",
         "description": "Gérer les préférences de notification par email et dans l'application"
@@ -2236,6 +2240,16 @@
       "canRequestPayments": {
         "label": "Le Vendeur Peut Demander des Paiements",
         "description": "Permettre aux vendeurs de demander des paiements pour leurs commandes terminées"
+      }
+    },
+    "callCenterPermissions": {
+      "deleteOrders": {
+        "label": "Autoriser la Suppression des Commandes en Attente",
+        "description": "Permettre aux agents du centre d'appels de supprimer les commandes encore en statut en attente"
+      },
+      "deleteExpeditions": {
+        "label": "Autoriser la Suppression des Expéditions en Attente",
+        "description": "Permettre aux agents du centre d'appels de supprimer les expéditions encore en statut en attente"
       }
     },
     "warehouseSelector": {
@@ -2700,7 +2714,11 @@
       "viewHistory": "Voir l'Historique",
       "copyToClipboard": "Copier dans le presse-papiers",
       "viewOrder": "Voir la Commande",
-      "backToOrders": "Retour aux Commandes"
+      "backToOrders": "Retour aux Commandes",
+      "deleteOrder": "Supprimer la Commande",
+      "deleteOrderConfirm": "Êtes-vous sûr de vouloir supprimer cette commande ? Cette action est irréversible.",
+      "deleteOrderSuccess": "Commande supprimée avec succès",
+      "deleteOrderError": "Échec de la suppression de la commande"
     },
 
     "statuses": {

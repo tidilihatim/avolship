@@ -25,6 +25,7 @@ import {
   Image,
   Star,
   Edit3,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +68,7 @@ interface OrderTableRowProps {
   onAssignRider?: (order: OrderTableData) => void;
   onEditCustomer?: (order: OrderTableData) => void;
   onApplyDiscount?: (order: OrderTableData) => void;
+  onDeleteOrder?: (order: OrderTableData) => void;
   columnVisibility: ColumnVisibility;
   isTrackingAllowed: boolean;
   showDeliveryProofToSeller: boolean;
@@ -82,6 +84,7 @@ export default function OrderTableRow({
   onAssignRider,
   onEditCustomer,
   onApplyDiscount,
+  onDeleteOrder,
   columnVisibility,
   isTrackingAllowed,
   showDeliveryProofToSeller,
@@ -1174,6 +1177,18 @@ export default function OrderTableRow({
                     {dt("applyDiscount")}
                   </DropdownMenuItem>
                 )}
+              </>
+            )}
+            {onDeleteOrder && order.status === 'pending' && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                  onClick={() => onDeleteOrder(order)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {t("orders.actions.deleteOrder")}
+                </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>

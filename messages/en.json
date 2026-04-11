@@ -1460,6 +1460,10 @@
         "title": "Seller Settings",
         "description": "Configure seller permissions and delivery proof visibility"
       },
+      "callCenterPermissions": {
+        "title": "Call Center Permissions",
+        "description": "Control what call center agents are allowed to do"
+      },
       "notifications": {
         "title": "Notifications",
         "description": "Manage email and in-app notification preferences"
@@ -1772,6 +1776,16 @@
       "canRequestPayments": {
         "label": "Can Seller Request Payments",
         "description": "Enable sellers to request payments for their completed orders"
+      }
+    },
+    "callCenterPermissions": {
+      "deleteOrders": {
+        "label": "Allow Deleting Pending Orders",
+        "description": "Allow call center agents to delete orders that are still in pending status"
+      },
+      "deleteExpeditions": {
+        "label": "Allow Deleting Pending Expeditions",
+        "description": "Allow call center agents to delete expeditions that are still in pending status"
       }
     },
     "warehouseSelector": {
@@ -2669,7 +2683,11 @@
       "viewHistory": "View History",
       "copyToClipboard": "Copy to clipboard",
       "viewOrder": "View Order",
-      "backToOrders": "Back to Orders"
+      "backToOrders": "Back to Orders",
+      "deleteOrder": "Delete Order",
+      "deleteOrderConfirm": "Are you sure you want to delete this order? This action cannot be undone.",
+      "deleteOrderSuccess": "Order deleted successfully",
+      "deleteOrderError": "Failed to delete order"
     },
 
     "statusHistory": {

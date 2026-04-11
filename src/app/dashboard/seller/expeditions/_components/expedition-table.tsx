@@ -99,7 +99,7 @@ import {
 import { ExpeditionStatus, TransportMode, ProviderType } from "@/app/dashboard/_constant/expedition";
 import { UserRole } from "@/app/dashboard/_constant/user";
 import { ExpeditionTableData, ExpeditionFilters, WarehouseOption, SellerOption, ProviderOption } from "@/types/expedition";
-import { updateExpeditionStatus } from "@/app/actions/expedition";
+import { updateExpeditionStatus, deleteExpedition } from "@/app/actions/expedition";
 import ProviderExpeditionActions from "../../../provider/expeditions/_components/provider-expedition-actions";
 import { PaginationData } from "@/types/user";
 
@@ -1064,6 +1064,49 @@ export default function ExpeditionTable({
                                       {t("common.edit")}
                                     </Link>
                                   </DropdownMenuItem>
+                                  {currentUserRole === UserRole.ADMIN && expedition.status === ExpeditionStatus.PENDING && (
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem
+                                          className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                                          onSelect={(e) => e.preventDefault()}
+                                        >
+                                          <Trash2 className="mr-2 h-4 w-4" />
+                                          {t("common.delete")}
+                                        </DropdownMenuItem>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            {t("expeditions.deleteDialog.title")}
+                                          </AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            {t("expeditions.deleteDialog.description")}
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>
+                                            {t("expeditions.deleteDialog.cancelButton")}
+                                          </AlertDialogCancel>
+                                          <AlertDialogAction
+                                            onClick={async () => {
+                                              const result = await deleteExpedition(expedition._id);
+                                              if (result.success) {
+                                                toast.success(result.message);
+                                                router.refresh();
+                                              } else {
+                                                toast.error(result.message);
+                                              }
+                                            }}
+                                            disabled={isPending}
+                                            className="bg-red-600 text-white hover:bg-red-700"
+                                          >
+                                            {t("expeditions.deleteDialog.confirmButton")}
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  )}
                                 </>
                               )}
 

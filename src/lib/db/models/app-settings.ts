@@ -75,6 +75,10 @@ export interface IAppSettings extends Document {
   showDeliveryProofToSeller: boolean; // Show delivery proof to sellers
   canSellerRequestPayments: boolean; // Allow sellers to request payments
 
+  // Call Center Permissions
+  canCallCenterDeleteOrders: boolean; // Allow call center to delete pending orders
+  canCallCenterDeleteExpeditions: boolean; // Allow call center to delete pending expeditions
+
   // Admin Controls
   isActive: boolean;
   lastUpdatedBy: mongoose.Types.ObjectId;
@@ -250,6 +254,16 @@ const AppSettingsSchema = new Schema<IAppSettings>(
     },
 
     canSellerRequestPayments: {
+      type: Boolean,
+      default: false,
+    },
+
+    canCallCenterDeleteOrders: {
+      type: Boolean,
+      default: false,
+    },
+
+    canCallCenterDeleteExpeditions: {
       type: Boolean,
       default: false,
     },

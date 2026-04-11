@@ -21,6 +21,7 @@ import { checkDuplicatesForNewOrder } from '@/lib/duplicate-detection/duplicate-
 import DuplicateDetectionSettings from '@/lib/db/models/duplicate-settings';
 import { ApplyDiscountRequest, DiscountResponse } from '@/types/discount';
 import { getAccessToken } from './cookie';
+import AppSettings from '@/lib/db/models/app-settings';
 import { createStockMovement } from './stock-history';
 import { StockMovementReason, StockMovementType } from '@/lib/db/models/stock-history';
 
@@ -1877,5 +1878,49 @@ export const applyDiscountToOrder = withDbConnection(async (
       success: false,
       message: error.message || 'Failed to apply discount',
     };
+  }
+});
+/**
+ * Delete a pending order (admin only)
+ */
+export const deleteOrder = withDbConnection(async (orderId: string): Promise<{ success: boolean; message: string }> => {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    const isAdmin = user.role === UserRole.ADMIN;
+    const isCallCenter = user.role === UserRole.CALL_CENTER;
+
+    if (!isAdmin && !isCallCenter) {
+      return { success: false, message: 'Only admins can delete orders' };
+    }
+
+    if (isCallCenter) {
+      const appSettings = await AppSettings.getActiveSettings();
+      if (!appSettings.canCallCenterDeleteOrders) {
+        return { success: false, message: 'Call center agents are not allowed to delete orders' };
+      }
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return { success: false, message: 'Order not found' };
+    }
+
+    if (order.status !== OrderStatus.PENDING) {
+      return { success: false, message: 'Only pending orders can be deleted' };
+    }
+
+    await Order.findByIdAndDelete(orderId);
+
+    revalidatePath('/dashboard/admin/orders');
+    revalidatePath('/dashboard/call_center/orders');
+
+    return { success: true, message: 'Order deleted successfully' };
+  } catch (error: any) {
+    console.error('Error deleting order:', error);
+    return { success: false, message: error.message || 'Failed to delete order' };
   }
 });

@@ -16,6 +16,7 @@ import { ExpeditionInput, ProductOption } from '@/types/expedition-form';
 import Product from '@/lib/db/models/product';
 import StockHistory, { StockMovementType, StockMovementReason } from '@/lib/db/models/stock-history';
 import { sendNotification, sendNotificationToUserType } from '@/lib/notifications/send-notification';
+import { revalidatePath } from 'next/cache';
 import { NotificationType } from '@/types/notification';
 import { NotificationIcon } from '@/lib/db/models/notification';
 
@@ -1382,5 +1383,37 @@ export const updateExpeditionStock = withDbConnection(async (
   } catch (error: any) {
     console.error('Error updating expedition stock:', error);
     return { success: false, message: error.message || 'Failed to update expedition stock' };
+  }
+});
+/**
+ * Delete a pending expedition (admin only)
+ */
+export const deleteExpedition = withDbConnection(async (expeditionId: string): Promise<{ success: boolean; message: string }> => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return { success: false, message: 'Unauthorized' };
+
+    const user = await User.findById(session.user.id) as IUser | null;
+    if (!user || user.role !== UserRole.ADMIN) {
+      return { success: false, message: 'Only admins can delete expeditions' };
+    }
+
+    const expedition = await Expedition.findById(expeditionId);
+    if (!expedition) {
+      return { success: false, message: 'Expedition not found' };
+    }
+
+    if (expedition.status !== 'pending') {
+      return { success: false, message: 'Only pending expeditions can be deleted' };
+    }
+
+    await Expedition.findByIdAndDelete(expeditionId);
+
+    revalidatePath('/dashboard/admin/expeditions');
+
+    return { success: true, message: 'Expedition deleted successfully' };
+  } catch (error: any) {
+    console.error('Error deleting expedition:', error);
+    return { success: false, message: error.message || 'Failed to delete expedition' };
   }
 });

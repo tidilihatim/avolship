@@ -52,6 +52,8 @@ interface AppSettings {
   enableTokenSystem: boolean;
   showDeliveryProofToSeller: boolean;
   canSellerRequestPayments: boolean;
+  canCallCenterDeleteOrders: boolean;
+  canCallCenterDeleteExpeditions: boolean;
   isActive: boolean;
 }
 
@@ -442,6 +444,43 @@ const AppSettingsPage = () => {
             })
           }
         />
+      ) : null
+    },
+    {
+      id: 'callCenterPermissions',
+      title: t('sections.callCenterPermissions.title'),
+      description: t('sections.callCenterPermissions.description'),
+      icon: <Headphones className="w-5 h-5" />,
+      component: settings ? (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="cc-delete-orders">{t('callCenterPermissions.deleteOrders.label')}</Label>
+              <p className="text-sm text-muted-foreground">
+                {t('callCenterPermissions.deleteOrders.description')}
+              </p>
+            </div>
+            <Switch
+              id="cc-delete-orders"
+              checked={settings.canCallCenterDeleteOrders}
+              onCheckedChange={(checked) => updateSettings({ canCallCenterDeleteOrders: checked })}
+            />
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="cc-delete-expeditions">{t('callCenterPermissions.deleteExpeditions.label')}</Label>
+              <p className="text-sm text-muted-foreground">
+                {t('callCenterPermissions.deleteExpeditions.description')}
+              </p>
+            </div>
+            <Switch
+              id="cc-delete-expeditions"
+              checked={settings.canCallCenterDeleteExpeditions}
+              onCheckedChange={(checked) => updateSettings({ canCallCenterDeleteExpeditions: checked })}
+            />
+          </div>
+        </div>
       ) : null
     },
     {
