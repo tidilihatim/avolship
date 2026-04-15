@@ -1261,7 +1261,14 @@
         "WRONG_NUMBER": "Mauvais Numéro",
         "DOUBLE": "Doublon",
         "UNREACHED": "Injoignable",
-        "EXPIRED": "Expiré"
+        "EXPIRED": "Expiré",
+        "ALREADY_RECEIVED": "Déjà Reçu",
+        "NOT_READY": "Pas Prêt",
+        "NO_ANSWER": "Pas de Réponse",
+        "CANCELLED_AT_DELIVERY": "Annulé à la Livraison",
+        "BUSY": "Occupé",
+        "OUT_OF_DELIVERY_ZONE": "Hors Zone de Livraison",
+        "ASKING_FOR_DISCOUNT": "Demande de Réduction"
       }
     }
   },

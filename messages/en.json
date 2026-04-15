@@ -1264,7 +1264,14 @@
         "WRONG_NUMBER": "Wrong Number",
         "DOUBLE": "Duplicate",
         "UNREACHED": "Unreached",
-        "EXPIRED": "Expired"
+        "EXPIRED": "Expired",
+        "ALREADY_RECEIVED": "Already Received",
+        "NOT_READY": "Not Ready",
+        "NO_ANSWER": "No Answer",
+        "CANCELLED_AT_DELIVERY": "Cancelled at Delivery",
+        "BUSY": "Busy",
+        "OUT_OF_DELIVERY_ZONE": "Out of Delivery Zone",
+        "ASKING_FOR_DISCOUNT": "Asking for Discount"
       }
     }
   },

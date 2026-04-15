@@ -73,7 +73,7 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
         <CardDescription>{t('description', { totalOrders: totalOrders })}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={getChartConfig(t)} className="h-[250px]">
+        <ChartContainer config={getChartConfig(t)} className="h-[350px] w-full">
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -102,13 +102,13 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
                   return (
-                    <div className="rounded-lg border bg-background p-2 shadow-sm">
-                      <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-lg border bg-background p-2 shadow-sm max-w-[180px]">
+                      <div className="flex flex-col gap-1">
                         <div className="flex flex-col">
                           <span className="text-[0.70rem] uppercase text-muted-foreground">
                             {t('product')}
                           </span>
-                          <span className="font-bold text-muted-foreground">
+                          <span className="font-bold text-muted-foreground text-xs break-words">
                             {data.productName}
                           </span>
                         </div>
@@ -116,7 +116,7 @@ export const TrendingProductsChart = ({ data, totalOrders, isLoading }: Trending
                           <span className="text-[0.70rem] uppercase text-muted-foreground">
                             {t('orders')}
                           </span>
-                          <span className="font-bold">
+                          <span className="font-bold text-xs">
                             {data.orderCount} ({data.percentage}%)
                           </span>
                         </div>

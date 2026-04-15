@@ -149,7 +149,7 @@ export const OrderStatusPieChart = ({ data, totalOrders, isLoading }: OrderStatu
             <div key={index} className="flex items-center gap-2 text-sm">
               <div
                 className="h-3 w-3 rounded-full"
-                style={{ 
+                style={{
                   backgroundColor: item.fill,
                   border: '1px solid hsl(var(--border))'
                 }}
@@ -202,7 +202,7 @@ export const OrderStatusBarChart = ({ data, totalOrders, isLoading }: OrderStatu
       <CardContent>
         <ChartContainer config={getChartConfig(t)}>
           <BarChart
-            
+
             accessibilityLayer
             data={chartData}
             margin={{

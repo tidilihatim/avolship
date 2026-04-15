@@ -1148,12 +1148,33 @@ export const getConfirmationRateChart = withDbConnection(async (filters: AdminFi
       }
     ]);
 
-    // Query confirmed orders only
+    // Query confirmed orders (all statuses that come after successful confirmation)
     const confirmedOrdersData = await Order.aggregate([
       {
         $match: {
           ...baseMatchQuery,
-          status: 'confirmed'
+          status: {
+            $in: [
+              'confirmed',
+              'in_preparation',
+              'awaiting_dispatch',
+              'shipped',
+              'assigned_to_delivery',
+              'accepted_by_delivery',
+              'in_transit',
+              'out_for_delivery',
+              'delivered',
+              'paid',
+              'processed',
+              'already_received',
+              'delivery_failed',
+              'cancelled_at_delivery',
+              'refunded',
+              'refund_in_progress',
+              'return_in_progress',
+              'returned',
+            ]
+          }
         }
       },
       {
@@ -1575,12 +1596,12 @@ export const getDeliveryRateChart = withDbConnection(async (filters: AdminFilter
       }
     ]);
 
-    // Query delivered orders only
+    // Query delivered orders (all terminal "successfully delivered" statuses)
     const deliveredOrdersData = await Order.aggregate([
       {
         $match: {
           ...baseMatchQuery,
-          status: 'delivered'
+          status: { $in: ['delivered', 'paid', 'processed', 'already_received'] }
         }
       },
       {

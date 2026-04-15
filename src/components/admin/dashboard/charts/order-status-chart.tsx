@@ -26,7 +26,11 @@ export function OrderStatusChartComponent({ data }: OrderStatusChartProps) {
   const totalOrders = data.reduce((sum, item) => sum + item.count, 0);
 
   const getStatusLabel = (status: string): string => {
-    return tStatuses(status?.toUpperCase() as any) || status.replace('_', ' ');
+    try {
+      return tStatuses(status?.toUpperCase() as any);
+    } catch {
+      return status.replace(/_/g, ' ');
+    }
   };
 
   return (

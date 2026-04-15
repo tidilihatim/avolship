@@ -808,20 +808,30 @@ export const getSellerConfirmationRate = withDbConnection(
         .lean();
 
       // Get confirmed orders (including all statuses that come after successful confirmation)
-      // Excluded: pending, cancelled, wrong_number, double, unreached, expired (these are not confirmed)
+      // Excluded: pending, cancelled, wrong_number, double, unreached, expired, busy, no_answer,
+      //           not_ready, mistaken_order, out_of_delivery_zone, asking_for_discount, unreachable
       const confirmedOrders = await Order.find({
         ...orderFilter,
         status: {
           $in: [
             'confirmed',
+            'in_preparation',
+            'awaiting_dispatch',
             'shipped',
             'assigned_to_delivery',
             'accepted_by_delivery',
             'in_transit',
             'out_for_delivery',
             'delivered',
-            'delivery_failed', // Order was confirmed but delivery failed
-            'refunded', // Order was confirmed but later refunded
+            'paid',
+            'processed',
+            'already_received',
+            'delivery_failed',       // Order was confirmed but delivery failed
+            'cancelled_at_delivery', // Order was confirmed but cancelled at delivery
+            'refunded',              // Order was confirmed but later refunded
+            'refund_in_progress',    // Order was confirmed, refund initiated
+            'return_in_progress',    // Order was confirmed and delivered, now being returned
+            'returned',              // Order was confirmed and delivered, then returned
           ]
         },
       })
@@ -1063,10 +1073,10 @@ export const getSellerDeliveryRate = withDbConnection(
         .select('orderDate status')
         .lean();
 
-      // Get delivered orders
+      // Get delivered orders (includes all terminal "successfully delivered" statuses)
       const deliveredOrders = await Order.find({
         ...orderFilter,
-        status: 'delivered',
+        status: { $in: ['delivered', 'paid', 'processed', 'already_received'] },
       })
         .select('orderDate')
         .lean();
@@ -1246,7 +1256,7 @@ export const getSellerDeliveryRate = withDbConnection(
 
 /**
  * Get seller return rate (Daily/Monthly/Yearly)
- * Return rate = (Refunded orders / Total orders) * 100
+ * Return rate = (Returned/refunded orders / Total orders) * 100
  */
 export const getSellerReturnRate = withDbConnection(
   async (
@@ -1306,10 +1316,10 @@ export const getSellerReturnRate = withDbConnection(
         .select('orderDate status')
         .lean();
 
-      // Get refunded/returned orders
+      // Get refunded/returned orders (all statuses representing a return or refund event)
       const returnedOrders = await Order.find({
         ...orderFilter,
-        status: 'refunded',
+        status: { $in: ['returned', 'return_in_progress', 'refund_in_progress', 'refunded'] },
       })
         .select('orderDate')
         .lean();
@@ -1924,7 +1934,7 @@ export const getSellerRevenue = withDbConnection(
 
 /**
  * Get refunded orders count (Daily/Monthly/Yearly)
- * Refunded orders = Orders with status 'refunded'
+ * Refunded orders = Orders with status refunded, refund_in_progress, returned, or return_in_progress
  */
 export const getRefundedOrders = withDbConnection(
   async (
@@ -1972,7 +1982,7 @@ export const getRefundedOrders = withDbConnection(
           $gte: fromDate,
           $lte: toDate,
         },
-        status: 'refunded',
+        status: { $in: ['refunded', 'refund_in_progress', 'returned', 'return_in_progress'] },
       };
 
       // Add seller filter if specific seller is selected
@@ -2274,7 +2284,7 @@ export const getRefundAmount = withDbConnection(
 
 /**
  * Get refund rate percentage per seller over time
- * Refund Rate = (Refunded Orders / Total Orders) × 100
+ * Refund Rate = (Refunded/returned orders / Total Orders) × 100
  */
 export const getRefundRate = withDbConnection(
   async (
@@ -2308,7 +2318,9 @@ export const getRefundRate = withDbConnection(
       const allOrders = await Order.find(orderFilter).select('orderDate status').lean();
 
       // Get refunded orders
-      const refundedOrders = allOrders.filter((order: any) => order.status === 'refunded');
+      const refundedOrders = allOrders.filter((order: any) =>
+        ['refunded', 'refund_in_progress', 'returned', 'return_in_progress'].includes(order.status)
+      );
 
       // Helper function to get period key
       const getPeriodKey = (date: Date): string => {
