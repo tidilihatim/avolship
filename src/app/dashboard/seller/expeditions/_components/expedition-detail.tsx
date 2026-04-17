@@ -4,16 +4,16 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { 
-  Edit, 
-  ArrowLeft, 
-  Package, 
-  MapPin, 
-  Tag, 
-  Building2, 
-  Calendar, 
-  DollarSign, 
-  Hash, 
+import {
+  Edit,
+  ArrowLeft,
+  Package,
+  MapPin,
+  Tag,
+  Building2,
+  Calendar,
+  DollarSign,
+  Hash,
   Truck,
   User,
   Phone,
@@ -25,7 +25,8 @@ import {
   AlertTriangle,
   Eye,
   Weight,
-  Navigation
+  Navigation,
+  ChevronDown
 } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -43,6 +44,14 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 import { ExpeditionStatus, TransportMode, ProviderType } from '@/app/dashboard/_constant/expedition';
 import { updateExpeditionStatus } from '@/app/actions/expedition';
@@ -202,52 +211,74 @@ export default function ExpeditionDetails({ expedition, userRole }: ExpeditionDe
         <div className="flex items-center gap-2">
           {/* Status Quick Actions for Admin/Moderator */}
           {isAdminOrModerator && (
-            <>
-              {expedition.status === ExpeditionStatus.PENDING && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  {t('expeditions.statusActions.changeStatus')}
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
+                  {t('expeditions.statusActions.changeStatus')}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {expedition.status !== ExpeditionStatus.PENDING && (
+                  <DropdownMenuItem
+                    onClick={() => handleStatusUpdate(ExpeditionStatus.PENDING)}
+                    className="text-yellow-600"
+                  >
+                    <Clock className="mr-2 h-4 w-4" />
+                    {t('expeditions.statusActions.setPending')}
+                  </DropdownMenuItem>
+                )}
+                {expedition.status !== ExpeditionStatus.APPROVED && (
+                  <DropdownMenuItem
                     onClick={() => handleStatusUpdate(ExpeditionStatus.APPROVED)}
-                    className="text-green-600 hover:text-green-700"
+                    className="text-green-600"
                   >
-                    <CheckCircle2 className="mr-1 h-4 w-4" />
-                    Approve
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleStatusUpdate(ExpeditionStatus.REJECTED, "Rejected by admin")}
-                    className="text-red-600 hover:text-red-700"
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    {t('expeditions.statusActions.approve')}
+                  </DropdownMenuItem>
+                )}
+                {expedition.status !== ExpeditionStatus.IN_TRANSIT && (
+                  <DropdownMenuItem
+                    onClick={() => handleStatusUpdate(ExpeditionStatus.IN_TRANSIT)}
+                    className="text-blue-600"
                   >
-                    <XCircle className="mr-1 h-4 w-4" />
-                    Reject
-                  </Button>
-                </>
-              )}
-              {expedition.status === ExpeditionStatus.APPROVED && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleStatusUpdate(ExpeditionStatus.IN_TRANSIT)}
-                  className="text-blue-600 hover:text-blue-700"
-                >
-                  <Truck className="mr-1 h-4 w-4" />
-                  Mark In Transit
-                </Button>
-              )}
-              {expedition.status === ExpeditionStatus.IN_TRANSIT && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleStatusUpdate(ExpeditionStatus.DELIVERED)}
-                  className="text-emerald-600 hover:text-emerald-700"
-                >
-                  <CheckCircle2 className="mr-1 h-4 w-4" />
-                  Mark Delivered
-                </Button>
-              )}
-            </>
+                    <Truck className="mr-2 h-4 w-4" />
+                    {t('expeditions.statusActions.markInTransit')}
+                  </DropdownMenuItem>
+                )}
+                {expedition.status !== ExpeditionStatus.DELIVERED && (
+                  <DropdownMenuItem
+                    onClick={() => handleStatusUpdate(ExpeditionStatus.DELIVERED)}
+                    className="text-emerald-600"
+                  >
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    {t('expeditions.statusActions.markDelivered')}
+                  </DropdownMenuItem>
+                )}
+                {expedition.status !== ExpeditionStatus.CANCELLED && (
+                  <DropdownMenuItem
+                    onClick={() => handleStatusUpdate(ExpeditionStatus.CANCELLED)}
+                    className="text-gray-600"
+                  >
+                    <XCircle className="mr-2 h-4 w-4" />
+                    {t('expeditions.statusActions.cancel')}
+                  </DropdownMenuItem>
+                )}
+                {expedition.status !== ExpeditionStatus.REJECTED && (
+                  <DropdownMenuItem
+                    onClick={() => handleStatusUpdate(ExpeditionStatus.REJECTED, t('expeditions.statusActions.rejectedByAdmin'))}
+                    className="text-red-600"
+                  >
+                    <XCircle className="mr-2 h-4 w-4" />
+                    {t('expeditions.statusActions.reject')}
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
           
           {/* Edit button for sellers (only pending expeditions) */}

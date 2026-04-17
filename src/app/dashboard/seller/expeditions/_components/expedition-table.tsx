@@ -994,36 +994,38 @@ export default function ExpeditionTable({
                               {isAdminOrModerator && (
                                 <>
                                   <DropdownMenuSeparator />
-                                  {expedition.status === ExpeditionStatus.PENDING && (
-                                    <>
-                                      <DropdownMenuItem
-                                        onClick={() =>
-                                          handleStatusUpdate(
-                                            expedition._id,
-                                            ExpeditionStatus.APPROVED
-                                          )
-                                        }
-                                        className="text-green-600"
-                                      >
-                                        <CheckCircle className="mr-2 h-4 w-4" />
-                                        Approve
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        onClick={() =>
-                                          handleStatusUpdate(
-                                            expedition._id,
-                                            ExpeditionStatus.REJECTED,
-                                            "Rejected by admin"
-                                          )
-                                        }
-                                        className="text-red-600"
-                                      >
-                                        <XCircle className="mr-2 h-4 w-4" />
-                                        Reject
-                                      </DropdownMenuItem>
-                                    </>
+                                  <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
+                                    {t("expeditions.statusActions.changeStatus")}
+                                  </DropdownMenuLabel>
+                                  {expedition.status !== ExpeditionStatus.PENDING && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleStatusUpdate(
+                                          expedition._id,
+                                          ExpeditionStatus.PENDING
+                                        )
+                                      }
+                                      className="text-yellow-600"
+                                    >
+                                      <Clock className="mr-2 h-4 w-4" />
+                                      {t("expeditions.statusActions.setPending")}
+                                    </DropdownMenuItem>
                                   )}
-                                  {expedition.status === ExpeditionStatus.APPROVED && (
+                                  {expedition.status !== ExpeditionStatus.APPROVED && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleStatusUpdate(
+                                          expedition._id,
+                                          ExpeditionStatus.APPROVED
+                                        )
+                                      }
+                                      className="text-green-600"
+                                    >
+                                      <CheckCircle className="mr-2 h-4 w-4" />
+                                      {t("expeditions.statusActions.approve")}
+                                    </DropdownMenuItem>
+                                  )}
+                                  {expedition.status !== ExpeditionStatus.IN_TRANSIT && (
                                     <DropdownMenuItem
                                       onClick={() =>
                                         handleStatusUpdate(
@@ -1034,10 +1036,10 @@ export default function ExpeditionTable({
                                       className="text-blue-600"
                                     >
                                       <Truck className="mr-2 h-4 w-4" />
-                                      Mark In Transit
+                                      {t("expeditions.statusActions.markInTransit")}
                                     </DropdownMenuItem>
                                   )}
-                                  {expedition.status === ExpeditionStatus.IN_TRANSIT && (
+                                  {expedition.status !== ExpeditionStatus.DELIVERED && (
                                     <DropdownMenuItem
                                       onClick={() =>
                                         handleStatusUpdate(
@@ -1048,7 +1050,36 @@ export default function ExpeditionTable({
                                       className="text-emerald-600"
                                     >
                                       <CheckCircle className="mr-2 h-4 w-4" />
-                                      Mark Delivered
+                                      {t("expeditions.statusActions.markDelivered")}
+                                    </DropdownMenuItem>
+                                  )}
+                                  {expedition.status !== ExpeditionStatus.CANCELLED && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleStatusUpdate(
+                                          expedition._id,
+                                          ExpeditionStatus.CANCELLED
+                                        )
+                                      }
+                                      className="text-gray-600"
+                                    >
+                                      <XCircle className="mr-2 h-4 w-4" />
+                                      {t("expeditions.statusActions.cancel")}
+                                    </DropdownMenuItem>
+                                  )}
+                                  {expedition.status !== ExpeditionStatus.REJECTED && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleStatusUpdate(
+                                          expedition._id,
+                                          ExpeditionStatus.REJECTED,
+                                          t("expeditions.statusActions.rejectedByAdmin")
+                                        )
+                                      }
+                                      className="text-red-600"
+                                    >
+                                      <XCircle className="mr-2 h-4 w-4" />
+                                      {t("expeditions.statusActions.reject")}
                                     </DropdownMenuItem>
                                   )}
                                 </>
